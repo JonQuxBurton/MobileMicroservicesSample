@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SimCards.EventHandlers": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

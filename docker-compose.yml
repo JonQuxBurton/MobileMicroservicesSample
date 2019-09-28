@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  sql.data:
+    image: mcr.microsoft.com/mssql/server
+    build:
+      context: .
+      dockerfile: DatabaseSetup/Dockerfile
+      
+  mobileorderer.api:
+    image: ${DOCKER_REGISTRY}mobileordererapi
+    build:
+      context: .
+      dockerfile: src/MobileOrderer/MobileOrderer.Api/Dockerfile
+
+  simcardwholesaler.api:
+    image: ${DOCKER_REGISTRY}simcardwholesalerapi
+    build:
+      context: .
+      dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
+
+  simcards.eventhandlers:
+    image: ${DOCKER_REGISTRY}simcardseventhandlers
+    build:
+      context: .
+      dockerfile: src/SimCards/SimCards.EventHandlers/Dockerfile
+
+  localstack-s3:
+    image: localstack/localstack:0.10.2
+    container_name: localstack-s3
+    environment:
+     - SERVICES=s3,sqs,sns, lambda, iam, apigateway
+     - DEFAULT_REGION=us-east-1
+     - DATA_DIR=/tmp/localstack/data
+    ports:
+     - "4567-4584:4567-4584"
+     - "9999:8080"
+    volumes:
+      - localstack-data:/tmp/localstack
+
+volumes:
+
+  localstack-data:
+    name: localstack-data           
+     
