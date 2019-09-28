@@ -22,15 +22,10 @@ Then: A SimCard Order is sent to the SimCardWholesaler
 |               |               |
 | ------------- | ------------- |
 | Cloud         | [Localstack](https://github.com/localstack/localstack) - local AWS cloud stack |
-| ------------- | ------------- |
 | WebApi        | ASP.NET Core  |
-| ------------- | ------------- |
 | Data access   | Dapper        |
-| ------------- | ------------- |
 | Event-based collaboration | AWS SNS and SQS. JustSaying message bus |
-| ------------- | ------------- |
 | Unit tests    | Moq, xUnit, FluentAssertions |
-| ------------- | ------------- |
 | Containers    | Docker        |
 
 ## Launching
