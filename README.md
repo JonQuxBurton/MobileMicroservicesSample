@@ -3,7 +3,6 @@ A small sample of a Microservices architecture for a simple Mobile Phone/Telecom
 
 (Warning: This code is not suitable for Production use)
 
-
 ## Domain
 User Story #1
 
@@ -20,17 +19,18 @@ Then: A SimCard Order is sent to the SimCardWholesaler
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram2.png)
 
 ## Technologies:
-Cloud: [Localstack](https://github.com/localstack/localstack) - local AWS cloud stack
-
-WebApi: ASP.NET Core
-
-Data access: Dapper
-
-Event-based collaboration: AWS SNS and SQS. JustSaying message bus
-
-Unit tests: Moq, xUnit, FluentAssertions
-
-Containers: Docker
+|--------------|--------------|
+|Cloud         |[Localstack](https://github.com/localstack/localstack) - local AWS cloud stack |
+|--------------|--------------|
+|WebApi        | ASP.NET Core |
+|--------------|--------------|
+|Data access   | Dapper       |
+|--------------|--------------|
+|Event-based collaboration | AWS SNS and SQS. JustSaying message bus |
+|--------------|--------------|
+|Unit tests    | Moq, xUnit, FluentAssertions |
+|--------------|--------------|
+|Containers    | Docker       |
 
 ## Launching
 Launch the system using docker:
