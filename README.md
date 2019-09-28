@@ -53,7 +53,7 @@ content-type: application/json
 $ docker exec -it localstack-s3 bash
 ```
 ```shell
-`$ /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Pass@word"
+$ /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Pass@word"
 ```
 ```sql
 select * from SimCardWholesaler.Orders;

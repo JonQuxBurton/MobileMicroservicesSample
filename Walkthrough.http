@@ -1,0 +1,22 @@
+
+###==================================================
+### Order a Mobile
+###==================================================
+POST http://localhost:5000/api/provisioner
+content-type: application/json
+
+{
+	"Name" : "Neil Armstrong",
+	"ContactPhoneNumber" : "40123456789"
+}
+
+###==================================================
+### Health Checks
+###==================================================
+GET http://localhost:5000/api/provisioner/status
+###
+GET http://localhost:5001/api/orders/status
+
+
+###
+POST http://localhost:5001/api/orders
