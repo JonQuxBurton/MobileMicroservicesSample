@@ -29,6 +29,8 @@ namespace SimCardWholesaler.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
+
             services.Configure<Config>(options => Configuration.GetSection("Config").Bind(options));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -46,6 +48,7 @@ namespace SimCardWholesaler.Api
 
             app.UseSerilogRequestLogging();
             app.UseMvc();
+            app.UseHealthChecks("/health");
         }
     }
 }
