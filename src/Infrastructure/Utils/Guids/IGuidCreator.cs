@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MobileOrderer.Api.Domain
+namespace Utils.Guids
 {
     public interface IGuidCreator
     {

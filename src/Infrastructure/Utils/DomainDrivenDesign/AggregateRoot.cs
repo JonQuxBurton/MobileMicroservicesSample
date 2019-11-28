@@ -1,4 +1,4 @@
-﻿namespace MobileOrderer.Api.Domain
+﻿namespace Utils.DomainDrivenDesign
 {
     public abstract class AggregateRoot : Entity
     {

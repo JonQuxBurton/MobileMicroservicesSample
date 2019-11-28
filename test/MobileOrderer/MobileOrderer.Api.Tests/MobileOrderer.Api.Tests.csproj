@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Infrastructure\Utils\Utils.csproj" />
     <ProjectReference Include="..\..\..\src\MobileOrderer\MobileOrderer.Api\MobileOrderer.Api.csproj" />
   </ItemGroup>
   

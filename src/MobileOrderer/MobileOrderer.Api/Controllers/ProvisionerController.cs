@@ -2,6 +2,8 @@
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Resources;
 using System;
+using Utils.DomainDrivenDesign;
+using Utils.Guids;
 
 namespace MobileOrderer.Api.Controllers
 {

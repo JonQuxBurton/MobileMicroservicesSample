@@ -4,6 +4,7 @@ using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
 using System;
 using System.Linq;
+using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {

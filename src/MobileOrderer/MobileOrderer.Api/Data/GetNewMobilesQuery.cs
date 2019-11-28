@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Dapper;
+using Utils.Enums;
 
 namespace MobileOrderer.Api.Data
 {
@@ -14,15 +15,17 @@ namespace MobileOrderer.Api.Data
         private const string TableName = "Mobiles";
         private const string MobileOrdersTableName = "Orders";
         private readonly string connectionString;
+        private readonly IEnumConverter enumConverter;
 
-        public GetNewMobilesQuery(IOptions<Config> config)
+        public GetNewMobilesQuery(IOptions<Config> config, IEnumConverter enumConverter)
         {
             this.connectionString = config.Value.ConnectionString;
+            this.enumConverter = enumConverter;
         }
 
         public IEnumerable<Mobile> GetNew()
         {
-            var sql = $"select *,  {SchemaName}.{MobileOrdersTableName}.Id as OrderId from {SchemaName}.{TableName} join {SchemaName}.{MobileOrdersTableName} on Mobiles.Id=Orders.MobileId and Mobiles.State='New'";
+            var sql = $"select *, {SchemaName}.{MobileOrdersTableName}.Id as OrderId from {SchemaName}.{TableName} join {SchemaName}.{MobileOrdersTableName} on Mobiles.Id=Orders.MobileId and Mobiles.State='New'";
 
             var buildersDictionary = new Dictionary<Guid, MobileBuilder>();
 
@@ -34,13 +37,13 @@ namespace MobileOrderer.Api.Data
                 {
                     if (!buildersDictionary.ContainsKey(dbMobileAndOrder.GlobalId))
                     {
-                        Enum.TryParse(dbMobileAndOrder.State.Trim(), out Domain.Mobile.State state);
+                        var state = enumConverter.ToEnum<Mobile.State>(dbMobileAndOrder.State);
                         buildersDictionary.Add(dbMobileAndOrder.GlobalId, new MobileBuilder(state, dbMobileAndOrder.GlobalId));
                     }
 
                     if (buildersDictionary.TryGetValue(dbMobileAndOrder.GlobalId, out MobileBuilder builder))
                     {
-                        builder.AddInFlightOrder(new MobileOrder(dbMobileAndOrder.Id, 
+                        builder.AddInFlightOrder(new MobileOrder(dbMobileAndOrder.OrderId, 
                             dbMobileAndOrder.GlobalId,
                             dbMobileAndOrder.MobileId,
                             dbMobileAndOrder.Name,

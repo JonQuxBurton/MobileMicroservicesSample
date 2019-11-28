@@ -15,6 +15,9 @@ using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Services;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
+using Utils.DomainDrivenDesign;
+using Utils.Enums;
+using Utils.Guids;
 
 namespace MobileOrderer.Api
 {
@@ -58,6 +61,7 @@ namespace MobileOrderer.Api
             services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
             services.AddSingleton<IRepository<Mobile>, MobileRepository>();
             services.AddSingleton<IGuidCreator, GuidCreator>();
+            services.AddSingleton<IEnumConverter, EnumConverter>();
             services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
         }
 

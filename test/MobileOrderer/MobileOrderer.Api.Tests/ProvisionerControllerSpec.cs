@@ -7,6 +7,8 @@ using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Resources;
 using Moq;
 using System;
+using Utils.DomainDrivenDesign;
+using Utils.Guids;
 using Xunit;
 
 namespace MobileOrderer.Api.Tests

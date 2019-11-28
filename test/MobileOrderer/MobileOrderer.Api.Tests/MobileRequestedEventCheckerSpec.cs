@@ -6,6 +6,7 @@ using MobileOrderer.Api.Messages;
 using MobileOrderer.Api.Services;
 using Moq;
 using System;
+using Utils.DomainDrivenDesign;
 using Xunit;
 
 namespace MobileOrderer.Api.Tests

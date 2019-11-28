@@ -7,6 +7,8 @@ using Dapper;
 using Microsoft.Extensions.Options;
 using MobileOrderer.Api.Configuration;
 using MobileOrderer.Api.Domain;
+using Utils.DomainDrivenDesign;
+using Utils.Enums;
 
 namespace MobileOrderer.Api.Data
 {
@@ -16,10 +18,12 @@ namespace MobileOrderer.Api.Data
         private const string MobilesTableName = "Mobiles";
         private const string OrdersTableName = "Orders";
         private readonly string connectionString;
+        private readonly IEnumConverter enumConverter;
 
-        public MobileRepository(IOptions<Config> config)
+        public MobileRepository(IOptions<Config> config, IEnumConverter enumConverter)
         {
             this.connectionString = config.Value.ConnectionString;
+            this.enumConverter = enumConverter;
         }
 
         public Mobile GetById(Guid globalId)
@@ -56,7 +60,7 @@ namespace MobileOrderer.Api.Data
                         orderHistory.Remove(inFlightOrder);
                 }
 
-                Enum.TryParse(dbRow.Status, out Domain.Mobile.State state);
+                var state = enumConverter.ToEnum<Mobile.State>(dbRow.State);
 
                 return new Mobile(state, dbRow.GlobalId, dbRow.Id, inFlightOrder, orderHistory);
             }
@@ -83,7 +87,7 @@ namespace MobileOrderer.Api.Data
 
         private void Insert(SqlConnection connection, DbTransaction transaction, Domain.Mobile mobile)
         {
-            var stateString = Enum.GetName(typeof(Domain.Mobile.State), mobile.CurrentState);
+            var stateString = enumConverter.ToName<Mobile.State>(mobile.CurrentState);
             var sql = $"insert into {SchemaName}.{MobilesTableName} (GlobalId, State) values (@GlobalId, @State); SELECT CAST(SCOPE_IDENTITY() as int)";
             var mobileId = connection.Query<int>(sql, new { mobile.GlobalId, State=stateString }, transaction);
 
@@ -97,7 +101,7 @@ namespace MobileOrderer.Api.Data
 
         private void Update(SqlConnection connection, DbTransaction transaction, Domain.Mobile mobile)
         {
-            var stateString = Enum.GetName(typeof(Domain.Mobile.State), mobile.CurrentState);
+            var stateString = enumConverter.ToName<Mobile.State>(mobile.CurrentState);
             var sql = $"update {SchemaName}.{MobilesTableName} set State=@State, UpdatedAt=GETDATE() where GlobalId=@GlobalId";
             connection.Execute(sql, new { mobile.GlobalId, State=stateString }, transaction);
 

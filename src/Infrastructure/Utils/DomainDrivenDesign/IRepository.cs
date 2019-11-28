@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MobileOrderer.Api.Domain
+namespace Utils.DomainDrivenDesign
 {
     public interface IRepository<T> where T : AggregateRoot
     {

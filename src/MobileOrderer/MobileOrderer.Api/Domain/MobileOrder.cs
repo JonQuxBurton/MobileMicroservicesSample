@@ -1,5 +1,6 @@
 ﻿using MobileOrderer.Api.Resources;
 using System;
+using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Domain
 {

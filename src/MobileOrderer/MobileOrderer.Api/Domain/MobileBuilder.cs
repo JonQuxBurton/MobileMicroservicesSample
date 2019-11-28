@@ -10,7 +10,7 @@ namespace MobileOrderer.Api.Domain
         private readonly Mobile.State initialState;
         private readonly Guid globalId;
         private MobileOrder inFlightOrder;
-        private List<MobileOrder> orderHistory = new List<MobileOrder>();
+        private readonly List<MobileOrder> orderHistory = new List<MobileOrder>();
 
         public MobileBuilder(Mobile.State initialState, Guid globalId)
         {

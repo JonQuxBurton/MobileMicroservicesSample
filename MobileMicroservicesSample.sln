@@ -41,7 +41,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimCardWholesaler", "SimCar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimCardWholesaler.Api.Tests", "test\SimCardWholesaler\SimCardWholesaler.Api.Tests\SimCardWholesaler.Api.Tests.csproj", "{64475DA3-3BBC-4D5C-8FAD-450BCC722A10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperDataAccess.Tests", "test\Infrastructure\DapperDataAccess.Tests\DapperDataAccess.Tests.csproj", "{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperDataAccess.Tests", "test\Infrastructure\DapperDataAccess.Tests\DapperDataAccess.Tests.csproj", "{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "src\Infrastructure\Utils\Utils.csproj", "{30CCD285-7FF8-466B-8D83-CA588A137ACD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,10 @@ Global
 		{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30CCD285-7FF8-466B-8D83-CA588A137ACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30CCD285-7FF8-466B-8D83-CA588A137ACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30CCD285-7FF8-466B-8D83-CA588A137ACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30CCD285-7FF8-466B-8D83-CA588A137ACD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{5FED58DA-9143-4562-A5D2-F606F823B8C2} = {D374DC68-2F5F-400D-B922-52D975F58237}
 		{64475DA3-3BBC-4D5C-8FAD-450BCC722A10} = {5FED58DA-9143-4562-A5D2-F606F823B8C2}
 		{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622} = {CF195203-41A5-4AF3-89C0-ED050D8C66FE}
+		{30CCD285-7FF8-466B-8D83-CA588A137ACD} = {97B7AB63-5905-494B-BF77-958A3D6FA125}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {193462FA-4043-46E4-ACD2-D7792F0C599C}
