@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Resources;
 using System;
 
@@ -9,11 +9,13 @@ namespace MobileOrderer.Api.Controllers
     [ApiController]
     public class ProvisionerController : ControllerBase
     {
-        private readonly IOrdersDataStore orderDataStore;
+        private readonly IRepository<Mobile> mobileRepository;
+        private readonly IGuidCreator guidCreator;        
 
-        public ProvisionerController(IOrdersDataStore orderDataStore)
+        public ProvisionerController(IRepository<Mobile> mobileRepository, IGuidCreator guidCreator)
         {
-            this.orderDataStore = orderDataStore;
+            this.mobileRepository = mobileRepository;
+            this.guidCreator = guidCreator;
         }
 
         [HttpGet("status")]
@@ -25,18 +27,22 @@ namespace MobileOrderer.Api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] MobileOrderToAdd orderToAdd)
         {
-            var order = new MobileOrder(orderToAdd)
-            {
-                GlobalId = Guid.NewGuid(),
-                Status = "New"
-            };
-
-            using (this.orderDataStore.BeginTransaction())
-            {
-                this.orderDataStore.Add(order);
-            }
-
+            var mobileBuilder = new MobileBuilder(Mobile.State.New, this.guidCreator.Create());
+            mobileBuilder.AddInFlightOrder(orderToAdd, this.guidCreator.Create());
+            this.mobileRepository.Save(mobileBuilder.Build());
+            
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Mobile> Get(Guid id)
+        {
+            var mobile = this.mobileRepository.GetById(id);
+
+            if (mobile == null)
+                return NotFound();
+
+            return new OkObjectResult(mobile);
         }
     }
 }

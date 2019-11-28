@@ -10,6 +10,9 @@ content-type: application/json
 	"ContactPhoneNumber" : "40123456789"
 }
 
+###
+GET http://localhost:5000/api/provisioner/8B4C3F55-71CD-4F6D-9BFB-F31FDBBBAE63
+
 ###==================================================
 ### Health Checks
 ###==================================================

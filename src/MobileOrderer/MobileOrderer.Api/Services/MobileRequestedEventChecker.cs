@@ -1,39 +1,44 @@
 ﻿using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
+using System;
+using System.Linq;
 
 namespace MobileOrderer.Api.Services
 {
     public class MobileRequestedEventChecker : IMobileRequestedEventChecker
     {
-        private readonly IOrdersDataStore orderDataStore;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IGetNewMobilesQuery getNewMobilesQuery;
+        private readonly IRepository<Mobile> mobileRepository;
 
-        public MobileRequestedEventChecker(IOrdersDataStore orderDataStore, IMessagePublisher messagePublisher)
+        public MobileRequestedEventChecker(IMessagePublisher messagePublisher,
+            IGetNewMobilesQuery getNewMobilesQuery, IRepository<Mobile> mobileRepository)
         {
-            this.orderDataStore = orderDataStore;
             this.messagePublisher = messagePublisher;
+            this.getNewMobilesQuery = getNewMobilesQuery;
+            this.mobileRepository = mobileRepository;
         }
 
         public void Check()
         {
-            var newOrders = orderDataStore.GetNewOrders();
+            var newMobiles = this.getNewMobilesQuery.GetNew();
 
-            foreach (var newOrder in newOrders)
+            foreach (var newMobile in newMobiles)
             {
-                using (orderDataStore.BeginTransaction())
-                {
-                    Publish(newOrder);
-                    orderDataStore.SetToProcessing(newOrder);
-                }
+                newMobile.Provision();
+                this.mobileRepository.Save(newMobile);
+                if (newMobile.InFlightOrder != null)
+                    Publish(newMobile.GlobalId, newMobile.InFlightOrder);
             }
         }
 
-        private void Publish(MobileOrder order)
+        private void Publish(Guid mobileGlobalId, MobileOrder order)
         {
             messagePublisher.PublishAsync(new MobileRequestedMessage
             {
-                MobileOrderId = order.GlobalId,
+                MobileOrderId = mobileGlobalId, 
                 Name = order.Name,
                 ContactPhoneNumber = order.ContactPhoneNumber
             });

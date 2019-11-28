@@ -17,14 +17,25 @@ GO
 GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: MobileOrderer TO MobileOrdererMicroservice;
 GO
 
+CREATE TABLE [MobileOrderer].[Mobiles](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[GlobalId] [uniqueidentifier] NOT NULL,
+	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[UpdatedAt] datetime,
+	[State] [nchar](100) NOT NULL
+)
+GO
+
 CREATE TABLE [MobileOrderer].[Orders](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[MobileId] [int] NOT NULL,
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[Name] [nchar](100) NOT NULL,
 	[ContactPhoneNumber] [nvarchar](50) NULL,
-	[Status] [nchar](100) NOT NULL
+	[Status] [nchar](100) NOT NULL,
+	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [MobileOrderer].[Mobiles](Id)
 )
 GO
 

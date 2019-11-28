@@ -11,6 +11,7 @@ using MinimalEventBus.Aws;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Configuration;
 using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Services;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
@@ -47,7 +48,6 @@ namespace MobileOrderer.Api
             services.Configure<EventBusConfig>(options => Configuration.GetSection("EventBusConfig").Bind(options));
             
             services.AddSingleton<AWSCredentials>(credentials);
-            services.AddSingleton<IOrdersDataStore, OrdersDataStore>();
             services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
             services.AddSingleton<IMessageBus, MessageBus>();
             services.AddSingleton<IMessagePublisher, MessagePublisher>();
@@ -56,6 +56,9 @@ namespace MobileOrderer.Api
             services.AddSingleton<ISqsService, SqsService>();
             services.AddSingleton<IHostedService, EventPublisherService>();
             services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
+            services.AddSingleton<IRepository<Mobile>, MobileRepository>();
+            services.AddSingleton<IGuidCreator, GuidCreator>();
+            services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
