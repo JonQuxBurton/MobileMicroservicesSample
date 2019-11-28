@@ -1,7 +1,6 @@
 ﻿using Amazon.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,7 +23,7 @@ namespace MobileOrderer.Api
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        public Startup(Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public Startup(IHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -41,7 +40,7 @@ namespace MobileOrderer.Api
         {
             services.AddHealthChecks();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => options.EnableEndpointRouting = false);
 
             var eventBusConfig = new EventBusConfig();
             Configuration.GetSection("EventBusConfig").Bind(eventBusConfig);
@@ -66,7 +65,7 @@ namespace MobileOrderer.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
