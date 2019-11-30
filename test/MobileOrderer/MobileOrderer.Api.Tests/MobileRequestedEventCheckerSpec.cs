@@ -21,7 +21,7 @@ namespace MobileOrderer.Api.Tests
 
         public MobileRequestedEventCheckerSpec()
         {
-            var inFlightOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Neil", ContactPhoneNumber = "0123456789", Status = "New" });
+            var inFlightOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Neil", ContactPhoneNumber = "0123456789", State = "New" });
             expectedNewMobile = new Mobile(new MobileDataEntity { GlobalId = Guid.NewGuid(), Id = 101, State = "New" }, inFlightOrder, null);
             messagePublisher = new Mock<IMessagePublisher>();
             mobileRepositoryMock = new Mock<IRepository<Mobile>>();

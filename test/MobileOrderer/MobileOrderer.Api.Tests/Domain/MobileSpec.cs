@@ -44,12 +44,12 @@ namespace MobileOrderer.Api.Tests.Domain
             [Fact]
             public void ChangeInFlightOrderStateToPending()
             {
-                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", Status = "New" });
+                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
                 var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid() , State = "New"}, mobileOrder, null);
 
                 sut.Provision();
 
-                sut.InFlightOrder.Status.Should().Be("Pending");
+                sut.InFlightOrder.CurrentState.Should().Be(Order.State.Processing);
             }
         }
     }

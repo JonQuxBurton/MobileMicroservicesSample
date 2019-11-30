@@ -24,7 +24,7 @@ namespace MobileOrderer.Api.Domain
                 GlobalId = globalId, 
                 Name = order.Name,
                 ContactPhoneNumber = order.ContactPhoneNumber,
-                Status = newStateName
+                State = newStateName
             };
             inFlightOrder = new Order(dataEntity);
 

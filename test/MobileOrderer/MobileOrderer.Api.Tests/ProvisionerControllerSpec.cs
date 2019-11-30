@@ -92,7 +92,7 @@ namespace MobileOrderer.Api.Tests
                     y.GlobalId == expectedGlobalId &&
                     y.CurrentState == Mobile.State.New &&
                     y.InFlightOrder != null &&
-                    y.InFlightOrder.Status == "New")));
+                    y.InFlightOrder.CurrentState == Order.State.New)));
             }
 
             [Fact]

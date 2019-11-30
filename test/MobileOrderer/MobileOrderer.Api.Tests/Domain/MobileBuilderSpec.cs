@@ -18,7 +18,7 @@ namespace MobileOrderer.Api.Tests.Domain
                 var expectedId = 0;
                 var expectedInFlightOrderGuid = Guid.NewGuid();
                 var expectedOrderToAdd = new OrderToAdd() { Name = "Neil", ContactPhoneNumber = "01234" };
-                var expectedHistoryOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Buzz", ContactPhoneNumber = "05678", Status = "Completed" });
+                var expectedHistoryOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Buzz", ContactPhoneNumber = "05678", State = "Completed" });
                 
                 var sut = new MobileBuilder(expectedGuid)
                     .AddInFlightOrder(expectedOrderToAdd, expectedInFlightOrderGuid)

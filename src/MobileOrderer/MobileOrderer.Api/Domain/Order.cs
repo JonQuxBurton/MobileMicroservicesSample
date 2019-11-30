@@ -1,28 +1,45 @@
-﻿using System;
+﻿using Stateless;
+using System;
 using Utils.DomainDrivenDesign;
+using Utils.Enums;
 
 namespace MobileOrderer.Api.Domain
 {
     public class Order : Entity
     {
+        public enum State { New, Processing, Sent, Completed, Failed, Cancelled }
+        public enum Trigger { Process, Send, Complete, Fail, Cancel }
+        private readonly StateMachine<State, Trigger> machine;
+
         private readonly OrderDataEntity orderDataEntity;
 
         public Order(OrderDataEntity orderDataEntity)
         {
             this.orderDataEntity = orderDataEntity;
+
+            var enumConverter = new EnumConverter();
+            var initialState = enumConverter.ToEnum<State>(orderDataEntity.State);
+            machine = new StateMachine<State, Trigger>(initialState);
+
+            machine.Configure(State.New).Permit(Trigger.Process, State.Processing);
+            machine.Configure(State.Processing)
+                .OnEntry(() => {
+                    this.orderDataEntity.State = enumConverter.ToName<State>(State.Processing);
+                })
+                .Permit(Trigger.Process, State.Sent);
         }
 
         public Guid GlobalId => this.orderDataEntity.GlobalId;
         public int MobileId => this.orderDataEntity.MobileId;
         public string Name => this.orderDataEntity.Name;
         public string ContactPhoneNumber => this.orderDataEntity.ContactPhoneNumber;
-        public string Status => this.orderDataEntity.Status;
+        public State CurrentState => machine.State;
         public DateTime? CreatedAt => this.orderDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.orderDataEntity.UpdatedAt;
 
         public void Process()
         {
-            this.orderDataEntity.Status = "Pending";
+            this.machine.Fire(Trigger.Process);
         }
     }
 }

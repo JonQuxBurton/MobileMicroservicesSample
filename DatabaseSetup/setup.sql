@@ -22,7 +22,7 @@ CREATE TABLE [MobileOrderer].[Mobiles](
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
-	[State] [nchar](100) NOT NULL
+	[State] [nvarchar](100) NOT NULL
 )
 GO
 
@@ -34,7 +34,7 @@ CREATE TABLE [MobileOrderer].[Orders](
 	[UpdatedAt] datetime,
 	[Name] [nchar](100) NOT NULL,
 	[ContactPhoneNumber] [nvarchar](50) NULL,
-	[Status] [nchar](100) NOT NULL,
+	[State] [nvarchar](100) NOT NULL,
 	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [MobileOrderer].[Mobiles](Id)
 )
 GO
