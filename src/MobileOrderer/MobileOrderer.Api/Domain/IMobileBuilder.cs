@@ -5,8 +5,9 @@ namespace MobileOrderer.Api.Domain
 {
     public interface IMobileBuilder
     {
-        void AddInFlightOrder(MobileOrder order);
-        void AddInFlightOrder(MobileOrderToAdd order, Guid globalId);
+        MobileBuilder AddInFlightOrder(OrderToAdd order, Guid globalId);
+        MobileBuilder AddOrderToHistory(Order order);
+
         Mobile Build();
     }
 }

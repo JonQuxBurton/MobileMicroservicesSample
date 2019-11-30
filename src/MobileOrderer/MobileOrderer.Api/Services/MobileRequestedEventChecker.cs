@@ -3,7 +3,6 @@ using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
 using System;
-using System.Linq;
 using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
@@ -15,7 +14,8 @@ namespace MobileOrderer.Api.Services
         private readonly IRepository<Mobile> mobileRepository;
 
         public MobileRequestedEventChecker(IMessagePublisher messagePublisher,
-            IGetNewMobilesQuery getNewMobilesQuery, IRepository<Mobile> mobileRepository)
+            IGetNewMobilesQuery getNewMobilesQuery, IRepository<Mobile> mobileRepository
+            )
         {
             this.messagePublisher = messagePublisher;
             this.getNewMobilesQuery = getNewMobilesQuery;
@@ -29,13 +29,13 @@ namespace MobileOrderer.Api.Services
             foreach (var newMobile in newMobiles)
             {
                 newMobile.Provision();
-                this.mobileRepository.Save(newMobile);
+                mobileRepository.Update(newMobile);
                 if (newMobile.InFlightOrder != null)
                     Publish(newMobile.GlobalId, newMobile.InFlightOrder);
             }
         }
 
-        private void Publish(Guid mobileGlobalId, MobileOrder order)
+        private void Publish(Guid mobileGlobalId, Order order)
         {
             messagePublisher.PublishAsync(new MobileRequestedMessage
             {

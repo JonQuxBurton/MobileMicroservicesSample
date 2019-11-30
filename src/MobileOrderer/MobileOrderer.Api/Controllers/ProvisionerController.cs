@@ -27,11 +27,11 @@ namespace MobileOrderer.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] MobileOrderToAdd orderToAdd)
+        public IActionResult Post([FromBody] OrderToAdd orderToAdd)
         {
-            var mobileBuilder = new MobileBuilder(Mobile.State.New, this.guidCreator.Create());
-            mobileBuilder.AddInFlightOrder(orderToAdd, this.guidCreator.Create());
-            this.mobileRepository.Save(mobileBuilder.Build());
+            var mobileBuilder = new MobileBuilder(this.guidCreator.Create())
+                            .AddInFlightOrder(orderToAdd, this.guidCreator.Create());
+            this.mobileRepository.Add(mobileBuilder.Build());
             
             return Ok();
         }

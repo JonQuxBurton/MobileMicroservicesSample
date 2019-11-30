@@ -21,8 +21,8 @@ namespace MobileOrderer.Api.Tests
 
         public MobileRequestedEventCheckerSpec()
         {
-            var inFlightOrder = new MobileOrder(Guid.NewGuid(), "Neil", "0123456789", "New");
-            expectedNewMobile = new Mobile(Mobile.State.New, Guid.NewGuid(), 101, inFlightOrder, null);
+            var inFlightOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Neil", ContactPhoneNumber = "0123456789", Status = "New" });
+            expectedNewMobile = new Mobile(new MobileDataEntity { GlobalId = Guid.NewGuid(), Id = 101, State = "New" }, inFlightOrder, null);
             messagePublisher = new Mock<IMessagePublisher>();
             mobileRepositoryMock = new Mock<IRepository<Mobile>>();
             getNewMobilesQueryMock = new Mock<IGetNewMobilesQuery>();
@@ -33,13 +33,13 @@ namespace MobileOrderer.Api.Tests
         }
 
         [Fact]
-        public void SavesTheMobile()
+        public void UpdateTheMobile()
         {
             sut.Check();
 
-            this.mobileRepositoryMock.Verify(x => x.Save(expectedNewMobile));
-        }        
-        
+            this.mobileRepositoryMock.Verify(x => x.Update(expectedNewMobile));
+        }
+
         [Fact]
         public void ProvisionsTheMobile()
         {

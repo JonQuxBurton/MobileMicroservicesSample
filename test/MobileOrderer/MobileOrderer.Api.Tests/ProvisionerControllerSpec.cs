@@ -58,9 +58,9 @@ namespace MobileOrderer.Api.Tests
             private readonly Mock<IGuidCreator> guidCreatorMock;
 
             [Fact]
-            public void SaveMobileInRepositoryWithStateOfNew()
+            public void AddMobileInRepositoryWithStateOfNew()
             {
-                var expectedOrder = new MobileOrderToAdd()
+                var expectedOrder = new OrderToAdd()
                 {
                     Name = "Neil Armstrong",
                     ContactPhoneNumber = "01234 123123"
@@ -70,15 +70,15 @@ namespace MobileOrderer.Api.Tests
 
                 sut.Post(expectedOrder);
 
-                mobileRepositoryMock.Verify(x => x.Save(It.Is<Mobile>(y =>
+                mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
                     y.GlobalId == expectedGlobalId &&
                     y.CurrentState == Mobile.State.New)));
-            }            
-            
+            }
+
             [Fact]
-            public void SaveMobileInRepositoryWithInFligthOrder()
+            public void AddMobileInRepositoryWithInFligthOrder()
             {
-                var expectedOrder = new MobileOrderToAdd()
+                var expectedOrder = new OrderToAdd()
                 {
                     Name = "Neil Armstrong",
                     ContactPhoneNumber = "01234 123123"
@@ -88,7 +88,7 @@ namespace MobileOrderer.Api.Tests
 
                 sut.Post(expectedOrder);
 
-                mobileRepositoryMock.Verify(x => x.Save(It.Is<Mobile>(y =>
+                mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
                     y.GlobalId == expectedGlobalId &&
                     y.CurrentState == Mobile.State.New &&
                     y.InFlightOrder != null &&
@@ -98,7 +98,7 @@ namespace MobileOrderer.Api.Tests
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Post(new MobileOrderToAdd());
+                var actual = sut.Post(new OrderToAdd());
 
                 actual.Should().BeOfType<OkResult>();
             }
@@ -115,7 +115,7 @@ namespace MobileOrderer.Api.Tests
 
                 sut = new ProvisionerController(mobileRepositoryMock.Object, guidCreatorMock.Object);
 
-                expectedMobile = new Mobile(Mobile.State.New, Guid.NewGuid(), 101, null, null);
+                expectedMobile = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid() , State = "New"}, null, null);
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobile.GlobalId))
                     .Returns(expectedMobile);
@@ -131,16 +131,16 @@ namespace MobileOrderer.Api.Tests
             public void ReturnMobile()
             {
                 var actual = sut.Get(expectedMobile.GlobalId);
-                
+
                 var actualResult = actual.Result as OkObjectResult;
                 actualResult.Value.Should().Be(this.expectedMobile);
             }
-            
+
             [Fact]
             public void ReturnOk()
             {
                 var actual = sut.Get(expectedMobile.GlobalId);
-                
+
                 actual.Result.Should().BeOfType<OkObjectResult>();
             }
 
@@ -148,7 +148,7 @@ namespace MobileOrderer.Api.Tests
             public void ReturnNotFound()
             {
                 var actual = sut.Get(Guid.NewGuid());
-                
+
                 actual.Result.Should().BeOfType<NotFoundResult>();
             }
         }

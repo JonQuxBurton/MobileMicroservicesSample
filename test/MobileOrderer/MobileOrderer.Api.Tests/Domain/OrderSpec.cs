@@ -5,14 +5,14 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Domain
 {
-    public class MobileOrderSpec
+    public class OrderSpec
     {
         public class ProcessShould
         {
             [Fact]
             public void ChangeStateToPending()
             {
-                var sut = new MobileOrder(Guid.NewGuid(), "Neil", "0123456789", "New");
+                var sut = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Neil", ContactPhoneNumber = "0123456789", Status = "New" });
 
                 sut.Process();
 

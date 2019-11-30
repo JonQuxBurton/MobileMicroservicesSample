@@ -12,17 +12,17 @@ namespace MobileOrderer.Api.Tests.Domain
             [Fact]
             public void CreateMobileInStateNew()
             {
-                var sut = new Mobile(Mobile.State.New, Guid.NewGuid(), 101, null, null);
+                var sut = new Mobile(new MobileDataEntity{ Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
 
                 sut.CurrentState.Should().Be(Mobile.State.New);
             }
-            
+
             [Fact]
             public void CreateMobile()
             {
                 var expectedGlobalId = Guid.NewGuid();
                 var expectedId = 101;
-                var sut = new Mobile(Mobile.State.New, expectedGlobalId, expectedId, null, null);
+                var sut = new Mobile(new MobileDataEntity {Id = expectedId, GlobalId = expectedGlobalId, State = "New" }, null, null);
 
                 sut.GlobalId.Should().Be(expectedGlobalId);
                 sut.Id.Should().Be(expectedId);
@@ -34,19 +34,19 @@ namespace MobileOrderer.Api.Tests.Domain
             [Fact]
             public void ChangeCurrentStateToPendingLive()
             {
-                var sut = new Mobile(Mobile.State.New, Guid.NewGuid(), 101, null, null);
-                
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid() , State = "New"}, null, null);
+
                 sut.Provision();
 
                 sut.CurrentState.Should().Be(Mobile.State.PendingLive);
-            }            
-            
+            }
+
             [Fact]
             public void ChangeInFlightOrderStateToPending()
             {
-                var mobileOrder = new MobileOrder(Guid.NewGuid(), "Name", "0123456789", "New");
-                var sut = new Mobile(Mobile.State.New, Guid.NewGuid(), 101, mobileOrder, null);
-                
+                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", Status = "New" });
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid() , State = "New"}, mobileOrder, null);
+
                 sut.Provision();
 
                 sut.InFlightOrder.Status.Should().Be("Pending");

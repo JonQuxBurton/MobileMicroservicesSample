@@ -1,41 +1,48 @@
 ﻿using MobileOrderer.Api.Resources;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Utils.Enums;
+using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Domain
 {
     public class MobileBuilder : IMobileBuilder
     {
-        private readonly Mobile.State initialState;
         private readonly Guid globalId;
-        private MobileOrder inFlightOrder;
-        private readonly List<MobileOrder> orderHistory = new List<MobileOrder>();
+        private Order inFlightOrder;
+        private readonly List<Order> orderHistory = new List<Order>();
 
-        public MobileBuilder(Mobile.State initialState, Guid globalId)
+        public MobileBuilder(Guid globalId)
         {
-            this.initialState = initialState;
             this.globalId = globalId;
         }
-
-        public void AddInFlightOrder(MobileOrder order)
+        public MobileBuilder AddInFlightOrder(OrderToAdd order, Guid globalId)
         {
-            inFlightOrder = order;
+            var newStateName = new EnumConverter().ToName<State>(State.New);
+            var dataEntity = new OrderDataEntity()
+            { 
+                GlobalId = globalId, 
+                Name = order.Name,
+                ContactPhoneNumber = order.ContactPhoneNumber,
+                Status = newStateName
+            };
+            inFlightOrder = new Order(dataEntity);
+
+            return this;
         }
 
-        public void AddInFlightOrder(MobileOrderToAdd order, Guid globalId)
-        {
-            inFlightOrder = new MobileOrder(globalId, order.Name, order.ContactPhoneNumber, "New");
-        }
-
-        public void AddOrderToHistory(MobileOrder order)
+        public MobileBuilder AddOrderToHistory(Order order)
         {
             orderHistory.Add(order);
+            return this;
         }
 
         public Mobile Build()
         {
-            return new Mobile(initialState, globalId, 0, inFlightOrder, orderHistory);
+            var enumConverter = new EnumConverter();
+            var initialState = enumConverter.ToName<State>(State.New);
+            var mobileDataEntity = new MobileDataEntity() { Id = 0, GlobalId = globalId, State = initialState };
+            return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
         }
     }
 }

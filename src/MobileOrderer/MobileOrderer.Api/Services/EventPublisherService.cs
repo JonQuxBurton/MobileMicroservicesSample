@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -9,30 +10,34 @@ namespace MobileOrderer.Api.Services
     public class EventPublisherService : BackgroundService
     {
         private readonly ILogger<EventPublisherService> logger;
-        private readonly IMobileRequestedEventChecker mobileRequestedEventChecker;
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public EventPublisherService(ILogger<EventPublisherService> logger, IMobileRequestedEventChecker mobileRequestedEventChecker)
+        public EventPublisherService(ILogger<EventPublisherService> logger, IServiceScopeFactory scopeFactory)
         {
             this.logger = logger;
-            this.mobileRequestedEventChecker = mobileRequestedEventChecker;
+            this.scopeFactory = scopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("EventPublisherService is starting...");
-
-            while (!stoppingToken.IsCancellationRequested)
+            using (var scope = scopeFactory.CreateScope())
             {
-                try
-                {
-                    mobileRequestedEventChecker.Check();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Exception");
-                }
+                logger.LogInformation("EventPublisherService is starting...");
+                var mobileRequestedEventChecker = scope.ServiceProvider.GetRequiredService<IMobileRequestedEventChecker>();
 
-                await Task.Delay(10 * 1000, stoppingToken);
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        mobileRequestedEventChecker.Check();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Exception");
+                    }
+
+                    await Task.Delay(10 * 1000, stoppingToken);
+                }
             }
         }
     }

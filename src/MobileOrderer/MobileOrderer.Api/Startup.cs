@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,20 +49,23 @@ namespace MobileOrderer.Api
 
             services.Configure<Config>(options => Configuration.GetSection("Config").Bind(options));
             services.Configure<EventBusConfig>(options => Configuration.GetSection("EventBusConfig").Bind(options));
-            
+
+            services.AddDbContext<MobilesContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("MobileDatabase")));
+
             services.AddSingleton<AWSCredentials>(credentials);
-            services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
-            services.AddSingleton<IMessageBus, MessageBus>();
-            services.AddSingleton<IMessagePublisher, MessagePublisher>();
-            services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
-            services.AddSingleton<ISnsService, SnsService>();
-            services.AddSingleton<ISqsService, SqsService>();
+            services.AddScoped<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
+            services.AddScoped<IMessageBus, MessageBus>();
+            services.AddScoped<IMessagePublisher, MessagePublisher>();
+            services.AddScoped<IMessageDeserializer, MessageDeserializer>();
+            services.AddScoped<ISnsService, SnsService>();
+            services.AddScoped<ISqsService, SqsService>();
             services.AddSingleton<IHostedService, EventPublisherService>();
-            services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
-            services.AddSingleton<IRepository<Mobile>, MobileRepository>();
+            services.AddScoped<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
+            services.AddScoped<IRepository<Mobile>, MobileRepository>();
             services.AddSingleton<IGuidCreator, GuidCreator>();
             services.AddSingleton<IEnumConverter, EnumConverter>();
-            services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
+            services.AddScoped<IGetNewMobilesQuery, GetNewMobilesQuery>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
