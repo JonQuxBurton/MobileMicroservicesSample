@@ -54,5 +54,11 @@ namespace SimCards.EventHandlers.Data
                 };
             }
         }
+
+        public void Sent(Guid mobileOrderId)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent' where MobileOrderId=@MobileOrderId";
+            this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
+        }
     }
 }

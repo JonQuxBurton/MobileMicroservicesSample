@@ -28,10 +28,12 @@ namespace MobileOrderer.Api.Services
 
             foreach (var newMobile in newMobiles)
             {
-                newMobile.Provision();
+                newMobile.Provision(newMobile.InFlightOrder);
                 mobileRepository.Update(newMobile);
-                if (newMobile.InFlightOrder != null)
-                    Publish(newMobile.GlobalId, newMobile.InFlightOrder);
+
+                Publish(newMobile.GlobalId, newMobile.InFlightOrder);
+                newMobile.OrderProcessing();
+                mobileRepository.Update(newMobile);
             }
         }
 
@@ -39,7 +41,7 @@ namespace MobileOrderer.Api.Services
         {
             messagePublisher.PublishAsync(new MobileRequestedMessage
             {
-                MobileOrderId = mobileGlobalId, 
+                MobileOrderId = order.GlobalId, 
                 Name = order.Name,
                 ContactPhoneNumber = order.ContactPhoneNumber
             });

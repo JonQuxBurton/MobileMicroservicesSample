@@ -50,22 +50,29 @@ namespace MobileOrderer.Api
             services.Configure<Config>(options => Configuration.GetSection("Config").Bind(options));
             services.Configure<EventBusConfig>(options => Configuration.GetSection("EventBusConfig").Bind(options));
 
+            // Shared
             services.AddDbContext<MobilesContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MobileDatabase")));
-
-            services.AddSingleton<AWSCredentials>(credentials);
-            services.AddScoped<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
-            services.AddScoped<IMessageBus, MessageBus>();
-            services.AddScoped<IMessagePublisher, MessagePublisher>();
-            services.AddScoped<IMessageDeserializer, MessageDeserializer>();
-            services.AddScoped<ISnsService, SnsService>();
-            services.AddScoped<ISqsService, SqsService>();
-            services.AddSingleton<IHostedService, EventPublisherService>();
-            services.AddScoped<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
-            services.AddScoped<IRepository<Mobile>, MobileRepository>();
-            services.AddSingleton<IGuidCreator, GuidCreator>();
+                options.UseSqlServer(Configuration.GetConnectionString("MobileDatabase")), ServiceLifetime.Singleton);
+            services.AddSingleton<IRepository<Mobile>, MobileRepository>();
             services.AddSingleton<IEnumConverter, EnumConverter>();
-            services.AddScoped<IGetNewMobilesQuery, GetNewMobilesQuery>();
+
+            // API
+            services.AddScoped<IGuidCreator, GuidCreator>();
+
+            // HostedService
+            services.AddSingleton<IHostedService, EventsService>();
+            services.AddSingleton<IHostedService, EventPublisherService>();
+            services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
+            services.AddSingleton<IMessagePublisher, MessagePublisher>();
+            services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
+            services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
+            services.AddSingleton<ISqsService, SqsService>();
+            services.AddSingleton<IMessageBus, MessageBus>();
+            services.AddSingleton<IGetMobileByOrderIdQuery, GetMobileByOrderIdQuery>();
+            services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
+            services.AddSingleton<ISnsService, SnsService>();
+            services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
+            services.AddSingleton<AWSCredentials>(credentials);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

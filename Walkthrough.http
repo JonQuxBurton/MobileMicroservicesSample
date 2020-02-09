@@ -1,25 +1,46 @@
 
 ###==================================================
-### Order a Mobile
+### Mobile Orderer
 ###==================================================
+
+### Health Check
+GET http://localhost:5000/api/provisioner/status
+
+### Order a Mobile
 POST http://localhost:5000/api/provisioner
 content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "40123456789"
+	"ContactPhoneNumber" : "00123456789"
 }
 
-###
+### Get an Order
 GET http://localhost:5000/api/provisioner/2F8326D3-EFD1-4D30-99D3-E2FA75BC7CEF
 
 ###==================================================
-### Health Checks
+### SimCard Wholesaler
 ###==================================================
-GET http://localhost:5000/api/provisioner/status
-###
+
+### Health check
 GET http://localhost:5001/api/orders/status
 
-
-###
+### Create an Order
 POST http://localhost:5001/api/orders
+content-type: application/json
+
+{
+	"Reference" : "CF94A4CA-7CAD-467B-946C-ED4642280033",
+	"Name" : "Neil Armstrong",
+}
+
+### Get an Order
+GET http://localhost:5001/api/orders/CF94A4CA-7CAD-467B-946C-ED4642280033
+
+### Complete an Order
+POST http://localhost:5001/api/orders/complete
+content-type: application/json
+
+{
+	"Reference" : "A91B7ECD-A0EF-4248-987A-9AB26A47C2BF",
+}

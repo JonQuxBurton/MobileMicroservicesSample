@@ -26,7 +26,12 @@ namespace MobileOrderer.Api.Domain
                 .OnEntry(() => {
                     this.orderDataEntity.State = enumConverter.ToName<State>(State.Processing);
                 })
-                .Permit(Trigger.Process, State.Sent);
+                .Permit(Trigger.Send, State.Sent);
+            machine.Configure(State.Sent)
+                .OnEntry(() => {
+                    this.orderDataEntity.State = enumConverter.ToName<State>(State.Sent);
+                })
+                .Permit(Trigger.Complete, State.Completed);
         }
 
         public Guid GlobalId => this.orderDataEntity.GlobalId;
@@ -40,6 +45,16 @@ namespace MobileOrderer.Api.Domain
         public void Process()
         {
             this.machine.Fire(Trigger.Process);
+        }
+        
+        public void Send()
+        {
+            this.machine.Fire(Trigger.Send);
+        }
+
+        public void Complete()
+        {
+            this.machine.Fire(Trigger.Complete);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace MobileOrderer.Api.Tests
         {
             sut.Check();
 
-            expectedNewMobile.CurrentState.Should().Be(Mobile.State.PendingLive);
+            expectedNewMobile.CurrentState.Should().Be(Mobile.State.ProcessingProvisioning);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace MobileOrderer.Api.Tests
             sut.Check();
 
             messagePublisher.Verify(x => x.PublishAsync(It.Is<MobileRequestedMessage>(
-                y => y.MobileOrderId == expectedNewMobile.GlobalId &&
+                y => y.MobileOrderId == expectedNewMobile.InFlightOrder.GlobalId &&
                         y.Name == expectedNewMobile.InFlightOrder.Name &&
                         y.ContactPhoneNumber == expectedNewMobile.InFlightOrder.ContactPhoneNumber)));
         }

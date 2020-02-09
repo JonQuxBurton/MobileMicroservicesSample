@@ -1,0 +1,21 @@
+/* 
+Last modified: 08/02/2020
+*/
+
+initial => New;
+New => ProcessingProvisioning : Provision;
+ProcessingProvisioning => WaitingForActivation: ProcessingProvisioningCompleted;
+WaitingForActivation => ProcessingActivation: Activate;
+ProcessingActivation => Live: ActivationCompleted;
+Live => ProcessingCease  : Cease;
+Live => Suspended : Suspend;
+Live => Suspended : ReplaceSim;
+Suspended => Live : Resume;
+ProcessingCease => Ceased : CeaseCompleted;
+Ceased => final;
+
+Live => ProcessingPortOut : RequestPAC;
+New => ProcessingPortIn : PortIn;
+ProcessingPortIn => Live : PortInCompleted (Polling);
+ProcessingPortOut => PortedOut : PortOutCompleted (Polling);
+PortedOut => final;

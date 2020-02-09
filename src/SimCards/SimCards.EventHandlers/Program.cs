@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using Serilog;
 using Serilog.Events;
 using Microsoft.Extensions.Hosting;
+using MinimalEventBus.JustSaying;
 
 namespace SimCards.EventHandlers
 {
@@ -37,12 +38,13 @@ namespace SimCards.EventHandlers
             services.AddHttpClient<ISimCardWholesaleService, SimCardWholesaleService>();
 
             services.AddSingleton<AWSCredentials>(credentials);
-            services.AddTransient<ISimCardOrdersDataStore, SimCardOrdersDataStore>();
-            services.AddTransient<ISqsService, SqsService>();
-            services.AddTransient<ISnsService, SnsService>();
-            services.AddTransient<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
-            services.AddTransient<IMessageBus, MessageBus>();
-            services.AddTransient<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
+            services.AddSingleton<ISimCardOrdersDataStore, SimCardOrdersDataStore>();
+            services.AddSingleton<ISqsService, SqsService>();
+            services.AddSingleton<ISnsService, SnsService>();
+            services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
+            services.AddSingleton<IMessageBus, MessageBus>();
+            services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
+            services.AddSingleton<IMessagePublisher, MessagePublisher>();
 
             services.AddSingleton<IHostedService, HostedService>();
         }

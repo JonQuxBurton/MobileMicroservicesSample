@@ -35,7 +35,7 @@ namespace SimCardWholesaler.Api.Data
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var dbOrders = conn.Query(sql, reference);
+                var dbOrders = conn.Query(sql, new { reference });
                 var dbOrder = dbOrders.FirstOrDefault();
 
                 Order order = null;
@@ -59,6 +59,12 @@ namespace SimCardWholesaler.Api.Data
         {
             var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Status) values (@Reference, @Status)";
             this.connection.Execute(sql, new { order.Reference, order.Status }, this.currentTransaction.Get());
+        }
+
+        public void Complete(Order order)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where Reference=@Reference";
+            this.connection.Execute(sql, new { Reference = order.Reference.ToString() }, this.currentTransaction.Get());
         }
     }
 }

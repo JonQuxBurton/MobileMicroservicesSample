@@ -40,13 +40,29 @@ namespace SimCardWholesaler.Api.Controllers
             return new OkResult();
         }
 
-        [HttpGet]
+        [HttpGet("{reference}")]
         public IActionResult Get(Guid reference)
         {
             var order = this.ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
+
+            return new OkObjectResult(order);
+        }
+
+        [HttpPost("complete")]
+        public IActionResult Complete([FromBody] OrderToComplete orderToComplete)
+        {
+            var order = this.ordersDataStore.GetByReference(orderToComplete.Reference);
+
+            if (order == null)
+                return NotFound();
+
+            using (this.ordersDataStore.BeginTransaction())
+            {
+                this.ordersDataStore.Complete(order);
+            }
 
             return new OkObjectResult(order);
         }

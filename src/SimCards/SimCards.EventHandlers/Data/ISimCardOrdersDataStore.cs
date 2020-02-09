@@ -8,5 +8,6 @@ namespace SimCards.EventHandlers.Data
         void Add(SimCardOrder order);
         SimCardOrder GetExisting(Guid mobileOrderId);
         ITransaction BeginTransaction();
+        void Sent(Guid mobileOrderId);
     }
 }

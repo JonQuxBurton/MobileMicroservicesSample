@@ -9,6 +9,7 @@ using SimCards.EventHandlers.Messages;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using MinimalEventBus.JustSaying;
 
 namespace SimCards.EventHandlers.Tests.Handlers
 {
@@ -44,8 +45,9 @@ namespace SimCards.EventHandlers.Tests.Handlers
 
                 simCardWholesaleServiceMock = new Mock<ISimCardWholesaleService>();
                 var loggerMock = new Mock<ILogger<MobileRequestedHandler>>();
+                var messagePublisherMock = new Mock<IMessagePublisher>();
 
-                sut = new MobileRequestedHandler(loggerMock.Object, dataStoreMock.Object, simCardWholesaleServiceMock.Object);
+                sut = new MobileRequestedHandler(loggerMock.Object, dataStoreMock.Object, simCardWholesaleServiceMock.Object, messagePublisherMock.Object);
             }
 
             [Fact]

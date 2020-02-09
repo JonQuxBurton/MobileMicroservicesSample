@@ -1,0 +1,92 @@
+/* 
+Last modified: 08/02/2020
+*/
+
+New [color="blue"],
+WaitingForActivation [color="blue"],
+Live [color="blue"],
+Suspended [color="blue"],
+PortedOut [color="blue"],
+Ceased [color="blue"],
+ProcessingPortIn [color="blue"] {
+ ProcessingPortInNewOrder [label="New Order"],
+ ProcessingPortInProcessing [label="Processing"],
+ ProcessingPortInSent [label="Sent"],
+ ProcessingPortInCompleted [label="Completed"];
+
+ ProcessingPortInNewOrder => ProcessingPortInProcessing : Process;
+ ProcessingPortInProcessing => ProcessingPortInSent : Send;
+ ProcessingPortInSent => ProcessingPortInCompleted : Complete;
+},
+
+ProcessingProvisioning [color="blue"] {
+ ProcessingProvisioningNewOrder [label="New Order"],
+ ProcessingProvisioningProcessing [label="Processing"],
+ ProcessingProvisioningSent [label="Sent"],
+ ProcessingProvisioningCompleted [label="Completed"];
+
+ ProcessingProvisioningNewOrder => ProcessingProvisioningProcessing : Process;
+ ProcessingProvisioningProcessing => ProcessingProvisioningSent : Send;
+ ProcessingProvisioningSent => ProcessingProvisioningCompleted : Complete;
+},
+
+ProcessingActivation [color="blue"] {
+ ProcessingActivationNewOrder [label="New Order"],
+ ProcessingActivationProcessing [label="Processing"],
+ ProcessingActivationSent [label="Sent"],
+ ProcessingActivationCompleted [label="Completed"];
+
+ ProcessingActivationNewOrder => ProcessingActivationProcessing : Process;
+ ProcessingActivationProcessing => ProcessingActivationSent : Send;
+ ProcessingActivationSent => ProcessingActivationCompleted : Complete;
+},
+ProcessingPortOut [color="blue"] {
+ ProcessingPortOutNewOrder [label="New Order"],
+ ProcessingPortOutProcessing [label="Processing"],
+ ProcessingPortOutSent [label="Sent"],
+ ProcessingPortOutCompleted [label="Completed"];
+
+ ProcessingPortOutNewOrder => ProcessingPortOutProcessing : Process;
+ ProcessingPortOutProcessing => ProcessingPortOutSent : Send;
+ ProcessingPortOutSent => ProcessingPortOutCompleted : Complete;
+},
+ProcessingCease [color="blue"] {
+ ProcessingCeaseNewOrder [label="New Order"],
+ ProcessingCeaseProcessing [label="Processing"],
+ ProcessingCeaseSent [label="Sent"],
+ ProcessingCeaseCompleted [label="Completed"];
+
+ ProcessingCeaseNewOrder => ProcessingCeaseProcessing : Process;
+ ProcessingCeaseProcessing => ProcessingCeaseSent : Send;
+ ProcessingCeaseSent => ProcessingCeaseCompleted : Complete;
+},
+ProcessingResume [color="blue"] {
+ ProcessingResumeNewOrder [label="New Order"],
+ ProcessingResumeProcessing [label="Processing"],
+ ProcessingResumeSent [label="Sent"],
+ ProcessingResumeCompleted [label="Completed"];
+
+ ProcessingResumeNewOrder => ProcessingResumeProcessing : Process;
+ ProcessingResumeProcessing => ProcessingResumeSent : Send;
+ ProcessingResumeSent => ProcessingResumeCompleted : Complete;
+};
+
+initial => New [color="blue"] ;
+New => ProcessingProvisioningNewOrder [color="blue"] : Provision;
+WaitingForActivation => ProcessingActivationNewOrder[color="blue"] : Activate;
+ProcessingProvisioningCompleted => WaitingForActivation [color="blue"] : ProcessingProvisioningCompleted;
+Suspended => ProcessingResumeNewOrder [color="blue"] : Resume;
+Live => ProcessingCeaseNewOrder [color="blue"] : Cease;
+Live => Suspended [color="blue"] : Suspend;
+Live => Suspended [color="blue"] : ReplaceSim;
+
+Live => ProcessingPortOutNewOrder [color="blue"] : RequestPac;
+New => ProcessingPortInNewOrder [color="blue"] : PortIn;
+ProcessingPortInCompleted => Live [color="blue"] : PortInCompleted;
+ProcessingActivationCompleted => Live [color="blue"] : ActivationCompleted;
+ProcessingPortOutCompleted => PortedOut [color="blue"] : PortOutCompleted;
+PortedOut => final;
+
+ProcessingResumeCompleted => Live [color="blue"] : ResumeCompleted;
+ProcessingCeaseCompleted => Ceased [color="blue"] : CeaseCompleted;
+Ceased => final;
