@@ -32,7 +32,7 @@ CREATE TABLE [MobileOrderer].[Orders](
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
-	[Name] [nchar](100) NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
 	[ContactPhoneNumber] [nvarchar](50) NULL,
 	[State] [nvarchar](100) NOT NULL,
 	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [MobileOrderer].[Mobiles](Id)
@@ -56,8 +56,8 @@ CREATE TABLE [SimCards].[Orders](
 	[MobileOrderId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
-	[Name] [nchar](100) NOT NULL,
-	[Status] [nchar](100) NOT NULL
+	[Name] [nvarchar](100) NOT NULL,
+	[Status] [nvarchar](100) NOT NULL
 )
 GO
 
@@ -78,7 +78,7 @@ CREATE TABLE [SimCardWholesaler].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[Reference] [uniqueidentifier] NOT NULL,
-	[Status] [nchar](100) NOT NULL
+	[Status] [nvarchar](100) NOT NULL
 )
 GO
 
