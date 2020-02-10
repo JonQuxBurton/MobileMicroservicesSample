@@ -17,7 +17,7 @@ namespace SimCards.EventHandlers.Tests
                 var messageBusMock = new Mock<IMessageBusListener>();
                 var messageBusListenerBuilderMock = new Mock<IMessageBusListenerBuilder>();
                 messageBusListenerBuilderMock.Setup(x => x.Build()).Returns(messageBusMock.Object);
-                var sut = new HostedService(Mock.Of<ILogger<HostedService>>(), messageBusListenerBuilderMock.Object);
+                var sut = new EventListenerHostedService(Mock.Of<ILogger<EventListenerHostedService>>(), messageBusListenerBuilderMock.Object);
 
                 sut.StartAsync(new CancellationToken());
 

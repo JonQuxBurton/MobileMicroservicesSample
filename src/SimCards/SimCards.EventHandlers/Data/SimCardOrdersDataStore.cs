@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using Dapper;
@@ -59,6 +60,37 @@ namespace SimCards.EventHandlers.Data
         {
             var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent' where MobileOrderId=@MobileOrderId";
             this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
+        }
+        
+        public void Complete(Guid mobileOrderId)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where MobileOrderId=@MobileOrderId";
+            this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
+        }
+
+        public IEnumerable<SimCardOrder> GetSent()
+        {
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where Status='Sent'";
+            var orders = new List<SimCardOrder>();
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var dbOrders = conn.Query(sql);
+
+                foreach (var dbOrder in dbOrders)
+                {
+                    orders.Add(new SimCardOrder
+                    {
+                        MobileOrderId = dbOrder.MobileOrderId,
+                        Name = dbOrder.Name,
+                        Status = dbOrder.Status,
+                        CreatedAt = dbOrder.CreatedAt,
+                        UpdatedAt = dbOrder.UpdatedAt
+                    });
+                }
+            }
+
+            return orders;
         }
     }
 }

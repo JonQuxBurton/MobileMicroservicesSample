@@ -12,22 +12,22 @@ namespace MobileOrderer.Api.Services
 {
     public class MessageBusListenerBuilder : IMessageBusListenerBuilder
     {
-        private readonly ILogger<OrderProcessedHandler> logger;
         private readonly ILogger<OrderSentHandler> orderSentLogger;
+        private readonly ILogger<ProvisioningOrderCompletedHandler> provisioningOrderCompletedLogger;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IGetMobileByOrderIdQuery getMobileByOrderIdQuery;
 
-        public MessageBusListenerBuilder(ILogger<OrderProcessedHandler> logger, 
-            ILogger<OrderSentHandler> orderSentLogger, 
+        public MessageBusListenerBuilder(ILogger<OrderSentHandler> orderSentLogger, 
+            ILogger<ProvisioningOrderCompletedHandler> provisioningOrderCompletedLogger,
             IMessageBus messageBus, 
             ISqsService sqsService,
             IRepository<Mobile> mobileRepository, 
             IGetMobileByOrderIdQuery getMobileByOrderIdQuery)
         {
-            this.logger = logger;
             this.orderSentLogger = orderSentLogger;
+            this.provisioningOrderCompletedLogger = provisioningOrderCompletedLogger;
             this.messageBus = messageBus;
             this.sqsService = sqsService;
             this.mobileRepository = mobileRepository;
@@ -38,6 +38,9 @@ namespace MobileOrderer.Api.Services
         {
             var handler = new OrderSentHandler(orderSentLogger, mobileRepository, getMobileByOrderIdQuery);
             messageBus.Subscribe<OrderSentMessage, IHandlerAsync<OrderSentMessage>>(handler);
+
+            var provisioningOrderCompletedHandler = new ProvisioningOrderCompletedHandler(provisioningOrderCompletedLogger, mobileRepository, getMobileByOrderIdQuery);
+            messageBus.Subscribe<ProvisioningOrderCompletedMessage, IHandlerAsync<ProvisioningOrderCompletedMessage>>(provisioningOrderCompletedHandler);
 
             return new MessageBusListener(messageBus, sqsService, new MessageDeserializer());
         }

@@ -12,7 +12,7 @@ content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "00123456789"
+	"ContactPhoneNumber" : "50123456789"
 }
 
 ### Get an Order
@@ -35,12 +35,12 @@ content-type: application/json
 }
 
 ### Get an Order
-GET http://localhost:5001/api/orders/CF94A4CA-7CAD-467B-946C-ED4642280033
+GET http://localhost:5001/api/orders/D651B45D-EE98-4CD4-BC74-C97C466600D6
 
 ### Complete an Order
 POST http://localhost:5001/api/orders/complete
 content-type: application/json
 
 {
-	"Reference" : "A91B7ECD-A0EF-4248-987A-9AB26A47C2BF",
+	"Reference" : "9276D89B-EABE-4C15-9EC0-BF0C2208C801",
 }

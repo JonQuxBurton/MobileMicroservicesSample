@@ -60,8 +60,9 @@ namespace MobileOrderer.Api
             services.AddScoped<IGuidCreator, GuidCreator>();
 
             // HostedService
-            services.AddSingleton<IHostedService, EventsService>();
-            services.AddSingleton<IHostedService, EventPublisherService>();
+            services.AddHostedService<EventsService>();
+            services.AddHostedService<EventPublisherService>();
+
             services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
             services.AddSingleton<IMessagePublisher, MessagePublisher>();
             services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();

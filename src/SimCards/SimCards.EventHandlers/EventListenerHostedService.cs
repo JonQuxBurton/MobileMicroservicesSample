@@ -6,12 +6,12 @@ using SimCards.EventHandlers.Services;
 
 namespace SimCards.EventHandlers
 {
-    public class HostedService : IHostedService
+    public class EventListenerHostedService : IHostedService
     {
-        private readonly ILogger<HostedService> logger;
+        private readonly ILogger<EventListenerHostedService> logger;
         private readonly IMessageBusListenerBuilder messageBusListenerBuilder;
 
-        public HostedService(ILogger<HostedService> logger, IMessageBusListenerBuilder messageBusListenerBuilder)
+        public EventListenerHostedService(ILogger<EventListenerHostedService> logger, IMessageBusListenerBuilder messageBusListenerBuilder)
         {
             this.logger = logger;
             this.messageBusListenerBuilder = messageBusListenerBuilder;
@@ -19,14 +19,14 @@ namespace SimCards.EventHandlers
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            this.logger.LogInformation("HostedService Starting...");
+            this.logger.LogInformation("EventListenerHostedService Starting...");
             this.messageBusListenerBuilder.Build().StartListening();
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            this.logger.LogInformation("HostedService Stopping...");
+            this.logger.LogInformation("EventListenerHostedService Stopping...");
             return Task.CompletedTask;
         }
     }
