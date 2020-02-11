@@ -35,6 +35,7 @@ CREATE TABLE [MobileOrderer].[Orders](
 	[Name] [nvarchar](100) NOT NULL,
 	[ContactPhoneNumber] [nvarchar](50) NULL,
 	[State] [nvarchar](100) NOT NULL,
+	[Type] [nvarchar](100) NOT NULL,
 	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [MobileOrderer].[Mobiles](Id)
 )
 GO

@@ -35,16 +35,5 @@ namespace MobileOrderer.Api.Controllers
             
             return Ok();
         }
-
-        [HttpGet("{id}")]
-        public ActionResult<Mobile> Get(Guid id)
-        {
-            var mobile = this.mobileRepository.GetById(id);
-
-            if (mobile == null)
-                return NotFound();
-
-            return new OkObjectResult(mobile);
-        }
     }
 }

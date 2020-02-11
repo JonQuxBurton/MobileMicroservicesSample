@@ -12,11 +12,20 @@ content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "00123456789"
+	"ContactPhoneNumber" : "10123456789"
 }
 
-### Get an Order
-GET http://localhost:5000/api/provisioner/2F8326D3-EFD1-4D30-99D3-E2FA75BC7CEF
+### Get a Mobile
+GET http://localhost:5000/api/mobiles/1ABCCDF6-CD0A-4227-97C3-1FF2374096C2
+
+### Activate a Mobile
+POST http://localhost:5000/api/mobiles/E458EDB4-C075-409A-BBEC-DF57C9EEEC09/activate
+content-type: application/json
+
+{
+	"Name" : "Neil Armstrong",
+	"ContactPhoneNumber" : "00123456789"
+}
 
 ###==================================================
 ### SimCard Wholesaler
@@ -42,5 +51,5 @@ POST http://localhost:5001/api/orders/complete
 content-type: application/json
 
 {
-	"Reference" : "11D3C42D-46A7-41CB-8DB3-3B6A334A29ED"
+	"Reference" : "16E3BA86-4B2A-43F2-8D1C-35C2905B9E1B"
 }

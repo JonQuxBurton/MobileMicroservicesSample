@@ -27,6 +27,8 @@ namespace MobileOrderer.Api.Data
             {
                 var order = aggregateRoot.InFlightOrder;
                 var state = enumConverter.ToName<Order.State>(order.CurrentState);
+                var type = enumConverter.ToName<Order.OrderType>(order.Type);
+                
                 mobileDbEntity.Orders = new List<OrderDataEntity>
                 {
                     new OrderDataEntity
@@ -34,7 +36,8 @@ namespace MobileOrderer.Api.Data
                         GlobalId = order.GlobalId,
                         Name = order.Name,
                         ContactPhoneNumber = order.ContactPhoneNumber,
-                        State = state
+                        State = state,
+                        Type = type
                     }
                 };
             }
@@ -52,7 +55,9 @@ namespace MobileOrderer.Api.Data
 
             var newStateName = enumConverter.ToName<Mobile.State>(Mobile.State.New);
             var inFlightOrderDataEntity = mobileDbEntity.Orders.FirstOrDefault(x => x.State == newStateName);
-            var inFlightOrder = new Order(inFlightOrderDataEntity);
+            Order inFlightOrder = null;
+            if (inFlightOrderDataEntity != null)
+                inFlightOrder = new Order(inFlightOrderDataEntity);
 
             var orderHistoryDataEntities = mobileDbEntity.Orders.Except(new[] { inFlightOrderDataEntity });
             var orderHistory = new List<Order>();

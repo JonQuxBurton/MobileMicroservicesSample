@@ -53,7 +53,6 @@ namespace MobileOrderer.Api.Domain
                 .Permit(Trigger.ProcessingProvisioningCompleted, State.WaitingForActivation)
                 .OnEntry(() => {
                     this.mobileDataEntity.State = enumConverter.ToName<State>(this.CurrentState);
-                    this.CreateNewOrder();
                 })
                 .OnExit(() =>
                 {
@@ -133,6 +132,7 @@ namespace MobileOrderer.Api.Domain
         private void CreateNewOrder()
         {            
             this.InFlightOrder = newOrder;
+            this.mobileDataEntity.Orders.Add(newOrder.GetDataEntity());
         }
     }
 }
