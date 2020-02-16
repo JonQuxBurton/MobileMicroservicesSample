@@ -83,3 +83,47 @@ CREATE TABLE [SimCardWholesaler].[Orders](
 )
 GO
 
+/*----------*/
+
+CREATE SCHEMA [MobileTelecomsNetwork]
+GO
+
+CREATE LOGIN MobileTelecomsNetworkMicroservice WITH PASSWORD = 'MobileTelecomsNetwork@123';
+GO  
+CREATE USER MobileTelecomsNetworkMicroservice FOR LOGIN MobileTelecomsNetworkMicroservice
+GO
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: MobileTelecomsNetwork TO MobileTelecomsNetworkMicroservice;
+GO
+
+CREATE TABLE [MobileTelecomsNetwork].[Orders](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[MobileOrderId] [uniqueidentifier] NOT NULL,
+	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[UpdatedAt] datetime,
+	[Name] [nvarchar](100) NOT NULL,
+	[Status] [nvarchar](100) NOT NULL
+)
+GO
+
+/*----------*/
+
+CREATE SCHEMA [ExternalMobileTelecomsNetwork]
+GO
+
+CREATE LOGIN ExternalMobileTelecomsNetworkWebService WITH PASSWORD = 'ExternalMobileTelecomsNetwork@123';
+GO  
+CREATE USER ExternalMobileTelecomsNetworkWebService FOR LOGIN ExternalMobileTelecomsNetworkWebService
+GO
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: ExternalMobileTelecomsNetwork TO ExternalMobileTelecomsNetworkWebService;
+GO
+
+CREATE TABLE [ExternalMobileTelecomsNetwork].[Orders](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[UpdatedAt] datetime,
+	[Reference] [uniqueidentifier] NOT NULL,
+	[Status] [nvarchar](100) NOT NULL
+)
+GO
+
+/*----------*/

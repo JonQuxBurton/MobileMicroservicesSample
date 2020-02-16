@@ -64,8 +64,10 @@ namespace MobileOrderer.Api
             services.AddHostedService<EventPublisherService>();
 
             services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
+            services.AddSingleton<IActivationRequestedEventChecker, ActivationRequestedEventChecker>();
             services.AddSingleton<IMessagePublisher, MessagePublisher>();
             services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
+            services.AddSingleton<IGetNewActivationsQuery, GetNewActivationsQuery>();
             services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
             services.AddSingleton<ISqsService, SqsService>();
             services.AddSingleton<IMessageBus, MessageBus>();

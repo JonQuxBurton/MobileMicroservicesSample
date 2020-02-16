@@ -12,14 +12,14 @@ content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "10123456789"
+	"ContactPhoneNumber" : "00123456789"
 }
 
 ### Get a Mobile
 GET http://localhost:5000/api/mobiles/1ABCCDF6-CD0A-4227-97C3-1FF2374096C2
 
 ### Activate a Mobile
-POST http://localhost:5000/api/mobiles/E458EDB4-C075-409A-BBEC-DF57C9EEEC09/activate
+POST http://localhost:5000/api/mobiles/F4521D1C-7FA1-45E9-B936-36FD696E6238/activate
 content-type: application/json
 
 {
@@ -51,5 +51,32 @@ POST http://localhost:5001/api/orders/complete
 content-type: application/json
 
 {
-	"Reference" : "16E3BA86-4B2A-43F2-8D1C-35C2905B9E1B"
+	"Reference" : "6699047A-F702-4673-9CD9-1429B5807B06"
+}
+
+###==================================================
+### ExternalMobileTelecomsNetwork.Api
+###==================================================
+
+### Health check
+GET http://localhost:5002/api/orders/status
+
+### Create an Order
+POST http://localhost:5002/api/orders
+content-type: application/json
+
+{
+	"Reference" : "CF94A4CA-7CAD-467B-946C-ED4642280033",
+	"Name" : "Neil Armstrong"
+}
+
+### Get an Order
+GET http://localhost:5002/api/orders/CF94A4CA-7CAD-467B-946C-ED4642280033
+
+### Complete an Order
+POST http://localhost:5002/api/orders/complete
+content-type: application/json
+
+{
+	"Reference" : "21738381-5B8D-4882-9503-8EB45C31D6B8"
 }

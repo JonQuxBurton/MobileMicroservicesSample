@@ -24,12 +24,14 @@ namespace MobileOrderer.Api.Services
             {
                 logger.LogInformation("EventPublisherService is starting...");
                 var mobileRequestedEventChecker = scope.ServiceProvider.GetRequiredService<IMobileRequestedEventChecker>();
-
+                var activationRequestedEventChecker = scope.ServiceProvider.GetRequiredService<IActivationRequestedEventChecker>();
+                
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     try
                     {
                         mobileRequestedEventChecker.Check();
+                        activationRequestedEventChecker.Check();
                     }
                     catch (Exception ex)
                     {

@@ -58,7 +58,6 @@ namespace MobileOrderer.Api.Domain
                 {
                     this.CompleteInFlightOrder();
                 });
-
             machine.Configure(State.WaitingForActivation)
                 .Permit(Trigger.Activate, State.ProcessingActivation)
                 .OnEntry(() =>
@@ -73,6 +72,11 @@ namespace MobileOrderer.Api.Domain
                 })
                 .OnExit(() => {
                     this.CompleteInFlightOrder();
+                });
+            machine.Configure(State.Live)
+                .OnEntry(() =>
+                {
+                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.Live);
                 });
             machine.Configure(State.New).Permit(Trigger.PortIn, State.ProcessingPortIn);
             machine.Configure(State.ProcessingPortIn).Permit(Trigger.PortInCompleted, State.Live);
