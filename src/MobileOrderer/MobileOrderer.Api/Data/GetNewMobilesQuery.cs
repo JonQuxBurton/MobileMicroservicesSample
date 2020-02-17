@@ -22,7 +22,6 @@ namespace MobileOrderer.Api.Data
         {
             var newStateName = enumConverter.ToName<Mobile.State>(Mobile.State.New);
             var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == newStateName).ToList();
-            var buildersDictionary = new Dictionary<Guid, MobileBuilder>();
             var mobiles = new List<Mobile>();
 
             foreach (var mobileDataEntity in mobilesDataEntities)

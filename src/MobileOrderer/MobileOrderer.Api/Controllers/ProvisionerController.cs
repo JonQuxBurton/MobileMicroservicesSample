@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Resources;
-using System;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 
@@ -29,10 +28,10 @@ namespace MobileOrderer.Api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] OrderToAdd orderToAdd)
         {
-            var mobileBuilder = new MobileBuilder(this.guidCreator.Create())
+            var mobileBuilder = new MobileWhenNewBuilder(this.guidCreator.Create())
                             .AddInFlightOrder(orderToAdd, this.guidCreator.Create());
             this.mobileRepository.Add(mobileBuilder.Build());
-            
+
             return Ok();
         }
     }

@@ -25,8 +25,6 @@ namespace MobileOrderer.Api.Data
             var sentStateName = enumConverter.ToName<Order.State>(Order.State.Sent);
             var mobileDataEntity = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.Orders.Any(y => y.GlobalId == orderId)).FirstOrDefault();
 
-            var buildersDictionary = new Dictionary<Guid, MobileBuilder>();
-
             var inFlightOrderDataEntity = mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName || x.State.Trim() == processingStateName || x.State.Trim() == sentStateName);
             var inFlightOrder = new Order(inFlightOrderDataEntity);
 

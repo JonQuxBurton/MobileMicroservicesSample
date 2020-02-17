@@ -13,7 +13,8 @@ namespace MobileOrderer.Api.Data
         private readonly MobilesContext mobilesContext;
         private readonly IEnumConverter enumConverter;
 
-        public GetNewActivationsQuery(MobilesContext mobilesContext, IEnumConverter enumConverter)
+        public GetNewActivationsQuery(MobilesContext mobilesContext, 
+            IEnumConverter enumConverter)
         {
             this.mobilesContext = mobilesContext;
             this.enumConverter = enumConverter;
@@ -28,7 +29,6 @@ namespace MobileOrderer.Api.Data
                 .Where(x => x.Orders.Any(y => y.Type == activateOrderType && y.State == newStateName))
                 .ToList();
 
-            var buildersDictionary = new Dictionary<Guid, MobileBuilder>();
             var mobiles = new List<Mobile>();
 
             foreach (var mobileDataEntity in mobilesDataEntities)
@@ -39,6 +39,7 @@ namespace MobileOrderer.Api.Data
                 {
                     var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
                     var orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
+
                     mobiles.Add(new Mobile(mobileDataEntity, inFlightOrder, orderHistory));
                 }
             }

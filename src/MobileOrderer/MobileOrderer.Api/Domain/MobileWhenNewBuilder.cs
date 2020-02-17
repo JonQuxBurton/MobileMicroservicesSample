@@ -6,28 +6,30 @@ using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Domain
 {
-    public class MobileBuilder : IMobileBuilder
+    public class MobileWhenNewBuilder : IMobileWhenNewBuilder
     {
         private readonly Guid globalId;
         private Order inFlightOrder;
         private readonly List<Order> orderHistory = new List<Order>();
         private EnumConverter enumConverter;
+        private State initialState = State.New;
 
-        public MobileBuilder(Guid globalId)
+        public MobileWhenNewBuilder(Guid globalId)
         {
             this.globalId = globalId;
             this.enumConverter = new EnumConverter();
 
         }
-        public MobileBuilder AddInFlightOrder(OrderToAdd order, Guid globalId)
+
+        public MobileWhenNewBuilder AddInFlightOrder(OrderToAdd order, Guid globalId)
         {
             var newStateName = new EnumConverter().ToName<State>(State.New);
             var dataEntity = new OrderDataEntity()
-            { 
-                GlobalId = globalId, 
+            {
+                GlobalId = globalId,
                 Name = order.Name,
                 ContactPhoneNumber = order.ContactPhoneNumber,
-                State = newStateName, 
+                State = newStateName,
                 Type = this.enumConverter.ToName<Order.OrderType>(Order.OrderType.Provision)
             };
             inFlightOrder = new Order(dataEntity);
@@ -35,16 +37,10 @@ namespace MobileOrderer.Api.Domain
             return this;
         }
 
-        public MobileBuilder AddOrderToHistory(Order order)
-        {
-            orderHistory.Add(order);
-            return this;
-        }
-
         public Mobile Build()
         {
-            var initialState = enumConverter.ToName<State>(State.New);
-            var mobileDataEntity = new MobileDataEntity() { Id = 0, GlobalId = globalId, State = initialState };
+            var state = enumConverter.ToName<State>(initialState);
+            var mobileDataEntity = new MobileDataEntity() { Id = 0, GlobalId = globalId, State = state };
             return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
         }
     }

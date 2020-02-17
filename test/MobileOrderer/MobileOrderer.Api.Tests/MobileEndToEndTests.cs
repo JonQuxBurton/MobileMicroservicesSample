@@ -12,7 +12,7 @@ namespace MobileOrderer.Api.Tests
         public void ProvisionToWaitingForActivationScenario()
         {
             var provisionOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
-            var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
+            var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, provisionOrder, null);
 
             sut.CurrentState.Should().Be(Mobile.State.New);
 

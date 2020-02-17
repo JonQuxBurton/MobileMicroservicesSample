@@ -17,9 +17,7 @@ namespace MobileOrderer.Api.Domain
         public DateTime? CreatedAt => this.mobileDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.mobileDataEntity.UpdatedAt;
         public Order InFlightOrder { get; private set; }
-        
         public IEnumerable<Order> OrderHistory => this.orderHistory;
-        
         public State CurrentState => machine.State;
 
         private readonly StateMachine<State, Trigger> machine;
@@ -27,12 +25,7 @@ namespace MobileOrderer.Api.Domain
         private List<Order> orderHistory;
         private Order newOrder;
 
-        public MobileDataEntity GetDataEntity()
-        {
-            return this.mobileDataEntity;
-        }
-
-        public Mobile(MobileDataEntity mobileDataEntity, Order inFlightOrder, IEnumerable<Order> orderHistory)
+        public Mobile(MobileDataEntity mobileDataEntity, Order inFlightOrder, IEnumerable<Order> orderHistory = null)
         {
             this.mobileDataEntity = mobileDataEntity;
             this.InFlightOrder = inFlightOrder;
@@ -89,6 +82,11 @@ namespace MobileOrderer.Api.Domain
             machine.Configure(State.ProcessingPortOut).Permit(Trigger.PortOutCompleted, State.PortedOut);
         }
 
+        public MobileDataEntity GetDataEntity()
+        {
+            return this.mobileDataEntity;
+        }
+
         public void Provision(Order order)
         {
             this.newOrder = order;
@@ -136,7 +134,7 @@ namespace MobileOrderer.Api.Domain
         private void CreateNewOrder()
         {            
             this.InFlightOrder = newOrder;
-            this.mobileDataEntity.Orders.Add(newOrder.GetDataEntity());
+            this.mobileDataEntity.AddOrder(newOrder.GetDataEntity());
         }
     }
 }

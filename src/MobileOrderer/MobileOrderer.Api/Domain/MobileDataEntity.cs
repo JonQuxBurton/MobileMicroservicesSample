@@ -14,5 +14,13 @@ namespace MobileOrderer.Api.Domain
         public string State { get; set; }
 
         public List<OrderDataEntity> Orders { get; set; }
+
+        public void AddOrder(OrderDataEntity orderDataEntity)
+        {
+            if (this.Orders == null)
+                this.Orders = new List<OrderDataEntity>();
+
+            this.Orders.Add(orderDataEntity);
+        }
     }
 }
