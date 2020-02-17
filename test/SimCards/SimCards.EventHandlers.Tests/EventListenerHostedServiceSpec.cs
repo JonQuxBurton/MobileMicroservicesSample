@@ -7,7 +7,7 @@ using SimCards.EventHandlers.Services;
 
 namespace SimCards.EventHandlers.Tests
 {
-    public class HostedServiceSpec
+    public class EventListenerHostedServiceSpec
     {
         public class RunShould
         {

@@ -51,7 +51,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MobileTelecomsNetwork", "Mo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalMobileTelecomsNetwork", "ExternalMobileTelecomsNetwork", "{7262A6D0-99E0-4408-A98B-66425ACE57E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMobileTelecomsNetwork.Api", "src\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api\ExternalMobileTelecomsNetwork.Api.csproj", "{E78ABA1F-5FB4-4B08-A100-B72F627DD3CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalMobileTelecomsNetwork.Api", "src\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api\ExternalMobileTelecomsNetwork.Api.csproj", "{E78ABA1F-5FB4-4B08-A100-B72F627DD3CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MobileTelecomsNetwork", "MobileTelecomsNetwork", "{1703F50B-5EFC-4FB8-A681-1D75085EB760}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalMobileTelecomsNetwork", "ExternalMobileTelecomsNetwork", "{3E915535-A665-41F5-A39D-F6EC67106176}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMobileTelecomsNetwork.Api.Tests", "test\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api.Tests\ExternalMobileTelecomsNetwork.Api.Tests.csproj", "{E7EB4EF0-64A3-4D95-83CC-75D256286B82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileTelecomsNetwork.EventHandlers.Tests", "test\MobileTelecomsNetwork\MobileTelecomsNetwork.EventHandlers.Tests\MobileTelecomsNetwork.EventHandlers.Tests.csproj", "{EE616E52-B07F-4DFC-9B12-D3106EEFAB86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +119,14 @@ Global
 		{E78ABA1F-5FB4-4B08-A100-B72F627DD3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E78ABA1F-5FB4-4B08-A100-B72F627DD3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E78ABA1F-5FB4-4B08-A100-B72F627DD3CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7EB4EF0-64A3-4D95-83CC-75D256286B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7EB4EF0-64A3-4D95-83CC-75D256286B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7EB4EF0-64A3-4D95-83CC-75D256286B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7EB4EF0-64A3-4D95-83CC-75D256286B82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE616E52-B07F-4DFC-9B12-D3106EEFAB86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE616E52-B07F-4DFC-9B12-D3106EEFAB86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE616E52-B07F-4DFC-9B12-D3106EEFAB86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE616E52-B07F-4DFC-9B12-D3106EEFAB86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +155,10 @@ Global
 		{9B186A1A-6B47-4C5E-BDE0-67DAC7706813} = {483CAB92-C78B-42BD-90CE-C8C393EAF470}
 		{7262A6D0-99E0-4408-A98B-66425ACE57E9} = {483CAB92-C78B-42BD-90CE-C8C393EAF470}
 		{E78ABA1F-5FB4-4B08-A100-B72F627DD3CB} = {7262A6D0-99E0-4408-A98B-66425ACE57E9}
+		{1703F50B-5EFC-4FB8-A681-1D75085EB760} = {D374DC68-2F5F-400D-B922-52D975F58237}
+		{3E915535-A665-41F5-A39D-F6EC67106176} = {D374DC68-2F5F-400D-B922-52D975F58237}
+		{E7EB4EF0-64A3-4D95-83CC-75D256286B82} = {3E915535-A665-41F5-A39D-F6EC67106176}
+		{EE616E52-B07F-4DFC-9B12-D3106EEFAB86} = {1703F50B-5EFC-4FB8-A681-1D75085EB760}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {193462FA-4043-46E4-ACD2-D7792F0C599C}
