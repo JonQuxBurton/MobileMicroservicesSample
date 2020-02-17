@@ -10,15 +10,10 @@ namespace MobileOrderer.Api.Domain
         public enum State { New, Processing, Sent, Completed, Failed, Cancelled }
         public enum Trigger { Process, Send, Complete, Fail, Cancel }
         public enum OrderType { Provision, Activate }
+
         private readonly StateMachine<State, Trigger> machine;
-
         private readonly OrderDataEntity orderDataEntity;
-        private EnumConverter enumConverter;
-
-        public OrderDataEntity GetDataEntity()
-        {
-            return this.orderDataEntity;
-        }
+        private readonly EnumConverter enumConverter;
 
         public Order(OrderDataEntity orderDataEntity)
         {
@@ -54,6 +49,11 @@ namespace MobileOrderer.Api.Domain
         public OrderType Type => enumConverter.ToEnum<OrderType>(this.orderDataEntity.Type);
         public DateTime? CreatedAt => this.orderDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.orderDataEntity.UpdatedAt;
+        
+        public OrderDataEntity GetDataEntity()
+        {
+            return this.orderDataEntity;
+        }
 
         public void Process()
         {

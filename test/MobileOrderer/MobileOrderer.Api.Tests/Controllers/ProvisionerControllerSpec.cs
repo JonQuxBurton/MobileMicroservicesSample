@@ -11,7 +11,7 @@ using Utils.DomainDrivenDesign;
 using Utils.Guids;
 using Xunit;
 
-namespace MobileOrderer.Api.Tests
+namespace MobileOrderer.Api.Tests.Controllers
 {
     public class ProvisionerControllerSpec
     {
@@ -58,7 +58,7 @@ namespace MobileOrderer.Api.Tests
             private readonly Mock<IGuidCreator> guidCreatorMock;
 
             [Fact]
-            public void AddMobileInRepositoryWithStateOfNew()
+            public void AddMobileToRepositoryWithStateOfNew()
             {
                 var expectedOrder = new OrderToAdd()
                 {
@@ -76,7 +76,7 @@ namespace MobileOrderer.Api.Tests
             }
 
             [Fact]
-            public void AddMobileInRepositoryWithInFligthOrder()
+            public void AddMobileToRepositoryWithInFligthOrder()
             {
                 var expectedOrder = new OrderToAdd()
                 {

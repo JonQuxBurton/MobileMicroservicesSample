@@ -3,6 +3,7 @@ using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
+using System;
 using System.Threading.Tasks;
 using Utils.DomainDrivenDesign;
 
@@ -25,9 +26,17 @@ namespace MobileOrderer.Api.Handlers
         {
             this.logger.LogInformation($"Received [OrderSent] MobileOrderId={message.MobileOrderId}");
 
-            var mobile = this.getMobileByOrderIdQuery.Get(message.MobileOrderId);
-            mobile.OrderSent();
-            this.mobileRepository.Update(mobile);
+            try
+            {
+                var mobile = this.getMobileByOrderIdQuery.Get(message.MobileOrderId);
+                mobile.OrderSent();
+                this.mobileRepository.Update(mobile);
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error while processing OrderSentMessage");
+                return Task.FromResult(false);
+            }
 
             return Task.FromResult(true);
         }

@@ -9,7 +9,7 @@ using System;
 using Utils.DomainDrivenDesign;
 using Xunit;
 
-namespace MobileOrderer.Api.Tests
+namespace MobileOrderer.Api.Tests.Services
 {
     public class MobileRequestedEventCheckerSpec
     {
@@ -26,7 +26,7 @@ namespace MobileOrderer.Api.Tests
             messagePublisher = new Mock<IMessagePublisher>();
             mobileRepositoryMock = new Mock<IRepository<Mobile>>();
             getNewMobilesQueryMock = new Mock<IGetNewMobilesQuery>();
-            this.getNewMobilesQueryMock.Setup(x => x.GetNew())
+            getNewMobilesQueryMock.Setup(x => x.GetNew())
                 .Returns(new[] { expectedNewMobile });
 
             sut = new MobileRequestedEventChecker(messagePublisher.Object, getNewMobilesQueryMock.Object, mobileRepositoryMock.Object);
@@ -37,7 +37,7 @@ namespace MobileOrderer.Api.Tests
         {
             sut.Check();
 
-            this.mobileRepositoryMock.Verify(x => x.Update(expectedNewMobile));
+            mobileRepositoryMock.Verify(x => x.Update(expectedNewMobile));
         }
 
         [Fact]

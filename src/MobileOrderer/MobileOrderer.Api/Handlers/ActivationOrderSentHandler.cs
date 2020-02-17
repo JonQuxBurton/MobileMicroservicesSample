@@ -35,6 +35,7 @@ namespace MobileOrderer.Api.Handlers
             catch (Exception ex)
             {
                 this.logger.LogError(ex, "Error while processing ActivationOrderSentMessage");
+                return Task.FromResult(false);
             }
 
             return Task.FromResult(true);

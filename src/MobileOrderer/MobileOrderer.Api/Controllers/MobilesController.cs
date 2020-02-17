@@ -26,7 +26,6 @@ namespace MobileOrderer.Api.Controllers
         [HttpPost("{id}/activate")]
         public IActionResult Post(Guid id, [FromBody] OrderToAdd orderToAdd)
         {
-
             var mobile = this.mobileRepository.GetById(id);
 
             if (mobile == null)
