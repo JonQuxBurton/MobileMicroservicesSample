@@ -6,6 +6,7 @@ using Serilog.Events;
 
 namespace ExternalMobileTelecomsNetwork.Api
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static int Main(string[] args)

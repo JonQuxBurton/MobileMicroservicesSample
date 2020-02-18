@@ -41,7 +41,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
         }
 
         [HttpGet("{reference}")]
-        public IActionResult Get(Guid reference)
+        public ActionResult<Order> Get(Guid reference)
         {
             var order = dataStore.GetByReference(reference);
 
