@@ -63,10 +63,9 @@ namespace MobileOrderer.Api
             services.AddHostedService<EventsService>();
             services.AddHostedService<EventPublisherService>();
 
-            services.AddSingleton<IMobileRequestedEventChecker, MobileRequestedEventChecker>();
-            services.AddSingleton<IActivationRequestedEventChecker, ActivationRequestedEventChecker>();
             services.AddSingleton<IMessagePublisher, MessagePublisher>();
             services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
+            services.AddSingleton<IGetProcessingProvisioningMobilesQuery, GetProcessingProvisioningMobilesQuery>();
             services.AddSingleton<IGetNewActivationsQuery, GetNewActivationsQuery>();
             services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
             services.AddSingleton<ISqsService, SqsService>();
@@ -76,6 +75,34 @@ namespace MobileOrderer.Api
             services.AddSingleton<ISnsService, SnsService>();
             services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
             services.AddSingleton<AWSCredentials>(credentials);
+
+            services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
+            {
+                var getNewMobilesQuery = serviceProvider.GetService<IGetNewMobilesQuery>();
+                var repository = serviceProvider.GetService<IRepository<Mobile>>();
+                var provisionCommand = new ProvisionCommand(repository);
+
+                return new NewMobileEventChecker(getNewMobilesQuery, provisionCommand);
+            });
+
+            services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
+            {
+                var getProcessingProvisioningMobilesQuery = serviceProvider.GetService<IGetProcessingProvisioningMobilesQuery>();
+                var repository = serviceProvider.GetService<IRepository<Mobile>>();
+                var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
+                var processingProvisioningCommand = new ProcessingProvisioningCommand(repository, messagePublisher);
+
+                return new ProcessingProvisioningEventChecker(getProcessingProvisioningMobilesQuery, processingProvisioningCommand);
+            });
+
+            services.AddSingleton<IMobileEventsChecker>(serviceProvider => {
+                var getNewActivationsQuery = serviceProvider.GetService<IGetNewActivationsQuery>();
+                var repository = serviceProvider.GetService<IRepository<Mobile>>();
+                var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
+                var activationCommand = new ActivationCommand(repository, messagePublisher);
+
+                return new ActivationRequestedEventChecker(getNewActivationsQuery, activationCommand);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

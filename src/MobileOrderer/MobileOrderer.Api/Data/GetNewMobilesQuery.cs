@@ -1,5 +1,4 @@
 ﻿using MobileOrderer.Api.Domain;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ namespace MobileOrderer.Api.Data
             this.enumConverter = enumConverter;
         }
 
-        public IEnumerable<Mobile> GetNew()
+        public IEnumerable<Mobile> Get()
         {
             var newStateName = enumConverter.ToName<Mobile.State>(Mobile.State.New);
             var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == newStateName).ToList();

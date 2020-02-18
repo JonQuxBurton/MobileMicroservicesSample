@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,36 +10,36 @@ namespace MobileOrderer.Api.Services
     public class EventPublisherService : BackgroundService
     {
         private readonly ILogger<EventPublisherService> logger;
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IEnumerable<IMobileEventsChecker> checkers;
 
-        public EventPublisherService(ILogger<EventPublisherService> logger, IServiceScopeFactory scopeFactory)
+        public EventPublisherService(ILogger<EventPublisherService> logger, 
+            IEnumerable<IMobileEventsChecker> checkers)
         {
             this.logger = logger;
-            this.scopeFactory = scopeFactory;
+            this.checkers = checkers;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using (var scope = scopeFactory.CreateScope())
-            {
-                logger.LogInformation("EventPublisherService is starting...");
-                var mobileRequestedEventChecker = scope.ServiceProvider.GetRequiredService<IMobileRequestedEventChecker>();
-                var activationRequestedEventChecker = scope.ServiceProvider.GetRequiredService<IActivationRequestedEventChecker>();
-                
-                while (!stoppingToken.IsCancellationRequested)
-                {
-                    try
-                    {
-                        mobileRequestedEventChecker.Check();
-                        activationRequestedEventChecker.Check();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "Exception");
-                    }
+            logger.LogInformation("EventPublisherService is starting...");
 
-                    await Task.Delay(10 * 1000, stoppingToken);
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    foreach (var checker in checkers)
+                    {
+                        logger.LogInformation($"Checking {checker.GetType().Name}");
+                        checker.Check();
+                    }
+                            
                 }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Exception");
+                }
+
+                await Task.Delay(10 * 1000, stoppingToken);
             }
         }
     }

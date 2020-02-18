@@ -2,23 +2,23 @@
 
 namespace MobileOrderer.Api.Services
 {
-    public class ActivationRequestedEventChecker : IMobileEventsChecker
+    public class NewMobileEventChecker : IMobileEventsChecker
     {
-        private readonly IGetNewActivationsQuery getNewActivationsQuery;
+        private readonly IGetNewMobilesQuery getNewMobilesQuery;
         private readonly IMobileCommand command;
 
-        public ActivationRequestedEventChecker(
-            IGetNewActivationsQuery getNewActivationsQuery,
+        public NewMobileEventChecker(
+            IGetNewMobilesQuery getNewMobilesQuery,
             IMobileCommand command
             )
         {
             this.command = command;
-            this.getNewActivationsQuery = getNewActivationsQuery;
+            this.getNewMobilesQuery = getNewMobilesQuery;
         }
 
         public void Check()
         {
-            var newMobiles = this.getNewActivationsQuery.Get();
+            var newMobiles = this.getNewMobilesQuery.Get();
 
             foreach (var newMobile in newMobiles)
             {

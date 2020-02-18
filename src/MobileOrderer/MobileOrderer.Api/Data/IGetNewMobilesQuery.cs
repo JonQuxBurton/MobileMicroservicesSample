@@ -5,6 +5,6 @@ namespace MobileOrderer.Api.Data
 {
     public interface IGetNewMobilesQuery
     {
-        IEnumerable<Mobile> GetNew();
+        IEnumerable<Mobile> Get();
     }
 }

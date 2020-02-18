@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MobileOrderer.Api.Data
 {
-    public interface IGetNewActivationsQuery
+    public interface IGetProcessingProvisioningMobilesQuery
     {
         IEnumerable<Mobile> Get();
     }

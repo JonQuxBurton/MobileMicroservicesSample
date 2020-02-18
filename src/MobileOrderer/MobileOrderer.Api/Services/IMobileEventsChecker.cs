@@ -1,6 +1,6 @@
 ﻿namespace MobileOrderer.Api.Services
 {
-    public interface IActivationRequestedEventChecker
+    public interface IMobileEventsChecker
     {
         void Check();
     }
