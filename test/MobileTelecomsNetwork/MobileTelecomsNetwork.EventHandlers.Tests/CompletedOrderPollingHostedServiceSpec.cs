@@ -22,11 +22,6 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests
                 { 
                     MobileOrderId = Guid.NewGuid()
                 };
-                var expectedUrl = new Uri($"{config.ExternalMobileTelecomsNetworkApiUrl}/api/orders/{expectedOrder.MobileOrderId}");
-                var externalOrder = new ExternalOrder {
-                    Name = "Neil Armstrong",
-                    Status = "Completed"
-                };
                 var dataStoreMock = new Mock<IDataStore>();
                 dataStoreMock.Setup(x => x.GetSent())
                     .Returns(new[] { expectedOrder });

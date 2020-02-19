@@ -10,7 +10,8 @@ namespace SimCards.EventHandlers.Services
         private readonly Config config;
         private readonly HttpClient httpClient;
 
-        public SimCardWholesaleService(IOptions<Config> configOptions, HttpClient httpClient)
+        public SimCardWholesaleService(IOptions<Config> configOptions, 
+            HttpClient httpClient)
         {
             config = configOptions?.Value;
             this.httpClient = httpClient;

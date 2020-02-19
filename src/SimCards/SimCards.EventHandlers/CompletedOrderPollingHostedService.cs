@@ -3,12 +3,8 @@ using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
-using System.Net.Http;
 using SimCards.EventHandlers.Data;
 using System.Linq;
-using System.Text.Json;
-using MinimalEventBus.JustSaying;
-using SimCards.EventHandlers.Messages;
 
 namespace SimCards.EventHandlers
 {
@@ -17,18 +13,17 @@ namespace SimCards.EventHandlers
         public const int BatchSize = 10;
 
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
-        private readonly IHttpClientFactory clientFactory;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
-        private readonly IMessagePublisher messagePublisher;
+        private readonly ICompletedOrderChecker completedOrderCheker;
         private Timer timer;
 
-        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger, IHttpClientFactory clientFactory, ISimCardOrdersDataStore simCardOrdersDataStore,
-            IMessagePublisher messagePublisher)
+        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger, 
+            ISimCardOrdersDataStore simCardOrdersDataStore,
+            ICompletedOrderChecker completedOrderCheker)
         {
             this.logger = logger;
-            this.clientFactory = clientFactory;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
-            this.messagePublisher = messagePublisher;
+            this.completedOrderCheker = completedOrderCheker;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -39,39 +34,14 @@ namespace SimCards.EventHandlers
             return Task.CompletedTask;
         }
 
-        private async void DoWork(object state)
+        public async void DoWork(object state)
         {
             var sentOrders = simCardOrdersDataStore.GetSent().Take(BatchSize);
 
             foreach (var sentOrder in sentOrders)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5001/api/orders/{sentOrder.MobileOrderId}");
-                var client = clientFactory.CreateClient();
-
-                var response = await client.SendAsync(request);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    using var responseStream = await response.Content.ReadAsStreamAsync();
-                    var simCardOrderFromWholesaler = await JsonSerializer.DeserializeAsync<SimCardOrderFromWholesaler>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    if (simCardOrderFromWholesaler.Status.Trim() == "Completed")
-                    {
-                        using var tx = simCardOrdersDataStore.BeginTransaction();
-                        simCardOrdersDataStore.Complete(sentOrder.MobileOrderId);
-                        this.PublishProvisioningOrderCompleted(sentOrder.MobileOrderId);
-                    }
-                }
+                await completedOrderCheker.Check(sentOrder);
             }
-        }
-        private void PublishProvisioningOrderCompleted(Guid mobileGlobalId)
-        {
-            this.logger.LogInformation($"Publishing ProvisioningOrderCompletedMessage [{mobileGlobalId}]");
-
-            messagePublisher.PublishAsync(new ProvisioningOrderCompletedMessage
-            {
-                MobileOrderId = mobileGlobalId
-            });
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
