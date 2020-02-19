@@ -3,13 +3,9 @@ using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
-using System.Net.Http;
 using System.Linq;
-using System.Text.Json;
-using MinimalEventBus.JustSaying;
 using MobileTelecomsNetwork.EventHandlers.Data;
-using Microsoft.Extensions.Options;
-using MobileTelecomsNetwork.EventHandlers.Messages;
+using MobileTelecomsNetwork.EventHandlers.Services;
 
 namespace MobileTelecomsNetwork.EventHandlers
 {
@@ -18,21 +14,17 @@ namespace MobileTelecomsNetwork.EventHandlers
         public const int BatchSize = 10;
 
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
-        private readonly IHttpClientFactory clientFactory;
         private readonly IDataStore dataStore;
-        private readonly IMessagePublisher messagePublisher;
+        private readonly IActivationOrderChecker activationOrderChecker;
         private Timer timer;
-        private readonly string externalApiUrl;
 
-        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger, IHttpClientFactory clientFactory, IDataStore dataStore,
-            IMessagePublisher messagePublisher,
-            IOptions<Config> config)
+        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger, 
+            IDataStore dataStore,
+            IActivationOrderChecker activationOrderChecker)
         {
             this.logger = logger;
-            this.clientFactory = clientFactory;
             this.dataStore = dataStore;
-            this.messagePublisher = messagePublisher;
-            this.externalApiUrl = config.Value?.ExternalMobileTelecomsNetworkApiUrl;
+            this.activationOrderChecker = activationOrderChecker;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -43,39 +35,14 @@ namespace MobileTelecomsNetwork.EventHandlers
             return Task.CompletedTask;
         }
 
-        private async void DoWork(object state)
+        public async void DoWork(object state)
         {
             var sentOrders = dataStore.GetSent().Take(BatchSize);
 
             foreach (var sentOrder in sentOrders)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{this.externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
-                var client = clientFactory.CreateClient();
-
-                var response = await client.SendAsync(request);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    using var responseStream = await response.Content.ReadAsStreamAsync();
-                    var externalOrder = await JsonSerializer.DeserializeAsync<ExternalOrder>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    if (externalOrder.Status.Trim() == "Completed")
-                    {
-                        using var tx = dataStore.BeginTransaction();
-                        dataStore.Complete(sentOrder.MobileOrderId);
-                        this.PublishActivationOrderCompleted(sentOrder.MobileOrderId);
-                    }
-                }
+                await activationOrderChecker.Check(sentOrder);
             }
-        }
-        private void PublishActivationOrderCompleted(Guid mobileGlobalId)
-        {
-            logger.LogInformation($"Publishing ActivationOrderCompletedMessage [{mobileGlobalId}]");
-
-            messagePublisher.PublishAsync(new ActivationOrderCompletedMessage
-            {
-                MobileOrderId = mobileGlobalId
-            });
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

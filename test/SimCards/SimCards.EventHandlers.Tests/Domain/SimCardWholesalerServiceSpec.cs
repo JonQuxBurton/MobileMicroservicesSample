@@ -86,9 +86,9 @@ namespace SimCards.EventHandlers.Tests.Domain
             private bool HttpContentEquals(HttpContent content, SimCardWholesalerOrder order)
             {
                 var json = JsonConvert.SerializeObject(order);
-                var aaa = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-                return content.ReadAsStringAsync().Result == aaa.ReadAsStringAsync().Result;
+                return content.ReadAsStringAsync().Result == stringContent.ReadAsStringAsync().Result;
             }
         }
     }

@@ -62,7 +62,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             return true;
         }
 
-        public void Publish(Guid mobileGlobalId)
+        private void Publish(Guid mobileGlobalId)
         {
             messagePublisher.PublishAsync(new ActivationOrderSentMessage
             {
