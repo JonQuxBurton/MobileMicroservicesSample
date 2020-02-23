@@ -1,0 +1,19 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+' uncomment the following line and comment the first to use locally
+'!include C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context diagram for the Mobile system
+Person(customer, "Customer", "A Customer that would like a Mobile.")
+
+System(mobile_system, "Mobile system", "Allows Customers to order Mobiles.")
+System_Ext(sim_card_system, "SIM Card system", "The external SIM Card ordering system.")
+System_Ext(mobile_telecoms_network_system, "Mobile Telecoms Network system", "The external Mobile Telecoms Network system.")
+
+Rel(customer, mobile_system, "Uses")
+Rel(mobile_system, sim_card_system, "Uses")
+Rel(mobile_system, mobile_telecoms_network_system, "Uses")
+
+@enduml

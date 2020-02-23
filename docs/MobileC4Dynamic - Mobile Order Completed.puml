@@ -1,0 +1,29 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
+' uncomment the following line and comment the first to use locally
+'!include C4_Dynamic.puml
+
+LAYOUT_TOP_DOWN
+LAYOUT_WITH_LEGEND()
+
+title Dynamic diagram for the Mobile system - Mobile Order Completed
+
+System_Ext(sim_card_system, "SIM Card system", "The external SIM Card ordering system")
+
+System_Boundary(c1, "Mobile System") {
+
+    Container(mobiles_ms, "Mobiles Microservice", "C#, ASP.NET Core", "")    
+    Container(sim_cards_ms, "SIM Cards Microservice", "C#, ASP.NET Core", "")
+    
+    ContainerDb(mobiles_db, "Mobiles database", "SQL Server", "")    
+    ContainerDb(sim_cards_db, "SIM Cards database", "SQL Server", "")    
+}
+
+Interact_Up(sim_cards_ms, sim_card_system, "Gets completed Orders", "HTTPS")
+
+Interact2_Right("GetIndex(0)-1", sim_cards_ms, sim_cards_db, "Updates SIM Card Order to Completed", "Dapper")
+Interact2("GetIndex()-2", sim_cards_ms, mobiles_ms, "Publishes Order Completed", "AWS SNS+SQS/JSON")
+
+Interact_Right(mobiles_ms, mobiles_db, "Updates Order to Completed, Mobile to WaitingForActivation", "Dapper")
+
+@enduml

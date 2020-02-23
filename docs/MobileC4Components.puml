@@ -1,0 +1,54 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+'!include C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Components diagram for the Mobile system - Mobiles Microservice
+Person(customer, "Customer", "A Customer that would like a Mobile.")
+
+Container(web_app, "Mobile Orderer Web Application", "C#, ASP.NET Core", "Allows users to order Mobiles")
+
+Container_Boundary(api, "Mobiles Microservice") {
+    Component(provisioner_controller, "Provisioner Controller", "MVC Rest Controller", "Provides functionality for Provisioing new Mobiles")
+    Component(mobiles_controller, "Mobiles Controller", "MVC Rest Controller", "Provides functionality for Mobiles")
+    
+    Component(processing_provisioning_checker, "Processing Provisioning Event Checker", "Polling Background Service", "Checks for and Posts Provisioning Requests")
+    Component(provisioning_sent_handler, "Order Sent Handler", "Event Handler", "Handles Provisioning Order Sent events")
+    Component(provisioning_completed_handler, "Provisioning Order Completed Handler", "Event Handler", "Handles Provisioning Order Completed events")    
+    
+    Component(activation_requested_checker, "Activation Requested Event Checker", "Polling Background Service", "Checks for and Posts Activation Requests")
+    Component(activation_sent_handler, "Activation Order Sent Handler", "Event Handler", "Handles Activation Order Sent events")
+    Component(activation_completed_handler, "Activation Order Completed Handler", "Event Handler", "Handles Activation Order Completed events")
+    
+    ComponentDb(mobiles_db, "Mobiles database", "SQL Server", "Store the Mobiles and their Orders")
+
+    Rel(provisioner_controller, mobiles_db, "Write Provision Order", "EF")
+    Rel(processing_provisioning_checker, mobiles_db, "Update Provision Order", "EF")
+    Rel(provisioning_sent_handler, mobiles_db, "Update Provision Order", "EF")
+    Rel(provisioning_completed_handler, mobiles_db, "Update Mobile+Order", "EF")
+
+    Rel(mobiles_controller, mobiles_db, "Write Activation Order", "EF")
+    Rel(activation_requested_checker, mobiles_db, "Update Activation Order", "EF")
+    Rel(activation_sent_handler, mobiles_db, "Update Activation Order", "EF")
+    Rel(activation_completed_handler, mobiles_db, "Update Mobile+Order", "EF")
+}
+
+Container(sim_cards_ms, "SIM Cards Microservice", "C#, ASP.NET Core", "")
+Container(mobile_telecoms_network_ms, "Mobile Telecoms Network Microservice", "C#, ASP.NET Core", "")
+
+Rel(customer, web_app, "Uses", "HTTPS")
+
+Rel(web_app, provisioner_controller, "Posts Provision Order", "HTTPS/JSON")
+Rel(web_app, mobiles_controller, "Posts Activation Order", "HTTPS/JSON")
+
+Rel_Back(sim_cards_ms, processing_provisioning_checker, "Posts Provision Order", "HTTPS/JSON")
+Rel(sim_cards_ms, provisioning_sent_handler, "Publishes Provision Order Sent event", "AWS SNS+SQS/JSON")
+Rel(sim_cards_ms, provisioning_completed_handler, "Publishes Provision Order Completed event", "AWS SNS+SQS/JSON")
+
+Rel_Back(mobile_telecoms_network_ms, activation_requested_checker, "Posts Activation Order", "HTTPS/JSON")
+Rel(mobile_telecoms_network_ms, activation_sent_handler, "Publishes Activation Order Sent event", "AWS SNS+SQS/JSON")
+Rel(mobile_telecoms_network_ms, activation_completed_handler, "Publishes Activation Order Completed event", "AWS SNS+SQS/JSON")
+
+@enduml

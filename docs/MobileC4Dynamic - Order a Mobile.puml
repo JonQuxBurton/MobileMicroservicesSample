@@ -1,0 +1,36 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
+' uncomment the following line and comment the first to use locally
+'!include C4_Dynamic.puml
+
+LAYOUT_TOP_DOWN
+LAYOUT_WITH_LEGEND()
+
+title Dynamic diagram for the Mobile system - Order a Mobile
+Person(customer, "Customer", "A Customer orders a Mobile.")
+
+System_Boundary(c1, "Mobile System") {
+    Container(web_app, "Mobile Orderer Web Application", "C#, ASP.NET Core", "")
+
+    Container(mobiles_ms, "Mobiles Microservice", "C#, ASP.NET Core", "")    
+    Container(sim_cards_ms, "SIM Cards Microservice", "C#, ASP.NET Core", "")
+    
+    ContainerDb(mobiles_db, "Mobiles database", "SQL Server", "")    
+    ContainerDb(sim_cards_db, "SIM Cards database", "SQL Server", "")    
+}
+
+System_Ext(sim_card_system, "SIM Card system", "The external SIM Card ordering system")
+
+Interact(customer, web_app, "Orders a Mobile", "HTTPS")
+Interact(web_app, mobiles_ms, "Posts Order", "HTTPS")
+Interact2_Right("GetIndex(0)-1", mobiles_ms, mobiles_db, "Writes new Mobile+Order", "EF")
+Interact2("GetIndex()-2", mobiles_ms, sim_cards_ms, "Posts SIM Card Order", "HTTPS")
+Interact2_Right("GetIndex(0)-1", sim_cards_ms, sim_cards_db, "Writes new SIM Card Order", "Dapper")
+Interact2("GetIndex()-2", sim_cards_ms, sim_card_system, "Posts SIM Card Order", "HTTPS")
+
+Interact2_Right("GetIndex(0)-1", sim_cards_ms, sim_cards_db, "Updates SIM Card Order to Sent", "Dapper")
+Interact2("GetIndex()-2", sim_cards_ms, mobiles_ms, "Publishes Order Sent", "AWS SNS+SQS/JSON")
+
+Interact_Right(mobiles_ms, mobiles_db, "Updates Order to Sent", "EF")
+
+@enduml

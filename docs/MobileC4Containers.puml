@@ -1,0 +1,45 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+' uncomment the following line and comment the first to use locally
+'!include C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+'LAYOUT_AS_SKETCH()
+
+title Containers diagram for the Mobile system
+Person(customer, "Customer", "A Customer that would like a Mobile")
+System_Boundary(c1, "Mobile System") {
+    Container(web_app, "Mobile Orderer Web Application", "C#, ASP.NET Core", "Allows users to order Mobiles")
+
+    Container(mobiles_ms, "Mobiles Microservice", "C#, ASP.NET Core", "Microservice for Mobiles")    
+    Container(sim_cards_ms, "SIM Cards Microservice", "C#, ASP.NET Core", "Microservice for SIM Cards")
+    Container(mobile_telecoms_network_ms, "Mobile Telecoms Network Microservice", "C#, ASP.NET Core", "Microservice for Mobiles")
+    
+    ContainerDb(mobiles_db, "Mobiles database", "SQL Server", "Stores the Mobiles and their Orders")    
+    ContainerDb(sim_cards_db, "SIM Cards database", "SQL Server", "Stores the SIM Card Orders")
+    ContainerDb(mobile_telecoms_network_db, "Mobiles Telecoms Network database", "SQL Server", "Stores the Mobiles Telecoms Network Orders")
+}
+
+System_Ext(sim_card_system, "SIM Card system", "The external SIM Card ordering system.")
+System_Ext(mobile_telecoms_network_system, "Mobile Telecoms Network system", "The external Mobile Telecoms Network system.")
+
+Rel(customer, web_app, "Uses", "HTTPS")
+
+Rel(web_app, mobiles_ms, "Posts Order", "HTTPS/JSON")
+
+Rel(mobiles_ms, sim_cards_ms, "Posts SIM Card Provision Order", "HTTPS/JSON")
+Rel_Back(mobiles_ms, sim_cards_ms, "Publishes Completed Order", "AWS SNS+SQS/JSON")
+Rel(mobiles_ms, mobile_telecoms_network_ms, "Posts Activation Order", "HTTPS/JSON")
+Rel_Back(mobiles_ms, mobile_telecoms_network_ms, "Publishes Completed Order", "AWS SNS+SQS/JSON")
+
+Rel_R(mobiles_ms, mobiles_db, "Stores data in", "EF")
+Rel_L(sim_cards_ms, sim_cards_db, "Stores data in", "Dapper")
+Rel_R(mobile_telecoms_network_ms, mobile_telecoms_network_db, "Stores data in", "Dapper")
+
+
+Rel(sim_cards_ms, sim_card_system, "Posts SIM Card Provision Order", "HTTPS")
+Rel_Back(sim_cards_ms, sim_card_system, "Gets completed Orders", "HTTPS")
+Rel(mobile_telecoms_network_ms, mobile_telecoms_network_system, "Posts Mobile Activation Order", "HTTPS")
+Rel_Back(mobile_telecoms_network_ms, mobile_telecoms_network_system, "Gets completed Orders", "HTTPS")
+
+@enduml
