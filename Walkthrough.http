@@ -19,7 +19,7 @@ content-type: application/json
 GET http://localhost:5000/api/mobiles/1ABCCDF6-CD0A-4227-97C3-1FF2374096C2
 
 ### Activate a Mobile
-POST http://localhost:5000/api/mobiles/F4521D1C-7FA1-45E9-B936-36FD696E6238/activate
+POST http://localhost:5000/api/mobiles/9DED12FC-C58D-4898-A477-91D77A9866D3/activate
 content-type: application/json
 
 {
@@ -51,7 +51,7 @@ POST http://localhost:5001/api/orders/complete
 content-type: application/json
 
 {
-	"Reference" : "6699047A-F702-4673-9CD9-1429B5807B06"
+	"Reference" : "0281EACB-AA2B-4340-A0BD-181B32060942"
 }
 
 ###==================================================
@@ -78,5 +78,5 @@ POST http://localhost:5002/api/orders/complete
 content-type: application/json
 
 {
-	"Reference" : "21738381-5B8D-4882-9503-8EB45C31D6B8"
+	"Reference" : "FDAA0F93-ADAA-4A20-B6D1-48255CE28B3E"
 }
