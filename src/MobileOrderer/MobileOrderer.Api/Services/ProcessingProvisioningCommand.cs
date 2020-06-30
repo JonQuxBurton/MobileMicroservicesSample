@@ -24,9 +24,9 @@ namespace MobileOrderer.Api.Services
             mobileRepository.Update(mobile);
         }
 
-        private void Publish(Order order)
+        private async void Publish(Order order)
         {
-            messagePublisher.PublishAsync(new MobileRequestedMessage
+            await messagePublisher.PublishAsync(new MobileRequestedMessage
             {
                 MobileOrderId = order.GlobalId,
                 Name = order.Name,

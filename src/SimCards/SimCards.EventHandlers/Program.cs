@@ -16,9 +16,9 @@ using MinimalEventBus.JustSaying;
 namespace SimCards.EventHandlers
 {
     [ExcludeFromCodeCoverage]
-    class Program
+    public class Program
     {
-        private static void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services)
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -51,11 +51,22 @@ namespace SimCards.EventHandlers
             services.AddHostedService<CompletedOrderPollingHostedService>();
         }
 
-        public static IHost BuildHost(string[] args) =>
-        new HostBuilder()
-            .ConfigureServices(services => ConfigureServices(services))
-            .UseSerilog()
-            .Build();
+        public static IHostBuilder GetHostBuilder()
+        {
+            var hostBuilder = new HostBuilder()
+                .ConfigureServices(services => ConfigureServices(services))
+                .UseSerilog();
+                return hostBuilder;
+        }
+
+        public static IHost BuildHost(string[] args)
+        {
+            var hostBuilder = new HostBuilder()
+                .ConfigureServices(services => ConfigureServices(services))
+                .UseSerilog();
+
+            return hostBuilder.Build();
+        }
 
         public static int Main(string[] args)
         {

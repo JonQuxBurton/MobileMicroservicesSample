@@ -74,6 +74,7 @@ namespace MobileOrderer.Api
             services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
             services.AddSingleton<ISnsService, SnsService>();
             services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
+            services.AddSingleton<IMobileEventCheckersRunner, MobileEventCheckersRunner>();
             services.AddSingleton<AWSCredentials>(credentials);
 
             services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
