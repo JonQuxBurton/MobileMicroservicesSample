@@ -1,12 +1,12 @@
 @startuml
-!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
+'!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
 ' uncomment the following line and comment the first to use locally
-'!include C4_Dynamic.puml
+!include C4_Dynamic.puml
 
 LAYOUT_TOP_DOWN
 LAYOUT_WITH_LEGEND()
 
-title Dynamic diagram for the Mobile system - Activate a Mobile
+title Activate a Mobile
 Person(customer, "Customer", "A Customer orders a Mobile.")
 
 System_Boundary(c1, "Mobile System") {

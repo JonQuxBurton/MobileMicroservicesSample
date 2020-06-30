@@ -1,12 +1,12 @@
 @startuml
-!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
+'!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
 ' uncomment the following line and comment the first to use locally
-'!include C4_Dynamic.puml
+!include C4_Dynamic.puml
 
 LAYOUT_TOP_DOWN
 LAYOUT_WITH_LEGEND()
 
-title Dynamic diagram for the Mobile system - Activation Order Completed
+title Activation Order Completed
 
 System_Ext(mobile_telecoms_network_system, "Mobile Telecoms Network system", "The external Mobile Telecoms Network system.")
 

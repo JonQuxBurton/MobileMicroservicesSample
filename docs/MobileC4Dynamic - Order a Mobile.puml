@@ -1,13 +1,13 @@
 @startuml
-!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
+'!includeurl https://raw.githubusercontent.com/kirchsth/C4-PlantUML/master/C4_Dynamic.puml
 ' uncomment the following line and comment the first to use locally
-'!include C4_Dynamic.puml
+!include C4_Dynamic.puml
 
 LAYOUT_TOP_DOWN
 LAYOUT_WITH_LEGEND()
 
-title Dynamic diagram for the Mobile system - Order a Mobile
-Person(customer, "Customer", "A Customer orders a Mobile.")
+title Order a Mobile
+Person(customer, "Customer", "A Customer orders a Mobile")
 
 System_Boundary(c1, "Mobile System") {
     Container(web_app, "Mobile Orderer Web Application", "C#, ASP.NET Core", "")
