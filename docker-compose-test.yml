@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  sql.data:
+    image: mcr.microsoft.com/mssql/server
+    build:
+      context: .
+      dockerfile: DatabaseSetup/Dockerfile
+
+  goaws:
+    image: pafortin/goaws
+    ports:
+      - "4100:4100"
+      
+  mobileorderer.api:
+    image: ${DOCKER_REGISTRY}mobileordererapi
+    build:
+      context: .
+      dockerfile: src/MobileOrderer/MobileOrderer.Api/Dockerfile
+
+  simcards.eventhandlers:
+    image: ${DOCKER_REGISTRY}simcardseventhandlers
+    build:
+      context: .
+      dockerfile: src/SimCards/SimCards.EventHandlers/Dockerfile
+    stdin_open: true
+    tty: true
+
+  simcardwholesaler.api:
+    image: ${DOCKER_REGISTRY}simcardwholesalerapi
+    build:
+      context: .
+      dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile

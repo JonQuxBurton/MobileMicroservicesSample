@@ -17,7 +17,7 @@ namespace SimCards.EventHandlers
         private readonly ICompletedOrderChecker completedOrderCheker;
         private Timer timer;
 
-        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger, 
+        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
             ISimCardOrdersDataStore simCardOrdersDataStore,
             ICompletedOrderChecker completedOrderCheker)
         {
@@ -36,11 +36,18 @@ namespace SimCards.EventHandlers
 
         public async void DoWork(object state)
         {
-            var sentOrders = simCardOrdersDataStore.GetSent().Take(BatchSize);
-
-            foreach (var sentOrder in sentOrders)
+            try
             {
-                await completedOrderCheker.Check(sentOrder);
+                var sentOrders = simCardOrdersDataStore.GetSent().Take(BatchSize);
+
+                foreach (var sentOrder in sentOrders)
+                {
+                    await completedOrderCheker.Check(sentOrder);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
             }
         }
 

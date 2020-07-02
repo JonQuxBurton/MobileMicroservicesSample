@@ -28,42 +28,51 @@ namespace SimCards.EventHandlers.Handlers
         {
             this.logger.LogInformation($"Received [MobileRequested] {message.Name} {message.ContactPhoneNumber}");
 
-            var existingOrder = simCardOrdersDataStore.GetExisting(message.MobileOrderId);
-
-            if (existingOrder != null)
+            try
             {
-                return true;
-            }
+                var existingOrder = simCardOrdersDataStore.GetExisting(message.MobileOrderId);
 
-            using (var tx = simCardOrdersDataStore.BeginTransaction())
-            {
-                simCardOrdersDataStore.Add(new SimCardOrder()
+                if (existingOrder != null)
                 {
-                    Name = message.Name,
-                    MobileOrderId = message.MobileOrderId,
-                    Status = "New"
-                });
-            }
-
-            using (var tx = simCardOrdersDataStore.BeginTransaction())
-            {
-                var result = await simCardWholesaleService.PostOrder(new SimCardWholesalerOrder
-                {
-                    Reference = message.MobileOrderId,
-                    Name = message.Name
-                });
-
-                if (!result)
-                {
-                    tx.Rollback();
-                    return false;
+                    return true;
                 }
 
-                this.simCardOrdersDataStore.Sent(message.MobileOrderId);
-                this.Publish(message.MobileOrderId);
-            }
+                using (var tx = simCardOrdersDataStore.BeginTransaction())
+                {
+                    simCardOrdersDataStore.Add(new SimCardOrder()
+                    {
+                        Name = message.Name,
+                        MobileOrderId = message.MobileOrderId,
+                        Status = "New"
+                    });
+                }
 
-            return true;
+                using (var tx = simCardOrdersDataStore.BeginTransaction())
+                {
+                    var result = await simCardWholesaleService.PostOrder(new SimCardWholesalerOrder
+                    {
+                        Reference = message.MobileOrderId,
+                        Name = message.Name
+                    });
+
+                    if (!result)
+                    {
+                        tx.Rollback();
+                        return false;
+                    }
+
+                    this.simCardOrdersDataStore.Sent(message.MobileOrderId);
+
+                    this.Publish(message.MobileOrderId);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+                return false;
+            }
         }
 
         public void Publish(Guid mobileGlobalId)

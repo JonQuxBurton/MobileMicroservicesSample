@@ -51,8 +51,12 @@ namespace MobileOrderer.Api
             services.Configure<EventBusConfig>(options => Configuration.GetSection("EventBusConfig").Bind(options));
 
             // Shared
+            var config = new Config();
+            Configuration.GetSection("Config").Bind(config);
+            
+
             services.AddDbContext<MobilesContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MobileDatabase")), ServiceLifetime.Singleton);
+                options.UseSqlServer(config.ConnectionString), ServiceLifetime.Singleton);
             services.AddSingleton<IRepository<Mobile>, MobileRepository>();
             services.AddSingleton<IEnumConverter, EnumConverter>();
 

@@ -26,13 +26,20 @@ namespace MobileOrderer.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] OrderToAdd orderToAdd)
+        public ActionResult<MobileResource> Post([FromBody] OrderToAdd orderToAdd)
         {
-            var mobileBuilder = new MobileWhenNewBuilder(this.guidCreator.Create())
-                            .AddInFlightOrder(orderToAdd, this.guidCreator.Create());
-            this.mobileRepository.Add(mobileBuilder.Build());
+            var mobile = new MobileWhenNewBuilder(this.guidCreator.Create())
+                            .AddInFlightOrder(orderToAdd, this.guidCreator.Create())
+                            .Build();
+            this.mobileRepository.Add(mobile);
 
-            return Ok();
+            return new OkObjectResult(new MobileResource 
+            { 
+                Id = mobile.Id,
+                GlobalId = mobile.GlobalId,
+                CreatedAt = mobile.CreatedAt,
+                UpdatedAt = mobile.UpdatedAt
+            });
         }
     }
 }
