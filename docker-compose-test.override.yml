@@ -31,3 +31,4 @@ services:
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardWholesalerWebService;Password=SimCardWholesaler@123
     ports:
       - "5001:80"
+  

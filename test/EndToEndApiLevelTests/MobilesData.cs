@@ -20,15 +20,16 @@ namespace EndToEndApiLevelTests
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var dbOrder = conn.QueryFirstOrDefault(sql, new { mobileOrderId = mobileOrderId.ToString() });
+                var dbRow = conn.QueryFirstOrDefault(sql, new { mobileOrderId = mobileOrderId.ToString() });
 
-                if (dbOrder == null)
+                if (dbRow == null)
                     return null;
 
                 var mobileDataEntity = new MobileDataEntity
                 {
-                    Id = dbOrder.Id,
-                    GlobalId = dbOrder.GlobalId
+                    Id = dbRow.Id,
+                    GlobalId = dbRow.GlobalId,
+                    State = dbRow.State
                 };
                 return mobileDataEntity;
             }
@@ -50,7 +51,8 @@ namespace EndToEndApiLevelTests
                     Id = dbRow.Id,
                     GlobalId = dbRow.GlobalId,
                     Name = dbRow.Name,
-                    ContactPhoneNumber = dbRow.ContactPhoneNumber
+                    ContactPhoneNumber = dbRow.ContactPhoneNumber,
+                    State = dbRow.State
                 };
                 return order;
             }

@@ -3,12 +3,13 @@ using System.Net;
 using System.Net.Http;
 using Xunit;
 using System.Text.Json;
-using System;
 using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace EndToEndApiLevelTests
 {
-    public class Scenario_Order_A_Mobile
+    public class Scenario_Mobile_Order_Completed
     {
         internal void CheckReady()
         {
@@ -46,32 +47,38 @@ namespace EndToEndApiLevelTests
             var stringResponse = await actualResponse.Content.ReadAsStringAsync();
             var actualMobileReturned = JsonSerializer.Deserialize<MobileOrderer.Api.Resources.MobileResource>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-            actualResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            Thread.Sleep(60 * 1000);
 
             var mobileGlobalId = actualMobileReturned.GlobalId;
+            var currentMobile = mobilesData.GetMobile(mobileGlobalId);
+            var currentMobileOrder = mobilesData.GetMobileOrder(currentMobile.Id);
+
+            var externalSimCardWholesalerUrl = "http://localhost:5001/api/orders/complete";
+            var orderToComplete = new SimCardWholesaler.Api.Resources.OrderToComplete
+            {
+                Reference = currentMobileOrder.GlobalId
+            };
+
+            HttpResponseMessage actualCompleteOrderResponse = await client.PostAsJsonAsync(externalSimCardWholesalerUrl, orderToComplete);
+
+            actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             Thread.Sleep(60 * 1000);
 
+            var actualSimCardOrder = simCardsData.TryGetSimCardOrder(currentMobileOrder.GlobalId);
             var actualMobile = mobilesData.GetMobile(mobileGlobalId);
             var actualMobileOrder = mobilesData.GetMobileOrder(actualMobile.Id);
 
-            var actualSimCardOrder = simCardsData.TryGetSimCardOrder(actualMobileOrder.GlobalId);
-            var actualExternalSimCardOrder = externalSimCardOrdersData.TryGetExternalSimCardOrder(actualMobileOrder.GlobalId);
+            // Check Order is Completed in the SIM Cards database
+            actualSimCardOrder.Should().NotBeNull();
+            actualSimCardOrder.Status.Should().Be("Completed");
 
             // Check Mobiles database
             actualMobile.Should().NotBeNull();
-            actualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning));
+            actualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation));
+
             actualMobileOrder.Should().NotBeNull();
-            actualMobileOrder.Name.Should().Be(expectedOrder.Name);
-            actualMobileOrder.ContactPhoneNumber.Should().Be(expectedOrder.ContactPhoneNumber);
-            actualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Sent));
-
-            // Check SIM Cards database
-            actualSimCardOrder.Should().NotBeNull();
-            actualSimCardOrder.Name.Should().Be(expectedOrder.Name);
-
-            // Check External SIM Card system
-            actualExternalSimCardOrder.Should().NotBeNull();
+            actualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Completed));
         }
     }
 }

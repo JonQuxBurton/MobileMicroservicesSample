@@ -31,3 +31,4 @@ services:
     build:
       context: .
       dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
+      
