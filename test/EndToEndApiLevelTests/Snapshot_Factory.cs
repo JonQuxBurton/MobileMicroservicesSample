@@ -6,6 +6,8 @@ namespace EndToEndApiLevelTests
 {
     public class Snapshot_Factory
     {
+
+
         public static Scenario1_Snapshot Take_Scenario1_Snapshot(MobileOrderer.Api.Resources.OrderToAdd scenario1OrderToAdd, Guid mobileGlobalId, Guid orderAMobileOrderReference)
         {
             var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
@@ -47,6 +49,50 @@ namespace EndToEndApiLevelTests
                 ActualMobileOrder = Snapshot(scenario2_completedMobileOrder),
                 ActualMobile = Snapshot(mobilesData.GetMobile(mobileGlobalId)),
                 ActualSimCardOrder = Snapshot(simCardsData.TryGetSimCardOrder(orderAMobileOrderReference))
+            };
+        }
+
+        public static Scenario3_Snapshot Take_Scenario3_Snapshot(Guid mobileGlobalId, Guid activateAMobileOrderReference)
+        {
+            var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
+            var mobileTelecomsNetworkData = new MobileTelecomsNetworkData(connectionString);
+            var externalMobileTelecomsNetworkData = new ExternalMobileTelecomsNetworkData(connectionString);
+
+            var finalActionCheckDelay = TimeSpan.FromSeconds(10);
+
+            var mobilesData = new MobilesData(connectionString);
+
+            // Wait for final action... Mobile ActivateOrder updated to Sent
+            var scenario3_sentMobileOrder = mobilesData.TryGetMobileOrder(activateAMobileOrderReference, "Sent", finalActionCheckDelay);
+            scenario3_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 3 final action (MobileOrder updated to sent)");
+
+            return new Scenario3_Snapshot
+            {
+                ActualMobileOrder = Snapshot(scenario3_sentMobileOrder),
+                ActualMobile = Snapshot(mobilesData.GetMobile(mobileGlobalId)),
+                ActualMobileTelecomsNetworkOrder = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference)),
+                ActualExternalMobileTelecomsNetworkOrder = Snapshot(externalMobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference))
+            };
+        }
+
+        public static Scenario4_Snapshot Take_Scenario4_Snapshot(Guid mobileGlobalId, Guid activateAMobileOrderReference)
+        {
+            var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
+            var mobileTelecomsNetworkData = new MobileTelecomsNetworkData(connectionString);
+
+            var finalActionCheckDelay = TimeSpan.FromSeconds(10);
+
+            var mobilesData = new MobilesData(connectionString);
+
+            // Wait for final action... Mobile ActivateOrder updated to Completed
+            var scenario4_completedMobileOrder = mobilesData.TryGetMobileOrder(activateAMobileOrderReference, "Completed", finalActionCheckDelay);
+            scenario4_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 4 final action (MobileOrder updated to Completed)");
+
+            return new Scenario4_Snapshot
+            {
+                ActualMobileActivateOrderSnapshot = Snapshot(scenario4_completedMobileOrder),
+                ActualMobile = Snapshot(mobilesData.GetMobile(mobileGlobalId)),
+                ActualMobileTelecomsNetworkOrderSnapshot = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference))
             };
         }
 

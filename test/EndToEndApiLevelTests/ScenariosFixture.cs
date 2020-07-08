@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System;
 using System.Threading.Tasks;
-using MobileOrderer.Api.Domain;
 
 namespace EndToEndApiLevelTests
 {
@@ -18,12 +17,7 @@ namespace EndToEndApiLevelTests
         private async Task Execute()
         {
             var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
-
             var mobilesData = new MobilesData(connectionString);
-            var mobileTelecomsNetworkData = new MobileTelecomsNetworkData(connectionString);
-            var externalMobileTelecomsNetworkData = new ExternalMobileTelecomsNetworkData(connectionString);
-
-            var finalActionCheckDelay = TimeSpan.FromSeconds(10);
 
             // Scneario 1 Order a Mobile
             var client = new HttpClient();
@@ -78,15 +72,7 @@ namespace EndToEndApiLevelTests
             var activateAMobileOrderReference = actualActivationOrderReturned.GlobalId;
 
             // Take Scenario 3 Snapshot
-
-            // Wait for final action... Mobile ActivateOrder updated to Sent
-            var scenario3_sentMobileOrder = mobilesData.TryGetMobileOrder(activateAMobileOrderReference, "Sent", finalActionCheckDelay);
-            scenario3_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 3 final action (MobileOrder updated to sent)");
-            
-            Scenario3ActualMobileOrderSnapshot = Snapshot(scenario3_sentMobileOrder);
-            Scenario3MobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
-            Scenario3MobileTelecomsNetworkOrder = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference));
-            Scenario3ExternalMobileTelecomsNetworkOrder = Snapshot(externalMobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference));
+            scenario3_Snapshot = Snapshot_Factory.Take_Scenario3_Snapshot(mobileGlobalId, activateAMobileOrderReference);
 
             // Scenario 4 Complete Activate Order
             var externalMobileTelecomsNetworkUrl = "http://localhost:5002/api/orders/complete";
@@ -100,14 +86,7 @@ namespace EndToEndApiLevelTests
             actualCompleteActivateOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Take Scenario 4 Snapshot
-
-            // Wait for final action... Mobile ActivateOrder updated to Completed
-            var scenario4_completedMobileOrder = mobilesData.TryGetMobileOrder(activateAMobileOrderReference, "Completed", finalActionCheckDelay);
-            scenario4_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 4 final action (MobileOrder updated to Completed)");
-
-            Scenario4ActualMobileActivateOrderSnapshot = Snapshot(scenario4_completedMobileOrder);
-            Scenario4ActualMobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
-            Scenario4MobileTelecomsNetworkOrderSnapshot = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference));
+            scenario4_Snapshot = Snapshot_Factory.Take_Scenario4_Snapshot(mobileGlobalId, activateAMobileOrderReference);
         }
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
@@ -133,16 +112,7 @@ namespace EndToEndApiLevelTests
 
         public Scenario1_Snapshot scenario1_Snapshot { get; private set; }
         public Scenario2_Snapshot scenario2_Snapshot { get; private set; }
-
-
-        public OrderDataEntity Scenario3ActualMobileOrderSnapshot { get; private set; }
-        public MobileDataEntity Scenario3MobileSnapshot { get; private set; }
-        public MobileTelecomsNetwork.EventHandlers.Data.ActivationOrder Scenario3MobileTelecomsNetworkOrder { get; private set; }
-        public ExternalMobileTelecomsNetwork.Api.Data.Order Scenario3ExternalMobileTelecomsNetworkOrder { get; private set; }
-
-
-        public MobileDataEntity Scenario4ActualMobileSnapshot { get; private set; }
-        public OrderDataEntity Scenario4ActualMobileActivateOrderSnapshot { get; private set; }
-        public MobileTelecomsNetwork.EventHandlers.Data.ActivationOrder Scenario4MobileTelecomsNetworkOrderSnapshot { get; private set; }
+        public Scenario3_Snapshot scenario3_Snapshot { get; private set; }
+        public Scenario4_Snapshot scenario4_Snapshot { get; private set; }
     }
 }

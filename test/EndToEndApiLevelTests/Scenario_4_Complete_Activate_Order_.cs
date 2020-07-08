@@ -18,17 +18,19 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
+            var snapshot = scenariosFixture.scenario4_Snapshot;
+
             // Check the Mobile has been updated to Live
-            scenariosFixture.Scenario4ActualMobileSnapshot.Should().NotBeNull();
-            scenariosFixture.Scenario4ActualMobileSnapshot.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.Live));
+            snapshot.ActualMobile.Should().NotBeNull();
+            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.Live));
 
             // Check the Activation Order has updated to Completed
-            scenariosFixture.Scenario4ActualMobileActivateOrderSnapshot.Should().NotBeNull();
-            scenariosFixture.Scenario4ActualMobileActivateOrderSnapshot.State.Should().Be("Completed");
+            snapshot.ActualMobileActivateOrderSnapshot.Should().NotBeNull();
+            snapshot.ActualMobileActivateOrderSnapshot.State.Should().Be("Completed");
 
             // Check the MobileTelecomsNetwork Order has updated to Completed
-            scenariosFixture.Scenario4MobileTelecomsNetworkOrderSnapshot.Should().NotBeNull();
-            scenariosFixture.Scenario4MobileTelecomsNetworkOrderSnapshot.Status.Should().Be("Completed");
+            snapshot.ActualMobileTelecomsNetworkOrderSnapshot.Should().NotBeNull();
+            snapshot.ActualMobileTelecomsNetworkOrderSnapshot.Status.Should().Be("Completed");
         }
     }
 }

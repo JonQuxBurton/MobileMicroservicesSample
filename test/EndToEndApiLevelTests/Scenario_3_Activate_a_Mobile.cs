@@ -18,21 +18,22 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
+            var snapshot = scenariosFixture.scenario3_Snapshot;
+
             // Check the Mobile has been updated to Processing Activation
-            scenariosFixture.Scenario3MobileSnapshot.Should().NotBeNull();
-            //scenariosFixture.Scenario3MobileState.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation));
-            scenariosFixture.Scenario3MobileSnapshot.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation));
+            snapshot.ActualMobile.Should().NotBeNull();
+            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation));
 
             // Check the Mobile ActivateOrder has been updated to Sent
-            scenariosFixture.Scenario3ActualMobileOrderSnapshot.State.Should().Be("Sent");
+            snapshot.ActualMobileOrder.State.Should().Be("Sent");
 
             // Check the Activation Order has been sent to the External Mobile Telecoms Network
-            scenariosFixture.Scenario3MobileTelecomsNetworkOrder.Should().NotBeNull();
-            scenariosFixture.Scenario3MobileTelecomsNetworkOrder.Status.Should().Be("Sent");
+            snapshot.ActualMobileTelecomsNetworkOrder.Should().NotBeNull();
+            snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be("Sent");
 
             // Check the Activation Order has been recevied by the External Mobile Telecoms Network
-            scenariosFixture.Scenario3ExternalMobileTelecomsNetworkOrder.Should().NotBeNull();
-            scenariosFixture.Scenario3ExternalMobileTelecomsNetworkOrder.Status.Should().Be("New");
+            snapshot.ActualExternalMobileTelecomsNetworkOrder.Should().NotBeNull();
+            snapshot.ActualExternalMobileTelecomsNetworkOrder.Status.Should().Be("New");
         }
     }
 }
