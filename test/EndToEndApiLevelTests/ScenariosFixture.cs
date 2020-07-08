@@ -37,8 +37,8 @@ namespace EndToEndApiLevelTests
                 ContactPhoneNumber = "0123456789"
             };
 
-            HttpResponseMessage actualResponse = await client.PostAsJsonAsync(url, Scenario1OrderToAdd);
-            var stringResponse = await actualResponse.Content.ReadAsStringAsync();
+            HttpResponseMessage orderAMobileResponse = await client.PostAsJsonAsync(url, Scenario1OrderToAdd);
+            var stringResponse = await orderAMobileResponse.Content.ReadAsStringAsync();
             var actualMobileReturned = JsonSerializer.Deserialize<MobileOrderer.Api.Resources.MobileResource>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
             var actualMobileOrder = mobilesData.GetMobileOrder(actualMobileReturned.Id);
@@ -46,7 +46,7 @@ namespace EndToEndApiLevelTests
             // Take Scenario 1 Snapshot
             
             // Wait for final action... MobileOrder updated to Sent
-            var scenario1_sentMobileOrder = mobilesData.TryGetSentMobileOrder(actualMobileOrder.GlobalId, finalActionCheckDelay);
+            var scenario1_sentMobileOrder = mobilesData.TryGetMobileOrder(actualMobileOrder.GlobalId, "Sent", finalActionCheckDelay);
             scenario1_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 1 final action (MobileOrder updated to Sent)");
 
             Scenario1ActualMobileOrderSnapshot = Snapshot(scenario1_sentMobileOrder);
@@ -72,7 +72,7 @@ namespace EndToEndApiLevelTests
             // Take Scenario 2 Snapshot
 
             // Wait for final action... MobileOrder updated to Completed
-            var scenario2_completedMobileOrder = mobilesData.TryGetCompletedMobileOrder(currentMobileOrder.GlobalId, finalActionCheckDelay);
+            var scenario2_completedMobileOrder = mobilesData.TryGetMobileOrder(currentMobileOrder.GlobalId, "Completed", finalActionCheckDelay);
             scenario2_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 2 final action (MobileOrder updated to Completed)");
 
             Scenario2ActualMobileOrderSnapshot = Snapshot(scenario2_completedMobileOrder);
@@ -96,7 +96,7 @@ namespace EndToEndApiLevelTests
             // Take Scenario 3 Snapshot
 
             // Wait for final action... Mobile ActivateOrder updated to Sent
-            var scenario3_sentMobileOrder = mobilesData.TryGetSentMobileOrder(actualActivationOrderReturned.GlobalId, finalActionCheckDelay);
+            var scenario3_sentMobileOrder = mobilesData.TryGetMobileOrder(actualActivationOrderReturned.GlobalId, "Sent", finalActionCheckDelay);
             scenario3_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 3 final action (MobileOrder updated to sent)");
             
             Scenario3ActualMobileOrderSnapshot = Snapshot(scenario3_sentMobileOrder);
@@ -118,7 +118,7 @@ namespace EndToEndApiLevelTests
             // Take Scenario 4 Snapshot
 
             // Wait for final action... Mobile ActivateOrder updated to Completed
-            var scenario4_completedMobileOrder = mobilesData.TryGetCompletedMobileOrder(actualActivationOrderReturned.GlobalId, finalActionCheckDelay);
+            var scenario4_completedMobileOrder = mobilesData.TryGetMobileOrder(actualActivationOrderReturned.GlobalId, "Completed", finalActionCheckDelay);
             scenario4_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 4 final action (MobileOrder updated to Completed)");
 
             Scenario4ActualMobileActivateOrderSnapshot = Snapshot(scenario4_completedMobileOrder);

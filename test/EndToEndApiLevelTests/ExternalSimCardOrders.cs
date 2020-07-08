@@ -17,7 +17,7 @@ namespace EndToEndApiLevelTests
 
         public Order TryGetExternalSimCardOrder(Guid reference)
         {
-            return TryGet(GetNewExternalSimCardOrder, reference);
+            return TryGet(() => GetNewExternalSimCardOrder(reference));
         }
 
         public Order GetNewExternalSimCardOrder(Guid reference)

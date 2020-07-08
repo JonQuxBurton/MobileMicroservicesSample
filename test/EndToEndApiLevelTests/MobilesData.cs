@@ -36,49 +36,16 @@ namespace EndToEndApiLevelTests
             }
         }
         
-        public OrderDataEntity TryGetSentMobileOrder(Guid mobileOrderGlobalId, TimeSpan? delay = null)
+        public OrderDataEntity TryGetMobileOrder(Guid mobileOrderGlobalId, string state, TimeSpan? delay = null)
         {
             if (delay.HasValue)
                 Thread.Sleep(delay.Value);
             
-            return TryGet(GetSentMobileOrder, mobileOrderGlobalId);
+            return TryGet(() => GetMobileOrder(mobileOrderGlobalId, state));
         }
 
-        public OrderDataEntity GetSentMobileOrder(Guid globalId)
+        public OrderDataEntity GetMobileOrder(Guid globalId, string state)
         {
-            var state = "Sent";
-            var sql = $"select * from MobileOrderer.Orders where GlobalId=@globalId and State=@state";
-
-            using (var conn = new SqlConnection(connectionString))
-            {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { globalId, state });
-
-                if (dbRow == null)
-                    return null;
-
-                var order = new OrderDataEntity
-                {
-                    Id = dbRow.Id,
-                    GlobalId = dbRow.GlobalId,
-                    Name = dbRow.Name,
-                    ContactPhoneNumber = dbRow.ContactPhoneNumber,
-                    State = dbRow.State
-                };
-                return order;
-            }
-        }
-
-        public OrderDataEntity TryGetCompletedMobileOrder(Guid mobileOrderGlobalId, TimeSpan? delay)
-        {
-            if (delay.HasValue)
-                Thread.Sleep(delay.Value);
-
-            return TryGet(GetCompletedMobileOrder, mobileOrderGlobalId);
-        }
-
-        public OrderDataEntity GetCompletedMobileOrder(Guid globalId)
-        {
-            var state = "Completed";
             var sql = $"select * from MobileOrderer.Orders where GlobalId=@globalId and State=@state";
 
             using (var conn = new SqlConnection(connectionString))

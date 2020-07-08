@@ -8,7 +8,7 @@ namespace EndToEndApiLevelTests
         public const int RetryAttempts = 18;
         private const int RetryIntervalSeconds = 10;
 
-        protected T TryGet<T, U>(Func<U, T> func, U argument) where T : class
+        protected T TryGet<T>(Func<T> func) where T : class
         {
             T result = null;
             var policy = Policy
@@ -17,7 +17,7 @@ namespace EndToEndApiLevelTests
 
             policy.Execute(() =>
             {
-                result = func(argument);
+                result = func();
 
                 if (result == null)
                     throw new Exception();

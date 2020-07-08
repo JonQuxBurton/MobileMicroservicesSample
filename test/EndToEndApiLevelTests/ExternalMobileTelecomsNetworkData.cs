@@ -17,7 +17,7 @@ namespace EndToEndApiLevelTests
 
         public Order TryGetOrder(Guid mobileOrderId)
         {
-            return TryGet(GetOrder, mobileOrderId);
+            return TryGet(() => GetOrder(mobileOrderId));
         }
 
         public Order GetOrder(Guid reference)

@@ -16,7 +16,7 @@ namespace EndToEndApiLevelTests
 
         public ActivationOrder TryGetOrder(Guid mobileOrderId)
         {
-            return TryGet(GetOrder, mobileOrderId);
+            return TryGet(() => GetOrder(mobileOrderId));
         }
 
         public ActivationOrder GetOrder(Guid mobileOrderId)

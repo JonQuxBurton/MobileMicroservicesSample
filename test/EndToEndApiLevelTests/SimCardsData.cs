@@ -16,7 +16,7 @@ namespace EndToEndApiLevelTests
 
         public SimCardOrder TryGetSimCardOrder(Guid mobileOrderId)
         {
-            return TryGet(GetSimCardOrder, mobileOrderId);
+            return TryGet(() => GetSimCardOrder(mobileOrderId));
         }
 
         public SimCardOrder GetSimCardOrder(Guid mobileOrderId)
