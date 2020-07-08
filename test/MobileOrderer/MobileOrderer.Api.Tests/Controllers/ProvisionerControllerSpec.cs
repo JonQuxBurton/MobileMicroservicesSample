@@ -48,6 +48,9 @@ namespace MobileOrderer.Api.Tests.Controllers
                 optionsMock.Setup(x => x.Value).Returns(new Config());
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
+                
+                expectedGlobalId = Guid.NewGuid();
+                guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
 
                 sut = new ProvisionerController(mobileRepositoryMock.Object, guidCreatorMock.Object);
             }
@@ -56,6 +59,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             private readonly Mock<IOptions<Config>> optionsMock;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Guid expectedGlobalId;
 
             [Fact]
             public void AddMobileToRepositoryWithStateOfNew()
@@ -65,8 +69,6 @@ namespace MobileOrderer.Api.Tests.Controllers
                     Name = "Neil Armstrong",
                     ContactPhoneNumber = "01234 123123"
                 };
-                var expectedGlobalId = Guid.NewGuid();
-                guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
 
                 sut.Post(expectedOrder);
 
@@ -83,8 +85,6 @@ namespace MobileOrderer.Api.Tests.Controllers
                     Name = "Neil Armstrong",
                     ContactPhoneNumber = "01234 123123"
                 };
-                var expectedGlobalId = Guid.NewGuid();
-                guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
 
                 sut.Post(expectedOrder);
 
@@ -100,7 +100,18 @@ namespace MobileOrderer.Api.Tests.Controllers
             {
                 var actual = sut.Post(new OrderToAdd());
 
-                actual.Should().BeOfType<OkResult>();
+                actual.Should().BeOfType<OkObjectResult>();
+            }
+            
+            [Fact]
+            public void ReturnNewMobile()
+            {
+                var actual = sut.Post(new OrderToAdd());
+                var actualResult = actual as OkObjectResult;
+                var actualMobile = actualResult.Value as MobileResource;
+
+                actualMobile.Should().NotBeNull();
+                actualMobile.GlobalId.Should().Be(expectedGlobalId);
             }
         }
     }

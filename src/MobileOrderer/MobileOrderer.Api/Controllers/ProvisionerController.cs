@@ -26,7 +26,7 @@ namespace MobileOrderer.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<MobileResource> Post([FromBody] OrderToAdd orderToAdd)
+        public IActionResult Post([FromBody] OrderToAdd orderToAdd)
         {
             var mobile = new MobileWhenNewBuilder(this.guidCreator.Create())
                             .AddInFlightOrder(orderToAdd, this.guidCreator.Create())

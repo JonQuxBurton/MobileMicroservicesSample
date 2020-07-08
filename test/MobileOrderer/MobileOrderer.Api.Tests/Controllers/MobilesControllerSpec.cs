@@ -121,7 +121,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             {
                 var actual = sut.Post(expectedGlobalId , new OrderToAdd());
 
-                actual.Should().BeOfType<OkResult>();
+                actual.Should().BeOfType<OkObjectResult>();
             }
 
             [Fact]
