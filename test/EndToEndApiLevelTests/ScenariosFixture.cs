@@ -38,8 +38,7 @@ namespace EndToEndApiLevelTests
             };
 
             HttpResponseMessage orderAMobileResponse = await client.PostAsJsonAsync(url, Scenario1OrderToAdd);
-            var stringResponse = await orderAMobileResponse.Content.ReadAsStringAsync();
-            var actualMobileReturned = JsonSerializer.Deserialize<MobileOrderer.Api.Resources.MobileResource>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var actualMobileReturned = await DeserializeResponse<MobileOrderer.Api.Resources.MobileResource>(orderAMobileResponse);
 
             var actualMobileOrder = mobilesData.GetMobileOrder(actualMobileReturned.Id);
 
@@ -90,8 +89,7 @@ namespace EndToEndApiLevelTests
             HttpResponseMessage actualActivateTheMobileResponse = await client.PostAsJsonAsync(activateTheMobileUrl, activateTheMobileOrder);
 
             actualActivateTheMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var stringResponse2 = await actualActivateTheMobileResponse.Content.ReadAsStringAsync();
-            var actualActivationOrderReturned = JsonSerializer.Deserialize<MobileOrderer.Api.Resources.OrderResource>(stringResponse2, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var actualActivationOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
 
             // Take Scenario 3 Snapshot
 
@@ -124,6 +122,13 @@ namespace EndToEndApiLevelTests
             Scenario4ActualMobileActivateOrderSnapshot = Snapshot(scenario4_completedMobileOrder);
             Scenario4ActualMobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
             Scenario4MobileTelecomsNetworkOrderSnapshot = Snapshot(mobileTelecomsNetworkData.TryGetOrder(actualActivationOrderReturned.GlobalId));
+        }
+
+        private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
+        {
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var deserialized = JsonSerializer.Deserialize<T>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            return deserialized;
         }
 
         private T Snapshot<T>(T original) where T: class
