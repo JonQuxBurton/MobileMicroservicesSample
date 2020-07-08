@@ -8,7 +8,7 @@ using MobileOrderer.Api.Domain;
 
 namespace EndToEndApiLevelTests
 {
-    public class ScenariosFixture : IDisposable
+    public partial class ScenariosFixture : IDisposable
     {
         public ScenariosFixture()
         {
@@ -20,8 +20,6 @@ namespace EndToEndApiLevelTests
             var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
 
             var mobilesData = new MobilesData(connectionString);
-            var simCardsData = new SimCardsData(connectionString);
-            var externalSimCardOrdersData = new ExternalSimCardOrders(connectionString);
             var mobileTelecomsNetworkData = new MobileTelecomsNetworkData(connectionString);
             var externalMobileTelecomsNetworkData = new ExternalMobileTelecomsNetworkData(connectionString);
 
@@ -31,13 +29,13 @@ namespace EndToEndApiLevelTests
             var client = new HttpClient();
             var url = "http://localhost:5000/api/provisioner";
 
-            Scenario1OrderToAdd = new MobileOrderer.Api.Resources.OrderToAdd
+            var scenario1OrderToAdd = new MobileOrderer.Api.Resources.OrderToAdd
             {
                 Name = "Neil Armstrong",
                 ContactPhoneNumber = "0123456789"
             };
 
-            HttpResponseMessage orderAMobileResponse = await client.PostAsJsonAsync(url, Scenario1OrderToAdd);
+            HttpResponseMessage orderAMobileResponse = await client.PostAsJsonAsync(url, scenario1OrderToAdd);
 
             orderAMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -48,15 +46,7 @@ namespace EndToEndApiLevelTests
             var orderAMobileOrderReference = actualMobileOrder.GlobalId;
 
             // Take Scenario 1 Snapshot
-
-            // Wait for final action... MobileOrder updated to Sent
-            var scenario1_sentMobileOrder = mobilesData.TryGetMobileOrder(orderAMobileOrderReference, "Sent", finalActionCheckDelay);
-            scenario1_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 1 final action (MobileOrder updated to Sent)");
-
-            Scenario1ActualMobileSnapshot = Snapshot(mobilesData.GetMobile(actualMobileReturned.GlobalId));
-            Scenario1ActualMobileOrderSnapshot = Snapshot(scenario1_sentMobileOrder);
-            Scenario1ExternalSimCardOrder = externalSimCardOrdersData.TryGetExternalSimCardOrder(orderAMobileOrderReference);
-            Scenario1ActualSimCardOrder = simCardsData.TryGetSimCardOrder(orderAMobileOrderReference);
+            scenario1_Snapshot = Snapshot_Factory.Take_Scenario1_Snapshot(scenario1OrderToAdd, mobileGlobalId, orderAMobileOrderReference);
 
             // Scenario 2 Complete Mobile Order
             var externalSimCardWholesalerUrl = "http://localhost:5001/api/orders/complete";
@@ -70,14 +60,7 @@ namespace EndToEndApiLevelTests
             actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Take Scenario 2 Snapshot
-
-            // Wait for final action... MobileOrder updated to Completed
-            var scenario2_completedMobileOrder = mobilesData.TryGetMobileOrder(orderAMobileOrderReference, "Completed", finalActionCheckDelay);
-            scenario2_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 2 final action (MobileOrder updated to Completed)");
-
-            Scenario2ActualMobileOrderSnapshot = Snapshot(scenario2_completedMobileOrder);
-            Scenario2MobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
-            Scenario2ActualSimCardOrderSnapshot = Snapshot(simCardsData.TryGetSimCardOrder(orderAMobileOrderReference));
+            scenario2_Snapshot = Snapshot_Factory.Take_Scenario2_Snapshot(mobileGlobalId, orderAMobileOrderReference);
 
             // Scenario 3 Activate a Mobile
             var activateTheMobileUrl = $"http://localhost:5000/api/mobiles/{mobileGlobalId}/activate";
@@ -148,15 +131,9 @@ namespace EndToEndApiLevelTests
 
         }
 
-        public MobileOrderer.Api.Resources.OrderToAdd Scenario1OrderToAdd { get; private set; }
-        public MobileDataEntity Scenario1ActualMobileSnapshot { get; private set; }
-        public SimCards.EventHandlers.Data.SimCardOrder Scenario1ActualSimCardOrder { get; private set; }
-        public OrderDataEntity Scenario1ActualMobileOrderSnapshot { get; private set; }
-        public SimCardWholesaler.Api.Data.Order Scenario1ExternalSimCardOrder { get; private set; }
+        public Scenario1_Snapshot scenario1_Snapshot { get; private set; }
+        public Scenario2_Snapshot scenario2_Snapshot { get; private set; }
 
-        public MobileDataEntity Scenario2MobileSnapshot { get; private set; }
-        public SimCards.EventHandlers.Data.SimCardOrder Scenario2ActualSimCardOrderSnapshot { get; private set; }
-        public OrderDataEntity Scenario2ActualMobileOrderSnapshot { get; private set; }
 
         public OrderDataEntity Scenario3ActualMobileOrderSnapshot { get; private set; }
         public MobileDataEntity Scenario3MobileSnapshot { get; private set; }

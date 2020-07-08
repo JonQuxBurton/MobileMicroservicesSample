@@ -18,25 +18,23 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
+            var snapshot = scenariosFixture.scenario1_Snapshot;
 
             // Check Mobiles database
-            var expectedOrder = scenariosFixture.Scenario1OrderToAdd;
-            var actualMobile = scenariosFixture.Scenario1ActualMobileSnapshot;
-            actualMobile.Should().NotBeNull();
-            actualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning));
-            var actualMobileOrder = scenariosFixture.Scenario1ActualMobileOrderSnapshot;
-            actualMobileOrder.Should().NotBeNull();
-            actualMobileOrder.Name.Should().Be(expectedOrder.Name);
-            actualMobileOrder.ContactPhoneNumber.Should().Be(expectedOrder.ContactPhoneNumber);
-            actualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Sent));
+            var expectedOrder = snapshot.OrderToAdd;
+            snapshot.ActualMobile.Should().NotBeNull();
+            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning));
+            snapshot.ActualMobileOrder.Should().NotBeNull();
+            snapshot.ActualMobileOrder.Name.Should().Be(expectedOrder.Name);
+            snapshot.ActualMobileOrder.ContactPhoneNumber.Should().Be(expectedOrder.ContactPhoneNumber);
+            snapshot.ActualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Sent));
 
             // Check SIM Cards database
-            var actualSimCardOrder = scenariosFixture.Scenario1ActualSimCardOrder;
-            actualSimCardOrder.Should().NotBeNull();
-            actualSimCardOrder.Name.Should().Be(expectedOrder.Name);
+            snapshot.ActualSimCardOrder.Should().NotBeNull();
+            snapshot.ActualSimCardOrder.Name.Should().Be(expectedOrder.Name);
 
             // Check External SIM Card system
-            scenariosFixture.Scenario1ExternalSimCardOrder.Should().NotBeNull();
+            snapshot.ActualExternalSimCardOrder.Should().NotBeNull();
         }
     }
 }

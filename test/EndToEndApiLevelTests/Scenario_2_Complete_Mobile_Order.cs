@@ -18,16 +18,18 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
+            var snapshot = scenariosFixture.scenario2_Snapshot;
+
             // Check Order is Completed in the SIM Cards database
-            scenariosFixture.Scenario2ActualSimCardOrderSnapshot.Should().NotBeNull();
-            scenariosFixture.Scenario2ActualSimCardOrderSnapshot.Status.Should().Be("Completed");
+            snapshot.ActualSimCardOrder.Should().NotBeNull();
+            snapshot.ActualSimCardOrder.Status.Should().Be("Completed");
 
             // Check Mobiles database
-            scenariosFixture.Scenario2MobileSnapshot.Should().NotBeNull();
-            scenariosFixture.Scenario2MobileSnapshot.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation));
+            snapshot.ActualMobile.Should().NotBeNull();
+            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation));
 
-            scenariosFixture.Scenario2ActualMobileOrderSnapshot.Should().NotBeNull();
-            scenariosFixture.Scenario2ActualMobileOrderSnapshot.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Completed));
+            snapshot.ActualMobileOrder.Should().NotBeNull();
+            snapshot.ActualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Completed));
         }
     }
 }
