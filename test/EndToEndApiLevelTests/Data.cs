@@ -1,36 +1,30 @@
 ﻿using Polly;
 using System;
-using System.Threading;
 
 namespace EndToEndApiLevelTests
 {
     public class Data
     {
+        public const int RetryAttempts = 18;
+        private const int RetryIntervalSeconds = 10;
+
         protected T TryGet<T, U>(Func<U, T> func, U argument) where T : class
         {
-            T target = null;
-            Thread.Sleep(10 * 1000);
-
+            T result = null;
             var policy = Policy
               .Handle<Exception>()
-              .WaitAndRetry(new[]
-              {
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(40),
-              });
+              .WaitAndRetry(retryCount: RetryAttempts, retryNumber => TimeSpan.FromSeconds(RetryIntervalSeconds));
 
             policy.Execute(() =>
             {
-                target = func(argument);
+                result = func(argument);
 
-                if (target == null)
+                if (result == null)
                     throw new Exception();
 
             });
 
-            return target;
+            return result;
         }
     }
 }

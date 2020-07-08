@@ -32,3 +32,17 @@ services:
       context: .
       dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
       
+  mobiletelecomsnetwork.eventhandlers:
+    image: ${DOCKER_REGISTRY}mobiletelecomsnetworkhandlers
+    build:
+      context: .
+      dockerfile: src/MobileTelecomsNetwork/MobileTelecomsNetwork.EventHandlers/Dockerfile
+    stdin_open: true
+    tty: true
+    
+  externalmobiletelecomsnetwork.api:
+    image: ${DOCKER_REGISTRY}externalmobiletelecomsnetwork
+    build:
+      context: .
+      dockerfile: src/ExternalMobileTelecomsNetwork/ExternalMobileTelecomsNetwork.Api/Dockerfile
+      

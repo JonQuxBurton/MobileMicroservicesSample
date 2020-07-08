@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MobileTelecomsNetwork.EventHandlers": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

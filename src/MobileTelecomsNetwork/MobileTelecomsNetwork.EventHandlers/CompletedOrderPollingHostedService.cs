@@ -18,7 +18,7 @@ namespace MobileTelecomsNetwork.EventHandlers
         private readonly IActivationOrderChecker activationOrderChecker;
         private Timer timer;
 
-        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger, 
+        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
             IDataStore dataStore,
             IActivationOrderChecker activationOrderChecker)
         {
@@ -37,11 +37,18 @@ namespace MobileTelecomsNetwork.EventHandlers
 
         public async void DoWork(object state)
         {
-            var sentOrders = dataStore.GetSent().Take(BatchSize);
-
-            foreach (var sentOrder in sentOrders)
+            try
             {
-                await activationOrderChecker.Check(sentOrder);
+                var sentOrders = dataStore.GetSent().Take(BatchSize);
+
+                foreach (var sentOrder in sentOrders)
+                {
+                    await activationOrderChecker.Check(sentOrder);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
             }
         }
 

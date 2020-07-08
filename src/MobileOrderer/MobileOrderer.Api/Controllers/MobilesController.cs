@@ -45,7 +45,15 @@ namespace MobileOrderer.Api.Controllers
             mobile.Activate(inFlightOrder);
             this.mobileRepository.Update(mobile);
 
-            return Ok();
+            return new OkObjectResult(new OrderResource {
+                GlobalId = dataEntity.GlobalId,
+                Name = dataEntity.Name,
+                ContactPhoneNumber = dataEntity.ContactPhoneNumber,
+                State = dataEntity.State,
+                Type = dataEntity.Type,
+                CreatedAt = dataEntity.CreatedAt,
+                UpdatedAt = dataEntity.UpdatedAt
+            });
         }
 
         [HttpGet("{id}")]

@@ -25,7 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api\ExternalMobileTelecomsNetwork.Api.csproj" />
     <ProjectReference Include="..\..\src\MobileOrderer\MobileOrderer.Api\MobileOrderer.Api.csproj" />
+    <ProjectReference Include="..\..\src\MobileTelecomsNetwork\MobileTelecomsNetwork.EventHandlers\MobileTelecomsNetwork.EventHandlers.csproj" />
     <ProjectReference Include="..\..\src\SimCards\SimCards.EventHandlers\SimCards.EventHandlers.csproj" />
     <ProjectReference Include="..\..\src\SimCardWholesaler\SimCardWholesaler.Api\SimCardWholesaler.Api.csproj" />
   </ItemGroup>
