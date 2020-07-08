@@ -38,30 +38,31 @@ namespace EndToEndApiLevelTests
             };
 
             HttpResponseMessage orderAMobileResponse = await client.PostAsJsonAsync(url, Scenario1OrderToAdd);
-            var actualMobileReturned = await DeserializeResponse<MobileOrderer.Api.Resources.MobileResource>(orderAMobileResponse);
 
+            orderAMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            // Gather needed data
+            var actualMobileReturned = await DeserializeResponse<MobileOrderer.Api.Resources.MobileResource>(orderAMobileResponse);
             var actualMobileOrder = mobilesData.GetMobileOrder(actualMobileReturned.Id);
+            var mobileGlobalId = actualMobileReturned.GlobalId;
+            var orderAMobileOrderReference = actualMobileOrder.GlobalId;
 
             // Take Scenario 1 Snapshot
-            
+
             // Wait for final action... MobileOrder updated to Sent
-            var scenario1_sentMobileOrder = mobilesData.TryGetMobileOrder(actualMobileOrder.GlobalId, "Sent", finalActionCheckDelay);
+            var scenario1_sentMobileOrder = mobilesData.TryGetMobileOrder(orderAMobileOrderReference, "Sent", finalActionCheckDelay);
             scenario1_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 1 final action (MobileOrder updated to Sent)");
 
-            Scenario1ActualMobileOrderSnapshot = Snapshot(scenario1_sentMobileOrder);
-            Scenario1ExternalSimCardOrder = externalSimCardOrdersData.TryGetExternalSimCardOrder(actualMobileOrder.GlobalId);
             Scenario1ActualMobileSnapshot = Snapshot(mobilesData.GetMobile(actualMobileReturned.GlobalId));
-            Scenario1ActualSimCardOrder = simCardsData.TryGetSimCardOrder(Scenario1ActualMobileOrderSnapshot.GlobalId);
-
-            var mobileGlobalId = actualMobileReturned.GlobalId;
-            var currentMobile = mobilesData.GetMobile(mobileGlobalId);
-            var currentMobileOrder = mobilesData.GetMobileOrder(currentMobile.Id);
+            Scenario1ActualMobileOrderSnapshot = Snapshot(scenario1_sentMobileOrder);
+            Scenario1ExternalSimCardOrder = externalSimCardOrdersData.TryGetExternalSimCardOrder(orderAMobileOrderReference);
+            Scenario1ActualSimCardOrder = simCardsData.TryGetSimCardOrder(orderAMobileOrderReference);
 
             // Scenario 2 Complete Mobile Order
             var externalSimCardWholesalerUrl = "http://localhost:5001/api/orders/complete";
             var orderToComplete = new SimCardWholesaler.Api.Resources.OrderToComplete
             {
-                Reference = currentMobileOrder.GlobalId
+                Reference = orderAMobileOrderReference
             };
 
             HttpResponseMessage actualCompleteOrderResponse = await client.PostAsJsonAsync(externalSimCardWholesalerUrl, orderToComplete);
@@ -71,12 +72,12 @@ namespace EndToEndApiLevelTests
             // Take Scenario 2 Snapshot
 
             // Wait for final action... MobileOrder updated to Completed
-            var scenario2_completedMobileOrder = mobilesData.TryGetMobileOrder(currentMobileOrder.GlobalId, "Completed", finalActionCheckDelay);
+            var scenario2_completedMobileOrder = mobilesData.TryGetMobileOrder(orderAMobileOrderReference, "Completed", finalActionCheckDelay);
             scenario2_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 2 final action (MobileOrder updated to Completed)");
 
             Scenario2ActualMobileOrderSnapshot = Snapshot(scenario2_completedMobileOrder);
             Scenario2MobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
-            Scenario2ActualSimCardOrderSnapshot = Snapshot(simCardsData.TryGetSimCardOrder(currentMobileOrder.GlobalId));
+            Scenario2ActualSimCardOrderSnapshot = Snapshot(simCardsData.TryGetSimCardOrder(orderAMobileOrderReference));
 
             // Scenario 3 Activate a Mobile
             var activateTheMobileUrl = $"http://localhost:5000/api/mobiles/{mobileGlobalId}/activate";
@@ -89,24 +90,26 @@ namespace EndToEndApiLevelTests
             HttpResponseMessage actualActivateTheMobileResponse = await client.PostAsJsonAsync(activateTheMobileUrl, activateTheMobileOrder);
 
             actualActivateTheMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            
             var actualActivationOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
+            var activateAMobileOrderReference = actualActivationOrderReturned.GlobalId;
 
             // Take Scenario 3 Snapshot
 
             // Wait for final action... Mobile ActivateOrder updated to Sent
-            var scenario3_sentMobileOrder = mobilesData.TryGetMobileOrder(actualActivationOrderReturned.GlobalId, "Sent", finalActionCheckDelay);
+            var scenario3_sentMobileOrder = mobilesData.TryGetMobileOrder(activateAMobileOrderReference, "Sent", finalActionCheckDelay);
             scenario3_sentMobileOrder.Should().NotBeNull("Failed to complete Scenario 3 final action (MobileOrder updated to sent)");
             
             Scenario3ActualMobileOrderSnapshot = Snapshot(scenario3_sentMobileOrder);
             Scenario3MobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
-            Scenario3MobileTelecomsNetworkOrder = Snapshot(mobileTelecomsNetworkData.TryGetOrder(actualActivationOrderReturned.GlobalId));
-            Scenario3ExternalMobileTelecomsNetworkOrder = Snapshot(externalMobileTelecomsNetworkData.TryGetOrder(actualActivationOrderReturned.GlobalId));
+            Scenario3MobileTelecomsNetworkOrder = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference));
+            Scenario3ExternalMobileTelecomsNetworkOrder = Snapshot(externalMobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference));
 
             // Scenario 4 Complete Activate Order
             var externalMobileTelecomsNetworkUrl = "http://localhost:5002/api/orders/complete";
             var activateOrderToComplete = new ExternalMobileTelecomsNetwork.Api.Resources.OrderToComplete
             {
-                Reference = actualActivationOrderReturned.GlobalId
+                Reference = activateAMobileOrderReference
             };
 
             HttpResponseMessage actualCompleteActivateOrderResponse = await client.PostAsJsonAsync(externalMobileTelecomsNetworkUrl, activateOrderToComplete);
@@ -116,12 +119,12 @@ namespace EndToEndApiLevelTests
             // Take Scenario 4 Snapshot
 
             // Wait for final action... Mobile ActivateOrder updated to Completed
-            var scenario4_completedMobileOrder = mobilesData.TryGetMobileOrder(actualActivationOrderReturned.GlobalId, "Completed", finalActionCheckDelay);
+            var scenario4_completedMobileOrder = mobilesData.TryGetMobileOrder(activateAMobileOrderReference, "Completed", finalActionCheckDelay);
             scenario4_completedMobileOrder.Should().NotBeNull("Failed to complete Scenario 4 final action (MobileOrder updated to Completed)");
 
             Scenario4ActualMobileActivateOrderSnapshot = Snapshot(scenario4_completedMobileOrder);
             Scenario4ActualMobileSnapshot = Snapshot(mobilesData.GetMobile(mobileGlobalId));
-            Scenario4MobileTelecomsNetworkOrderSnapshot = Snapshot(mobileTelecomsNetworkData.TryGetOrder(actualActivationOrderReturned.GlobalId));
+            Scenario4MobileTelecomsNetworkOrderSnapshot = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference));
         }
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
