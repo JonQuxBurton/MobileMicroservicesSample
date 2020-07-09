@@ -27,10 +27,11 @@ namespace EndToEndApiLevelTests
             snapshot.ActualSimCardOrder.Should().NotBeNull();
             snapshot.ActualSimCardOrder.Status.Should().Be("Completed");
 
-            // Check Mobiles database
+            // Check Mobile has been updated
             snapshot.ActualMobile.Should().NotBeNull();
             snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 
+            // Check Mobile Order has been updated
             snapshot.ActualMobileOrder.Should().NotBeNull();
             snapshot.ActualMobileOrder.State.Should().Be(expectedMobileOrderState);
         }

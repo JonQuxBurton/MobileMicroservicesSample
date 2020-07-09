@@ -23,20 +23,22 @@ namespace EndToEndApiLevelTests
             var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning);
             var expectedOrderMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Sent);
 
-            // Check Mobiles database
+            // Check Mobile has been updated
             var expectedOrder = snapshot.OrderToAdd;
             snapshot.ActualMobile.Should().NotBeNull();
             snapshot.ActualMobile.State.Should().Be(expectedMobileState);
+
+            // Check Mobile Order has been updated
             snapshot.ActualMobileOrder.Should().NotBeNull();
             snapshot.ActualMobileOrder.Name.Should().Be(expectedOrder.Name);
             snapshot.ActualMobileOrder.ContactPhoneNumber.Should().Be(expectedOrder.ContactPhoneNumber);
             snapshot.ActualMobileOrder.State.Should().Be(expectedOrderMobileState);
 
-            // Check SIM Cards database
+            // Check SIM Card Order has been updated
             snapshot.ActualSimCardOrder.Should().NotBeNull();
             snapshot.ActualSimCardOrder.Name.Should().Be(expectedOrder.Name);
 
-            // Check External SIM Card system
+            // Check the Provisioning Order has been sent to the External SIM Card system
             snapshot.ActualExternalSimCardOrder.Should().NotBeNull();
         }
     }
