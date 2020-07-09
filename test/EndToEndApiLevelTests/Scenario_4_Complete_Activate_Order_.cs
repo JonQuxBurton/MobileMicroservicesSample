@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Xunit;
-using System;
+using Utils.Enums;
 
 namespace EndToEndApiLevelTests
 {
@@ -18,15 +18,18 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
-            var snapshot = scenariosFixture.scenario4_Snapshot;
+            var snapshot = scenariosFixture.Scenario4_Snapshot;
+            var enumConverter = new EnumConverter();
+            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.Live);
+            var expectedMobileOrderState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Completed);
 
             // Check the Mobile has been updated to Live
             snapshot.ActualMobile.Should().NotBeNull();
-            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.Live));
+            snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 
             // Check the Activation Order has updated to Completed
             snapshot.ActualMobileActivateOrderSnapshot.Should().NotBeNull();
-            snapshot.ActualMobileActivateOrderSnapshot.State.Should().Be("Completed");
+            snapshot.ActualMobileActivateOrderSnapshot.State.Should().Be(expectedMobileOrderState);
 
             // Check the MobileTelecomsNetwork Order has updated to Completed
             snapshot.ActualMobileTelecomsNetworkOrderSnapshot.Should().NotBeNull();

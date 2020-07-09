@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Xunit;
-using System;
+using Utils.Enums;
 
 namespace EndToEndApiLevelTests
 {
@@ -18,16 +18,19 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
-            var snapshot = scenariosFixture.scenario1_Snapshot;
+            var snapshot = scenariosFixture.Scenario1_Snapshot;
+            var enumConverter = new EnumConverter();
+            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning);
+            var expectedOrderMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Sent);
 
             // Check Mobiles database
             var expectedOrder = snapshot.OrderToAdd;
             snapshot.ActualMobile.Should().NotBeNull();
-            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning));
+            snapshot.ActualMobile.State.Should().Be(expectedMobileState);
             snapshot.ActualMobileOrder.Should().NotBeNull();
             snapshot.ActualMobileOrder.Name.Should().Be(expectedOrder.Name);
             snapshot.ActualMobileOrder.ContactPhoneNumber.Should().Be(expectedOrder.ContactPhoneNumber);
-            snapshot.ActualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Sent));
+            snapshot.ActualMobileOrder.State.Should().Be(expectedOrderMobileState);
 
             // Check SIM Cards database
             snapshot.ActualSimCardOrder.Should().NotBeNull();

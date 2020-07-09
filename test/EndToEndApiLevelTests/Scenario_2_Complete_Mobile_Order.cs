@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Xunit;
-using System;
+using Utils.Enums;
 
 namespace EndToEndApiLevelTests
 {
@@ -18,7 +18,10 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
-            var snapshot = scenariosFixture.scenario2_Snapshot;
+            var snapshot = scenariosFixture.Scenario2_Snapshot;
+            var enumConverter = new EnumConverter();
+            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation);
+            var expectedMobileOrderState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Completed);
 
             // Check Order is Completed in the SIM Cards database
             snapshot.ActualSimCardOrder.Should().NotBeNull();
@@ -26,10 +29,10 @@ namespace EndToEndApiLevelTests
 
             // Check Mobiles database
             snapshot.ActualMobile.Should().NotBeNull();
-            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation));
+            snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 
             snapshot.ActualMobileOrder.Should().NotBeNull();
-            snapshot.ActualMobileOrder.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Order.State), MobileOrderer.Api.Domain.Order.State.Completed));
+            snapshot.ActualMobileOrder.State.Should().Be(expectedMobileOrderState);
         }
     }
 }

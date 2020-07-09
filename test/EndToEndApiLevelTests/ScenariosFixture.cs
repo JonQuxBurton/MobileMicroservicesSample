@@ -19,6 +19,8 @@ namespace EndToEndApiLevelTests
             var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
             var mobilesData = new MobilesData(connectionString);
 
+            var snapshotFactory = new SnapshotFactory(connectionString, TimeSpan.FromSeconds(10));
+
             // Scneario 1 Order a Mobile
             var client = new HttpClient();
             var url = "http://localhost:5000/api/provisioner";
@@ -40,7 +42,7 @@ namespace EndToEndApiLevelTests
             var orderAMobileOrderReference = actualMobileOrder.GlobalId;
 
             // Take Scenario 1 Snapshot
-            scenario1_Snapshot = Snapshot_Factory.Take_Scenario1_Snapshot(scenario1OrderToAdd, mobileGlobalId, orderAMobileOrderReference);
+            Scenario1_Snapshot = snapshotFactory.Take_Scenario1_Snapshot(scenario1OrderToAdd, mobileGlobalId, orderAMobileOrderReference);
 
             // Scenario 2 Complete Mobile Order
             var externalSimCardWholesalerUrl = "http://localhost:5001/api/orders/complete";
@@ -54,7 +56,7 @@ namespace EndToEndApiLevelTests
             actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Take Scenario 2 Snapshot
-            scenario2_Snapshot = Snapshot_Factory.Take_Scenario2_Snapshot(mobileGlobalId, orderAMobileOrderReference);
+            Scenario2_Snapshot = snapshotFactory.Take_Scenario2_Snapshot(mobileGlobalId, orderAMobileOrderReference);
 
             // Scenario 3 Activate a Mobile
             var activateTheMobileUrl = $"http://localhost:5000/api/mobiles/{mobileGlobalId}/activate";
@@ -72,7 +74,7 @@ namespace EndToEndApiLevelTests
             var activateAMobileOrderReference = actualActivationOrderReturned.GlobalId;
 
             // Take Scenario 3 Snapshot
-            scenario3_Snapshot = Snapshot_Factory.Take_Scenario3_Snapshot(mobileGlobalId, activateAMobileOrderReference);
+            Scenario3_Snapshot = snapshotFactory.Take_Scenario3_Snapshot(mobileGlobalId, activateAMobileOrderReference);
 
             // Scenario 4 Complete Activate Order
             var externalMobileTelecomsNetworkUrl = "http://localhost:5002/api/orders/complete";
@@ -86,7 +88,7 @@ namespace EndToEndApiLevelTests
             actualCompleteActivateOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Take Scenario 4 Snapshot
-            scenario4_Snapshot = Snapshot_Factory.Take_Scenario4_Snapshot(mobileGlobalId, activateAMobileOrderReference);
+            Scenario4_Snapshot = snapshotFactory.Take_Scenario4_Snapshot(mobileGlobalId, activateAMobileOrderReference);
         }
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
@@ -96,23 +98,14 @@ namespace EndToEndApiLevelTests
             return deserialized;
         }
 
-        private T Snapshot<T>(T original) where T: class
-        {
-            if (original == null)
-                return null;
-
-            var serialized = JsonSerializer.Serialize(original);
-            return JsonSerializer.Deserialize<T>(serialized);
-        }
-
         public void Dispose()
         {
 
         }
 
-        public Scenario1_Snapshot scenario1_Snapshot { get; private set; }
-        public Scenario2_Snapshot scenario2_Snapshot { get; private set; }
-        public Scenario3_Snapshot scenario3_Snapshot { get; private set; }
-        public Scenario4_Snapshot scenario4_Snapshot { get; private set; }
+        public Scenario1_Snapshot Scenario1_Snapshot { get; private set; }
+        public Scenario2_Snapshot Scenario2_Snapshot { get; private set; }
+        public Scenario3_Snapshot Scenario3_Snapshot { get; private set; }
+        public Scenario4_Snapshot Scenario4_Snapshot { get; private set; }
     }
 }

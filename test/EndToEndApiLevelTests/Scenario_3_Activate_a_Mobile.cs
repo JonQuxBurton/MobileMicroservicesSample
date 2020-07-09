@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 using System;
+using Utils.Enums;
 
 namespace EndToEndApiLevelTests
 {
@@ -18,11 +19,13 @@ namespace EndToEndApiLevelTests
         [Fact]
         public void Execute()
         {
-            var snapshot = scenariosFixture.scenario3_Snapshot;
+            var snapshot = scenariosFixture.Scenario3_Snapshot;
+            var enumConverter = new EnumConverter();
+            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation);
 
             // Check the Mobile has been updated to Processing Activation
             snapshot.ActualMobile.Should().NotBeNull();
-            snapshot.ActualMobile.State.Should().Be(Enum.GetName(typeof(MobileOrderer.Api.Domain.Mobile.State), MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation));
+            snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 
             // Check the Mobile ActivateOrder has been updated to Sent
             snapshot.ActualMobileOrder.State.Should().Be("Sent");
