@@ -1,0 +1,31 @@
+###==================================================
+### Check Infrastructure
+###==================================================
+
+### Check goaws
+POST http://localhost:4100/
+Authorization:AL03THI20QLMNG01QOPU5EDS/ftg7tCesw0Yr%Xr%3jV2KOyKaoLzZXre3sIAWOI8
+Content-Type:multipart/form-data; boundary=--------------------------669459213080013617420231
+
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Action"
+
+ListQueues
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Version"
+
+2012-11-05
+----------------------------669459213080013617420231--
+
+###==================================================
+### Check Services
+###==================================================
+
+### Check Mobile Orderer
+GET http://localhost:5000/api/provisioner/status
+
+### Check SimCard Wholesaler
+GET http://localhost:5001/api/orders/status
+
+### Check ExternalMobileTelecomsNetwork.Api
+GET http://localhost:5002/api/orders/status

@@ -37,6 +37,7 @@ namespace EndToEndApiLevelTests
             // Check SIM Card Order has been updated
             snapshot.ActualSimCardOrder.Should().NotBeNull();
             snapshot.ActualSimCardOrder.Name.Should().Be(expectedOrder.Name);
+            snapshot.ActualSimCardOrder.Status.Should().Be("Sent");
 
             // Check the Provisioning Order has been sent to the External SIM Card system
             snapshot.ActualExternalSimCardOrder.Should().NotBeNull();

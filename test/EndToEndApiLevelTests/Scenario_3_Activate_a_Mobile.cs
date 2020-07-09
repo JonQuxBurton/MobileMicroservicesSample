@@ -23,7 +23,7 @@ namespace EndToEndApiLevelTests
             var enumConverter = new EnumConverter();
             var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation);
 
-            // Check the Mobile has been updated to Processing Activation
+            // Check the Mobile has been updated to ProcessingActivation
             snapshot.ActualMobile.Should().NotBeNull();
             snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 
