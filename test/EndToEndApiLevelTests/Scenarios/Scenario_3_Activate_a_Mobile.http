@@ -1,8 +1,0 @@
-### Activate a Mobile
-POST http://localhost:5000/api/mobiles/9DED12FC-C58D-4898-A477-91D77A9866D3/activate
-content-type: application/json
-
-{
-	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "00123456789"
-}

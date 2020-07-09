@@ -16,7 +16,7 @@ content-type: application/json
 }
 
 ### Get a Mobile
-GET http://localhost:5000/api/mobiles/1ABCCDF6-CD0A-4227-97C3-1FF2374096C2
+GET http://localhost:5000/api/mobiles/ef0e5e84-b562-4391-bdd6-c699d0acba0e
 
 ### Activate a Mobile
 POST http://localhost:5000/api/mobiles/9DED12FC-C58D-4898-A477-91D77A9866D3/activate

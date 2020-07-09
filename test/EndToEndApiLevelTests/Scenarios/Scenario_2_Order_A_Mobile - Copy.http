@@ -1,9 +1,0 @@
-### Order a Mobile
-POST http://localhost:5000/api/provisioner
-content-type: application/json
-
-{
-	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "00123456789"
-}
-

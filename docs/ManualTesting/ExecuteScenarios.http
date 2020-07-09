@@ -1,0 +1,37 @@
+
+### Scenario 1 - Order a Mobile
+POST http://localhost:5000/api/provisioner
+content-type: application/json
+
+{
+	"Name" : "Neil Armstrong",
+	"ContactPhoneNumber" : "00123456789"
+}
+
+### Get the Mobile, so we can get the Order Reference (orderHistory.globalId)
+GET http://localhost:5000/api/mobiles/ef0e5e84-b562-4391-bdd6-c699d0acba0e
+
+### Scenario 2 - Mobile Order Completed
+POST http://localhost:5001/api/orders/complete
+content-type: application/json
+
+{
+	"Reference" : "0281EACB-AA2B-4340-A0BD-181B32060942"
+}
+
+### Scenario 3 - Activate a Mobile
+POST http://localhost:5000/api/mobiles/9DED12FC-C58D-4898-A477-91D77A9866D3/activate
+content-type: application/json
+
+{
+	"Name" : "Neil Armstrong",
+	"ContactPhoneNumber" : "00123456789"
+}
+
+### Scenario 4 - Activate Order Completed
+POST http://localhost:5002/api/orders/complete
+content-type: application/json
+
+{
+	"Reference" : "0281EACB-AA2B-4340-A0BD-181B32060942"
+}
