@@ -45,6 +45,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
                     order = new Order
                     {
                         Reference = dbOrder.Reference,
+                        Type = dbOrder.Type,
                         Status = dbOrder.Status,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
@@ -57,14 +58,24 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
 
         public void Add(Order order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Status) values (@Reference, @Status)";
-            connection.Execute(sql, new { order.Reference, order.Status }, currentTransaction.Get());
+            var type = "Provision";
+            var status = "New";
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status) values (@Reference, @Type, @Status)";
+            connection.Execute(sql, new { order.Reference, type, status }, currentTransaction.Get());
         }
 
-        public void Complete(Order order)
+        public void Complete(Guid reference)
         {
             var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where Reference=@Reference";
-            connection.Execute(sql, new { Reference = order.Reference.ToString() }, currentTransaction.Get());
+            connection.Execute(sql, new { Reference = reference.ToString() }, currentTransaction.Get());
+        }
+
+        public void Cancel(Guid reference)
+        {
+            var type = "Cancel";
+            var status = "New";
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status) values (@Reference, @Type, @Status)";
+            connection.Execute(sql, new { reference, type, status }, currentTransaction.Get());
         }
     }
 }

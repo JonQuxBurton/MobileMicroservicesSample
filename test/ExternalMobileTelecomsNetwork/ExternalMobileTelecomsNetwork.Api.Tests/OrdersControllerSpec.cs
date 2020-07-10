@@ -67,8 +67,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             {
                 expectedOrderToAdd = new OrderToAdd()
                 {
-                    Reference = Guid.NewGuid(),
-                    Name = "Neil Armstrong"
+                    Reference = Guid.NewGuid()
                 };
                 dataStoreMock = new Mock<IDataStore>();
                 
@@ -82,8 +81,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(It.Is<Order>(
-                    y => y.Name == expectedOrderToAdd.Name &&
-                    y.Reference == expectedOrderToAdd.Reference
+                    y => y.Reference == expectedOrderToAdd.Reference
                 )));
             }
 
@@ -100,18 +98,15 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
         {
             private readonly OrdersController sut;
             private readonly Mock<IDataStore> dataStoreMock;
-            private readonly OrderToComplete expectedOrderToComplete;
             private readonly Order expectedOrder;
+            private readonly Guid expectedReference;
 
             public CompleteShould()
             {
-                expectedOrderToComplete = new OrderToComplete()
-                {
-                    Reference = Guid.NewGuid()
-                };
+                expectedReference = Guid.NewGuid();
                 expectedOrder = new Order { };
                 dataStoreMock = new Mock<IDataStore>();
-                dataStoreMock.Setup(x => x.GetByReference(expectedOrderToComplete.Reference))
+                dataStoreMock.Setup(x => x.GetByReference(expectedReference))
                     .Returns(expectedOrder);
 
                 sut = new OrdersController(dataStoreMock.Object);
@@ -120,31 +115,28 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void CompleteTheOrder()
             {
-                sut.Complete(expectedOrderToComplete);
+                sut.Complete(expectedReference);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
-                dataStoreMock.Verify(x => x.Complete(expectedOrder));
+                dataStoreMock.Verify(x => x.Complete(expectedReference));
             }
 
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Complete(expectedOrderToComplete);
+                var actual = sut.Complete(expectedReference);
 
-                actual.Should().BeOfType<OkObjectResult>();
+                actual.Should().BeOfType<OkResult>();
             }
 
             [Fact]
             public void ReturnNotFound()
             {
-                var notFoundOrderToComplete = new OrderToComplete
-                {
-                    Reference = Guid.NewGuid()
-                };
-                dataStoreMock.Setup(x => x.GetByReference(notFoundOrderToComplete.Reference))
+                var notFoundReference = Guid.NewGuid();
+                dataStoreMock.Setup(x => x.GetByReference(notFoundReference))
                     .Returns((Order)null);
 
-                var actual = sut.Complete(notFoundOrderToComplete);
+                var actual = sut.Complete(notFoundReference);
 
                 actual.Should().BeOfType<NotFoundResult>();
             }

@@ -27,8 +27,8 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
         {
             var order = new Order
             {
-                Name = orderToAdd.Name,
                 Reference = orderToAdd.Reference,
+                Type = "Provision",
                 Status = "New"
             };
 
@@ -51,20 +51,38 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpPost("complete")]
-        public IActionResult Complete([FromBody] OrderToComplete orderToComplete)
+        [HttpPost("{reference}/complete")]
+        public IActionResult Complete(Guid reference)
         {
-            var order = dataStore.GetByReference(orderToComplete.Reference);
+            var order = dataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
 
             using (dataStore.BeginTransaction())
             {
-                dataStore.Complete(order);
+                dataStore.Complete(reference);
             }
 
-            return new OkObjectResult(order);
+            return Ok();
+        }
+
+        [HttpDelete("{reference}")]
+        public IActionResult Cancel(Guid reference)
+        {
+            var order = new Order
+            {
+                Reference = reference,
+                Type = "Cancel",
+                Status = "New"
+            };
+
+            using (dataStore.BeginTransaction())
+            {
+                dataStore.Add(order);
+            }
+
+            return new OkResult();
         }
     }
 }

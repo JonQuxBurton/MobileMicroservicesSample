@@ -47,12 +47,7 @@ content-type: application/json
 GET http://localhost:5001/api/orders/D651B45D-EE98-4CD4-BC74-C97C466600D6
 
 ### Complete an Order
-POST http://localhost:5001/api/orders/complete
-content-type: application/json
-
-{
-	"Reference" : "0281EACB-AA2B-4340-A0BD-181B32060942"
-}
+POST http://localhost:5001/api/orders/0281EACB-AA2B-4340-A0BD-181B32060942/complete
 
 ###==================================================
 ### ExternalMobileTelecomsNetwork.Api
@@ -74,9 +69,4 @@ content-type: application/json
 GET http://localhost:5002/api/orders/CF94A4CA-7CAD-467B-946C-ED4642280033
 
 ### Complete an Order
-POST http://localhost:5002/api/orders/complete
-content-type: application/json
-
-{
-	"Reference" : "FDAA0F93-ADAA-4A20-B6D1-48255CE28B3E"
-}
+POST http://localhost:5002/api/orders/FDAA0F93-ADAA-4A20-B6D1-48255CE28B3E/complete

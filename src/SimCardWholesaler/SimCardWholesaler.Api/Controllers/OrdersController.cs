@@ -51,10 +51,10 @@ namespace SimCardWholesaler.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpPost("complete")]
-        public IActionResult Complete([FromBody] OrderToComplete orderToComplete)
+        [HttpPost("{reference}/complete")]
+        public IActionResult Complete(Guid reference)
         {
-            var order = this.ordersDataStore.GetByReference(orderToComplete.Reference);
+            var order = this.ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();

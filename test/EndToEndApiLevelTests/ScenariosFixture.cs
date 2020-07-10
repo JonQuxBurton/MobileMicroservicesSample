@@ -45,13 +45,13 @@ namespace EndToEndApiLevelTests
             Scenario1_Snapshot = snapshotFactory.Take_Scenario1_Snapshot(scenario1OrderToAdd, mobileGlobalId, orderAMobileOrderReference);
 
             // Scenario 2 Complete Mobile Order
-            var externalSimCardWholesalerUrl = "http://localhost:5001/api/orders/complete";
-            var orderToComplete = new SimCardWholesaler.Api.Resources.OrderToComplete
-            {
-                Reference = orderAMobileOrderReference
-            };
+            var externalSimCardWholesalerUrl = $"http://localhost:5001/api/orders/{orderAMobileOrderReference}complete";
+            //var orderToComplete = new SimCardWholesaler.Api.Resources.OrderToComplete
+            //{
+            //    Reference = orderAMobileOrderReference
+            //};
 
-            HttpResponseMessage actualCompleteOrderResponse = await client.PostAsJsonAsync(externalSimCardWholesalerUrl, orderToComplete);
+            HttpResponseMessage actualCompleteOrderResponse = await client.PostAsync(externalSimCardWholesalerUrl, null);
 
             actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -77,13 +77,9 @@ namespace EndToEndApiLevelTests
             Scenario3_Snapshot = snapshotFactory.Take_Scenario3_Snapshot(mobileGlobalId, activateAMobileOrderReference);
 
             // Scenario 4 Complete Activate Order
-            var externalMobileTelecomsNetworkUrl = "http://localhost:5002/api/orders/complete";
-            var activateOrderToComplete = new ExternalMobileTelecomsNetwork.Api.Resources.OrderToComplete
-            {
-                Reference = activateAMobileOrderReference
-            };
+            var externalMobileTelecomsNetworkUrl = $"http://localhost:5002/api/orders/{activateAMobileOrderReference}/complete";
 
-            HttpResponseMessage actualCompleteActivateOrderResponse = await client.PostAsJsonAsync(externalMobileTelecomsNetworkUrl, activateOrderToComplete);
+            HttpResponseMessage actualCompleteActivateOrderResponse = await client.PostAsync(externalMobileTelecomsNetworkUrl, null);
 
             actualCompleteActivateOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 

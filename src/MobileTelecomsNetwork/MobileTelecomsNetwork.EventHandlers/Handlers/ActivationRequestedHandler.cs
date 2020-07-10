@@ -29,11 +29,11 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
         public async Task<bool> Handle(ActivationRequestedMessage message)
         {
-            this.logger.LogInformation($"Received [ActivationRequested] {message.Name} {message.ContactPhoneNumber}");
+            logger.LogInformation($"Received [ActivationRequested] {message.Name} {message.ContactPhoneNumber}");
 
             using (var tx = dataStore.BeginTransaction())
             {
-                this.dataStore.AddActivation(new ActivationOrder
+                dataStore.AddActivation(new ActivationOrder
                 {
                     Name = message.Name,
                     MobileOrderId = message.MobileOrderId,
@@ -45,8 +45,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             {
                 var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
                 {
-                    Reference = message.MobileOrderId,
-                    Name = message.Name
+                    Reference = message.MobileOrderId
                 });
 
                 if (!result)
@@ -55,8 +54,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     return false;
                 }
 
-                this.dataStore.Sent(message.MobileOrderId);
-                this.Publish(message.MobileOrderId);
+                dataStore.Sent(message.MobileOrderId);
+                Publish(message.MobileOrderId);
             }
 
             return true;

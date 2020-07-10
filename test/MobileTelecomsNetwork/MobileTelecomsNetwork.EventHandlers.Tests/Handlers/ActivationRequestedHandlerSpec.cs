@@ -35,7 +35,6 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 };
                 expectedExternalServiceOrder = new ExternalMobileTelecomsNetworkOrder
                 {
-                    Name = inputMessage.Name,
                     Reference = inputMessage.MobileOrderId
                 };
 
@@ -54,8 +53,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             public async void AddActivationToDataStore()
             {
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostOrder(It.Is<ExternalMobileTelecomsNetworkOrder>(
-                        y => y.Name == expectedExternalServiceOrder.Name && 
-                        y.Reference == expectedExternalServiceOrder.Reference
+                        y => y.Reference == expectedExternalServiceOrder.Reference
                     )))
                     .Returns(Task.FromResult(true));
 
@@ -63,8 +61,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.AddActivation(
-                    It.Is<ActivationOrder>(y => y.Name == expectedExternalServiceOrder.Name && 
-                                                y.MobileOrderId == expectedExternalServiceOrder.Reference &&
+                    It.Is<ActivationOrder>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
                                                 y.Status == "New")));
                 transactionMock.Verify(x => x.Dispose());
             }
@@ -73,8 +70,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             public async void SendOrderToExternalService()
             {
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostOrder(It.Is<ExternalMobileTelecomsNetworkOrder>(
-                        y => y.Name == expectedExternalServiceOrder.Name &&
-                        y.Reference == expectedExternalServiceOrder.Reference
+                        y => y.Reference == expectedExternalServiceOrder.Reference
                     )))
                     .Returns(Task.FromResult(true));
 
@@ -87,8 +83,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             public async void SetsOrderToSentInDataStore()
             {
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostOrder(It.Is<ExternalMobileTelecomsNetworkOrder>(
-                        y => y.Name == expectedExternalServiceOrder.Name &&
-                        y.Reference == expectedExternalServiceOrder.Reference
+                        y => y.Reference == expectedExternalServiceOrder.Reference
                     )))
                     .Returns(Task.FromResult(true));
 
@@ -102,9 +97,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             [Fact]
             public async void PublishActivationOrderSentMessage()
             {
-                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostOrder(It.Is<ExternalMobileTelecomsNetworkOrder>(
-                        y => y.Name == expectedExternalServiceOrder.Name &&
-                        y.Reference == expectedExternalServiceOrder.Reference
+                externalMobileTelecomsNetworkServiceMock.Setup(
+                        x => x.PostOrder(It.Is<ExternalMobileTelecomsNetworkOrder>(y => y.Reference == expectedExternalServiceOrder.Reference
                     )))
                     .Returns(Task.FromResult(true));
 
