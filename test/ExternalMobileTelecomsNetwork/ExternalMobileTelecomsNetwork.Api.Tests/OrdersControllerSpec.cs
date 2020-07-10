@@ -81,7 +81,9 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(It.Is<Order>(
-                    y => y.Reference == expectedOrderToAdd.Reference
+                    y => y.Reference == expectedOrderToAdd.Reference &&
+                    y.Type == "Provision" &&
+                    y.Status == "New"
                 )));
             }
 
@@ -139,6 +141,44 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                 var actual = sut.Complete(notFoundReference);
 
                 actual.Should().BeOfType<NotFoundResult>();
+            }
+        }
+
+        public class CancelShould
+        {
+            private readonly OrdersController sut;
+            private readonly Mock<IDataStore> dataStoreMock;
+            private readonly Order expectedOrder;
+            private readonly Guid expectedReference;
+
+            public CancelShould()
+            {
+                expectedReference = Guid.NewGuid();
+                expectedOrder = new Order { };
+                dataStoreMock = new Mock<IDataStore>();
+                dataStoreMock.Setup(x => x.GetByReference(expectedReference))
+                    .Returns(expectedOrder);
+
+                sut = new OrdersController(dataStoreMock.Object);
+            }
+
+            [Fact]
+            public void CreateTheCancelOrder()
+            {
+                sut.Cancel(expectedReference);
+
+                dataStoreMock.Verify(x => x.BeginTransaction());
+                dataStoreMock.Verify(x => x.Add(It.Is<Order>(
+                    y => y.Reference == expectedReference && y.Type == "Cancel" && y.Status == "New"
+                )));
+            }
+
+            [Fact]
+            public void ReturnOk()
+            {
+                var actual = sut.Cancel(expectedReference);
+
+                actual.Should().BeOfType<OkResult>();
             }
         }
 
