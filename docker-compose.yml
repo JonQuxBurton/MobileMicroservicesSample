@@ -6,6 +6,11 @@ services:
     build:
       context: .
       dockerfile: DatabaseSetup/Dockerfile
+
+  goaws:
+    image: pafortin/goaws
+    ports:
+      - "4100:4100"
       
   mobileorderer.api:
     image: ${DOCKER_REGISTRY}mobileordererapi
@@ -13,33 +18,31 @@ services:
       context: .
       dockerfile: src/MobileOrderer/MobileOrderer.Api/Dockerfile
 
+  simcards.eventhandlers:
+    image: ${DOCKER_REGISTRY}simcardseventhandlers
+    build:
+      context: .
+      dockerfile: src/SimCards/SimCards.EventHandlers/Dockerfile
+    stdin_open: true
+    tty: true
+
   simcardwholesaler.api:
     image: ${DOCKER_REGISTRY}simcardwholesalerapi
     build:
       context: .
       dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
 
-  simcards.eventhandlers:
-    image: ${DOCKER_REGISTRY}simcardseventhandlers
+  mobiletelecomsnetwork.eventhandlers:
+    image: ${DOCKER_REGISTRY}mobiletelecomsnetworkhandlers
     build:
       context: .
-      dockerfile: src/SimCards/SimCards.EventHandlers/Dockerfile
-
-  localstack-s3:
-    image: localstack/localstack:0.10.2
-    container_name: localstack-s3
-    environment:
-     - SERVICES=s3,sqs,sns, lambda, iam, apigateway
-     - DEFAULT_REGION=us-east-1
-     - DATA_DIR=/tmp/localstack/data
-    ports:
-     - "4567-4584:4567-4584"
-     - "9999:8080"
-    volumes:
-      - localstack-data:/tmp/localstack
-
-volumes:
-
-  localstack-data:
-    name: localstack-data           
-     
+      dockerfile: src/MobileTelecomsNetwork/MobileTelecomsNetwork.EventHandlers/Dockerfile
+    stdin_open: true
+    tty: true
+    
+  externalmobiletelecomsnetwork.api:
+    image: ${DOCKER_REGISTRY}externalmobiletelecomsnetwork
+    build:
+      context: .
+      dockerfile: src/ExternalMobileTelecomsNetwork/ExternalMobileTelecomsNetwork.Api/Dockerfile
+  

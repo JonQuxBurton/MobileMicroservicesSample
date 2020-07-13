@@ -31,6 +31,9 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         {
             logger.LogInformation($"Received [CancelRequested] {message.MobileOrderId}");
 
+            try
+            {
+
             using (var tx = dataStore.BeginTransaction())
             {
                 dataStore.AddCancel(new CancelOrder
@@ -41,21 +44,35 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 });
             }
 
+            var result = await externalMobileTelecomsNetworkService.PostCancel(new ExternalMobileTelecomsNetworkOrder
+            {
+                Reference = message.MobileOrderId
+            });
+
+            if (!result)
+            {
+                logger.LogInformation($"Failed to PostCancel to externalMobileTelecomsNetworkService");
+                return false;
+            }
+
             using (var tx = dataStore.BeginTransaction())
             {
-                var result = await externalMobileTelecomsNetworkService.PostCancel(new ExternalMobileTelecomsNetworkOrder
-                {
-                    Reference = message.MobileOrderId
-                });
+                
 
-                if (!result)
-                {
-                    tx.Rollback();
-                    return false;
-                }
+                //if (!result)
+                //{
+                //    tx.Rollback();
+                //    return false;
+                //}
 
                 dataStore.Sent(message.MobileOrderId);
                 Publish(message.MobileOrderId);
+            }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+                return false;
             }
 
             return true;

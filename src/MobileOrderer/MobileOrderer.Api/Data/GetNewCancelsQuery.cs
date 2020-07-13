@@ -27,9 +27,9 @@ namespace MobileOrderer.Api.Data
             foreach (var mobileDataEntity in mobilesDataEntities)
             {
                 var inFlightOrderDataEntity = mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newOrderStateName);
-                var inFlightOrder = new Order(inFlightOrderDataEntity);
-                if (inFlightOrder != null)
+                if (inFlightOrderDataEntity != null)
                 {
+                    var inFlightOrder = new Order(inFlightOrderDataEntity);
                     var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
                     var orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
                     mobiles.Add(new Mobile(mobileDataEntity, inFlightOrder, orderHistory));

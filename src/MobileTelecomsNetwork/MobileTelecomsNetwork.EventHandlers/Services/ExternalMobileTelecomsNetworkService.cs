@@ -28,7 +28,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
         {
             var response = await httpClient.DeleteAsync($"{config.ExternalMobileTelecomsNetworkApiUrl}/api/orders/{order.Reference}");
 
-            return response.StatusCode == System.Net.HttpStatusCode.OK;
+            return response.StatusCode == System.Net.HttpStatusCode.NoContent;
         }
     }
 }

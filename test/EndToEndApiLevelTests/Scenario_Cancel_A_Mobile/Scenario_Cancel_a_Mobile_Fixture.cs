@@ -22,11 +22,12 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
 
             var snapshotFactory = new SnapshotFactory(connectionString, TimeSpan.FromSeconds(10));
 
-            var mobileWhichIsLive = mobilesData.CreateMobile(Guid.NewGuid(), "Live");
+            var reference = Guid.NewGuid();
+            var mobileWhichIsLive = mobilesData.CreateMobile(reference, "Live");
 
             // Step 1 - Cancel a Mobile
             var client = new HttpClient();
-            var reference = Guid.NewGuid();
+            
             var url = $"http://localhost:5000/api/mobiles/{reference}";
 
             HttpResponseMessage cancelAMobileResponse = await client.DeleteAsync(url);

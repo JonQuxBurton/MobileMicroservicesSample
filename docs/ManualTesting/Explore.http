@@ -19,13 +19,16 @@ content-type: application/json
 GET http://localhost:5000/api/mobiles/ef0e5e84-b562-4391-bdd6-c699d0acba0e
 
 ### Activate a Mobile
-POST http://localhost:5000/api/mobiles/9DED12FC-C58D-4898-A477-91D77A9866D3/activate
+POST http://localhost:5000/api/mobiles/6F04C7C5-2D23-4D9A-A2B6-575B452C8ACF/activate
 content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
 	"ContactPhoneNumber" : "00123456789"
 }
+
+### Cancel a Mobile
+DELETE http://localhost:5000/api/mobiles/20110CA0-AC94-447E-9888-1E048FC2A4C5
 
 ###==================================================
 ### SimCard Wholesaler
@@ -44,10 +47,10 @@ content-type: application/json
 }
 
 ### Get an Order
-GET http://localhost:5001/api/orders/D651B45D-EE98-4CD4-BC74-C97C466600D6
+GET http://localhost:5001/api/orders/6C1622FB-70FB-4A02-89F2-780AF670149E
 
 ### Complete an Order
-POST http://localhost:5001/api/orders/0281EACB-AA2B-4340-A0BD-181B32060942/complete
+POST http://localhost:5001/api/orders/6C1622FB-70FB-4A02-89F2-780AF670149E/complete
 
 ###==================================================
 ### ExternalMobileTelecomsNetwork.Api

@@ -32,7 +32,7 @@ CREATE TABLE [MobileOrderer].[Orders](
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
-	[Name] [nvarchar](100) NOT NULL,
+	[Name] [nvarchar](100) NULL,
 	[ContactPhoneNumber] [nvarchar](50) NULL,
 	[State] [nvarchar](100) NOT NULL,
 	[Type] [nvarchar](100) NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE [MobileTelecomsNetwork].[Orders](
 	[MobileOrderId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
-	[Name] [nvarchar](100) NOT NULL,
+	[Name] [nvarchar](100) NULL,
 	[Status] [nvarchar](100) NOT NULL
 )
 GO
