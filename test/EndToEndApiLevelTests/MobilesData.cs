@@ -15,13 +15,24 @@ namespace EndToEndApiLevelTests
             this.connectionString = connectionString;
         }
 
-        public MobileDataEntity GetMobile(Guid mobileOrderId)
+        public MobileDataEntity CreateMobile(Guid globalId, string state)
         {
-            var sql = $"select * from MobileOrderer.Mobiles where GlobalId=@mobileOrderId";
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var sql = $"insert into MobileOrderer.Mobiles (GlobalId, State) values (@globalId, @state)";
+                connection.Execute(sql, new { globalId, state });
+            }
+
+            return GetMobile(globalId);
+        }
+
+        public MobileDataEntity GetMobile(Guid globalId)
+        {
+            var sql = $"select * from MobileOrderer.Mobiles where GlobalId=@globalId";
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { mobileOrderId = mobileOrderId.ToString() });
+                var dbRow = conn.QueryFirstOrDefault(sql, new { globalId = globalId.ToString() });
 
                 if (dbRow == null)
                     return null;

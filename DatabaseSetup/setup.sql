@@ -123,7 +123,8 @@ CREATE TABLE [ExternalMobileTelecomsNetwork].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[Reference] [uniqueidentifier] NOT NULL,
-	[Status] [nvarchar](100) NOT NULL
+	[Status] [nvarchar](100) NOT NULL,
+	[Type]  [nvarchar](100) NOT NULL
 )
 GO
 

@@ -71,6 +71,7 @@ namespace MobileOrderer.Api
             services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
             services.AddSingleton<IGetProcessingProvisioningMobilesQuery, GetProcessingProvisioningMobilesQuery>();
             services.AddSingleton<IGetNewActivationsQuery, GetNewActivationsQuery>();
+            services.AddSingleton<IGetNewCancelsQuery, GetNewCancelsQuery>();
             services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
             services.AddSingleton<ISqsService, SqsService>();
             services.AddSingleton<IMessageBus, MessageBus>();

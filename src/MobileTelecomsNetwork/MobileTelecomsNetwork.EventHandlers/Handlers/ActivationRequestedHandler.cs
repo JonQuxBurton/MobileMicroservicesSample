@@ -15,7 +15,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
         private readonly IMessagePublisher messagePublisher;
 
-        public ActivationRequestedHandler(ILogger<ActivationRequestedHandler> logger, 
+        public ActivationRequestedHandler(ILogger<ActivationRequestedHandler> logger,
             IDataStore dataStore,
             IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService,
             IMessagePublisher messagePublisher
@@ -31,31 +31,41 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         {
             logger.LogInformation($"Received [ActivationRequested] {message.Name} {message.ContactPhoneNumber}");
 
-            using (var tx = dataStore.BeginTransaction())
+            try
             {
-                dataStore.AddActivation(new ActivationOrder
-                {
-                    Name = message.Name,
-                    MobileOrderId = message.MobileOrderId,
-                    Status = "New"
-                });
-            }
 
-            using (var tx = dataStore.BeginTransaction())
-            {
-                var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
+                using (var tx = dataStore.BeginTransaction())
                 {
-                    Reference = message.MobileOrderId
-                });
-
-                if (!result)
-                {
-                    tx.Rollback();
-                    return false;
+                    dataStore.AddActivation(new ActivationOrder
+                    {
+                        Name = message.Name,
+                        MobileOrderId = message.MobileOrderId,
+                        Status = "New",
+                        Type = "Activate",
+                    });
                 }
 
-                dataStore.Sent(message.MobileOrderId);
-                Publish(message.MobileOrderId);
+                using (var tx = dataStore.BeginTransaction())
+                {
+                    var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
+                    {
+                        Reference = message.MobileOrderId
+                    });
+
+                    if (!result)
+                    {
+                        tx.Rollback();
+                        return false;
+                    }
+
+                    dataStore.Sent(message.MobileOrderId);
+                    Publish(message.MobileOrderId);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+                return false;
             }
 
             return true;

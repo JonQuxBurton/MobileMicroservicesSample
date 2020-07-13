@@ -30,14 +30,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 
         public void AddActivation(ActivationOrder order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status) values (@Name, @MobileOrderId, @Status)";
-            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status, Type) values (@Name, @MobileOrderId, @Status, @Type)";
+            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status, order.Type }, currentTransaction.Get());
         }
 
         public void AddCancel(CancelOrder order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status) values (@Name, @MobileOrderId, @Status)";
-            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status, Type) values (@Name, @MobileOrderId, @Status, @Type)";
+            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status, order.Type }, currentTransaction.Get());
         }
 
         public void Sent(Guid mobileOrderId)

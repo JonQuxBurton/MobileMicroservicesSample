@@ -30,7 +30,7 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
 
             var newStateName = new EnumConverter().ToName<Order.State>(Order.State.New);
-            var orderType = new EnumConverter().ToName<Order.State>(Order.OrderType.Activate);
+            var orderType = new EnumConverter().ToName<Order.OrderType>(Order.OrderType.Activate);
             var dataEntity = new OrderDataEntity()
             {
                 GlobalId = this.guidCreator.Create(),

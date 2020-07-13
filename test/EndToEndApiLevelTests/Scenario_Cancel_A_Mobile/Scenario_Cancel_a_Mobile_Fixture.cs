@@ -4,12 +4,13 @@ using System.Net.Http;
 using System.Text.Json;
 using System;
 using System.Threading.Tasks;
+using MobileOrderer.Api.Domain;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
 {
-    public class Scenario_Cancel_a_Mobile_Fixture : IDisposable
+    public class Scenario_Cancel_A_Mobile_Fixture : IDisposable
     {
-        public Scenario_Cancel_a_Mobile_Fixture()
+        public Scenario_Cancel_A_Mobile_Fixture()
         {
             Execute().Wait();
         }
@@ -21,20 +22,26 @@ namespace EndToEndApiLevelTests
 
             var snapshotFactory = new SnapshotFactory(connectionString, TimeSpan.FromSeconds(10));
 
+            var mobileWhichIsLive = mobilesData.CreateMobile(Guid.NewGuid(), "Live");
+
             // Step 1 - Cancel a Mobile
             var client = new HttpClient();
             var reference = Guid.NewGuid();
-            var url = $"http://localhost:5000/api/mobiles/reference";
+            var url = $"http://localhost:5000/api/mobiles/{reference}";
 
             HttpResponseMessage cancelAMobileResponse = await client.DeleteAsync(url);
 
             cancelAMobileResponse.StatusCode.Should().Be(HttpStatusCode.Accepted);
 
-            //// Gather needed data
+            // Gather needed data
+            var actualMobile = mobilesData.GetMobile(mobileWhichIsLive.GlobalId);
             //var actualMobileReturned = await DeserializeResponse<MobileOrderer.Api.Resources.MobileResource>(orderAMobileResponse);
-            //var actualMobileOrder = mobilesData.GetMobileOrder(actualMobileReturned.Id);
+            //var actualMobileOrder = mobilesData.GetMobileOrder(actualMobile.Id);
             //var mobileGlobalId = actualMobileReturned.GlobalId;
             //var orderAMobileOrderReference = actualMobileOrder.GlobalId;
+            
+            // Take Scenario 1 Snapshot
+            Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(actualMobile);
 
             //// Take Scenario 1 Snapshot
             //Scenario1_Snapshot = snapshotFactory.Take_Scenario1_Snapshot(scenario1OrderToAdd, mobileGlobalId, orderAMobileOrderReference);
@@ -60,7 +67,7 @@ namespace EndToEndApiLevelTests
             //HttpResponseMessage actualActivateTheMobileResponse = await client.PostAsJsonAsync(activateTheMobileUrl, activateTheMobileOrder);
 
             //actualActivateTheMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            
+
             //var actualActivationOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
             //var activateAMobileOrderReference = actualActivationOrderReturned.GlobalId;
 
@@ -90,7 +97,7 @@ namespace EndToEndApiLevelTests
 
         }
 
-        public Scenario1_Snapshot Scenario1_Snapshot { get; private set; }
+        public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Scenario2_Snapshot Scenario2_Snapshot { get; private set; }
         public Scenario3_Snapshot Scenario3_Snapshot { get; private set; }
         public Scenario4_Snapshot Scenario4_Snapshot { get; private set; }

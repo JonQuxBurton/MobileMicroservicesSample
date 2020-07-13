@@ -36,7 +36,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 dataStore.AddCancel(new CancelOrder
                 {
                     MobileOrderId = message.MobileOrderId,
-                    Status = "New"
+                    Status = "New",
+                    Type = "Cease"
                 });
             }
 
