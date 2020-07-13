@@ -142,7 +142,7 @@ namespace MobileOrderer.Api.Domain
         }
 
         private void CreateNewOrder()
-        {            
+        {
             this.InFlightOrder = newOrder;
             this.mobileDataEntity.AddOrder(newOrder.GetDataEntity());
         }

@@ -107,6 +107,16 @@ namespace MobileOrderer.Api
 
                 return new ActivationRequestedEventChecker(getNewActivationsQuery, activationCommand);
             });
+
+            services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
+            {
+                var getNewCancelsQuery = serviceProvider.GetService<IGetNewCancelsQuery>();
+                var repository = serviceProvider.GetService<IRepository<Mobile>>();
+                var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
+                var cancelCommand = new CancelCommand(repository, messagePublisher);
+
+                return new CancelRequestedEventChecker(getNewCancelsQuery, cancelCommand);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
