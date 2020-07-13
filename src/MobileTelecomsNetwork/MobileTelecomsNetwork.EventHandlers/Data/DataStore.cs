@@ -34,6 +34,12 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
             connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status }, currentTransaction.Get());
         }
 
+        public void AddCancel(CancelOrder order)
+        {
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status) values (@Name, @MobileOrderId, @Status)";
+            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status }, currentTransaction.Get());
+        }
+
         public void Sent(Guid mobileOrderId)
         {
             var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent' where MobileOrderId=@MobileOrderId";

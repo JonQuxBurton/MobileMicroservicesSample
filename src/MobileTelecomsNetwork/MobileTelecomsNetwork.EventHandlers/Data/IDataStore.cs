@@ -11,5 +11,6 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
         void Sent(Guid mobileOrderId);
         IEnumerable<ActivationOrder> GetSent();
         void Complete(Guid mobileOrderId);
+        void AddCancel(CancelOrder order);
     }
 }
