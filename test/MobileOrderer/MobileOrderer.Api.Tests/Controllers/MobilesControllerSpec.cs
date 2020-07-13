@@ -119,7 +119,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Post(expectedGlobalId , new OrderToAdd());
+                var actual = sut.Post(expectedGlobalId, new OrderToAdd());
 
                 actual.Should().BeOfType<OkObjectResult>();
             }
@@ -134,6 +134,79 @@ namespace MobileOrderer.Api.Tests.Controllers
                 guidCreatorMock.Setup(x => x.Create()).Returns(notFoundGlobalId);
 
                 var actual = sut.Post(notFoundGlobalId, new OrderToAdd());
+
+                actual.Should().BeOfType<NotFoundResult>();
+            }
+        }
+
+        public class CancelShould
+        {
+            private readonly MobilesController sut;
+            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
+            private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mobile expectedMobile;
+            private readonly Guid expectedReference;
+
+            public CancelShould()
+            {
+                expectedMobile = new Mobile(new MobileDataEntity()
+                {
+                    GlobalId = Guid.NewGuid(),
+                    State = "Live"
+                }, null);
+                expectedReference = Guid.NewGuid();
+
+                mobileRepositoryMock = new Mock<IRepository<Mobile>>();
+                guidCreatorMock = new Mock<IGuidCreator>();
+
+                mobileRepositoryMock.Setup(x => x.GetById(expectedReference))
+                    .Returns(expectedMobile);
+                guidCreatorMock.Setup(x => x.Create()).Returns(expectedReference);
+
+                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object);
+            }
+
+            [Fact]
+            public void UpdateTheMobileInTheRepository()
+            {
+                sut.Cancel(expectedReference);
+
+                this.mobileRepositoryMock.Verify(
+                    x => x.Update(It.Is<Mobile>(y =>
+                        y.CurrentState == State.ProcessingCease)));
+            }
+
+            [Fact]
+            public void AddInFligthOrderToRepository()
+            {
+                sut.Cancel(expectedReference);
+
+                mobileRepositoryMock.Verify(x => x.Update(It.Is<Mobile>(y =>
+                    y.GlobalId == expectedMobile.GlobalId &&
+                    y.InFlightOrder != null &&
+                    y.InFlightOrder.Type == Order.OrderType.Cancel &&
+                    y.InFlightOrder.CurrentState == Order.State.New
+                    )));
+            }
+
+            [Fact]
+            public void ReturnAccepted()
+            {
+                var actual = sut.Cancel(expectedReference);
+
+                actual.Should().BeOfType<AcceptedResult>();
+            }
+
+            [Fact]
+            public void ReturnNotFound()
+            {
+                var notFoundReference = Guid.NewGuid();
+                mobileRepositoryMock.Setup(x => x.GetById(notFoundReference))
+                    .Returns((Mobile)null);
+
+                guidCreatorMock.Setup(x => x.Create()).Returns(notFoundReference);
+
+                var actual = sut.Cancel(notFoundReference);
 
                 actual.Should().BeOfType<NotFoundResult>();
             }

@@ -174,11 +174,11 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             }
 
             [Fact]
-            public void ReturnOk()
+            public void ReturnNoContent()
             {
                 var actual = sut.Cancel(expectedReference);
 
-                actual.Should().BeOfType<OkResult>();
+                actual.Should().BeOfType<NoContentResult>();
             }
         }
 

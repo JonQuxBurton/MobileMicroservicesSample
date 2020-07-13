@@ -5,8 +5,6 @@ using System;
 using Utils.DomainDrivenDesign;
 using Utils.Enums;
 using Utils.Guids;
-using static MobileOrderer.Api.Domain.Mobile;
-using static MobileOrderer.Api.Domain.Order;
 
 namespace MobileOrderer.Api.Controllers
 {
@@ -15,7 +13,7 @@ namespace MobileOrderer.Api.Controllers
     public class MobilesController : ControllerBase
     {
         private readonly IRepository<Mobile> mobileRepository;
-        private readonly IGuidCreator guidCreator;        
+        private readonly IGuidCreator guidCreator;
 
         public MobilesController(IRepository<Mobile> mobileRepository, IGuidCreator guidCreator)
         {
@@ -32,20 +30,22 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
 
             var newStateName = new EnumConverter().ToName<Order.State>(Order.State.New);
+            var orderType = new EnumConverter().ToName<Order.State>(Order.OrderType.Activate);
             var dataEntity = new OrderDataEntity()
             {
                 GlobalId = this.guidCreator.Create(),
                 Name = orderToAdd.Name,
                 ContactPhoneNumber = orderToAdd.ContactPhoneNumber,
                 State = newStateName,
-                Type = "Activate"
+                Type = orderType
             };
             var inFlightOrder = new Order(dataEntity);
 
             mobile.Activate(inFlightOrder);
             this.mobileRepository.Update(mobile);
 
-            return new OkObjectResult(new OrderResource {
+            return new OkObjectResult(new OrderResource
+            {
                 GlobalId = dataEntity.GlobalId,
                 Name = dataEntity.Name,
                 ContactPhoneNumber = dataEntity.ContactPhoneNumber,
@@ -65,6 +65,29 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
 
             return new OkObjectResult(mobile);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Cancel(Guid id)
+        {
+            var mobile = this.mobileRepository.GetById(id);
+
+            if (mobile == null)
+                return NotFound();
+
+            var newStateName = new EnumConverter().ToName<Order.State>(Order.State.New);
+            var orderType = new EnumConverter().ToName<Order.OrderType>(Order.OrderType.Cancel);
+            var dataEntity = new OrderDataEntity()
+            {
+                GlobalId = this.guidCreator.Create(),
+                State = newStateName,
+                Type = orderType
+            };
+            var inFlightOrder = new Order(dataEntity); 
+            mobile.Cease(inFlightOrder);
+            mobileRepository.Update(mobile);
+
+            return Accepted();
         }
     }
 }

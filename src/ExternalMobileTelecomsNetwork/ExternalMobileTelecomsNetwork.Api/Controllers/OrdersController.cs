@@ -82,7 +82,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
                 dataStore.Add(order);
             }
 
-            return new OkResult();
+            return new NoContentResult();
         }
     }
 }

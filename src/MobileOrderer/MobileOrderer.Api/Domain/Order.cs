@@ -9,7 +9,7 @@ namespace MobileOrderer.Api.Domain
     {
         public enum State { New, Processing, Sent, Completed, Failed, Cancelled }
         public enum Trigger { Process, Send, Complete, Fail, Cancel }
-        public enum OrderType { Provision, Activate }
+        public enum OrderType { Provision, Activate, Cancel }
 
         private readonly StateMachine<State, Trigger> machine;
         private readonly OrderDataEntity orderDataEntity;

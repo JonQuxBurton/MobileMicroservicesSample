@@ -46,10 +46,6 @@ namespace EndToEndApiLevelTests
 
             // Scenario 2 Complete Mobile Order
             var externalSimCardWholesalerUrl = $"http://localhost:5001/api/orders/{orderAMobileOrderReference}complete";
-            //var orderToComplete = new SimCardWholesaler.Api.Resources.OrderToComplete
-            //{
-            //    Reference = orderAMobileOrderReference
-            //};
 
             HttpResponseMessage actualCompleteOrderResponse = await client.PostAsync(externalSimCardWholesalerUrl, null);
 

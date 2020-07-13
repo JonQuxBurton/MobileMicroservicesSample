@@ -67,9 +67,16 @@ namespace MobileOrderer.Api.Domain
                     this.CompleteInFlightOrder();
                 });
             machine.Configure(State.Live)
+                .Permit(Trigger.Cease, State.ProcessingCease)
                 .OnEntry(() =>
                 {
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.Live);
+                });
+            machine.Configure(State.ProcessingCease)
+                .OnEntry(() =>
+                {
+                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.ProcessingCease);
+                    this.CreateNewOrder();
                 });
             machine.Configure(State.New).Permit(Trigger.PortIn, State.ProcessingPortIn);
             machine.Configure(State.ProcessingPortIn).Permit(Trigger.PortInCompleted, State.Live);
@@ -77,7 +84,6 @@ namespace MobileOrderer.Api.Domain
             machine.Configure(State.Suspended).Permit(Trigger.Resume, State.Live);
             machine.Configure(State.Live).Permit(Trigger.ReplaceSim, State.Suspended);
             machine.Configure(State.Live).Permit(Trigger.RequestPac, State.ProcessingPortOut);
-            machine.Configure(State.Live).Permit(Trigger.Cease, State.ProcessingCease);
             machine.Configure(State.ProcessingCease).Permit(Trigger.CeaseCompleted, State.Ceased);
             machine.Configure(State.ProcessingPortOut).Permit(Trigger.PortOutCompleted, State.PortedOut);
         }
@@ -97,11 +103,15 @@ namespace MobileOrderer.Api.Domain
             this.newOrder = order;
             this.machine.Fire(Trigger.Activate);
         }
+        public void Cease(Order order)
+        {
+            this.newOrder = order;
+            this.machine.Fire(Trigger.Cease);
+        }
         public void ProcessingProvisioningCompleted() => this.machine.Fire(Trigger.ProcessingProvisioningCompleted);
         public void ActivateCompleted() => this.machine.Fire(Trigger.ActivationCompleted);
         public void PortIn() => this.machine.Fire(Trigger.PortIn);
         public void PortInCompleted() => this.machine.Fire(Trigger.PortInCompleted);
-        public void Cease() => this.machine.Fire(Trigger.Cease);
         public void Suspend() => this.machine.Fire(Trigger.Suspend);
         public void ReplaceSim() => this.machine.Fire(Trigger.ReplaceSim);
         public void Resume() => this.machine.Fire(Trigger.ReplaceSim);

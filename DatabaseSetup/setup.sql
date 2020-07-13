@@ -97,6 +97,7 @@ GO
 
 CREATE TABLE [MobileTelecomsNetwork].[Orders](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[Type]  [nvarchar](100) NOT NULL,
 	[MobileOrderId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
