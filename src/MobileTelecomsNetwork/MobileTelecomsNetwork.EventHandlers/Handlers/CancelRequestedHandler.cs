@@ -44,28 +44,22 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 });
             }
 
-            var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
-            {
-                Reference = message.MobileOrderId
-            });
-
-            if (!result)
-            {
-                logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
-                return false;
-            }
-
             using (var tx = dataStore.BeginTransaction())
             {
-                
+                var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
+                {
+                    Reference = message.MobileOrderId
+                });
 
-                //if (!result)
-                //{
-                //    tx.Rollback();
-                //    return false;
-                //}
+                if (!result)
+                {
+                    logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
 
-                dataStore.Sent(message.MobileOrderId);
+                    tx.Rollback();
+                    return false;
+                }
+
+                 dataStore.Sent(message.MobileOrderId);
                 Publish(message.MobileOrderId);
             }
             }
