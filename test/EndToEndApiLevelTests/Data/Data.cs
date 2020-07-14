@@ -1,7 +1,7 @@
 ﻿using Polly;
 using System;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Data
 {
     public class Data
     {

@@ -2,23 +2,23 @@
 using Xunit;
 using Utils.Enums;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
-    [Collection("Scenarios collection")]
-    public class Scenario_2_Complete_Mobile_Order
+    [Collection("Scenario Order_a_Mobile collection")]
+    public class Step_2_Provision_Order_has_been_Completed
     {
-        private readonly ScenariosFixture scenariosFixture;
+        private readonly Scenario_Order_a_Mobile_Fixture fixture;
 
-        public Scenario_2_Complete_Mobile_Order(ScenariosFixture scenariosFixture)
+        public Step_2_Provision_Order_has_been_Completed(Scenario_Order_a_Mobile_Fixture fixture)
         {
-            this.scenariosFixture = scenariosFixture;
+            this.fixture = fixture;
         }
 
         [Trait("Category", "EndToEnd")]
         [Fact]
         public void Execute()
         {
-            var snapshot = scenariosFixture.Scenario2_Snapshot;
+            var snapshot = fixture.Step_2_Snapshot;
             var enumConverter = new EnumConverter();
             var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation);
             var expectedMobileOrderState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Completed);

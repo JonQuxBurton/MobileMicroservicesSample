@@ -15,7 +15,7 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
 {
-    public class ActivationOrderCheckerSpec
+    public class OrderCompletedCheckerSpec
     {
         [Fact]
         public async void CallExternalService()
@@ -26,7 +26,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
             };
             var expectedOrder = new Order()
             {
-                MobileOrderId = Guid.NewGuid()
+                MobileOrderId = Guid.NewGuid(),
+                Type = "Cease"
             };
             var expectedUrl = new Uri($"{config.ExternalMobileTelecomsNetworkApiUrl}/api/orders/{expectedOrder.MobileOrderId}");
             var externalOrder = new ExternalOrder

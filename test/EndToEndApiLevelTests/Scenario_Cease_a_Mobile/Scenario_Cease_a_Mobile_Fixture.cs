@@ -3,15 +3,16 @@ using System.Net;
 using System.Net.Http;
 using System;
 using System.Threading.Tasks;
+using EndToEndApiLevelTests.Data;
 
-namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
+namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
-    public class Scenario_Cancel_a_Mobile_Fixture : IDisposable
+    public class Scenario_Cease_a_Mobile_Fixture : IDisposable
     {
         public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
 
-        public Scenario_Cancel_a_Mobile_Fixture()
+        public Scenario_Cease_a_Mobile_Fixture()
         {
             Execute().Wait();
         }
@@ -26,12 +27,12 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
             var reference = Guid.NewGuid();
             var mobileWhichIsLive = mobilesData.CreateMobile(reference, "Live");
 
-            // Step 1 - Cancel a Mobile
+            // Step 1 - Cease a Mobile
             var client = new HttpClient();            
             var url = $"http://localhost:5000/api/mobiles/{reference}";
-            HttpResponseMessage cancelAMobileResponse = await client.DeleteAsync(url);
+            HttpResponseMessage ceaseAMobileResponse = await client.DeleteAsync(url);
 
-            cancelAMobileResponse.StatusCode.Should().Be(HttpStatusCode.Accepted);
+            ceaseAMobileResponse.StatusCode.Should().Be(HttpStatusCode.Accepted);
 
             // Gather needed data
             var actualMobile = mobilesData.GetMobile(mobileWhichIsLive.GlobalId);
@@ -40,7 +41,7 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
 
             Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(actualMobile);
 
-            // Step 2 - Cancel Order has been Completed
+            // Step 2 - Cease Order has been Completed
             var completeOrderUrl = $"http://localhost:5002/api/orders/{orderReference}/complete";
             HttpResponseMessage completeOrderResponse = await client.PostAsync(completeOrderUrl, null);
 

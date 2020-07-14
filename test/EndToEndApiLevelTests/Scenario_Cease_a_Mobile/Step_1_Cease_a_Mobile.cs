@@ -2,14 +2,14 @@
 using Xunit;
 using Utils.Enums;
 
-namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
+namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
-    [Collection("Scenario Cancel_A_Mobile collection")]
-    public class Step_1_Cancel_A_Mobile
+    [Collection("Scenario Cease_a_Mobile collection")]
+    public class Step_1_Cease_a_Mobile
     {
-        private readonly Scenario_Cancel_a_Mobile_Fixture scenariosFixture;
+        private readonly Scenario_Cease_a_Mobile_Fixture scenariosFixture;
 
-        public Step_1_Cancel_A_Mobile(Scenario_Cancel_a_Mobile_Fixture scenariosFixture)
+        public Step_1_Cease_a_Mobile(Scenario_Cease_a_Mobile_Fixture scenariosFixture)
         {
             this.scenariosFixture = scenariosFixture;
         }

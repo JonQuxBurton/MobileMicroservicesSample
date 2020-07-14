@@ -144,14 +144,14 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             }
         }
 
-        public class CancelShould
+        public class CeaseShould
         {
             private readonly OrdersController sut;
             private readonly Mock<IDataStore> dataStoreMock;
             private readonly Order expectedOrder;
             private readonly Guid expectedReference;
 
-            public CancelShould()
+            public CeaseShould()
             {
                 expectedReference = Guid.NewGuid();
                 expectedOrder = new Order { };
@@ -163,14 +163,12 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             }
 
             [Fact]
-            public void CreateTheCancelOrder()
+            public void CreateTheCeaseOrder()
             {
                 sut.Cease(expectedReference);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
-                dataStoreMock.Verify(x => x.Add(It.Is<Order>(
-                    y => y.Reference == expectedReference && y.Type == "Cancel" && y.Status == "New"
-                )));
+                dataStoreMock.Verify(x => x.Cease( expectedReference));
             }
 
             [Fact]

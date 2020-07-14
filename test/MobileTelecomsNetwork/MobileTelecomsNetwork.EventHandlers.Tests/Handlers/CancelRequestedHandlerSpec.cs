@@ -52,13 +52,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             }
 
             [Fact]
-            public async void AddCancelToDataStore()
+            public async void AddCeaseToDataStore()
             {
                 var actual = await sut.Handle(inputMessage);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
-                dataStoreMock.Verify(x => x.AddCancel(
-                    It.Is<CancelOrder>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
+                dataStoreMock.Verify(x => x.Add(
+                    It.Is<Order>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
+                                                y.Type == "Cease" &&
                                                 y.Status == "New")));
                 transactionMock.Verify(x => x.Dispose());
             }

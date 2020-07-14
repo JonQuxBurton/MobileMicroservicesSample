@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Data.SqlClient;
 using Dapper;
-using SimCards.EventHandlers.Data;
+using MobileTelecomsNetwork.EventHandlers.Data;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Data
 {
-    public class SimCardsData : Data
+    public class MobileTelecomsNetworkData : Data
     {
         private string connectionString;
 
-        public SimCardsData(string connectionString)
+        public MobileTelecomsNetworkData(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        public SimCardOrder TryGetSimCardOrder(Guid mobileOrderId)
+        public Order TryGetOrder(Guid mobileOrderId)
         {
-            return TryGet(() => GetSimCardOrder(mobileOrderId));
+            return TryGet(() => GetOrder(mobileOrderId));
         }
 
-        public SimCardOrder GetSimCardOrder(Guid mobileOrderId)
+        public Order GetOrder(Guid mobileOrderId)
         {
-            var sql = $"select * from SimCards.Orders where MobileOrderId=@MobileOrderId";
+            var sql = $"select * from MobileTelecomsNetwork.Orders where MobileOrderId=@MobileOrderId";
 
             using (var conn = new SqlConnection(connectionString))
             {
@@ -30,7 +30,7 @@ namespace EndToEndApiLevelTests
                 if (dbRow == null)
                     return null;
 
-                return new SimCardOrder
+                return new Order
                 {
                     MobileOrderId = dbRow.MobileOrderId,
                     Name = dbRow.Name,

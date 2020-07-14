@@ -1,8 +1,8 @@
 ﻿using MobileOrderer.Api.Domain;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
-    public class Scenario4_Snapshot
+    public class Step_4_Snapshot
     {
         public MobileDataEntity ActualMobile { get; set; }
         public OrderDataEntity ActualMobileActivateOrderSnapshot { get; set; }

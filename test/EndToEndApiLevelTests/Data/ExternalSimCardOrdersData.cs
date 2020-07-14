@@ -4,13 +4,13 @@ using Dapper;
 using System.Linq;
 using SimCardWholesaler.Api.Data;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Data
 {
-    public class ExternalSimCardOrders : Data
+    public class ExternalSimCardOrdersData : Data
     {
         private string connectionString;
 
-        public ExternalSimCardOrders(string connectionString)
+        public ExternalSimCardOrdersData(string connectionString)
         {
             this.connectionString = connectionString;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using Dapper;
 using ExternalMobileTelecomsNetwork.Api.Data;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Data
 {
     public class ExternalMobileTelecomsNetworkData : Data
     {

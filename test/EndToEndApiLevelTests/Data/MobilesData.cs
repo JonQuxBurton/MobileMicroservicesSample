@@ -4,7 +4,7 @@ using System.Threading;
 using Dapper;
 using MobileOrderer.Api.Domain;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Data
 {
     public class MobilesData : Data
     {
@@ -46,12 +46,12 @@ namespace EndToEndApiLevelTests
                 return mobileDataEntity;
             }
         }
-        
+
         public OrderDataEntity TryGetMobileOrder(Guid mobileOrderGlobalId, string state, TimeSpan? delay = null)
         {
             if (delay.HasValue)
                 Thread.Sleep(delay.Value);
-            
+
             return TryGet(() => GetMobileOrder(mobileOrderGlobalId, state));
         }
 
@@ -77,7 +77,7 @@ namespace EndToEndApiLevelTests
                 return order;
             }
         }
-        
+
         public OrderDataEntity GetMobileOrder(int mobileId)
         {
             var sql = $"select * from MobileOrderer.Orders where MobileId=@mobileId";
@@ -100,7 +100,7 @@ namespace EndToEndApiLevelTests
                 return order;
             }
         }
-        
+
         public OrderDataEntity GetMobileOrderByGlobalId(Guid gloablId)
         {
             var sql = $"select * from MobileOrderer.Orders where GlobalId=@gloablId";
