@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MobileTelecomsNetwork.EventHandlers.Services
 {
-    public class ActivationOrderChecker : IActivationOrderChecker
+    public class OrderCompletedChecker : IOrderCompletedChecker
     {
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
         private readonly IHttpClientFactory clientFactory;
@@ -18,7 +18,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
         private readonly IMessagePublisher messagePublisher;
         private readonly string externalApiUrl;
 
-        public ActivationOrderChecker(
+        public OrderCompletedChecker(
             ILogger<CompletedOrderPollingHostedService> logger,
             IHttpClientFactory clientFactory,
             IDataStore dataStore,
@@ -48,7 +48,11 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
                 {
                     using var tx = dataStore.BeginTransaction();
                     dataStore.Complete(sentOrder.MobileOrderId);
-                    this.PublishActivationOrderCompleted(sentOrder.MobileOrderId);
+
+                    if (sentOrder.Type == "Cease")
+                        this.PublishCeaseOrderCompleted(sentOrder.MobileOrderId);
+                    else
+                        this.PublishActivationOrderCompleted(sentOrder.MobileOrderId);
                 }
             }
         }
@@ -58,6 +62,16 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             logger.LogInformation($"Publishing ActivationOrderCompletedMessage [{mobileGlobalId}]");
 
             messagePublisher.PublishAsync(new ActivationOrderCompletedMessage
+            {
+                MobileOrderId = mobileGlobalId
+            });
+        }
+        
+        private void PublishCeaseOrderCompleted(Guid mobileGlobalId)
+        {
+            logger.LogInformation($"Publishing CeaseOrderCompletedMessage [{mobileGlobalId}]");
+
+            messagePublisher.PublishAsync(new CeaseOrderCompletedMessage
             {
                 MobileOrderId = mobileGlobalId
             });

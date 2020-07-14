@@ -68,18 +68,11 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
         }
 
         [HttpDelete("{reference}")]
-        public IActionResult Cancel(Guid reference)
+        public IActionResult Cease(Guid reference)
         {
-            var order = new Order
-            {
-                Reference = reference,
-                Type = "Cancel",
-                Status = "New"
-            };
-
             using (dataStore.BeginTransaction())
             {
-                dataStore.Add(order);
+                dataStore.Cease(reference);
             }
 
             return new NoContentResult();

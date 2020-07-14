@@ -77,7 +77,7 @@ namespace MobileTelecomsNetwork.EventHandlers
             services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
             services.AddSingleton<IMessagePublisher, MessagePublisher>();
             services.AddSingleton<IDataStore, DataStore>();
-            services.AddSingleton<IActivationOrderChecker, ActivationOrderChecker>();
+            services.AddSingleton<IOrderCompletedChecker, OrderCompletedChecker>();
 
             services.AddHostedService<EventListenerHostedService>();
             services.AddHostedService<CompletedOrderPollingHostedService>();

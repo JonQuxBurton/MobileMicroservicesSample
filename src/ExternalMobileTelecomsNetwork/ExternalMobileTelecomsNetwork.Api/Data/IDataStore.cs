@@ -7,6 +7,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
     {
         void Add(Order order);
         ITransaction BeginTransaction();
+        void Cease(Guid reference);
         void Complete(Guid reference);
         Order GetByReference(Guid reference);
     }

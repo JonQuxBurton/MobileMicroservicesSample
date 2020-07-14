@@ -1,10 +1,9 @@
 ﻿using FluentAssertions;
-using System.Text.Json;
 using System;
 
 namespace EndToEndApiLevelTests
 {
-    public class SnapshotFactory
+    public class SnapshotFactory : SnapshotFactoryBase
     {
         private readonly TimeSpan finalActionCheckDelay;
         private readonly MobilesData mobilesData;
@@ -80,15 +79,6 @@ namespace EndToEndApiLevelTests
                 ActualMobile = Snapshot(mobilesData.GetMobile(mobileGlobalId)),
                 ActualMobileTelecomsNetworkOrderSnapshot = Snapshot(mobileTelecomsNetworkData.TryGetOrder(activateAMobileOrderReference))
             };
-        }
-
-        private T Snapshot<T>(T original) where T : class
-        {
-            if (original == null)
-                return null;
-
-            var serialized = JsonSerializer.Serialize(original);
-            return JsonSerializer.Deserialize<T>(serialized);
         }
     }
 }

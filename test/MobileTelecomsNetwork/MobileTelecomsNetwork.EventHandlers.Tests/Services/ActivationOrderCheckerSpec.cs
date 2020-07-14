@@ -53,7 +53,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
             httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>()))
                 .Returns(client);
 
-            var sut = new ActivationOrderChecker(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
+            var sut = new OrderCompletedChecker(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
                 httpClientFactoryMock.Object,
                 dataStoreMock.Object,
                 messagePublisherMock.Object,

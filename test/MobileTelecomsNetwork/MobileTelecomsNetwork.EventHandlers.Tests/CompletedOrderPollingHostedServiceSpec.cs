@@ -25,7 +25,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests
                 var dataStoreMock = new Mock<IDataStore>();
                 dataStoreMock.Setup(x => x.GetSent())
                     .Returns(new[] { expectedOrder });
-                var activationOrderChecker = new Mock<IActivationOrderChecker>();
+                var activationOrderChecker = new Mock<IOrderCompletedChecker>();
 
                 var sut = new CompletedOrderPollingHostedService(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(), 
                     dataStoreMock.Object,

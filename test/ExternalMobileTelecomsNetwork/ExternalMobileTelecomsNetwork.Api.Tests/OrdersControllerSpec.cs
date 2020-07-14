@@ -165,7 +165,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void CreateTheCancelOrder()
             {
-                sut.Cancel(expectedReference);
+                sut.Cease(expectedReference);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(It.Is<Order>(
@@ -176,7 +176,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void ReturnNoContent()
             {
-                var actual = sut.Cancel(expectedReference);
+                var actual = sut.Cease(expectedReference);
 
                 actual.Should().BeOfType<NoContentResult>();
             }

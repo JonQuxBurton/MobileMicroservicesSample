@@ -15,6 +15,7 @@ namespace MobileOrderer.Api.Services
         private readonly ILogger<OrderSentHandler> orderSentLogger;
         private readonly ILogger<ProvisioningOrderCompletedHandler> provisioningOrderCompletedLogger;
         private readonly ILogger<ActivationOrderSentHandler> activationOrderSentLogger;
+        private readonly ILogger<CancelOrderSentHandler> cancelOrderSentLogger;
         private readonly ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
@@ -24,6 +25,7 @@ namespace MobileOrderer.Api.Services
         public MessageBusListenerBuilder(ILogger<OrderSentHandler> orderSentLogger, 
             ILogger<ProvisioningOrderCompletedHandler> provisioningOrderCompletedLogger,
             ILogger<ActivationOrderSentHandler> activationOrderSentLogger,
+            ILogger<CancelOrderSentHandler> cancelOrderSentLogger,
             ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger,
             IMessageBus messageBus, 
             ISqsService sqsService,
@@ -33,6 +35,7 @@ namespace MobileOrderer.Api.Services
             this.orderSentLogger = orderSentLogger;
             this.provisioningOrderCompletedLogger = provisioningOrderCompletedLogger;
             this.activationOrderSentLogger = activationOrderSentLogger;
+            this.cancelOrderSentLogger = cancelOrderSentLogger;
             this.activationOrderCompletedLogger = activationOrderCompletedLogger;
             this.messageBus = messageBus;
             this.sqsService = sqsService;
@@ -53,6 +56,9 @@ namespace MobileOrderer.Api.Services
 
             var activationOrderCompletedHandler = new ActivationOrderCompletedHandler(activationOrderCompletedLogger, mobileRepository, getMobileByOrderIdQuery);
             messageBus.Subscribe<ActivationOrderCompletedMessage, IHandlerAsync<ActivationOrderCompletedMessage>>(activationOrderCompletedHandler);
+
+            var cancelOrderSentHandler = new CancelOrderSentHandler(cancelOrderSentLogger, mobileRepository, getMobileByOrderIdQuery);
+            messageBus.Subscribe<CancelOrderSentMessage, IHandlerAsync<CancelOrderSentMessage>>(cancelOrderSentHandler);
 
             return new MessageBusListener(messageBus, sqsService, new MessageDeserializer());
         }

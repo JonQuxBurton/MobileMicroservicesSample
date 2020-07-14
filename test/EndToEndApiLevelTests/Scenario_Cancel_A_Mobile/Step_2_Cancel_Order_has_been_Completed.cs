@@ -5,11 +5,11 @@ using Utils.Enums;
 namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
 {
     [Collection("Scenario Cancel_A_Mobile collection")]
-    public class Step_1_Cancel_A_Mobile
+    public class Step_2_Cancel_Order_has_been_Completed
     {
         private readonly Scenario_Cancel_A_Mobile_Fixture scenariosFixture;
 
-        public Step_1_Cancel_A_Mobile(Scenario_Cancel_A_Mobile_Fixture scenariosFixture)
+        public Step_2_Cancel_Order_has_been_Completed(Scenario_Cancel_A_Mobile_Fixture scenariosFixture)
         {
             this.scenariosFixture = scenariosFixture;
         }
@@ -18,10 +18,10 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
         [Fact]
         public void Execute()
         {
-            var snapshot = scenariosFixture.Step_1_Snapshot;
+            var snapshot = scenariosFixture.Step_2_Snapshot;
             var enumConverter = new EnumConverter();
-            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingCease);
-            var expectedOrderMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Sent);
+            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.Ceased);
+            var expectedOrderMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Completed);
 
             // Check Mobile has been updated
             snapshot.ActualMobile.Should().NotBeNull();
@@ -33,11 +33,7 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
 
             // Check MobileTelecomsNetwork Order has been updated
             snapshot.ActualMobileTelecomsNetworkOrder.Should().NotBeNull();
-            snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be("Sent");
-            
-            // Check ExternalMobileTelecomsNetwork Order has been created
-            snapshot.ActualExternalMobileTelecomsNetworkOrder.Should().NotBeNull();
-            snapshot.ActualExternalMobileTelecomsNetworkOrder.Type.Should().Be("Cease");
+            snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be("Completed");
         }
     }
 }

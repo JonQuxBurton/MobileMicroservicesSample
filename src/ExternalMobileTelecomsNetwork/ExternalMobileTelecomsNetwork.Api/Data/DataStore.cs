@@ -70,9 +70,9 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
             connection.Execute(sql, new { Reference = reference.ToString() }, currentTransaction.Get());
         }
 
-        public void Cancel(Guid reference)
+        public void Cease(Guid reference)
         {
-            var type = "Cancel";
+            var type = "Cease";
             var status = "New";
             var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status) values (@Reference, @Type, @Status)";
             connection.Execute(sql, new { reference, type, status }, currentTransaction.Get());

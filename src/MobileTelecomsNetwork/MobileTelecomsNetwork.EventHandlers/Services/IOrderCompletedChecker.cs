@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace MobileTelecomsNetwork.EventHandlers.Services
 {
-    public interface IActivationOrderChecker
+    public interface IOrderCompletedChecker
     {
         Task Check(ActivationOrder sentOrder);
     }

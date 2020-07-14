@@ -37,6 +37,7 @@ namespace EndToEndApiLevelTests
                     {
                         Reference = dbOrder.Reference,
                         Status = dbOrder.Status,
+                        Type = dbOrder.Type,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
                     };

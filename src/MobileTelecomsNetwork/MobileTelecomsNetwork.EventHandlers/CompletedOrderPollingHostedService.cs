@@ -15,12 +15,12 @@ namespace MobileTelecomsNetwork.EventHandlers
 
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
         private readonly IDataStore dataStore;
-        private readonly IActivationOrderChecker activationOrderChecker;
+        private readonly IOrderCompletedChecker activationOrderChecker;
         private Timer timer;
 
         public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
             IDataStore dataStore,
-            IActivationOrderChecker activationOrderChecker)
+            IOrderCompletedChecker activationOrderChecker)
         {
             this.logger = logger;
             this.dataStore = dataStore;
