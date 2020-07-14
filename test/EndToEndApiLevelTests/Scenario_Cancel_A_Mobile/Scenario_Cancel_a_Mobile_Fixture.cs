@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
 {
-    public class Scenario_Cancel_A_Mobile_Fixture : IDisposable
+    public class Scenario_Cancel_a_Mobile_Fixture : IDisposable
     {
         public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
 
-        public Scenario_Cancel_A_Mobile_Fixture()
+        public Scenario_Cancel_a_Mobile_Fixture()
         {
             Execute().Wait();
         }
@@ -38,7 +38,6 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
             var actualMobileOrder = mobilesData.GetMobileOrder(actualMobile.Id);
             var orderReference = actualMobileOrder.GlobalId;
 
-            // Take Step 1 Snapshot
             Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(actualMobile);
 
             // Step 2 - Cancel Order has been Completed
@@ -46,6 +45,8 @@ namespace EndToEndApiLevelTests.Scenario_Cancel_A_Mobile
             HttpResponseMessage completeOrderResponse = await client.PostAsync(completeOrderUrl, null);
 
             completeOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            Step_2_Snapshot = snapshotFactory.Take_Step_2_Snapshot(actualMobile);
         }
 
         public void Dispose()

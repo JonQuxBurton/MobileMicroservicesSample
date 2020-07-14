@@ -35,7 +35,7 @@ POST http://localhost:5002/api/orders/41F139A0-7224-470C-80D1-4DD6291F376A/compl
 ###
 
 ### Step 1 - Cancel a Mobile
-DELETE http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
+DELETE http://localhost:5000/api/mobiles/714C0D05-DF75-4FBB-83BA-CE68B943DA0D
 
 ### Step 2 - Cancel Order has been Completed
-POST http://localhost:5002/api/orders/69FA78E1-6106-40BB-BC48-8B65EC6855BE/complete
+POST http://localhost:5002/api/orders/AEC96534-179B-4C91-8AA3-C4309B191A7B/complete
