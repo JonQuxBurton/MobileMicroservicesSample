@@ -6,11 +6,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 {
     public interface IDataStore
     {
-        void AddActivation(ActivationOrder order);
+        void Add(Order order);
         ITransaction BeginTransaction();
         void Sent(Guid mobileOrderId);
-        IEnumerable<ActivationOrder> GetSent();
+        IEnumerable<Order> GetSent();
         void Complete(Guid mobileOrderId);
-        void AddCancel(CancelOrder order);
     }
 }

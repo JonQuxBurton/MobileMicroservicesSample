@@ -14,12 +14,12 @@ namespace EndToEndApiLevelTests
             this.connectionString = connectionString;
         }
 
-        public ActivationOrder TryGetOrder(Guid mobileOrderId)
+        public Order TryGetOrder(Guid mobileOrderId)
         {
             return TryGet(() => GetOrder(mobileOrderId));
         }
 
-        public ActivationOrder GetOrder(Guid mobileOrderId)
+        public Order GetOrder(Guid mobileOrderId)
         {
             var sql = $"select * from MobileTelecomsNetwork.Orders where MobileOrderId=@MobileOrderId";
 
@@ -30,7 +30,7 @@ namespace EndToEndApiLevelTests
                 if (dbRow == null)
                     return null;
 
-                return new ActivationOrder
+                return new Order
                 {
                     MobileOrderId = dbRow.MobileOrderId,
                     Name = dbRow.Name,

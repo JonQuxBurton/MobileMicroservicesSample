@@ -24,7 +24,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             return response.StatusCode == System.Net.HttpStatusCode.OK;
         }
 
-        public async Task<bool> PostCancel(ExternalMobileTelecomsNetworkOrder order)
+        public async Task<bool> PostCease(ExternalMobileTelecomsNetworkOrder order)
         {
             var response = await httpClient.DeleteAsync($"{config.ExternalMobileTelecomsNetworkApiUrl}/api/orders/{order.Reference}");
 

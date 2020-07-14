@@ -17,6 +17,7 @@ namespace MobileOrderer.Api.Services
         private readonly ILogger<ActivationOrderSentHandler> activationOrderSentLogger;
         private readonly ILogger<CancelOrderSentHandler> cancelOrderSentLogger;
         private readonly ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger;
+        private readonly ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
         private readonly IRepository<Mobile> mobileRepository;
@@ -27,6 +28,7 @@ namespace MobileOrderer.Api.Services
             ILogger<ActivationOrderSentHandler> activationOrderSentLogger,
             ILogger<CancelOrderSentHandler> cancelOrderSentLogger,
             ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger,
+            ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger,
             IMessageBus messageBus, 
             ISqsService sqsService,
             IRepository<Mobile> mobileRepository, 
@@ -37,6 +39,7 @@ namespace MobileOrderer.Api.Services
             this.activationOrderSentLogger = activationOrderSentLogger;
             this.cancelOrderSentLogger = cancelOrderSentLogger;
             this.activationOrderCompletedLogger = activationOrderCompletedLogger;
+            this.ceaseOrderCompletedLogger = ceaseOrderCompletedLogger;
             this.messageBus = messageBus;
             this.sqsService = sqsService;
             this.mobileRepository = mobileRepository;
@@ -59,6 +62,9 @@ namespace MobileOrderer.Api.Services
 
             var cancelOrderSentHandler = new CancelOrderSentHandler(cancelOrderSentLogger, mobileRepository, getMobileByOrderIdQuery);
             messageBus.Subscribe<CancelOrderSentMessage, IHandlerAsync<CancelOrderSentMessage>>(cancelOrderSentHandler);
+
+            var ceaseOrderCompletedHandler = new CeaseOrderCompletedHandler(ceaseOrderCompletedLogger, mobileRepository, getMobileByOrderIdQuery);
+            messageBus.Subscribe<CeaseOrderCompletedMessage, IHandlerAsync<CeaseOrderCompletedMessage>>(ceaseOrderCompletedHandler);
 
             return new MessageBusListener(messageBus, sqsService, new MessageDeserializer());
         }

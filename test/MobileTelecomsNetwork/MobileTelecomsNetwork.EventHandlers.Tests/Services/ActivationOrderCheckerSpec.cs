@@ -24,7 +24,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
             {
                 ExternalMobileTelecomsNetworkApiUrl = "http://api:5000"
             };
-            var expectedOrder = new ActivationOrder()
+            var expectedOrder = new Order()
             {
                 MobileOrderId = Guid.NewGuid()
             };

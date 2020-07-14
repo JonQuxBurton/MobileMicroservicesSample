@@ -32,7 +32,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             this.externalApiUrl = config.Value?.ExternalMobileTelecomsNetworkApiUrl;
         }
 
-        public async Task Check(ActivationOrder sentOrder)
+        public async Task Check(Order sentOrder)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"{this.externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
             var client = clientFactory.CreateClient();
@@ -49,7 +49,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
                     using var tx = dataStore.BeginTransaction();
                     dataStore.Complete(sentOrder.MobileOrderId);
 
-                    if (sentOrder.Type == "Cease")
+                    if (sentOrder.Type.Trim() == "Cease")
                         this.PublishCeaseOrderCompleted(sentOrder.MobileOrderId);
                     else
                         this.PublishActivationOrderCompleted(sentOrder.MobileOrderId);

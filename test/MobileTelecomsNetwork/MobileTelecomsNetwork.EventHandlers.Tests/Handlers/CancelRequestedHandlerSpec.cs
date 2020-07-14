@@ -44,7 +44,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 messagePublisherMock = new Mock<IMessagePublisher>();
                 var loggerMock = new Mock<ILogger<CancelRequestedHandler>>();
 
-                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCancel(It.Is<ExternalMobileTelecomsNetworkOrder>(
+                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCease(It.Is<ExternalMobileTelecomsNetworkOrder>(
                     y => y.Reference == expectedExternalServiceOrder.Reference)))
                         .Returns(Task.FromResult(true));
 
@@ -101,7 +101,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             public async void RollbackWhenSendOrderFails()
             {
                 externalMobileTelecomsNetworkServiceMock.Reset();
-                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCancel(It.IsAny<ExternalMobileTelecomsNetworkOrder>()))
+                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCease(It.IsAny<ExternalMobileTelecomsNetworkOrder>()))
                     .Returns(Task.FromResult(false));
 
                 await sut.Handle(inputMessage);
@@ -113,7 +113,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             public async void ReturnFalseWhenSendOrderFails()
             {
                 externalMobileTelecomsNetworkServiceMock.Reset();
-                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCancel(It.IsAny<ExternalMobileTelecomsNetworkOrder>()))
+                externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCease(It.IsAny<ExternalMobileTelecomsNetworkOrder>()))
                     .Returns(Task.FromResult(false));
 
                 var actual = await sut.Handle(inputMessage);

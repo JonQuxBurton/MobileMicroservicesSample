@@ -36,7 +36,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
                 using (var tx = dataStore.BeginTransaction())
                 {
-                    dataStore.AddActivation(new ActivationOrder
+                    dataStore.Add(new Order
                     {
                         Name = message.Name,
                         MobileOrderId = message.MobileOrderId,

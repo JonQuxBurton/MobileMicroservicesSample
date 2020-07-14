@@ -5,6 +5,6 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
 {
     public interface IOrderCompletedChecker
     {
-        Task Check(ActivationOrder sentOrder);
+        Task Check(Order sentOrder);
     }
 }

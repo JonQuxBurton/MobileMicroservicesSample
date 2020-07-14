@@ -28,13 +28,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
             return currentTransaction;
         }
 
-        public void AddActivation(ActivationOrder order)
-        {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status, Type) values (@Name, @MobileOrderId, @Status, @Type)";
-            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status, order.Type }, currentTransaction.Get());
-        }
-
-        public void AddCancel(CancelOrder order)
+        public void Add(Order order)
         {
             var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status, Type) values (@Name, @MobileOrderId, @Status, @Type)";
             connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status, order.Type }, currentTransaction.Get());
@@ -52,10 +46,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
             connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
         }
 
-        public IEnumerable<ActivationOrder> GetSent()
+        public IEnumerable<Order> GetSent()
         {
             var sql = $"select * from {SchemaName}.{OrdersTableName} where Status='Sent'";
-            var orders = new List<ActivationOrder>();
+            var orders = new List<Order>();
 
             using (var conn = new SqlConnection(connectionString))
             {
@@ -63,11 +57,12 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 
                 foreach (var dbOrder in dbOrders)
                 {
-                    orders.Add(new ActivationOrder
+                    orders.Add(new Order
                     {
                         MobileOrderId = dbOrder.MobileOrderId,
                         Name = dbOrder.Name,
                         Status = dbOrder.Status,
+                        Type = dbOrder.Type,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
                     });

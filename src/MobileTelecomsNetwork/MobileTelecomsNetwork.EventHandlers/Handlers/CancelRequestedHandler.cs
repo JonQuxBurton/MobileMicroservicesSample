@@ -36,7 +36,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
             using (var tx = dataStore.BeginTransaction())
             {
-                dataStore.AddCancel(new CancelOrder
+                dataStore.Add(new Order
                 {
                     MobileOrderId = message.MobileOrderId,
                     Status = "New",
@@ -44,14 +44,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 });
             }
 
-            var result = await externalMobileTelecomsNetworkService.PostCancel(new ExternalMobileTelecomsNetworkOrder
+            var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
             {
                 Reference = message.MobileOrderId
             });
 
             if (!result)
             {
-                logger.LogInformation($"Failed to PostCancel to externalMobileTelecomsNetworkService");
+                logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
                 return false;
             }
 

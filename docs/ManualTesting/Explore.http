@@ -16,7 +16,7 @@ content-type: application/json
 }
 
 ### Get a Mobile
-GET http://localhost:5000/api/mobiles/ef0e5e84-b562-4391-bdd6-c699d0acba0e
+GET http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
 
 ### Activate a Mobile
 POST http://localhost:5000/api/mobiles/6F04C7C5-2D23-4D9A-A2B6-575B452C8ACF/activate
@@ -28,7 +28,7 @@ content-type: application/json
 }
 
 ### Cancel a Mobile
-DELETE http://localhost:5000/api/mobiles/20110CA0-AC94-447E-9888-1E048FC2A4C5
+DELETE http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
 
 ###==================================================
 ### SimCard Wholesaler

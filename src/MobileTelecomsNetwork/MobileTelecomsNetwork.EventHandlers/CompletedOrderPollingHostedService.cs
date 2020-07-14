@@ -15,7 +15,7 @@ namespace MobileTelecomsNetwork.EventHandlers
 
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
         private readonly IDataStore dataStore;
-        private readonly IOrderCompletedChecker activationOrderChecker;
+        private readonly IOrderCompletedChecker orderCompletedChecker;
         private Timer timer;
 
         public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
@@ -24,7 +24,7 @@ namespace MobileTelecomsNetwork.EventHandlers
         {
             this.logger = logger;
             this.dataStore = dataStore;
-            this.activationOrderChecker = activationOrderChecker;
+            this.orderCompletedChecker = activationOrderChecker;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -39,11 +39,11 @@ namespace MobileTelecomsNetwork.EventHandlers
         {
             try
             {
-                var sentOrders = dataStore.GetSent().Take(BatchSize);
+                var orders = dataStore.GetSent().Take(BatchSize);
 
-                foreach (var sentOrder in sentOrders)
+                foreach (var sentOrder in orders)
                 {
-                    await activationOrderChecker.Check(sentOrder);
+                    await orderCompletedChecker.Check(sentOrder);
                 }
             }
             catch (Exception ex)

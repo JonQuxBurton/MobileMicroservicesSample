@@ -6,6 +6,6 @@ namespace EndToEndApiLevelTests
     {
         public MobileDataEntity ActualMobile { get; set; }
         public OrderDataEntity ActualMobileActivateOrderSnapshot { get; set; }
-        public MobileTelecomsNetwork.EventHandlers.Data.ActivationOrder ActualMobileTelecomsNetworkOrderSnapshot { get; set; }
+        public MobileTelecomsNetwork.EventHandlers.Data.Order ActualMobileTelecomsNetworkOrderSnapshot { get; set; }
     }
 }

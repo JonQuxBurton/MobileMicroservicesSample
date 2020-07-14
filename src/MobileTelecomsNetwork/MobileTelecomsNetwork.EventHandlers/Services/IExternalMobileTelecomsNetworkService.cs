@@ -4,7 +4,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
 {
     public interface IExternalMobileTelecomsNetworkService
     {
-        Task<bool> PostCancel(ExternalMobileTelecomsNetworkOrder order);
+        Task<bool> PostCease(ExternalMobileTelecomsNetworkOrder order);
         Task<bool> PostOrder(ExternalMobileTelecomsNetworkOrder order);
     }
 }

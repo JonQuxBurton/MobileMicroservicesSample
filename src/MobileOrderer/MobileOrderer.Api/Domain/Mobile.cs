@@ -73,10 +73,20 @@ namespace MobileOrderer.Api.Domain
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.Live);
                 });
             machine.Configure(State.ProcessingCease)
+                .Permit(Trigger.CeaseCompleted, State.Ceased)
                 .OnEntry(() =>
                 {
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.ProcessingCease);
                     this.CreateNewOrder();
+                })
+                .OnExit(() =>
+                {
+                    this.CompleteInFlightOrder();
+                });
+            machine.Configure(State.Ceased)
+                .OnEntry(() =>
+                {
+                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.Ceased);
                 });
             machine.Configure(State.New).Permit(Trigger.PortIn, State.ProcessingPortIn);
             machine.Configure(State.ProcessingPortIn).Permit(Trigger.PortInCompleted, State.Live);
@@ -84,7 +94,6 @@ namespace MobileOrderer.Api.Domain
             machine.Configure(State.Suspended).Permit(Trigger.Resume, State.Live);
             machine.Configure(State.Live).Permit(Trigger.ReplaceSim, State.Suspended);
             machine.Configure(State.Live).Permit(Trigger.RequestPac, State.ProcessingPortOut);
-            machine.Configure(State.ProcessingCease).Permit(Trigger.CeaseCompleted, State.Ceased);
             machine.Configure(State.ProcessingPortOut).Permit(Trigger.PortOutCompleted, State.PortedOut);
         }
 

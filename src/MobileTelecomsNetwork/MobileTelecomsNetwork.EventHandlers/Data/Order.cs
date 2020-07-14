@@ -2,7 +2,7 @@
 
 namespace MobileTelecomsNetwork.EventHandlers.Data
 {
-    public class ActivationOrder
+    public class Order
     {
         public string Name { get; set; }
         public Guid MobileOrderId { get; set; }

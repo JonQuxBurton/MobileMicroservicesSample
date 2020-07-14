@@ -60,8 +60,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 var actual = await sut.Handle(inputMessage);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
-                dataStoreMock.Verify(x => x.AddActivation(
-                    It.Is<ActivationOrder>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
+                dataStoreMock.Verify(x => x.Add(
+                    It.Is<Order>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
                                                 y.Status == "New")));
                 transactionMock.Verify(x => x.Dispose());
             }
