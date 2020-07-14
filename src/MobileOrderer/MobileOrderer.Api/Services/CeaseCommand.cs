@@ -6,12 +6,12 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {
-    public class CancelCommand : IMobileCommand
+    public class CeaseCommand : IMobileCommand
     {
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMessagePublisher messagePublisher;
 
-        public CancelCommand(IRepository<Mobile> mobileRepository, 
+        public CeaseCommand(IRepository<Mobile> mobileRepository, 
             IMessagePublisher messagePublisher)
         {
             this.mobileRepository = mobileRepository;
@@ -27,7 +27,7 @@ namespace MobileOrderer.Api.Services
 
         private void Publish(Guid mobileGlobalId, Order order)
         {
-            messagePublisher.PublishAsync(new CancelRequestedMessage
+            messagePublisher.PublishAsync(new CeaselRequestedMessage
             {
                 MobileOrderId = order.GlobalId
             });

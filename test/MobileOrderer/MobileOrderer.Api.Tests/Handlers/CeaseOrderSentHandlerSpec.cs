@@ -11,16 +11,16 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public class CancelOrderSentHandlerSpec
+    public class CeaseOrderSentHandlerSpec
     {
         public class HandleShould
         {
-            private readonly CancelOrderSentHandler sut;
+            private readonly CeaseOrderSentHandler sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGetMobileByOrderIdQuery> getMobileByOrderIdQueryMock;
 
             private readonly Mobile expectedMobile;
-            private readonly CancelOrderSentMessage inputMessage;
+            private readonly CeaseOrderSentMessage inputMessage;
 
             public HandleShould()
             {
@@ -33,19 +33,19 @@ namespace MobileOrderer.Api.Tests.Handlers
                     GlobalId = Guid.NewGuid(),
                     State = "ProcessingCease"
                 }, inFlightOrder);
-                inputMessage = new CancelOrderSentMessage()
+                inputMessage = new CeaseOrderSentMessage()
                 {
                     MobileOrderId = expectedMobile.GlobalId
                 };
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 getMobileByOrderIdQueryMock = new Mock<IGetMobileByOrderIdQuery>();
-                var loggerMock = new Mock<ILogger<CancelOrderSentHandler>>();
+                var loggerMock = new Mock<ILogger<CeaseOrderSentHandler>>();
 
                 this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
                     .Returns(expectedMobile);
 
-                sut = new CancelOrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
+                sut = new CeaseOrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
             }
 
             [Fact]
@@ -76,7 +76,7 @@ namespace MobileOrderer.Api.Tests.Handlers
             [Fact]
             public async void ReturnFalseWhenNotSuccessful()
             {
-                var nonExistantMobileMessage = new CancelOrderSentMessage()
+                var nonExistantMobileMessage = new CeaseOrderSentMessage()
                 {
                     MobileOrderId = Guid.Empty
                 };

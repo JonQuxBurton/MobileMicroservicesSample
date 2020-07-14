@@ -9,24 +9,24 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Handlers
 {
-    public class CancelOrderSentHandler : IHandlerAsync<CancelOrderSentMessage>
+    public class CeaseOrderSentHandler : IHandlerAsync<CeaseOrderSentMessage>
     {
-        private readonly ILogger<CancelOrderSentHandler> logger;
+        private readonly ILogger<CeaseOrderSentHandler> logger;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IGetMobileByOrderIdQuery getMobileByOrderIdQuery;
 
-        public CancelOrderSentHandler(ILogger<CancelOrderSentHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery)
+        public CeaseOrderSentHandler(ILogger<CeaseOrderSentHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery)
         {
             this.logger = logger;
             this.mobileRepository = mobileRepository;
             this.getMobileByOrderIdQuery = getMobileByOrderIdQuery;
         }
 
-        public Task<bool> Handle(CancelOrderSentMessage message)
+        public Task<bool> Handle(CeaseOrderSentMessage message)
         {
             try
             {
-                logger.LogInformation($"Received [CancelOrderSent] MobileOrderId={message.MobileOrderId}");
+                logger.LogInformation($"Received [CeaseOrderSent] MobileOrderId={message.MobileOrderId}");
 
                 var mobile = this.getMobileByOrderIdQuery.Get(message.MobileOrderId);
                 mobile.OrderSent();
@@ -34,7 +34,7 @@ namespace MobileOrderer.Api.Handlers
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error while processing CancelOrderSentMessage");
+                this.logger.LogError(ex, "Error while processing CeaseOrderSentMessage");
                 return Task.FromResult(false);
             }
 

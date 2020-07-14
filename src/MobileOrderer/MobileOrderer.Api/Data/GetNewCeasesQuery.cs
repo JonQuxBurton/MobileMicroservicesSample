@@ -6,12 +6,12 @@ using Utils.Enums;
 
 namespace MobileOrderer.Api.Data
 {
-    public class GetNewCancelsQuery : IGetNewCancelsQuery
+    public class GetNewCeasesQuery : IGetNewCeasesQuery
     {
         private readonly MobilesContext mobilesContext;
         private readonly IEnumConverter enumConverter;
 
-        public GetNewCancelsQuery(MobilesContext mobilesContext, IEnumConverter enumConverter)
+        public GetNewCeasesQuery(MobilesContext mobilesContext, IEnumConverter enumConverter)
         {
             this.mobilesContext = mobilesContext;
             this.enumConverter = enumConverter;
@@ -19,8 +19,8 @@ namespace MobileOrderer.Api.Data
 
         public IEnumerable<Mobile> Get()
         {
-            var cancelMobileStateName = enumConverter.ToName<Mobile.State>(Mobile.State.ProcessingCease);
-            var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == cancelMobileStateName).ToList();
+            var ceaseMobileStateName = enumConverter.ToName<Mobile.State>(Mobile.State.ProcessingCease);
+            var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == ceaseMobileStateName).ToList();
             var mobiles = new List<Mobile>();
 
             var newOrderStateName = enumConverter.ToName<Order.State>(Order.State.New);

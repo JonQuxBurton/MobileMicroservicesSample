@@ -3,7 +3,7 @@ using System;
 
 namespace MobileTelecomsNetwork.EventHandlers.Messages
 {
-    public class CancelOrderSentMessage : Message
+    public class CeaseRequestedMessage : Message
     {
         public Guid MobileOrderId { get; set; }
     }

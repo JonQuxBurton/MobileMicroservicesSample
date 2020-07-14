@@ -7,23 +7,23 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Services
 {
-    public class CancelRequestedEventCheckerSpec
+    public class CeaseRequestedEventCheckerSpec
     {
         private readonly Mobile expectedMobile;
-        private readonly CancelRequestedEventChecker sut;
-        private readonly Mock<IGetNewCancelsQuery> getMobilesQueryMock;
+        private readonly CeaseRequestedEventChecker sut;
+        private readonly Mock<IGetNewCeasesQuery> getMobilesQueryMock;
         private readonly Mock<IMobileCommand> commandMock;
 
-        public CancelRequestedEventCheckerSpec()
+        public CeaseRequestedEventCheckerSpec()
         {
             var inFlightOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Neil", ContactPhoneNumber = "0123456789", State = "New" });
             expectedMobile = new Mobile(new MobileDataEntity { GlobalId = Guid.NewGuid(), Id = 101, State = "Live" }, inFlightOrder, null);
-            getMobilesQueryMock = new Mock<IGetNewCancelsQuery>();
+            getMobilesQueryMock = new Mock<IGetNewCeasesQuery>();
             commandMock = new Mock<IMobileCommand>();
             getMobilesQueryMock.Setup(x => x.Get())
                 .Returns(new[] { expectedMobile });
 
-            sut = new CancelRequestedEventChecker(getMobilesQueryMock.Object,
+            sut = new CeaseRequestedEventChecker(getMobilesQueryMock.Object,
                 commandMock.Object);
         }
 

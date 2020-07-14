@@ -2,18 +2,18 @@
 
 namespace MobileOrderer.Api.Services
 {
-    public class CancelRequestedEventChecker : IMobileEventsChecker
+    public class CeaseRequestedEventChecker : IMobileEventsChecker
     {
-        private readonly IGetNewCancelsQuery getMobilesQuery;
+        private readonly IGetNewCeasesQuery getMobilesQuery;
         private readonly IMobileCommand command;
 
-        public CancelRequestedEventChecker(
-            IGetNewCancelsQuery getCancelMobilesQuery,
+        public CeaseRequestedEventChecker(
+            IGetNewCeasesQuery getCeasesMobilesQuery,
             IMobileCommand command
             )
         {
             this.command = command;
-            this.getMobilesQuery = getCancelMobilesQuery;
+            this.getMobilesQuery = getCeasesMobilesQuery;
         }
 
         public void Check()

@@ -139,7 +139,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             }
         }
 
-        public class CancelShould
+        public class CeaseShould
         {
             private readonly MobilesController sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
@@ -147,7 +147,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             private readonly Mobile expectedMobile;
             private readonly Guid expectedReference;
 
-            public CancelShould()
+            public CeaseShould()
             {
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
@@ -169,7 +169,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void UpdateTheMobileInTheRepository()
             {
-                sut.Cancel(expectedReference);
+                sut.Cease(expectedReference);
 
                 this.mobileRepositoryMock.Verify(
                     x => x.Update(It.Is<Mobile>(y =>
@@ -179,12 +179,12 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void AddInFligthOrderToRepository()
             {
-                sut.Cancel(expectedReference);
+                sut.Cease(expectedReference);
 
                 mobileRepositoryMock.Verify(x => x.Update(It.Is<Mobile>(y =>
                     y.GlobalId == expectedMobile.GlobalId &&
                     y.InFlightOrder != null &&
-                    y.InFlightOrder.Type == Order.OrderType.Cancel &&
+                    y.InFlightOrder.Type == Order.OrderType.Cease &&
                     y.InFlightOrder.CurrentState == Order.State.New
                     )));
             }
@@ -192,7 +192,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void ReturnAccepted()
             {
-                var actual = sut.Cancel(expectedReference);
+                var actual = sut.Cease(expectedReference);
 
                 actual.Should().BeOfType<AcceptedResult>();
             }
@@ -206,7 +206,7 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 guidCreatorMock.Setup(x => x.Create()).Returns(notFoundReference);
 
-                var actual = sut.Cancel(notFoundReference);
+                var actual = sut.Cease(notFoundReference);
 
                 actual.Should().BeOfType<NotFoundResult>();
             }

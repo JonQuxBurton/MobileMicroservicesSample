@@ -15,7 +15,7 @@ namespace MobileOrderer.Api.Services
         private readonly ILogger<OrderSentHandler> orderSentLogger;
         private readonly ILogger<ProvisioningOrderCompletedHandler> provisioningOrderCompletedLogger;
         private readonly ILogger<ActivationOrderSentHandler> activationOrderSentLogger;
-        private readonly ILogger<CancelOrderSentHandler> cancelOrderSentLogger;
+        private readonly ILogger<CeaseOrderSentHandler> ceaseOrderSentLogger;
         private readonly ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger;
         private readonly ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger;
         private readonly IMessageBus messageBus;
@@ -26,7 +26,7 @@ namespace MobileOrderer.Api.Services
         public MessageBusListenerBuilder(ILogger<OrderSentHandler> orderSentLogger, 
             ILogger<ProvisioningOrderCompletedHandler> provisioningOrderCompletedLogger,
             ILogger<ActivationOrderSentHandler> activationOrderSentLogger,
-            ILogger<CancelOrderSentHandler> cancelOrderSentLogger,
+            ILogger<CeaseOrderSentHandler> ceaseOrderSentLogger,
             ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger,
             ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger,
             IMessageBus messageBus, 
@@ -37,7 +37,7 @@ namespace MobileOrderer.Api.Services
             this.orderSentLogger = orderSentLogger;
             this.provisioningOrderCompletedLogger = provisioningOrderCompletedLogger;
             this.activationOrderSentLogger = activationOrderSentLogger;
-            this.cancelOrderSentLogger = cancelOrderSentLogger;
+            this.ceaseOrderSentLogger = ceaseOrderSentLogger;
             this.activationOrderCompletedLogger = activationOrderCompletedLogger;
             this.ceaseOrderCompletedLogger = ceaseOrderCompletedLogger;
             this.messageBus = messageBus;
@@ -60,8 +60,8 @@ namespace MobileOrderer.Api.Services
             var activationOrderCompletedHandler = new ActivationOrderCompletedHandler(activationOrderCompletedLogger, mobileRepository, getMobileByOrderIdQuery);
             messageBus.Subscribe<ActivationOrderCompletedMessage, IHandlerAsync<ActivationOrderCompletedMessage>>(activationOrderCompletedHandler);
 
-            var cancelOrderSentHandler = new CancelOrderSentHandler(cancelOrderSentLogger, mobileRepository, getMobileByOrderIdQuery);
-            messageBus.Subscribe<CancelOrderSentMessage, IHandlerAsync<CancelOrderSentMessage>>(cancelOrderSentHandler);
+            var ceaseOrderSentHandler = new CeaseOrderSentHandler(ceaseOrderSentLogger, mobileRepository, getMobileByOrderIdQuery);
+            messageBus.Subscribe<CeaseOrderSentMessage, IHandlerAsync<CeaseOrderSentMessage>>(ceaseOrderSentHandler);
 
             var ceaseOrderCompletedHandler = new CeaseOrderCompletedHandler(ceaseOrderCompletedLogger, mobileRepository, getMobileByOrderIdQuery);
             messageBus.Subscribe<CeaseOrderCompletedMessage, IHandlerAsync<CeaseOrderCompletedMessage>>(ceaseOrderCompletedHandler);

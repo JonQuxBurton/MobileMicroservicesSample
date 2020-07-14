@@ -1,9 +1,9 @@
 ﻿using MinimalEventBus.JustSaying;
 using System;
 
-namespace MobileOrderer.Api.Messages
+namespace MobileTelecomsNetwork.EventHandlers.Messages
 {
-    public class CancelRequestedMessage : Message
+    public class CeaseOrderSentMessage : Message
     {
         public Guid MobileOrderId { get; set; }
     }

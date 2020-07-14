@@ -10,14 +10,14 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Services
 {
-    public class CancelCommandSpec
+    public class CeaseCommandSpec
     {
         public class ExecuteShould
         {
             private readonly Mobile expectedMobile;
             private readonly Mock<IRepository<Mobile>> repositoryMock;
             private Mock<IMessagePublisher> messagePublisherMock;
-            private readonly CancelCommand sut;
+            private readonly CeaseCommand sut;
 
             public ExecuteShould()
             {
@@ -30,7 +30,7 @@ namespace MobileOrderer.Api.Tests.Services
                 }));
                 repositoryMock = new Mock<IRepository<Mobile>>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
-                sut = new CancelCommand(repositoryMock.Object, messagePublisherMock.Object);
+                sut = new CeaseCommand(repositoryMock.Object, messagePublisherMock.Object);
             }
 
             [Fact]
@@ -54,7 +54,7 @@ namespace MobileOrderer.Api.Tests.Services
             {
                 sut.Execute(expectedMobile);
 
-                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<CancelRequestedMessage>(
+                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<CeaselRequestedMessage>(
                     y => y.MobileOrderId == expectedMobile.InFlightOrder.GlobalId)));
             }
         }

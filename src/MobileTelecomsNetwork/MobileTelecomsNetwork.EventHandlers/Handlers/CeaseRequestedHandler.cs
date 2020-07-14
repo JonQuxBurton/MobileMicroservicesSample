@@ -8,14 +8,14 @@ using MobileTelecomsNetwork.EventHandlers.Services;
 
 namespace MobileTelecomsNetwork.EventHandlers.Handlers
 {
-    public class CancelRequestedHandler : IHandlerAsync<CancelRequestedMessage>
+    public class CeaseRequestedHandler : IHandlerAsync<CeaseRequestedMessage>
     {
-        private readonly ILogger<CancelRequestedHandler> logger;
+        private readonly ILogger<CeaseRequestedHandler> logger;
         private readonly IDataStore dataStore;
         private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
         private readonly IMessagePublisher messagePublisher;
 
-        public CancelRequestedHandler(ILogger<CancelRequestedHandler> logger, 
+        public CeaseRequestedHandler(ILogger<CeaseRequestedHandler> logger, 
             IDataStore dataStore,
             IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService,
             IMessagePublisher messagePublisher
@@ -27,9 +27,9 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             this.messagePublisher = messagePublisher;
         }
 
-        public async Task<bool> Handle(CancelRequestedMessage message)
+        public async Task<bool> Handle(CeaseRequestedMessage message)
         {
-            logger.LogInformation($"Received [CancelRequested] {message.MobileOrderId}");
+            logger.LogInformation($"Received [CeaseRequested] {message.MobileOrderId}");
 
             try
             {
@@ -59,7 +59,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     return false;
                 }
 
-                 dataStore.Sent(message.MobileOrderId);
+                dataStore.Sent(message.MobileOrderId);
                 Publish(message.MobileOrderId);
             }
             }
@@ -74,7 +74,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
         private void Publish(Guid mobileGlobalId)
         {
-            messagePublisher.PublishAsync(new CancelOrderSentMessage
+            messagePublisher.PublishAsync(new CeaseOrderSentMessage
             {
                 MobileOrderId = mobileGlobalId
             });

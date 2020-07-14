@@ -13,21 +13,21 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 {
-    public class CancelRequestedHandlerSpec
+    public class CeaseRequestedHandlerSpec
     {
         public class HandleShould
         {
-            private CancelRequestedHandler sut;
+            private CeaseRequestedHandler sut;
             private Mock<IDataStore> dataStoreMock;
             private Mock<ITransaction> transactionMock;
             private Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkServiceMock;
-            private CancelRequestedMessage inputMessage;
+            private CeaseRequestedMessage inputMessage;
             private ExternalMobileTelecomsNetworkOrder expectedExternalServiceOrder;
             private Mock<IMessagePublisher> messagePublisherMock;
 
             public HandleShould()
             {
-                inputMessage = new CancelRequestedMessage
+                inputMessage = new CeaseRequestedMessage
                 {
                     MobileOrderId = Guid.NewGuid()
                 };
@@ -42,13 +42,13 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 
                 externalMobileTelecomsNetworkServiceMock = new Mock<IExternalMobileTelecomsNetworkService>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
-                var loggerMock = new Mock<ILogger<CancelRequestedHandler>>();
+                var loggerMock = new Mock<ILogger<CeaseRequestedHandler>>();
 
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCease(It.Is<ExternalMobileTelecomsNetworkOrder>(
                     y => y.Reference == expectedExternalServiceOrder.Reference)))
                         .Returns(Task.FromResult(true));
 
-                sut = new CancelRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object);
+                sut = new CeaseRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object);
             }
 
             [Fact]
@@ -87,7 +87,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             {
                 await sut.Handle(inputMessage);
 
-                this.messagePublisherMock.Verify(x => x.PublishAsync(It.Is<CancelOrderSentMessage>(y => y.MobileOrderId == inputMessage.MobileOrderId)));
+                this.messagePublisherMock.Verify(x => x.PublishAsync(It.Is<CeaseOrderSentMessage>(y => y.MobileOrderId == inputMessage.MobileOrderId)));
             }
 
             [Fact]

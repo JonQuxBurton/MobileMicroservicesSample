@@ -15,7 +15,7 @@ content-type: application/json
 ### Get the Mobile, so we can get the Order Reference (orderHistory.globalId)
 GET http://localhost:5000/api/mobiles/02b3f342-9c08-4c68-8324-4ec88ecc497e
 
-### Step 2 - Mobile Order Completed
+### Step 2 - Mobile Provision Order has been Completed
 POST http://localhost:5001/api/orders/5AD202C5-F96E-43F0-98A0-23FDCC97F222/complete
 
 ### Step 3 - Activate a Mobile
@@ -27,15 +27,15 @@ content-type: application/json
 	"ContactPhoneNumber" : "00123456789"
 }
 
-### Step  4 - Activate Order Completed
+### Step  4 - Mobile Activate Order has been Completed
 POST http://localhost:5002/api/orders/41F139A0-7224-470C-80D1-4DD6291F376A/complete
 
 ###
-### Sceanrio 2. Cancel a Mobile
+### Sceanrio 2. Cease a Mobile
 ###
 
-### Step 1 - Cancel a Mobile
+### Step 1 - Cease a Mobile
 DELETE http://localhost:5000/api/mobiles/714C0D05-DF75-4FBB-83BA-CE68B943DA0D
 
-### Step 2 - Cancel Order has been Completed
+### Step 2 - Cease Order has been Completed
 POST http://localhost:5002/api/orders/AEC96534-179B-4C91-8AA3-C4309B191A7B/complete

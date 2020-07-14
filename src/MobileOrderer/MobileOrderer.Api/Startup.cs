@@ -71,7 +71,7 @@ namespace MobileOrderer.Api
             services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
             services.AddSingleton<IGetProcessingProvisioningMobilesQuery, GetProcessingProvisioningMobilesQuery>();
             services.AddSingleton<IGetNewActivationsQuery, GetNewActivationsQuery>();
-            services.AddSingleton<IGetNewCancelsQuery, GetNewCancelsQuery>();
+            services.AddSingleton<IGetNewCeasesQuery, GetNewCeasesQuery>();
             services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
             services.AddSingleton<ISqsService, SqsService>();
             services.AddSingleton<IMessageBus, MessageBus>();
@@ -111,12 +111,12 @@ namespace MobileOrderer.Api
 
             services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
             {
-                var getNewCancelsQuery = serviceProvider.GetService<IGetNewCancelsQuery>();
+                var getNewCeasesQuery = serviceProvider.GetService<IGetNewCeasesQuery>();
                 var repository = serviceProvider.GetService<IRepository<Mobile>>();
                 var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
-                var cancelCommand = new CancelCommand(repository, messagePublisher);
+                var ceaseCommand = new CeaseCommand(repository, messagePublisher);
 
-                return new CancelRequestedEventChecker(getNewCancelsQuery, cancelCommand);
+                return new CeaseRequestedEventChecker(getNewCeasesQuery, ceaseCommand);
             });
         }
 

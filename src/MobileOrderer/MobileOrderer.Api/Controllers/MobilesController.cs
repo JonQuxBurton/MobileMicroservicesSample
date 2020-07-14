@@ -68,7 +68,7 @@ namespace MobileOrderer.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Cancel(Guid id)
+        public IActionResult Cease(Guid id)
         {
             var mobile = this.mobileRepository.GetById(id);
 
@@ -76,7 +76,7 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
 
             var newStateName = new EnumConverter().ToName<Order.State>(Order.State.New);
-            var orderType = new EnumConverter().ToName<Order.OrderType>(Order.OrderType.Cancel);
+            var orderType = new EnumConverter().ToName<Order.OrderType>(Order.OrderType.Cease);
             var dataEntity = new OrderDataEntity()
             {
                 GlobalId = this.guidCreator.Create(),
