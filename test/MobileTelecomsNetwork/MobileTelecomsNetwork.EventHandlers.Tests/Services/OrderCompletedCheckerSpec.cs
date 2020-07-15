@@ -17,8 +17,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
 {
     public class OrderCompletedCheckerSpec
     {
-        [Fact]
-        public async void CallExternalService()
+        [Theory]
+        [InlineData("Provision")]
+        [InlineData("Cease")]
+        public async void CallExternalService(string orderType)
         {
             var config = new Config
             {
@@ -27,7 +29,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
             var expectedOrder = new Order()
             {
                 MobileOrderId = Guid.NewGuid(),
-                Type = "Cease"
+                Type = orderType
             };
             var expectedUrl = new Uri($"{config.ExternalMobileTelecomsNetworkApiUrl}/api/orders/{expectedOrder.MobileOrderId}");
             var externalOrder = new ExternalOrder

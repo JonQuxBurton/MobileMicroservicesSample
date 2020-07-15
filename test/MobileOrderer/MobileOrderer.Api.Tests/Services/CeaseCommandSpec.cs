@@ -50,7 +50,7 @@ namespace MobileOrderer.Api.Tests.Services
             }
 
             [Fact]
-            public void PublishesMobileRequested()
+            public void PublishesCeaseRequested()
             {
                 sut.Execute(expectedMobile);
 

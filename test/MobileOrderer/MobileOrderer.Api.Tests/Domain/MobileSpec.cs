@@ -145,5 +145,64 @@ namespace MobileOrderer.Api.Tests.Domain
                 sut.InFlightOrder.CurrentState.Should().Be(Order.State.Sent);
             }
         }
+
+        public class CeaseShould
+        {
+            [Fact]
+            public void ChangeCurrentStateToProcessingCease()
+            {
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" }, null, null);
+
+                sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
+
+                sut.CurrentState.Should().Be(Mobile.State.ProcessingCease);
+            }
+
+            [Fact]
+            public void SetInFlightOrderStateToNew()
+            {
+                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" }, mobileOrder, null);
+
+                sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
+
+                sut.InFlightOrder.CurrentState.Should().Be(Order.State.New);
+            }
+        }
+
+        public class CeaseCompletedShould
+        {
+            [Fact]
+            public void ChangeCurrentStateToCeased()
+            {
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "ProcessingCease" }, null, null);
+
+                sut.CeaseCompleted();
+
+                sut.CurrentState.Should().Be(Mobile.State.Ceased);
+            }
+
+            [Fact]
+            public void SetActivateOrderStateToCompleted()
+            {
+                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "ProcessingCease" }, mobileOrder, null);
+
+                sut.CeaseCompleted();
+
+                sut.OrderHistory.First().CurrentState.Should().Be(Order.State.Completed);
+            }
+
+            [Fact]
+            public void SetInFlightOrderToNull()
+            {
+                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "ProcessingCease" }, mobileOrder, null);
+
+                sut.CeaseCompleted();
+
+                sut.InFlightOrder.Should().BeNull();
+            }
+        }
     }
 }
