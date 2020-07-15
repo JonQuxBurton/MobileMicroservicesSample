@@ -1,9 +1,9 @@
 ﻿using Polly;
 using System;
 
-namespace EndToEndApiLevelTests.Data
+namespace EndToEndApiLevelTests.DataAcess
 {
-    public class Data
+    public class Retry
     {
         public const int RetryAttempts = 18;
         private const int RetryIntervalSeconds = 10;

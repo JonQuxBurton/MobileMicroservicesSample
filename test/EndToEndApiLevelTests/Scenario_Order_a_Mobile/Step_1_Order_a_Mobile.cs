@@ -7,9 +7,9 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
     [Collection("Scenario Order_a_Mobile collection")]
     public class Step_1_Order_a_Mobile
     {
-        private readonly Scenario_Order_a_Mobile_Fixture fixture;
+        private readonly Scenario_Order_a_Mobile_Script fixture;
 
-        public Step_1_Order_a_Mobile(Scenario_Order_a_Mobile_Fixture fixture)
+        public Step_1_Order_a_Mobile(Scenario_Order_a_Mobile_Script fixture)
         {
             this.fixture = fixture;
         }

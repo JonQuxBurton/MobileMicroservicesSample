@@ -1,16 +1,16 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
 
 namespace EndToEndApiLevelTests
 {
     public class SnapshotFactoryBase
     {
-        protected T Snapshot<T>(T original) where T : class
+        protected T Snapshot<T>(T original) where T: class
         {
             if (original == null)
                 return null;
 
-            var serialized = JsonSerializer.Serialize(original);
-            return JsonSerializer.Deserialize<T>(serialized);
+            MethodInfo method = original.GetType().GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
+            return (T)method.Invoke(original, null);
         }
     }
 }

@@ -7,9 +7,9 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
     [Collection("Scenario Order_a_Mobile collection")]
     public class Step_2_Provision_Order_has_been_Completed
     {
-        private readonly Scenario_Order_a_Mobile_Fixture fixture;
+        private readonly Scenario_Order_a_Mobile_Script fixture;
 
-        public Step_2_Provision_Order_has_been_Completed(Scenario_Order_a_Mobile_Fixture fixture)
+        public Step_2_Provision_Order_has_been_Completed(Scenario_Order_a_Mobile_Script fixture)
         {
             this.fixture = fixture;
         }

@@ -7,9 +7,9 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
     [Collection("Scenario Cease_a_Mobile collection")]
     public class Step_2_Cease_Order_has_been_Completed
     {
-        private readonly Scenario_Cease_a_Mobile_Fixture scenariosFixture;
+        private readonly Scenario_Cease_a_Mobile_Script scenariosFixture;
 
-        public Step_2_Cease_Order_has_been_Completed(Scenario_Cease_a_Mobile_Fixture scenariosFixture)
+        public Step_2_Cease_Order_has_been_Completed(Scenario_Cease_a_Mobile_Script scenariosFixture)
         {
             this.scenariosFixture = scenariosFixture;
         }

@@ -3,40 +3,40 @@ using System.Net;
 using System.Net.Http;
 using System;
 using System.Threading.Tasks;
-using EndToEndApiLevelTests.Data;
+using EndToEndApiLevelTests.DataAcess;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
-    public class Scenario_Cease_a_Mobile_Fixture : IDisposable
+    public class Scenario_Cease_a_Mobile_Script : IDisposable
     {
         public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
 
-        public Scenario_Cease_a_Mobile_Fixture()
+        public Scenario_Cease_a_Mobile_Script()
         {
             Execute().Wait();
         }
 
         private async Task Execute()
         {
-            var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
-            var mobilesData = new MobilesData(connectionString);
+            var config = new Config();
+            var data = new Data(config);
+            var snapshotFactory = new SnapshotFactory(config, data);
 
-            var snapshotFactory = new SnapshotFactory(connectionString, TimeSpan.FromSeconds(10));
-
-            var reference = Guid.NewGuid();
-            var mobileWhichIsLive = mobilesData.CreateMobile(reference, "Live");
+            var mobileGlobalId = Guid.NewGuid();
+            data.MobilesData.CreateMobile(mobileGlobalId, "Live");
+            var mobileWhichIsLive = data.MobilesData.GetMobileByGlobalId(mobileGlobalId);
 
             // Step 1 - Cease a Mobile
-            var client = new HttpClient();            
-            var url = $"http://localhost:5000/api/mobiles/{reference}";
+            var client = new HttpClient();
+            var url = $"http://localhost:5000/api/mobiles/{mobileGlobalId}";
             HttpResponseMessage ceaseAMobileResponse = await client.DeleteAsync(url);
 
             ceaseAMobileResponse.StatusCode.Should().Be(HttpStatusCode.Accepted);
 
             // Gather needed data
-            var actualMobile = mobilesData.GetMobile(mobileWhichIsLive.GlobalId);
-            var actualMobileOrder = mobilesData.GetMobileOrder(actualMobile.Id);
+            var actualMobile = data.MobilesData.GetMobileByGlobalId(mobileWhichIsLive.GlobalId);
+            var actualMobileOrder = data.MobilesData.GetMobileOrder(actualMobile.Id);
             var orderReference = actualMobileOrder.GlobalId;
 
             Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(actualMobile);

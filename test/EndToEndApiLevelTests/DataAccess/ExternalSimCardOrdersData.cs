@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
 using Dapper;
-using ExternalMobileTelecomsNetwork.Api.Data;
+using System.Linq;
+using SimCardWholesaler.Api.Data;
 
-namespace EndToEndApiLevelTests.Data
+namespace EndToEndApiLevelTests.DataAcess
 {
-    public class ExternalMobileTelecomsNetworkData : Data
+    public class ExternalSimCardOrdersData : Retry
     {
         private string connectionString;
 
-        public ExternalMobileTelecomsNetworkData(string connectionString)
+        public ExternalSimCardOrdersData(string connectionString)
         {
             this.connectionString = connectionString;
         }
 
-        public Order TryGetOrder(Guid mobileOrderId)
+        public Order TryGetExternalSimCardOrder(Guid reference)
         {
-            return TryGet(() => GetOrder(mobileOrderId));
+            return TryGet(() => GetNewExternalSimCardOrder(reference));
         }
 
-        public Order GetOrder(Guid reference)
+        public Order GetNewExternalSimCardOrder(Guid reference)
         {
-            var sql = $"select * from ExternalMobileTelecomsNetwork.Orders where Reference=@reference";
+            var status = "New";
+            var sql = $"select * from SimCardWholesaler.Orders where Reference=@reference and Status=@status";
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var dbOrders = conn.Query(sql, new { reference });
+                var dbOrders = conn.Query(sql, new { reference, status });
                 var dbOrder = dbOrders.FirstOrDefault();
 
                 Order order = null;
@@ -37,7 +38,6 @@ namespace EndToEndApiLevelTests.Data
                     {
                         Reference = dbOrder.Reference,
                         Status = dbOrder.Status,
-                        Type = dbOrder.Type,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
                     };

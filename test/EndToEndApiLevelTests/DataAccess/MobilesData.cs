@@ -2,20 +2,26 @@
 using System.Data.SqlClient;
 using System.Threading;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
+using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 
-namespace EndToEndApiLevelTests.Data
+namespace EndToEndApiLevelTests.DataAcess
 {
-    public class MobilesData : Data
+    public class MobilesData : Retry
     {
         private string connectionString;
+        private DbContextOptions<MobilesContext> contextOptions;
 
         public MobilesData(string connectionString)
         {
             this.connectionString = connectionString;
+            var optionsBuilder = new DbContextOptionsBuilder<MobilesContext>();
+            optionsBuilder.UseSqlServer(connectionString);
+            contextOptions = optionsBuilder.Options;
         }
 
-        public MobileDataEntity CreateMobile(Guid globalId, string state)
+        public bool CreateMobile(Guid globalId, string state)
         {
             using (var connection = new SqlConnection(connectionString))
             {
@@ -23,27 +29,16 @@ namespace EndToEndApiLevelTests.Data
                 connection.Execute(sql, new { globalId, state });
             }
 
-            return GetMobile(globalId);
+            return true;
         }
 
-        public MobileDataEntity GetMobile(Guid globalId)
+        public MobileDataEntity GetMobileByGlobalId(Guid globalId)
         {
-            var sql = $"select * from MobileOrderer.Mobiles where GlobalId=@globalId";
-
-            using (var conn = new SqlConnection(connectionString))
+            using (var mobilesContext = new MobilesContext(contextOptions)) 
             {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { globalId = globalId.ToString() });
+                var mobilesRepo = new MobileRepository(mobilesContext, new Utils.Enums.EnumConverter());
 
-                if (dbRow == null)
-                    return null;
-
-                var mobileDataEntity = new MobileDataEntity
-                {
-                    Id = dbRow.Id,
-                    GlobalId = dbRow.GlobalId,
-                    State = dbRow.State
-                };
-                return mobileDataEntity;
+                return mobilesRepo.GetById(globalId).GetDataEntity();
             }
         }
 

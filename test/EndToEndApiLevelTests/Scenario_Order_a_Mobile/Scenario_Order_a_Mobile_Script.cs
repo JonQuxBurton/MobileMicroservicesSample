@@ -5,28 +5,28 @@ using System.Text.Json;
 using System;
 using System.Threading.Tasks;
 using EndToEndApiLevelTests.Scenario_Order_a_Mobile;
-using EndToEndApiLevelTests.Data;
+using EndToEndApiLevelTests.DataAcess;
 
 namespace EndToEndApiLevelTests
 {
-    public partial class Scenario_Order_a_Mobile_Fixture : IDisposable
+    public partial class Scenario_Order_a_Mobile_Script : IDisposable
     {
         public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
         public Step_3_Snapshot Step_3_Snapshot { get; private set; }
         public Step_4_Snapshot Step_4_Snapshot { get; private set; }
 
-        public Scenario_Order_a_Mobile_Fixture()
+        public Scenario_Order_a_Mobile_Script()
         {
             Execute().Wait();
         }
 
         private async Task Execute()
         {
-            var connectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
-            var mobilesData = new MobilesData(connectionString);
-
-            var snapshotFactory = new SnapshotFactory(connectionString, TimeSpan.FromSeconds(10));
+            var config = new Config();
+            //var mobilesData = new MobilesData(config.ConnectionString);
+            var data = new Data(config);
+            var snapshotFactory = new SnapshotFactory(config, data);
 
             // Step 1 Order a Mobile
             var client = new HttpClient();
@@ -44,7 +44,7 @@ namespace EndToEndApiLevelTests
 
             // Gather needed data
             var actualMobileReturned = await DeserializeResponse<MobileOrderer.Api.Resources.MobileResource>(orderAMobileResponse);
-            var actualMobileOrder = mobilesData.GetMobileOrder(actualMobileReturned.Id);
+            var actualMobileOrder = data.MobilesData.GetMobileOrder(actualMobileReturned.Id);
             var mobileGlobalId = actualMobileReturned.GlobalId;
             var orderAMobileOrderReference = actualMobileOrder.GlobalId;
 

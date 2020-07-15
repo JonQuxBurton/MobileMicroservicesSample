@@ -54,7 +54,7 @@ namespace MobileOrderer.Api.Tests.Services
             {
                 sut.Execute(expectedMobile);
 
-                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<CeaselRequestedMessage>(
+                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<CeaseRequestedMessage>(
                     y => y.MobileOrderId == expectedMobile.InFlightOrder.GlobalId)));
             }
         }

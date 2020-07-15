@@ -3,9 +3,9 @@ using System.Data.SqlClient;
 using Dapper;
 using SimCards.EventHandlers.Data;
 
-namespace EndToEndApiLevelTests.Data
+namespace EndToEndApiLevelTests.DataAcess
 {
-    public class SimCardsData : Data
+    public class SimCardsData : Retry
     {
         private string connectionString;
 

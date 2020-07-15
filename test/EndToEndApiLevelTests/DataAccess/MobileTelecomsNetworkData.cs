@@ -3,9 +3,9 @@ using System.Data.SqlClient;
 using Dapper;
 using MobileTelecomsNetwork.EventHandlers.Data;
 
-namespace EndToEndApiLevelTests.Data
+namespace EndToEndApiLevelTests.DataAcess
 {
-    public class MobileTelecomsNetworkData : Data
+    public class MobileTelecomsNetworkData : Retry
     {
         private string connectionString;
 

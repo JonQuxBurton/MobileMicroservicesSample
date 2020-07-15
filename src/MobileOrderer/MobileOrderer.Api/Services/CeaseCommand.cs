@@ -27,7 +27,7 @@ namespace MobileOrderer.Api.Services
 
         private void Publish(Guid mobileGlobalId, Order order)
         {
-            messagePublisher.PublishAsync(new CeaselRequestedMessage
+            messagePublisher.PublishAsync(new CeaseRequestedMessage
             {
                 MobileOrderId = order.GlobalId
             });
