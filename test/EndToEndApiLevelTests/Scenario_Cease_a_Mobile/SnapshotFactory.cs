@@ -21,7 +21,7 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
             var currentMobileOrder = data.MobilesData.GetMobileOrder(currentMobile.Id);
 
             // Wait for final action... Mobile CeaseOrder updated to Sent
-            var finalMobileOrder = data.MobilesData.TryGetMobileOrder(currentMobileOrder.GlobalId, "Sent", config.FinalActionCheckDelay);
+            var finalMobileOrder = data.MobilesData.TryGetMobileOrderInState(currentMobileOrder.GlobalId, "Sent", config.FinalActionCheckDelay);
             finalMobileOrder.Should().NotBeNull("Failed to complete Step 1 final action (Mobile CeaseOrder updated to Sent)");
 
             return new Step_1_Snapshot
@@ -40,7 +40,7 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
             var currentMobileOrder = data.MobilesData.GetMobileOrder(currentMobile.Id);
 
             // Wait for final action... Mobile CeaseOrder updated to Completed
-            var finalMobileOrder = data.MobilesData.TryGetMobileOrder(currentMobileOrder.GlobalId, "Completed", config.FinalActionCheckDelay);
+            var finalMobileOrder = data.MobilesData.TryGetMobileOrderInState(currentMobileOrder.GlobalId, "Completed", config.FinalActionCheckDelay);
             finalMobileOrder.Should().NotBeNull("Failed to complete Step 2 final action (Mobile CeaseOrder updated to 'Completed')");
 
             return new Step_2_Snapshot

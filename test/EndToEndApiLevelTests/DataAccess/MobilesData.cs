@@ -42,15 +42,15 @@ namespace EndToEndApiLevelTests.DataAcess
             }
         }
 
-        public OrderDataEntity TryGetMobileOrder(Guid mobileOrderGlobalId, string state, TimeSpan? delay = null)
+        public OrderDataEntity TryGetMobileOrderInState(Guid mobileOrderGlobalId, string state, TimeSpan? delay = null)
         {
             if (delay.HasValue)
                 Thread.Sleep(delay.Value);
 
-            return TryGet(() => GetMobileOrder(mobileOrderGlobalId, state));
+            return TryGet(() => GetMobileOrderInState(mobileOrderGlobalId, state));
         }
 
-        public OrderDataEntity GetMobileOrder(Guid globalId, string state)
+        private  OrderDataEntity GetMobileOrderInState(Guid globalId, string state)
         {
             var sql = $"select * from MobileOrderer.Orders where GlobalId=@globalId and State=@state";
 
