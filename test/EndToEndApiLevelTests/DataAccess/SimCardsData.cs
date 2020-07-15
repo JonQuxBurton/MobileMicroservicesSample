@@ -1,17 +1,20 @@
 ﻿using System;
-using System.Data.SqlClient;
-using Dapper;
+using Microsoft.Extensions.Options;
 using SimCards.EventHandlers.Data;
 
 namespace EndToEndApiLevelTests.DataAcess
 {
     public class SimCardsData : Retry
     {
-        private string connectionString;
+        private SimCardOrdersDataStore simCardOrdersDataStore;
 
         public SimCardsData(string connectionString)
         {
-            this.connectionString = connectionString;
+            var options = Options.Create<SimCards.EventHandlers.Config>(new SimCards.EventHandlers.Config()
+            {
+                ConnectionString = connectionString
+            });
+            simCardOrdersDataStore = new SimCardOrdersDataStore(options);
         }
 
         public SimCardOrder TryGetSimCardOrder(Guid mobileOrderId)
@@ -21,24 +24,7 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public SimCardOrder GetSimCardOrder(Guid mobileOrderId)
         {
-            var sql = $"select * from SimCards.Orders where MobileOrderId=@MobileOrderId";
-
-            using (var conn = new SqlConnection(connectionString))
-            {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { MobileOrderId = mobileOrderId.ToString() });
-
-                if (dbRow == null)
-                    return null;
-
-                return new SimCardOrder
-                {
-                    MobileOrderId = dbRow.MobileOrderId,
-                    Name = dbRow.Name,
-                    Status = dbRow.Status,
-                    CreatedAt = dbRow.CreatedAt,
-                    UpdatedAt = dbRow.UpdatedAt
-                };
-            }
+            return simCardOrdersDataStore.GetExisting(mobileOrderId);
         }
     }
 }

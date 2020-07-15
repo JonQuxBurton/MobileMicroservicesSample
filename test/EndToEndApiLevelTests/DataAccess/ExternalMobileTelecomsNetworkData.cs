@@ -1,18 +1,22 @@
 ﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
-using Dapper;
 using ExternalMobileTelecomsNetwork.Api.Data;
+using Microsoft.Extensions.Options;
 
 namespace EndToEndApiLevelTests.DataAcess
 {
     public class ExternalMobileTelecomsNetworkData : Retry
     {
-        private string connectionString;
+        private DataStore dataStore;
 
         public ExternalMobileTelecomsNetworkData(string connectionString)
         {
-            this.connectionString = connectionString;
+            var options = Options.Create(new
+                ExternalMobileTelecomsNetwork.Api.Configuration.Config()
+            {
+                ConnectionString = connectionString
+            });
+
+            dataStore = new DataStore(options);
         }
 
         public Order TryGetOrder(Guid mobileOrderId)
@@ -22,29 +26,7 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public Order GetOrder(Guid reference)
         {
-            var sql = $"select * from ExternalMobileTelecomsNetwork.Orders where Reference=@reference";
-
-            using (var conn = new SqlConnection(connectionString))
-            {
-                var dbOrders = conn.Query(sql, new { reference });
-                var dbOrder = dbOrders.FirstOrDefault();
-
-                Order order = null;
-
-                if (dbOrder != null)
-                {
-                    order = new Order
-                    {
-                        Reference = dbOrder.Reference,
-                        Status = dbOrder.Status,
-                        Type = dbOrder.Type,
-                        CreatedAt = dbOrder.CreatedAt,
-                        UpdatedAt = dbOrder.UpdatedAt
-                    };
-                }
-
-                return order;
-            }
+            return dataStore.GetByReference(reference);
         }
     }
 }

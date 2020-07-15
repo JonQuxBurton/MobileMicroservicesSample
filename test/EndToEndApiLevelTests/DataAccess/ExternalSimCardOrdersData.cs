@@ -1,18 +1,21 @@
 ﻿using System;
-using System.Data.SqlClient;
-using Dapper;
-using System.Linq;
 using SimCardWholesaler.Api.Data;
+using Microsoft.Extensions.Options;
 
 namespace EndToEndApiLevelTests.DataAcess
 {
     public class ExternalSimCardOrdersData : Retry
     {
-        private string connectionString;
+        private readonly OrdersDataStore ordersDataStore;
 
         public ExternalSimCardOrdersData(string connectionString)
         {
-            this.connectionString = connectionString;
+            var options = Options.Create<SimCardWholesaler.Api.Configuration.Config>(new SimCardWholesaler.Api.Configuration.Config()
+            {
+                ConnectionString = connectionString
+            });
+
+            ordersDataStore = new OrdersDataStore(options);
         }
 
         public Order TryGetExternalSimCardOrder(Guid reference)
@@ -22,29 +25,12 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public Order GetNewExternalSimCardOrder(Guid reference)
         {
-            var status = "New";
-            var sql = $"select * from SimCardWholesaler.Orders where Reference=@reference and Status=@status";
+            var order = ordersDataStore.GetByReference(reference);
 
-            using (var conn = new SqlConnection(connectionString))
-            {
-                var dbOrders = conn.Query(sql, new { reference, status });
-                var dbOrder = dbOrders.FirstOrDefault();
-
-                Order order = null;
-
-                if (dbOrder != null)
-                {
-                    order = new Order
-                    {
-                        Reference = dbOrder.Reference,
-                        Status = dbOrder.Status,
-                        CreatedAt = dbOrder.CreatedAt,
-                        UpdatedAt = dbOrder.UpdatedAt
-                    };
-                }
-
+            if (order.Status.Trim() == "New")
                 return order;
-            }
+            
+            return null;
         }
     }
 }
