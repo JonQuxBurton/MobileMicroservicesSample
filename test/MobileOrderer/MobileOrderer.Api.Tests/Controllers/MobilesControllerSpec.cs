@@ -24,8 +24,9 @@ namespace MobileOrderer.Api.Tests.Controllers
                 optionsMock.Setup(x => x.Value).Returns(new Config());
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
+                monitoringMock = new Mock<IMonitoring>();
 
-                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object);
+                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
 
                 expectedMobile = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
 
@@ -37,6 +38,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             private readonly Mock<IOptions<Config>> optionsMock;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IMonitoring> monitoringMock;
             private readonly Mobile expectedMobile;
 
             [Fact]
@@ -70,6 +72,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             private readonly MobilesController sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IMonitoring> monitoringMock;
             private readonly Mobile expectedMobile;
             private readonly Guid expectedGlobalId;
             private readonly OrderToAdd expectedOrder;
@@ -89,12 +92,13 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
+                monitoringMock = new Mock<IMonitoring>();
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedGlobalId))
                     .Returns(expectedMobile);
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
 
-                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object);
+                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
             }
 
             [Fact]
@@ -144,6 +148,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             private readonly MobilesController sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IMonitoring> monitoringMock;
             private readonly Mobile expectedMobile;
             private readonly Guid expectedReference;
 
@@ -158,12 +163,13 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
+                monitoringMock = new Mock<IMonitoring>();
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedReference))
                     .Returns(expectedMobile);
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedReference);
 
-                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object);
+                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
             }
 
             [Fact]

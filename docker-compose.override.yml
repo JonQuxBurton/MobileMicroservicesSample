@@ -1,12 +1,12 @@
 version: '3.7'
 
 services:
-  # sql.data:
-    # environment:
-      # - SA_PASSWORD=Pass@word
-      # - ACCEPT_EULA=Y
-    # ports:
-      # - "5433:1433"    # Important: In a production environment your should remove the external port
+  sql.data:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"    # Important: In a production environment your should remove the external port
       
   mobileorderer.api:
     environment:
@@ -17,32 +17,32 @@ services:
     ports:
       - "5000:80"
 
-  # simcards.eventhandlers:
-    # environment:
-      # - ASPNETCORE_ENVIRONMENT=Development
-      # - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardsMicroservice;Password=SimCards@123
-      # - Config:SimCardWholesalerApiUrl=http://simcardwholesaler.api
-      # - EventBusConfig:SnsServiceUrl=http://goaws:4100
-      # - EventBusConfig:SqsServiceUrl=http://goaws:4100
+  simcards.eventhandlers:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardsMicroservice;Password=SimCards@123
+      - Config:SimCardWholesalerApiUrl=http://simcardwholesaler.api
+      - EventBusConfig:SnsServiceUrl=http://goaws:4100
+      - EventBusConfig:SqsServiceUrl=http://goaws:4100
       
-  # simcardwholesaler.api:
-    # environment:
-      # - ASPNETCORE_ENVIRONMENT=Development
-      # - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardWholesalerWebService;Password=SimCardWholesaler@123
-    # ports:
-      # - "5001:80"
+  simcardwholesaler.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardWholesalerWebService;Password=SimCardWholesaler@123
+    ports:
+      - "5001:80"
       
-  # mobiletelecomsnetwork.eventhandlers:
-    # environment:
-      # - ASPNETCORE_ENVIRONMENT=Development
-      # - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileTelecomsNetworkMicroservice;Password=MobileTelecomsNetwork@123
-      # - Config:ExternalMobileTelecomsNetworkApiUrl=http://externalmobiletelecomsnetwork.api
-      # - EventBusConfig:SnsServiceUrl=http://goaws:4100
-      # - EventBusConfig:SqsServiceUrl=http://goaws:4100
+  mobiletelecomsnetwork.eventhandlers:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileTelecomsNetworkMicroservice;Password=MobileTelecomsNetwork@123
+      - Config:ExternalMobileTelecomsNetworkApiUrl=http://externalmobiletelecomsnetwork.api
+      - EventBusConfig:SnsServiceUrl=http://goaws:4100
+      - EventBusConfig:SqsServiceUrl=http://goaws:4100
       
-  # externalmobiletelecomsnetwork.api:
-    # environment:
-      # - ASPNETCORE_ENVIRONMENT=Development
-      # - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=ExternalMobileTelecomsNetworkWebService;Password=ExternalMobileTelecomsNetwork@123
-    # ports:
-      # - "5002:80"
+  externalmobiletelecomsnetwork.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=ExternalMobileTelecomsNetworkWebService;Password=ExternalMobileTelecomsNetwork@123
+    ports:
+      - "5002:80"

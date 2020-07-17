@@ -22,14 +22,16 @@ namespace MobileOrderer.Api.Tests.Controllers
                 optionsMock = new Mock<IOptions<Config>>();
                 optionsMock.Setup(x => x.Value).Returns(new Config());
                 guidCreatorMock = new Mock<IGuidCreator>();
+                monitoringMock = new Mock<IMonitoring>();
 
                 var mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-                sut = new ProvisionerController(mobileRepositoryMock.Object, guidCreatorMock.Object);
+                sut = new ProvisionerController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
             }
 
             private readonly ProvisionerController sut;
             private readonly Mock<IOptions<Config>> optionsMock;
             private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IMonitoring> monitoringMock;
 
             [Fact]
             public void ReturnOk()
@@ -48,17 +50,19 @@ namespace MobileOrderer.Api.Tests.Controllers
                 optionsMock.Setup(x => x.Value).Returns(new Config());
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
-                
+                monitoringMock = new Mock<IMonitoring>();
+
                 expectedGlobalId = Guid.NewGuid();
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
 
-                sut = new ProvisionerController(mobileRepositoryMock.Object, guidCreatorMock.Object);
+                sut = new ProvisionerController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
             }
 
             private readonly ProvisionerController sut;
             private readonly Mock<IOptions<Config>> optionsMock;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IMonitoring> monitoringMock;
             private readonly Guid expectedGlobalId;
 
             [Fact]
