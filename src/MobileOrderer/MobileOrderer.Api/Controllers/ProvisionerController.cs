@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Resources;
+using Prometheus;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 
@@ -11,12 +12,14 @@ namespace MobileOrderer.Api.Controllers
     public class ProvisionerController : ControllerBase
     {
         private readonly IRepository<Mobile> mobileRepository;
-        private readonly IGuidCreator guidCreator;        
+        private readonly IGuidCreator guidCreator;
+        private readonly IMonitoring monitoring;
 
-        public ProvisionerController(IRepository<Mobile> mobileRepository, IGuidCreator guidCreator)
+        public ProvisionerController(IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring)
         {
             this.mobileRepository = mobileRepository;
             this.guidCreator = guidCreator;
+            this.monitoring = monitoring;
         }
 
         [HttpGet("status")]
@@ -31,7 +34,9 @@ namespace MobileOrderer.Api.Controllers
             var mobile = new MobileWhenNewBuilder(this.guidCreator.Create())
                             .AddInFlightOrder(orderToAdd, this.guidCreator.Create())
                             .Build();
-            this.mobileRepository.Add(mobile);
+            mobileRepository.Add(mobile);
+
+            monitoring.Provision();
 
             return new OkObjectResult(new MobileResource 
             { 

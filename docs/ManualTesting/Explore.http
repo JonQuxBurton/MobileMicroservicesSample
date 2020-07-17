@@ -15,6 +15,9 @@ content-type: application/json
 	"ContactPhoneNumber" : "00123456789"
 }
 
+### Get Prometheus metrics
+GET http://localhost:5000/metrics
+
 ### Get a Mobile
 GET http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
 

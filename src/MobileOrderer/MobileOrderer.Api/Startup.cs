@@ -13,6 +13,7 @@ using MobileOrderer.Api.Configuration;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Services;
+using Prometheus;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using Utils.DomainDrivenDesign;
@@ -81,6 +82,8 @@ namespace MobileOrderer.Api
             services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
             services.AddSingleton<AWSCredentials>(credentials);
 
+            services.AddSingleton<IMonitoring>(new Monitoring());
+
             services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
             {
                 var getNewMobilesQuery = serviceProvider.GetService<IGetNewMobilesQuery>();
@@ -127,6 +130,8 @@ namespace MobileOrderer.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMetricServer();
 
             app.UseSerilogRequestLogging();
             app.UseMvc();

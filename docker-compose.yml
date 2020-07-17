@@ -1,16 +1,30 @@
 version: '3.7'
 
+volumes:
+    prometheus_data: {}
+    
 services:
-  sql.data:
-    image: mcr.microsoft.com/mssql/server
-    build:
-      context: .
-      dockerfile: DatabaseSetup/Dockerfile
-
-  goaws:
-    image: pafortin/goaws
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - ./prometheus_data/:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
     ports:
-      - "4100:4100"
+      - 9090:9090
+
+  # sql.data:
+    # image: mcr.microsoft.com/mssql/server
+    # build:
+      # context: .
+      # dockerfile: DatabaseSetup/Dockerfile
+
+  # goaws:
+    # image: pafortin/goaws
+    # ports:
+      # - "4100:4100"
       
   mobileorderer.api:
     image: ${DOCKER_REGISTRY}mobileordererapi
@@ -18,31 +32,31 @@ services:
       context: .
       dockerfile: src/MobileOrderer/MobileOrderer.Api/Dockerfile
 
-  simcards.eventhandlers:
-    image: ${DOCKER_REGISTRY}simcardseventhandlers
-    build:
-      context: .
-      dockerfile: src/SimCards/SimCards.EventHandlers/Dockerfile
-    stdin_open: true
-    tty: true
+  # simcards.eventhandlers:
+    # image: ${DOCKER_REGISTRY}simcardseventhandlers
+    # build:
+      # context: .
+      # dockerfile: src/SimCards/SimCards.EventHandlers/Dockerfile
+    # stdin_open: true
+    # tty: true
 
-  simcardwholesaler.api:
-    image: ${DOCKER_REGISTRY}simcardwholesalerapi
-    build:
-      context: .
-      dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
+  # simcardwholesaler.api:
+    # image: ${DOCKER_REGISTRY}simcardwholesalerapi
+    # build:
+      # context: .
+      # dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
 
-  mobiletelecomsnetwork.eventhandlers:
-    image: ${DOCKER_REGISTRY}mobiletelecomsnetworkhandlers
-    build:
-      context: .
-      dockerfile: src/MobileTelecomsNetwork/MobileTelecomsNetwork.EventHandlers/Dockerfile
-    stdin_open: true
-    tty: true
+  # mobiletelecomsnetwork.eventhandlers:
+    # image: ${DOCKER_REGISTRY}mobiletelecomsnetworkhandlers
+    # build:
+      # context: .
+      # dockerfile: src/MobileTelecomsNetwork/MobileTelecomsNetwork.EventHandlers/Dockerfile
+    # stdin_open: true
+    # tty: true
     
-  externalmobiletelecomsnetwork.api:
-    image: ${DOCKER_REGISTRY}externalmobiletelecomsnetwork
-    build:
-      context: .
-      dockerfile: src/ExternalMobileTelecomsNetwork/ExternalMobileTelecomsNetwork.Api/Dockerfile
+  # externalmobiletelecomsnetwork.api:
+    # image: ${DOCKER_REGISTRY}externalmobiletelecomsnetwork
+    # build:
+      # context: .
+      # dockerfile: src/ExternalMobileTelecomsNetwork/ExternalMobileTelecomsNetwork.Api/Dockerfile
   

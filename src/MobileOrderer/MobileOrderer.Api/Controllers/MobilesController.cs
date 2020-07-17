@@ -14,11 +14,13 @@ namespace MobileOrderer.Api.Controllers
     {
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IGuidCreator guidCreator;
+        private readonly IMonitoring monitoring;
 
-        public MobilesController(IRepository<Mobile> mobileRepository, IGuidCreator guidCreator)
+        public MobilesController(IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring)
         {
             this.mobileRepository = mobileRepository;
             this.guidCreator = guidCreator;
+            this.monitoring = monitoring;
         }
 
         [HttpPost("{id}/activate")]
@@ -42,7 +44,9 @@ namespace MobileOrderer.Api.Controllers
             var inFlightOrder = new Order(dataEntity);
 
             mobile.Activate(inFlightOrder);
-            this.mobileRepository.Update(mobile);
+            mobileRepository.Update(mobile);
+
+            monitoring.Activate();
 
             return new OkObjectResult(new OrderResource
             {
@@ -86,6 +90,8 @@ namespace MobileOrderer.Api.Controllers
             var inFlightOrder = new Order(dataEntity); 
             mobile.Cease(inFlightOrder);
             mobileRepository.Update(mobile);
+
+            monitoring.Cease();
 
             return Accepted();
         }
