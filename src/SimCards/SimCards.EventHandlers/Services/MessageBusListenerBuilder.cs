@@ -16,13 +16,15 @@ namespace SimCards.EventHandlers.Services
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IMonitoring monitoring;
 
         public MessageBusListenerBuilder(ILogger<MobileRequestedHandler> logger, 
             ISimCardOrdersDataStore simCardOrdersDataStore, 
             ISimCardWholesaleService simCardWholesaleService, 
             IMessageBus messageBus, 
             ISqsService sqsService,
-            IMessagePublisher messagePublisher)
+            IMessagePublisher messagePublisher, 
+            IMonitoring monitoring)
         {
             this.logger = logger;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
@@ -30,11 +32,12 @@ namespace SimCards.EventHandlers.Services
             this.messageBus = messageBus;
             this.sqsService = sqsService;
             this.messagePublisher = messagePublisher;
+            this.monitoring = monitoring;
         }
 
         public IMessageBusListener Build()
         {
-            var handler = new MobileRequestedHandler(logger, simCardOrdersDataStore, simCardWholesaleService, messagePublisher);
+            var handler = new MobileRequestedHandler(logger, simCardOrdersDataStore, simCardWholesaleService, messagePublisher, monitoring);
             messageBus.Subscribe<MobileRequestedMessage, IHandlerAsync<MobileRequestedMessage>>(handler);
 
             return new MessageBusListener(messageBus, sqsService, new MessageDeserializer());

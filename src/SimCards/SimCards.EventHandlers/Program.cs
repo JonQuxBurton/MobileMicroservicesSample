@@ -46,7 +46,9 @@ namespace SimCards.EventHandlers
             services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
             services.AddSingleton<IMessagePublisher, MessagePublisher>();
             services.AddSingleton<ICompletedOrderChecker, CompletedOrderChecker>();
+            services.AddSingleton<IMonitoring, Monitoring>();
 
+            services.AddHostedService<MetricsServerHost>();
             services.AddHostedService<EventListenerHostedService>();
             services.AddHostedService<CompletedOrderPollingHostedService>();
         }

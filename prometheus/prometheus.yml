@@ -11,3 +11,9 @@ scrape_configs:
       - targets: ["mobileorderer.api"]
         labels:
           alias: "mobileorderer.api"
+
+  - job_name: simcards
+    static_configs:
+      - targets: ["simcards.eventhandlers"]
+        labels:
+          alias: "simcards.eventhandlers"

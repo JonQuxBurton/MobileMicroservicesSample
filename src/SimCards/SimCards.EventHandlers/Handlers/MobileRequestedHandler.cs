@@ -5,6 +5,7 @@ using SimCards.EventHandlers.Data;
 using SimCards.EventHandlers.Services;
 using SimCards.EventHandlers.Messages;
 using System;
+using Prometheus;
 
 namespace SimCards.EventHandlers.Handlers
 {
@@ -14,14 +15,16 @@ namespace SimCards.EventHandlers.Handlers
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
         private readonly ISimCardWholesaleService simCardWholesaleService;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IMonitoring monitoring;
 
         public MobileRequestedHandler(ILogger<MobileRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, ISimCardWholesaleService simCardWholesaleService,
-            IMessagePublisher messagePublisher)
+            IMessagePublisher messagePublisher, IMonitoring monitoring)
         {
             this.logger = logger;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
             this.simCardWholesaleService = simCardWholesaleService;
             this.messagePublisher = messagePublisher;
+            this.monitoring = monitoring;
         }
 
         public async Task<bool> Handle(MobileRequestedMessage message)
@@ -64,6 +67,7 @@ namespace SimCards.EventHandlers.Handlers
                     this.simCardOrdersDataStore.Sent(message.MobileOrderId);
 
                     this.Publish(message.MobileOrderId);
+                    monitoring.SendSimCardOrder();
                 }
 
                 return true;
