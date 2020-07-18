@@ -14,12 +14,14 @@ namespace MobileOrderer.Api.Handlers
         private readonly ILogger<ProvisioningOrderCompletedHandler> logger;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IGetMobileByOrderIdQuery getMobileByOrderIdQuery;
+        private readonly IMonitoring monitoring;
 
-        public ProvisioningOrderCompletedHandler(ILogger<ProvisioningOrderCompletedHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery)
+        public ProvisioningOrderCompletedHandler(ILogger<ProvisioningOrderCompletedHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery, IMonitoring monitoring)
         {
             this.logger = logger;
             this.mobileRepository = mobileRepository;
             this.getMobileByOrderIdQuery = getMobileByOrderIdQuery;
+            this.monitoring = monitoring;
         }
 
         public Task<bool> Handle(ProvisioningOrderCompletedMessage message)
@@ -28,9 +30,10 @@ namespace MobileOrderer.Api.Handlers
 
             try
             {
-                var mobile = this.getMobileByOrderIdQuery.Get(message.MobileOrderId);
+                var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
                 mobile.ProcessingProvisioningCompleted();
-                this.mobileRepository.Update(mobile);
+                mobileRepository.Update(mobile);
+                monitoring.ProvisionCompleted();
             }
             catch (Exception ex)
             {

@@ -4,40 +4,48 @@ namespace MobileOrderer.Api.Domain
 {
     public class Monitoring : IMonitoring
     {
-        private readonly Counter provisionsCounter;
-        private readonly Counter activatesCounter;
-        private readonly Counter activatesCompletedCounter;
-        private readonly Counter ceasesCounter;
+        private readonly Counter provisions;
+        private readonly Counter provisionsCompleted;
+        private readonly Counter activates;
+        private readonly Counter activatesCompleted;
+        private readonly Counter ceases;
         private readonly Counter ceasesCompletedCounter;
 
         public Monitoring()
         {
-            provisionsCounter = Metrics.CreateCounter("mobile_provisions", "Number of Mobile Provisions");
-            activatesCounter = Metrics.CreateCounter("mobile_activates", "Number of Mobile Activates");
-            activatesCompletedCounter = Metrics.CreateCounter("mobile_activates_completed", "Number of Mobile Activates Completed");
-            ceasesCounter = Metrics.CreateCounter("mobile_ceases", "Number of Mobile Ceases");
+            provisions = Metrics.CreateCounter("mobile_provisions", "Number of Mobile Provisions");
+            provisionsCompleted = Metrics.CreateCounter("mobile_provisions_completed", "Number of Mobile Provisions completed");
+            activates = Metrics.CreateCounter("mobile_activates", "Number of Mobile Activates");
+            activatesCompleted = Metrics.CreateCounter("mobile_activates_completed", "Number of Mobile Activates Completed");
+            ceases = Metrics.CreateCounter("mobile_ceases", "Number of Mobile Ceases");
             ceasesCompletedCounter = Metrics.CreateCounter("mobile_ceases_completed", "Number of Mobile Ceases Completed");
         }
 
         public void Provision()
         {
             
-            provisionsCounter.Inc(1);
+            provisions.Inc(1);
+        }
+        
+        public void ProvisionCompleted()
+        {
+            
+            provisionsCompleted.Inc(1);
         }
         
         public void Activate()
         {
-            activatesCounter.Inc(1);
+            activates.Inc(1);
         }
         
         public void ActivateCompleted()
         {
-            activatesCompletedCounter.Inc(1);
+            activatesCompleted.Inc(1);
         }
         
         public void Cease()
         {
-            ceasesCounter.Inc(1);
+            ceases.Inc(1);
         }
         
         public void CeaseCompleted()

@@ -7,5 +7,6 @@
         void Cease();
         void CeaseCompleted();
         void Provision();
+        void ProvisionCompleted();
     }
 }
