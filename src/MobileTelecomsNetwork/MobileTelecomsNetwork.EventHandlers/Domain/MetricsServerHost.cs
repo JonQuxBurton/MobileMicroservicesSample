@@ -3,7 +3,7 @@ using Prometheus;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MobileTelecomsNetwork.EventHandlers
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class MetricsServerHost : IHostedService
     {

@@ -3,12 +3,13 @@ using Microsoft.Extensions.Options;
 using MinimalEventBus.JustSaying;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Messages;
+using MobileTelecomsNetwork.EventHandlers.Services;
 using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class OrderCompletedChecker : IOrderCompletedChecker
     {
@@ -32,12 +33,12 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             this.dataStore = dataStore;
             this.messagePublisher = messagePublisher;
             this.monitoring = monitoring;
-            this.externalApiUrl = config.Value?.ExternalMobileTelecomsNetworkApiUrl;
+            externalApiUrl = config.Value?.ExternalMobileTelecomsNetworkApiUrl;
         }
 
         public async Task Check(Order sentOrder)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{this.externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
             var client = clientFactory.CreateClient();
 
             var response = await client.SendAsync(request);
@@ -53,9 +54,9 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
                     dataStore.Complete(sentOrder.MobileOrderId);
 
                     if (sentOrder.Type.Trim() == "Cease")
-                        this.PublishCeaseOrderCompleted(sentOrder.MobileOrderId);
+                        PublishCeaseOrderCompleted(sentOrder.MobileOrderId);
                     else
-                        this.PublishActivationOrderCompleted(sentOrder.MobileOrderId);
+                        PublishActivationOrderCompleted(sentOrder.MobileOrderId);
                 }
             }
         }
@@ -70,7 +71,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             });
             monitoring.ActivateOrderCompleted();
         }
-        
+
         private void PublishCeaseOrderCompleted(Guid mobileGlobalId)
         {
             logger.LogInformation($"Publishing CeaseOrderCompletedMessage [{mobileGlobalId}]");

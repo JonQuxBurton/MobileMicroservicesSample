@@ -6,6 +6,7 @@ using MinimalEventBus;
 using MinimalEventBus.Aws;
 using MinimalEventBus.JustSaying;
 using MobileTelecomsNetwork.EventHandlers.Data;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 using MobileTelecomsNetwork.EventHandlers.Services;
 using Serilog;
 using Serilog.Events;

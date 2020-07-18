@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using MobileTelecomsNetwork.EventHandlers.Data;
-using MobileTelecomsNetwork.EventHandlers.Services;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 
-namespace MobileTelecomsNetwork.EventHandlers
+namespace MobileTelecomsNetwork.EventHandlers.Services
 {
     public class CompletedOrderPollingHostedService : IHostedService, IDisposable
     {
@@ -24,7 +24,7 @@ namespace MobileTelecomsNetwork.EventHandlers
         {
             this.logger = logger;
             this.dataStore = dataStore;
-            this.orderCompletedChecker = activationOrderChecker;
+            orderCompletedChecker = activationOrderChecker;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)

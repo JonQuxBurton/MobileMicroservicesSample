@@ -1,6 +1,6 @@
 ﻿using Prometheus;
 
-namespace MobileTelecomsNetwork.EventHandlers
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class Monitoring : IMonitoring
     {

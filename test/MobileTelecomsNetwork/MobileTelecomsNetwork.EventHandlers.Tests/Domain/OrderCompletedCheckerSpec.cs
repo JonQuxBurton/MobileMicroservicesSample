@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MinimalEventBus.JustSaying;
 using MobileTelecomsNetwork.EventHandlers.Data;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 using MobileTelecomsNetwork.EventHandlers.Services;
 using Moq;
 using Moq.Protected;

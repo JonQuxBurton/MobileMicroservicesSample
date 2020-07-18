@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Options;
-using MobileTelecomsNetwork.EventHandlers.Services;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;

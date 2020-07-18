@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
-using MobileTelecomsNetwork.EventHandlers.Services;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 
-namespace MobileTelecomsNetwork.EventHandlers
+namespace MobileTelecomsNetwork.EventHandlers.Services
 {
     public class EventListenerHostedService : IHostedService
     {

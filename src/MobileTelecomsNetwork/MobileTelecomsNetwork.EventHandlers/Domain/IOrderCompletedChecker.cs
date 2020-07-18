@@ -1,7 +1,7 @@
 ﻿using MobileTelecomsNetwork.EventHandlers.Data;
 using System.Threading.Tasks;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public interface IOrderCompletedChecker
     {

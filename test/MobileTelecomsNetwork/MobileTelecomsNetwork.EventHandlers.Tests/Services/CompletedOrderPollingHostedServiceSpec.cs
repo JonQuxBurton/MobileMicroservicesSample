@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MobileTelecomsNetwork.EventHandlers.Data;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 using MobileTelecomsNetwork.EventHandlers.Services;
 using Moq;
 using System;

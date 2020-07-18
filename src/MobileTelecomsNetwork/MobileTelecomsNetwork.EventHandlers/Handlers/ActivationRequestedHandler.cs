@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileTelecomsNetwork.EventHandlers.Data;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 using MobileTelecomsNetwork.EventHandlers.Messages;
-using MobileTelecomsNetwork.EventHandlers.Services;
 
 namespace MobileTelecomsNetwork.EventHandlers.Handlers
 {

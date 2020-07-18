@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class ExternalMobileTelecomsNetworkOrder
     {

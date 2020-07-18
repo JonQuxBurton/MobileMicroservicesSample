@@ -1,6 +1,6 @@
 ﻿using MinimalEventBus;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public interface IMessageBusListenerBuilder
     {

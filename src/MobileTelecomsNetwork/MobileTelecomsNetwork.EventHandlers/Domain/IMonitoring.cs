@@ -1,4 +1,4 @@
-﻿namespace MobileTelecomsNetwork.EventHandlers
+﻿namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public interface IMonitoring
     {

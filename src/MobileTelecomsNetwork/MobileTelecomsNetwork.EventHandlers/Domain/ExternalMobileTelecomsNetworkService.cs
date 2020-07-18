@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class ExternalMobileTelecomsNetworkService : IExternalMobileTelecomsNetworkService
     {

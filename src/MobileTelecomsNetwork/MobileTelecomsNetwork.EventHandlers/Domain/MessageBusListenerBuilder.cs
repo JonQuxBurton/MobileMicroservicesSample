@@ -6,7 +6,7 @@ using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Handlers;
 using MobileTelecomsNetwork.EventHandlers.Messages;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class MessageBusListenerBuilder : IMessageBusListenerBuilder
     {

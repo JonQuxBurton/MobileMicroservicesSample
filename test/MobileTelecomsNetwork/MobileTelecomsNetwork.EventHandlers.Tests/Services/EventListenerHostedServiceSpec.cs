@@ -1,11 +1,12 @@
 using Microsoft.Extensions.Logging;
 using MinimalEventBus;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 using MobileTelecomsNetwork.EventHandlers.Services;
 using Moq;
 using System.Threading;
 using Xunit;
 
-namespace MobileTelecomsNetwork.EventHandlers.Tests
+namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
 {
     public class EventListenerHostedServiceSpec
     {
