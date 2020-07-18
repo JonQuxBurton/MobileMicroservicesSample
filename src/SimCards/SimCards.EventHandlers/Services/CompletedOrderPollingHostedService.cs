@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using System;
 using SimCards.EventHandlers.Data;
 using System.Linq;
+using SimCards.EventHandlers.Domain;
 
-namespace SimCards.EventHandlers
+namespace SimCards.EventHandlers.Services
 {
     public class CompletedOrderPollingHostedService : IHostedService, IDisposable
     {
@@ -28,7 +29,7 @@ namespace SimCards.EventHandlers
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            this.logger.LogInformation("CompletedOrderPollingHostedService Starting...");
+            logger.LogInformation("CompletedOrderPollingHostedService Starting...");
             timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
 
             return Task.CompletedTask;
@@ -53,7 +54,7 @@ namespace SimCards.EventHandlers
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            this.logger.LogInformation("CompletedOrderPollingHostedService Stopping...");
+            logger.LogInformation("CompletedOrderPollingHostedService Stopping...");
             return Task.CompletedTask;
         }
 

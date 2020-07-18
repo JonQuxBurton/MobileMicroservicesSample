@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SimCards.EventHandlers
+namespace SimCards.EventHandlers.Domain
 {
     public class CompletedOrderChecker : ICompletedOrderChecker
     {
@@ -16,25 +16,28 @@ namespace SimCards.EventHandlers
         private readonly IHttpClientFactory clientFactory;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IMonitoring monitoring;
         private readonly string externalApiUrl;
 
         public CompletedOrderChecker(ILogger<CompletedOrderChecker> logger,
                                 IHttpClientFactory clientFactory,
                                 ISimCardOrdersDataStore simCardOrdersDataStore,
                                 IMessagePublisher messagePublisher,
-                                IOptions<Config> config
+                                IOptions<Config> config,
+                                IMonitoring monitoring
         )
         {
             this.logger = logger;
             this.clientFactory = clientFactory;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
             this.messagePublisher = messagePublisher;
-            this.externalApiUrl = config.Value?.SimCardWholesalerApiUrl;
+            this.monitoring = monitoring;
+            externalApiUrl = config.Value?.SimCardWholesalerApiUrl;
         }
 
         public async Task Check(SimCardOrder sentOrder)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{this.externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
             var client = clientFactory.CreateClient();
 
             var response = await client.SendAsync(request);
@@ -48,14 +51,15 @@ namespace SimCards.EventHandlers
                 {
                     using var tx = simCardOrdersDataStore.BeginTransaction();
                     simCardOrdersDataStore.Complete(sentOrder.MobileOrderId);
-                    this.PublishProvisioningOrderCompleted(sentOrder.MobileOrderId);
+                    PublishProvisioningOrderCompleted(sentOrder.MobileOrderId);
+                    monitoring.SimCardOrderCompleted();
                 }
             }
         }
 
         private void PublishProvisioningOrderCompleted(Guid mobileGlobalId)
         {
-            this.logger.LogInformation($"Publishing ProvisioningOrderCompletedMessage [{mobileGlobalId}]");
+            logger.LogInformation($"Publishing ProvisioningOrderCompletedMessage [{mobileGlobalId}]");
 
             messagePublisher.PublishAsync(new ProvisioningOrderCompletedMessage
             {

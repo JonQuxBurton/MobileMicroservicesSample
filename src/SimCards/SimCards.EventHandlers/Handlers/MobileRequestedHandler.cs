@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using SimCards.EventHandlers.Data;
-using SimCards.EventHandlers.Services;
 using SimCards.EventHandlers.Messages;
 using System;
 using Prometheus;
+using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Handlers
 {
@@ -67,7 +67,7 @@ namespace SimCards.EventHandlers.Handlers
                     this.simCardOrdersDataStore.Sent(message.MobileOrderId);
 
                     this.Publish(message.MobileOrderId);
-                    monitoring.SendSimCardOrder();
+                    monitoring.SimCardOrderSent();
                 }
 
                 return true;

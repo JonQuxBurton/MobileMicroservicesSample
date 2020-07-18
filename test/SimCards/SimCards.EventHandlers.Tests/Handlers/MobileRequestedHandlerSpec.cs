@@ -3,13 +3,13 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SimCards.EventHandlers.Data;
-using SimCards.EventHandlers.Services;
 using SimCards.EventHandlers.Handlers;
 using SimCards.EventHandlers.Messages;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using MinimalEventBus.JustSaying;
+using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Tests.Handlers
 {

@@ -3,7 +3,7 @@ using Prometheus;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SimCards.EventHandlers
+namespace SimCards.EventHandlers.Services
 {
     public class MetricsServerHost : IHostedService
     {
@@ -14,7 +14,7 @@ namespace SimCards.EventHandlers
             metricServer = new MetricServer(port: 80);
             metricServer.Start();
 
-            
+
 
             return Task.CompletedTask;
         }

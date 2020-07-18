@@ -3,14 +3,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace SimCards.EventHandlers.Services
+namespace SimCards.EventHandlers.Domain
 {
     public class SimCardWholesaleService : ISimCardWholesaleService
     {
         private readonly Config config;
         private readonly HttpClient httpClient;
 
-        public SimCardWholesaleService(IOptions<Config> configOptions, 
+        public SimCardWholesaleService(IOptions<Config> configOptions,
             HttpClient httpClient)
         {
             config = configOptions?.Value;

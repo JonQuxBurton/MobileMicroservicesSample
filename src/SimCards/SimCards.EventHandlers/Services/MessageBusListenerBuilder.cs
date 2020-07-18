@@ -3,6 +3,7 @@ using MinimalEventBus;
 using MinimalEventBus.Aws;
 using MinimalEventBus.JustSaying;
 using SimCards.EventHandlers.Data;
+using SimCards.EventHandlers.Domain;
 using SimCards.EventHandlers.Handlers;
 using SimCards.EventHandlers.Messages;
 

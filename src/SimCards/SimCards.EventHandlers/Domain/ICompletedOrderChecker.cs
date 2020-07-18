@@ -1,7 +1,7 @@
 ﻿using SimCards.EventHandlers.Data;
 using System.Threading.Tasks;
 
-namespace SimCards.EventHandlers
+namespace SimCards.EventHandlers.Domain
 {
     public interface ICompletedOrderChecker
     {

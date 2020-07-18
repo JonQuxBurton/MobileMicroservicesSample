@@ -2,9 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
-using SimCards.EventHandlers.Services;
 
-namespace SimCards.EventHandlers
+namespace SimCards.EventHandlers.Services
 {
     public class EventListenerHostedService : IHostedService
     {
@@ -19,14 +18,14 @@ namespace SimCards.EventHandlers
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            this.logger.LogInformation("EventListenerHostedService Starting...");
-            this.messageBusListenerBuilder.Build().StartListening();
+            logger.LogInformation("EventListenerHostedService Starting...");
+            messageBusListenerBuilder.Build().StartListening();
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            this.logger.LogInformation("EventListenerHostedService Stopping...");
+            logger.LogInformation("EventListenerHostedService Stopping...");
             return Task.CompletedTask;
         }
     }

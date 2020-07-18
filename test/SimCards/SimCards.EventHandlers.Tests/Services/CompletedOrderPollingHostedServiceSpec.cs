@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using SimCards.EventHandlers.Data;
+using SimCards.EventHandlers.Domain;
+using SimCards.EventHandlers.Services;
 using System;
 using Xunit;
 

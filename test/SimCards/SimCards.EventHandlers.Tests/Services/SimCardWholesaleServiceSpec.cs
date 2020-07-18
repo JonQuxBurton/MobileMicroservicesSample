@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
-using SimCards.EventHandlers.Services;
+using SimCards.EventHandlers.Domain;
 using System;
 using System.Net;
 using System.Net.Http;

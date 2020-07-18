@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace SimCards.EventHandlers.Services
+namespace SimCards.EventHandlers.Domain
 {
     public interface ISimCardWholesaleService
     {

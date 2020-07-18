@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SimCards.EventHandlers
+namespace SimCards.EventHandlers.Domain
 {
     public class SimCardOrderFromWholesaler
     {

@@ -4,6 +4,7 @@ using MinimalEventBus.JustSaying;
 using Moq;
 using Moq.Protected;
 using SimCards.EventHandlers.Data;
+using SimCards.EventHandlers.Domain;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -12,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SimCards.EventHandlers.Tests
+namespace SimCards.EventHandlers.Tests.Domain
 {
     public class CompletedOrderCheckerSpec
     {
@@ -36,6 +37,7 @@ namespace SimCards.EventHandlers.Tests
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
             var dataStoreMock = new Mock<ISimCardOrdersDataStore>();
             var messagePublisherMock = new Mock<IMessagePublisher>();
+            var monitoringMock = new Mock<IMonitoring>();
             var options = Options.Create(config);
             var handlerMock = new Mock<DelegatingHandler>();
             handlerMock.Protected()
@@ -56,7 +58,8 @@ namespace SimCards.EventHandlers.Tests
                 httpClientFactoryMock.Object,
                 dataStoreMock.Object,
                 messagePublisherMock.Object,
-                options);
+                options,
+                monitoringMock.Object);
 
             await sut.Check(expectedOrder);
 

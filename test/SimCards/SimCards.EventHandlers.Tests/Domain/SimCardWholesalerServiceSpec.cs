@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
-using SimCards.EventHandlers.Services;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -10,6 +9,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Moq.Protected;
 using Newtonsoft.Json;
+using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Tests.Domain
 {
