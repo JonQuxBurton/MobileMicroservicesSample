@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
+using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Services
 {

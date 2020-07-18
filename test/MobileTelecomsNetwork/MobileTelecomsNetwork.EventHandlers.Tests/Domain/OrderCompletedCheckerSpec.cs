@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
+namespace MobileTelecomsNetwork.EventHandlers.Tests.Domain
 {
     public class OrderCompletedCheckerSpec
     {

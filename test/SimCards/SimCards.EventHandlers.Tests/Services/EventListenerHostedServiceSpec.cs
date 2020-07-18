@@ -4,6 +4,7 @@ using Xunit;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using SimCards.EventHandlers.Services;
+using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Tests
 {

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Options;
 using MobileTelecomsNetwork.EventHandlers.Domain;
+using MobileTelecomsNetwork.EventHandlers.Tests.Services;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
+namespace MobileTelecomsNetwork.EventHandlers.Tests.Domain
 {
     public class ExternalMobileTelecomsNetworkServiceSpec
     {

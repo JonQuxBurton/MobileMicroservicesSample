@@ -3,11 +3,10 @@ using MinimalEventBus;
 using MinimalEventBus.Aws;
 using MinimalEventBus.JustSaying;
 using SimCards.EventHandlers.Data;
-using SimCards.EventHandlers.Domain;
 using SimCards.EventHandlers.Handlers;
 using SimCards.EventHandlers.Messages;
 
-namespace SimCards.EventHandlers.Services
+namespace SimCards.EventHandlers.Domain
 {
     public class MessageBusListenerBuilder : IMessageBusListenerBuilder
     {
@@ -19,12 +18,12 @@ namespace SimCards.EventHandlers.Services
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public MessageBusListenerBuilder(ILogger<MobileRequestedHandler> logger, 
-            ISimCardOrdersDataStore simCardOrdersDataStore, 
-            ISimCardWholesaleService simCardWholesaleService, 
-            IMessageBus messageBus, 
+        public MessageBusListenerBuilder(ILogger<MobileRequestedHandler> logger,
+            ISimCardOrdersDataStore simCardOrdersDataStore,
+            ISimCardWholesaleService simCardWholesaleService,
+            IMessageBus messageBus,
             ISqsService sqsService,
-            IMessagePublisher messagePublisher, 
+            IMessagePublisher messagePublisher,
             IMonitoring monitoring)
         {
             this.logger = logger;

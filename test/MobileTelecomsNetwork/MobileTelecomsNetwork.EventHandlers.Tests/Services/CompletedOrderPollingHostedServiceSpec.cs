@@ -6,7 +6,7 @@ using Moq;
 using System;
 using Xunit;
 
-namespace MobileTelecomsNetwork.EventHandlers.Tests
+namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
 {
     public class CompletedOrderPollingHostedServiceSpec
     {
@@ -20,7 +20,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests
                     ExternalMobileTelecomsNetworkApiUrl = "http://api:5000"
                 };
                 var expectedOrder = new Order()
-                { 
+                {
                     MobileOrderId = Guid.NewGuid()
                 };
                 var dataStoreMock = new Mock<IDataStore>();
@@ -28,7 +28,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests
                     .Returns(new[] { expectedOrder });
                 var activationOrderChecker = new Mock<IOrderCompletedChecker>();
 
-                var sut = new CompletedOrderPollingHostedService(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(), 
+                var sut = new CompletedOrderPollingHostedService(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
                     dataStoreMock.Object,
                     activationOrderChecker.Object);
 

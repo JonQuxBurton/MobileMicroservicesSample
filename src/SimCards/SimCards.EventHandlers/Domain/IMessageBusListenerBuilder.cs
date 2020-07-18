@@ -1,6 +1,6 @@
 ﻿using MinimalEventBus;
 
-namespace SimCards.EventHandlers.Services
+namespace SimCards.EventHandlers.Domain
 {
     public interface IMessageBusListenerBuilder
     {
