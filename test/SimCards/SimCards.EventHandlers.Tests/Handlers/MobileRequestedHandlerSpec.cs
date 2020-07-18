@@ -46,8 +46,9 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 simCardWholesaleServiceMock = new Mock<ISimCardWholesaleService>();
                 var loggerMock = new Mock<ILogger<MobileRequestedHandler>>();
                 var messagePublisherMock = new Mock<IMessagePublisher>();
+                var monitoringMock = new Mock<IMonitoring>();
 
-                sut = new MobileRequestedHandler(loggerMock.Object, dataStoreMock.Object, simCardWholesaleServiceMock.Object, messagePublisherMock.Object);
+                sut = new MobileRequestedHandler(loggerMock.Object, dataStoreMock.Object, simCardWholesaleServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
             }
 
             [Fact]

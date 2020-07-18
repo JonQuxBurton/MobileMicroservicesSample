@@ -45,8 +45,9 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 externalMobileTelecomsNetworkServiceMock = new Mock<IExternalMobileTelecomsNetworkService>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
                 var loggerMock = new Mock<ILogger<ActivationRequestedHandler>>();
+                var monitoringMock = new Mock<IMonitoring>();
 
-                sut = new ActivationRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object);
+                sut = new ActivationRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
             }
 
             [Fact]

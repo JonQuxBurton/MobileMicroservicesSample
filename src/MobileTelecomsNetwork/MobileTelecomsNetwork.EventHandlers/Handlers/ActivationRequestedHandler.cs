@@ -14,17 +14,20 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         private readonly IDataStore dataStore;
         private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IMonitoring monitoring;
 
         public ActivationRequestedHandler(ILogger<ActivationRequestedHandler> logger,
             IDataStore dataStore,
             IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService,
-            IMessagePublisher messagePublisher
+            IMessagePublisher messagePublisher,
+            IMonitoring monitoring
             )
         {
             this.logger = logger;
             this.dataStore = dataStore;
             this.externalMobileTelecomsNetworkService = externalMobileTelecomsNetworkService;
             this.messagePublisher = messagePublisher;
+            this.monitoring = monitoring;
         }
 
         public async Task<bool> Handle(ActivationRequestedMessage message)
@@ -60,6 +63,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
                     dataStore.Sent(message.MobileOrderId);
                     Publish(message.MobileOrderId);
+                    monitoring.ActivateOrderSent();
                 }
             }
             catch (Exception ex)

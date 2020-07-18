@@ -17,3 +17,11 @@ scrape_configs:
       - targets: ["simcards.eventhandlers"]
         labels:
           alias: "simcards.eventhandlers"
+
+  - job_name: mobiletelecomsnetwork
+    static_configs:
+      - targets: ["mobiletelecomsnetwork.eventhandlers:"]
+        labels:
+          alias: "mobiletelecomsnetwork.eventhandlers"
+          
+          

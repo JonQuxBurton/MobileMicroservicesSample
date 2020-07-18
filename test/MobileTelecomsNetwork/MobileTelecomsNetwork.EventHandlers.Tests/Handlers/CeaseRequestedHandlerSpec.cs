@@ -43,12 +43,13 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 externalMobileTelecomsNetworkServiceMock = new Mock<IExternalMobileTelecomsNetworkService>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
                 var loggerMock = new Mock<ILogger<CeaseRequestedHandler>>();
+                var monitoringMock = new Mock<IMonitoring>();
 
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCease(It.Is<ExternalMobileTelecomsNetworkOrder>(
                     y => y.Reference == expectedExternalServiceOrder.Reference)))
                         .Returns(Task.FromResult(true));
 
-                sut = new CeaseRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object);
+                sut = new CeaseRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
             }
 
             [Fact]

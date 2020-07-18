@@ -16,6 +16,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
         private readonly IHttpClientFactory clientFactory;
         private readonly IDataStore dataStore;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IMonitoring monitoring;
         private readonly string externalApiUrl;
 
         public OrderCompletedChecker(
@@ -23,12 +24,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             IHttpClientFactory clientFactory,
             IDataStore dataStore,
             IMessagePublisher messagePublisher,
-            IOptions<Config> config)
+            IOptions<Config> config,
+            IMonitoring monitoring)
         {
             this.logger = logger;
             this.clientFactory = clientFactory;
             this.dataStore = dataStore;
             this.messagePublisher = messagePublisher;
+            this.monitoring = monitoring;
             this.externalApiUrl = config.Value?.ExternalMobileTelecomsNetworkApiUrl;
         }
 
@@ -65,6 +68,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             {
                 MobileOrderId = mobileGlobalId
             });
+            monitoring.ActivateOrderCompleted();
         }
         
         private void PublishCeaseOrderCompleted(Guid mobileGlobalId)
@@ -75,6 +79,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             {
                 MobileOrderId = mobileGlobalId
             });
+            monitoring.CeaseOrderCompleted();
         }
     }
 }

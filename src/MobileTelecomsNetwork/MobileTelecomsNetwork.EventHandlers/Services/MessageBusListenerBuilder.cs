@@ -17,6 +17,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
         private readonly IMessagePublisher messagePublisher;
         private readonly IDataStore dataStore;
         private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
+        private readonly IMonitoring monitoring;
 
         public MessageBusListenerBuilder(ILogger<ActivationRequestedHandler> logger,
             ILogger<CeaseRequestedHandler> ceaseRequestedHandlerLogger,
@@ -24,7 +25,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             ISqsService sqsService,
             IMessagePublisher messagePublisher,
             IDataStore dataStore,
-            IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService)
+            IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService,
+            IMonitoring monitoring)
         {
             this.logger = logger;
             this.ceaseRequestedHandlerLogger = ceaseRequestedHandlerLogger;
@@ -33,14 +35,15 @@ namespace MobileTelecomsNetwork.EventHandlers.Services
             this.messagePublisher = messagePublisher;
             this.dataStore = dataStore;
             this.externalMobileTelecomsNetworkService = externalMobileTelecomsNetworkService;
+            this.monitoring = monitoring;
         }
 
         public IMessageBusListener Build()
         {
-            var handler = new ActivationRequestedHandler(logger, this.dataStore, this.externalMobileTelecomsNetworkService, this.messagePublisher);
+            var handler = new ActivationRequestedHandler(logger, dataStore, externalMobileTelecomsNetworkService, messagePublisher, monitoring);
             messageBus.Subscribe<ActivationRequestedMessage, IHandlerAsync<ActivationRequestedMessage>>(handler);
 
-            var ceaseRequestedHandler = new CeaseRequestedHandler(ceaseRequestedHandlerLogger, this.dataStore, this.externalMobileTelecomsNetworkService, this.messagePublisher);
+            var ceaseRequestedHandler = new CeaseRequestedHandler(ceaseRequestedHandlerLogger, dataStore, externalMobileTelecomsNetworkService, messagePublisher, monitoring);
             messageBus.Subscribe<CeaseRequestedMessage, IHandlerAsync<CeaseRequestedMessage>>(ceaseRequestedHandler);
 
             return new MessageBusListener(messageBus, sqsService, new MessageDeserializer());

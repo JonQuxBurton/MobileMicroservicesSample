@@ -40,6 +40,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
             var dataStoreMock = new Mock<IDataStore>();
             var messagePublisherMock = new Mock<IMessagePublisher>();
+            var monitoringMock = new Mock<IMonitoring>();
             var options = Options.Create(config);
             var handlerMock = new Mock<DelegatingHandler>();
             handlerMock.Protected()
@@ -60,7 +61,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
                 httpClientFactoryMock.Object,
                 dataStoreMock.Object,
                 messagePublisherMock.Object,
-                options);
+                options,
+                monitoringMock.Object);
 
             await sut.Check(expectedOrder);
 
