@@ -4,5 +4,6 @@
     {
         public string ConnectionString { get; set; }
         public string ExternalMobileTelecomsNetworkApiUrl { get; set; }
+        public int MetricsServerHostPort { get; set; }
     }
 }
