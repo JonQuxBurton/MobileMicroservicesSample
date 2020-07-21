@@ -237,3 +237,4 @@ _Pvt_Extensions
 
 coverage/
 prometheus_data/
+grafana_data/
