@@ -59,6 +59,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
 
                     tx.Rollback();
+                    monitoring.CeaseOrderFailed();
                     return false;
                 }
 

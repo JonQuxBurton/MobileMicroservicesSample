@@ -61,6 +61,7 @@ namespace SimCards.EventHandlers.Handlers
                     if (!result)
                     {
                         tx.Rollback();
+                        monitoring.SimCardOrderFailed();
                         return false;
                     }
 

@@ -40,8 +40,6 @@ namespace MobileOrderer.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
-
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             var eventBusConfig = new EventBusConfig();
@@ -121,6 +119,9 @@ namespace MobileOrderer.Api
 
                 return new CeaseRequestedEventChecker(getNewCeasesQuery, ceaseCommand);
             });
+
+            services.AddHealthChecks()
+                .ForwardToPrometheus();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -131,12 +132,13 @@ namespace MobileOrderer.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMetricServer();
-
             app.UseSerilogRequestLogging();
             app.UseMvc();
 
             app.UseHealthChecks("/health");
+
+            app.UseMetricServer();
+            app.UseHttpMetrics();
 
             var eventBusConfig = new EventBusConfig();
             Configuration.GetSection("EventBusConfig").Bind(eventBusConfig);

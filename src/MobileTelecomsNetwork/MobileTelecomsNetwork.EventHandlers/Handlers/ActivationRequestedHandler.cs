@@ -58,6 +58,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     if (!result)
                     {
                         tx.Rollback();
+                        monitoring.ActivateOrderFailed();
                         return false;
                     }
 

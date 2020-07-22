@@ -6,5 +6,7 @@
         void CeaseOrderSent();
         void ActivateOrderCompleted();
         void CeaseOrderCompleted();
+        void ActivateOrderFailed();
+        void CeaseOrderFailed();
     }
 }

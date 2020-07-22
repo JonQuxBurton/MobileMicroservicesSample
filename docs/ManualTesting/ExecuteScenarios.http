@@ -16,10 +16,10 @@ content-type: application/json
 GET http://localhost:5000/api/mobiles/02b3f342-9c08-4c68-8324-4ec88ecc497e
 
 ### Step 2 - Mobile Provision Order has been Completed
-POST http://localhost:5001/api/orders/5AD202C5-F96E-43F0-98A0-23FDCC97F222/complete
+POST http://localhost:5001/api/orders/60805604-A648-4C3B-BFF7-FC66E0DA29D1/complete
 
 ### Step 3 - Activate a Mobile
-POST http://localhost:5000/api/mobiles/20110CA0-AC94-447E-9888-1E048FC2A4C5/activate
+POST http://localhost:5000/api/mobiles/B32528CD-30CB-4625-90EF-AD77D629B04D/activate
 content-type: application/json
 
 {
@@ -28,7 +28,7 @@ content-type: application/json
 }
 
 ### Step  4 - Mobile Activate Order has been Completed
-POST http://localhost:5002/api/orders/41F139A0-7224-470C-80D1-4DD6291F376A/complete
+POST http://localhost:5002/api/orders/CAFA8CF9-CF1A-441B-8CB3-9C2C4C7DA02E/complete
 
 ###
 ### Sceanrio 2. Cease a Mobile

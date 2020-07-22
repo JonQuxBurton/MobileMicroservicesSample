@@ -4,5 +4,6 @@
     {
         void SimCardOrderSent();
         void SimCardOrderCompleted();
+        void SimCardOrderFailed();
     }
 }
