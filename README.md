@@ -190,3 +190,63 @@ Outputs:
 * Updates Mobiles database
 	* Mobile State to Live
 	* Order State to Completed
+
+## Monitoring
+
+The system is monitored so we can verify that it is functioning correctly and prevent problems before they escalate System Metrics are gathered using Prometheus and displayed in Grafana Dashboards.
+
+To test the system and genearte metrics, run the End-to-end tests, then observe in the Prometheus Control Panel and Grafana Dashboard.
+
+### Prometheus Control Panel
+The Prometheus Control Panel can be viewed at:
+```
+http://localhost:9090
+```
+
+View the metrics with the following PromQL queries:
+
+#### Mobiles System
+
+| PromQL | Description |
+| ---- | ---- |
+| mobile_provisions | Total number of Mobile Provisions requested |
+| mobile_provisions_completed | Total number of Mobile Provisions completed |
+| mobile_provisions_inprogress | Current number of Mobile Provisions in progress |
+| mobile_activates | Total number of Mobile Activates requested |
+| mobile_activates_completed | Total number of Mobile Activates requested |
+| mobile_activates_inprogress | Current number of Mobile Activates in progress |
+| mobile_ceases | Total number of Mobile Ceases requested |
+| mobile_ceases_completed | Total number of Mobile Ceases requested |
+| mobile_ceases_inprogress | Current number of Mobile Ceases in progress |
+
+#### External SIM Card System
+| PromQL | Description |
+| ---- | ---- |
+| simcard_orders_sent | Total number of SIM Card orders sent |
+| simcard_orders_completed | Total number of SIM Card orders completed |
+| simcard_orders_inprogress | Current number of SIM Card orders in progress |
+| simcard_orders_failed| Total number of SIM Card orders which failed |
+
+#### External Mobile Telecoms Network
+| PromQL | Description |
+| ---- | ---- |
+| mobiletelecomsnetwork_activate_orders_sent | Total number of Activate orders sent |
+| mobiletelecomsnetwork_activate_orders_completed | Total number of Activate orders completed |
+| mobiletelecomsnetwork_activate_orders_inprogress | Current number of Activate orders in progress |
+| mobiletelecomsnetwork_activate_orders_failed | Total number of Activate orders which failed|
+| mobiletelecomsnetwork_cease_orders_sent | Total number of Cease orders sent |
+| mobiletelecomsnetwork_cease_orders_completed | Total number of Cease orders completed |
+| mobiletelecomsnetwork_cease_orders_inprogress | Current number of Cease orders in progress |
+| mobiletelecomsnetwork_cease_orders_failed | Total number of Cease orders which failed |
+
+### Grafana Dashboard
+The Grafana Dashboard can be viewed at:
+```
+http://localhost:3000
+```
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/GrafanaDashboard.png)
+
+
+
+
+

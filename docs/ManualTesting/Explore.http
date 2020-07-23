@@ -1,10 +1,30 @@
 
 ###==================================================
+### Monitoring
+###==================================================
+
+### Prometheus Dashboard
+http://localhost:9090
+
+### Grafana Dashboard
+GET localhost:3000
+
+### Docker Workers
+GET 192.168.65.1:9323/metrics
+
+###==================================================
 ### Mobile Orderer
 ###==================================================
 
 ### Health Check
 GET http://localhost:5000/api/provisioner/status
+
+### Health Check
+GET http://localhost:5000/health
+
+
+### Get Prometheus metrics
+GET http://localhost:5000/metrics
 
 ### Order a Mobile
 POST http://localhost:5000/api/provisioner
@@ -14,9 +34,6 @@ content-type: application/json
 	"Name" : "Neil Armstrong",
 	"ContactPhoneNumber" : "00123456789"
 }
-
-### Get Prometheus metrics
-GET http://localhost:5000/metrics
 
 ### Get a Mobile
 GET http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
