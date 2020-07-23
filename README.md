@@ -193,9 +193,9 @@ Outputs:
 
 ## Monitoring
 
-The system is monitored so we can verify that it is functioning correctly and prevent problems before they escalate System Metrics are gathered using Prometheus and displayed in Grafana Dashboards.
+The system is monitored, so we can verify that it is functioning correctly and prevent problems before they escalate. System Metrics are gathered using Prometheus and displayed in Grafana Dashboards.
 
-To test the system and genearte metrics, run the End-to-end tests, then observe in the Prometheus Control Panel and Grafana Dashboard.
+To test the system and generate metrics, run the End-to-end tests, then observe in the Prometheus Control Panel and Grafana Dashboard.
 
 ### Prometheus Control Panel
 The Prometheus Control Panel can be viewed at:
@@ -203,7 +203,7 @@ The Prometheus Control Panel can be viewed at:
 http://localhost:9090
 ```
 
-View the metrics with the following PromQL queries:
+View the metrics using the following PromQL queries:
 
 #### Mobiles System
 
