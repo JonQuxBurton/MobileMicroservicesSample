@@ -9,14 +9,13 @@ using MobileTelecomsNetwork.EventHandlers.Domain;
 
 namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
 {
-    public class CompletedOrderPollingHostedService : IHostedService, IDisposable
+    public class CompletedOrderPollingHostedService : BackgroundService
     {
         public const int BatchSize = 10;
 
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
         private readonly IDataStore dataStore;
         private readonly IOrderCompletedChecker orderCompletedChecker;
-        private Timer timer;
 
         public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
             IDataStore dataStore,
@@ -27,15 +26,7 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
             orderCompletedChecker = activationOrderChecker;
         }
 
-        public Task StartAsync(CancellationToken stoppingToken)
-        {
-            logger.LogInformation("CompletedOrderPollingHostedService Starting...");
-            timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
-
-            return Task.CompletedTask;
-        }
-
-        public async void DoWork(object state)
+        public async void DoWork()
         {
             try
             {
@@ -52,15 +43,16 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
             }
         }
 
-        public Task StopAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("CompletedOrderPollingHostedService Stopping...");
-            return Task.CompletedTask;
-        }
+            logger.LogInformation("CompletedOrderPollingHostedService executing...");
 
-        public void Dispose()
-        {
-            timer?.Dispose();
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                DoWork();
+
+                await Task.Delay(10 * 1000, stoppingToken);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ using EndToEndApiLevelTests.DataAcess;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
-    public class Scenario_Cease_a_Mobile_Script : IDisposable
+    public class Scenario_Cease_a_Mobile_Script
     {
         public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
@@ -49,11 +49,5 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 
             Step_2_Snapshot = snapshotFactory.Take_Step_2_Snapshot(actualMobile);
         }
-
-        public void Dispose()
-        {
-
-        }
-
     }
 }

@@ -80,9 +80,9 @@ namespace MobileOrderer.Api
 
             services.AddSingleton<IMonitoring>(new Monitoring());
 
-            services.AddScoped<IMobileEventsChecker, NewMobileEventChecker>();
+            services.AddScoped<IMobileEventsChecker, ProvisionRequestedEventChecker>();
             services.AddScoped<IMobileEventsChecker, ProcessingProvisioningEventChecker>();
-            services.AddScoped<IMobileEventsChecker, ActivationRequestedEventChecker>();
+            services.AddScoped<IMobileEventsChecker, ActivateRequestedEventChecker>();
             services.AddScoped<IMobileEventsChecker, CeaseRequestedEventChecker>();
 
             // HostedService

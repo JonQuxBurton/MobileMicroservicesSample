@@ -8,13 +8,13 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Services
 {
-    public static class NewMobileEventCheckerSpec
+    public static class ProvisionRequestedEventCheckerSpec
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class CheckShould
         {
             private readonly Mobile expectedNewMobile;
-            private readonly NewMobileEventChecker sut;
+            private readonly ProvisionRequestedEventChecker sut;
             private readonly Mock<IGetNewMobilesQuery> getNewMobilesQueryMock;
             private readonly Mock<IRepository<Mobile>> repositoryMock;
 
@@ -29,7 +29,7 @@ namespace MobileOrderer.Api.Tests.Services
                     .Returns(new[] { expectedNewMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
 
-                sut = new NewMobileEventChecker(getNewMobilesQueryMock.Object,
+                sut = new ProvisionRequestedEventChecker(getNewMobilesQueryMock.Object,
                     repositoryMock.Object);
             }
 

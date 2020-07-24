@@ -32,7 +32,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
                     dataStoreMock.Object,
                     activationOrderChecker.Object);
 
-                sut.DoWork(new object());
+                sut.DoWork();
 
                 activationOrderChecker.Verify(x => x.Check(expectedOrder));
             }

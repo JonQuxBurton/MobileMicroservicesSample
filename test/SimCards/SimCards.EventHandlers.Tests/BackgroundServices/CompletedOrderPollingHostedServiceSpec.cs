@@ -34,7 +34,7 @@ namespace SimCards.EventHandlers.Tests.BackgroundServices
                     dataStoreMock.Object,
                     completedOrderChecker.Object);
 
-                sut.DoWork(new object());
+                sut.DoWork();
 
                 completedOrderChecker.Verify(x => x.Check(expectedOrder));
             }

@@ -9,7 +9,7 @@ using EndToEndApiLevelTests.DataAcess;
 
 namespace EndToEndApiLevelTests
 {
-    public partial class Scenario_Order_a_Mobile_Script : IDisposable
+    public partial class Scenario_Order_a_Mobile_Script
     {
         public Step_1_Snapshot Step_1_Snapshot { get; private set; }
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
@@ -96,11 +96,5 @@ namespace EndToEndApiLevelTests
             var deserialized = JsonSerializer.Deserialize<T>(stringResponse, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             return deserialized;
         }
-
-        public void Dispose()
-        {
-
-        }
-
     }
 }
