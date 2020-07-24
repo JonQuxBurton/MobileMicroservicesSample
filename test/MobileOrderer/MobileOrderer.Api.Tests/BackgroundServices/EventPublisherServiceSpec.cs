@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace MobileOrderer.Api.Tests.Services
+namespace MobileOrderer.Api.Tests.BackgroundServices
 {
     public class EventPublisherServiceSpec
     {

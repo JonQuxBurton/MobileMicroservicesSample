@@ -5,14 +5,14 @@ using Moq;
 using System.Threading;
 using Xunit;
 
-namespace MobileOrderer.Api.Tests.Services
+namespace MobileOrderer.Api.Tests.BackgroundServices
 {
     public class EventsServiceSpec
     {
-        Mock<IMessageBusListenerBuilder> messageBusListenerBuilderMock;
-        Mock<IMessageBusListener> messageBusListenerMock;
-        Mock<ILogger<EventsService>> loggerMock;
-        EventsService sut;
+        private readonly Mock<IMessageBusListenerBuilder> messageBusListenerBuilderMock;
+        private readonly Mock<IMessageBusListener> messageBusListenerMock;
+        private readonly Mock<ILogger<EventsService>> loggerMock;
+        private readonly EventsService sut;
 
         public EventsServiceSpec()
         {

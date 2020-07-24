@@ -42,10 +42,14 @@ namespace MobileOrderer.Api.Tests.Handlers
                 getMobileByOrderIdQueryMock = new Mock<IGetMobileByOrderIdQuery>();
                 var loggerMock = new Mock<ILogger<CeaseOrderSentHandler>>();
 
-                this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
-                    .Returns(expectedMobile);
+                getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
+                     .Returns(expectedMobile);
 
-                sut = new CeaseOrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
+                var serviceProviderMock = ServiceProviderHelper.GetMock();
+                serviceProviderMock.Setup(x => x.GetService(typeof(IGetMobileByOrderIdQuery))).Returns(getMobileByOrderIdQueryMock.Object);
+                serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<Mobile>))).Returns(mobileRepositoryMock.Object);
+
+                sut = new CeaseOrderSentHandler(loggerMock.Object, serviceProviderMock.Object);
             }
 
             [Fact]

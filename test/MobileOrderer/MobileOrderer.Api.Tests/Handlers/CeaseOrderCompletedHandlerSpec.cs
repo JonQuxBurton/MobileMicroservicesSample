@@ -43,10 +43,14 @@ namespace MobileOrderer.Api.Tests.Handlers
                 var loggerMock = new Mock<ILogger<CeaseOrderCompletedHandler>>();
                 var monitoringMock = new Mock<IMonitoring>();
 
-                this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
+                getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
                     .Returns(expectedMobile);
 
-                sut = new CeaseOrderCompletedHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object, monitoringMock.Object);
+                var serviceProviderMock = ServiceProviderHelper.GetMock();
+                serviceProviderMock.Setup(x => x.GetService(typeof(IGetMobileByOrderIdQuery))).Returns(getMobileByOrderIdQueryMock.Object);
+                serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<Mobile>))).Returns(mobileRepositoryMock.Object);
+
+                sut = new CeaseOrderCompletedHandler(loggerMock.Object, monitoringMock.Object, serviceProviderMock.Object);
             }
 
             [Fact]
@@ -56,7 +60,7 @@ namespace MobileOrderer.Api.Tests.Handlers
 
                 expectedMobile.CurrentState.Should().Be(Mobile.State.Ceased);
             }
-            
+
             [Fact]
             public async void HaveCompleteTheInFlightOrder()
             {

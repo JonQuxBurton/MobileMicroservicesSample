@@ -11,50 +11,55 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public class OrderSentHandlerSpec
+    public class ProvisioningOrderSentHandlerSpec
     {
         public class HandleShould
         {
-            private readonly ProvisionOrderSentHandler sut;
+            private readonly ProvisionOrderCompletedHandler sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGetMobileByOrderIdQuery> getMobileByOrderIdQueryMock;
 
             private readonly Mobile expectedMobile;
-            private readonly OrderSentMessage inputMessage;
+            private readonly ProvisioningOrderCompletedMessage inputMessage;
 
             public HandleShould()
             {
                 var inFlightOrder = new Order(new OrderDataEntity()
                 {
-                    State = "Processing"
+                    State = "Sent"
                 });
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
                     GlobalId = Guid.NewGuid(),
                     State = "ProcessingProvisioning"
                 }, inFlightOrder);
-                inputMessage = new OrderSentMessage()
+                inputMessage = new ProvisioningOrderCompletedMessage()
                 {
                     MobileOrderId = expectedMobile.GlobalId
                 };
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 getMobileByOrderIdQueryMock = new Mock<IGetMobileByOrderIdQuery>();
-                var loggerMock = new Mock<ILogger<ProvisionOrderSentHandler>>();
+                var loggerMock = new Mock<ILogger<ProvisionOrderCompletedHandler>>();
+                var monitoringMock = new Mock<IMonitoring>();
 
-                this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
+                getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
                     .Returns(expectedMobile);
 
-                sut = new ProvisionOrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
+                var serviceProviderMock = ServiceProviderHelper.GetMock();
+                serviceProviderMock.Setup(x => x.GetService(typeof(IGetMobileByOrderIdQuery))).Returns(getMobileByOrderIdQueryMock.Object);
+                serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<Mobile>))).Returns(mobileRepositoryMock.Object);
+
+                sut = new ProvisionOrderCompletedHandler(loggerMock.Object, monitoringMock.Object, serviceProviderMock.Object);
             }
 
             [Fact]
-            public async void SetTheMobilesInFlightOrderToSent()
+            public async void CompleteTheMobilesProvisioning()
             {
                 await sut.Handle(inputMessage);
 
-                expectedMobile.CurrentState.Should().Be(Mobile.State.ProcessingProvisioning);
-                expectedMobile.InFlightOrder.CurrentState.Should().Be(Order.State.Sent);
+                expectedMobile.CurrentState.Should().Be(Mobile.State.WaitingForActivation);
+                expectedMobile.InFlightOrder.Should().BeNull();
             }
 
             [Fact]
@@ -76,7 +81,7 @@ namespace MobileOrderer.Api.Tests.Handlers
             [Fact]
             public async void ReturnFalseWhenNotSuccessful()
             {
-                var nonExistantMobileMessage = new OrderSentMessage()
+                var nonExistantMobileMessage = new ProvisioningOrderCompletedMessage()
                 {
                     MobileOrderId = Guid.Empty
                 };

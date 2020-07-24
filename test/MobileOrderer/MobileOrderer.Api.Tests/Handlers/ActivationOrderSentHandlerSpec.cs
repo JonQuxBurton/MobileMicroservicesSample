@@ -11,8 +11,9 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public class ActivationOrderSentHandlerSpec
+    public static class ActivationOrderSentHandlerSpec
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class HandleShould
         {
             private readonly ActivationOrderSentHandler sut;
@@ -42,10 +43,14 @@ namespace MobileOrderer.Api.Tests.Handlers
                 getMobileByOrderIdQueryMock = new Mock<IGetMobileByOrderIdQuery>();
                 var loggerMock = new Mock<ILogger<ActivationOrderSentHandler>>();
 
-                this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
+                getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
                     .Returns(expectedMobile);
 
-                sut = new ActivationOrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
+                var serviceProviderMock = ServiceProviderHelper.GetMock();
+                serviceProviderMock.Setup(x => x.GetService(typeof(IGetMobileByOrderIdQuery))).Returns(getMobileByOrderIdQueryMock.Object);
+                serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<Mobile>))).Returns(mobileRepositoryMock.Object);
+
+                sut = new ActivationOrderSentHandler(loggerMock.Object, serviceProviderMock.Object);
             }
 
             [Fact]

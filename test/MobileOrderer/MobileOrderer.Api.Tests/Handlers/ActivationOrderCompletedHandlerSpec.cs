@@ -12,8 +12,9 @@ using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public class ActivationOrderCompletedHandlerSpec
+    public static class ActivationOrderCompletedHandlerSpec
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class HandleShould
         {
             private readonly ActivationOrderCompletedHandler sut;
@@ -26,7 +27,7 @@ namespace MobileOrderer.Api.Tests.Handlers
             public HandleShould()
             {
                 var inFlightOrder = new Order(new OrderDataEntity()
-                { 
+                {
                     State = "Sent"
                 });
                 expectedMobile = new Mobile(new MobileDataEntity()
@@ -44,10 +45,14 @@ namespace MobileOrderer.Api.Tests.Handlers
                 var loggerMock = new Mock<ILogger<ActivationOrderCompletedHandler>>();
                 var monitoringMock = new Mock<IMonitoring>();
 
-                this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
+                getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
                     .Returns(expectedMobile);
 
-                sut = new ActivationOrderCompletedHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object, monitoringMock.Object);
+                var serviceProviderMock = ServiceProviderHelper.GetMock();
+                serviceProviderMock.Setup(x => x.GetService(typeof(IGetMobileByOrderIdQuery))).Returns(getMobileByOrderIdQueryMock.Object);
+                serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<Mobile>))).Returns(mobileRepositoryMock.Object);
+
+                sut = new ActivationOrderCompletedHandler(loggerMock.Object, monitoringMock.Object, serviceProviderMock.Object);
             }
 
             [Fact]
