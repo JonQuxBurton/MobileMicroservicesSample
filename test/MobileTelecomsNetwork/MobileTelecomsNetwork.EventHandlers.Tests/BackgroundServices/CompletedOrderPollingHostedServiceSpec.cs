@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
+using MobileTelecomsNetwork.EventHandlers.BackgroundServices;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Domain;
-using MobileTelecomsNetwork.EventHandlers.Services;
 using Moq;
 using System;
 using Xunit;
 
-namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
+namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
 {
     public class CompletedOrderPollingHostedServiceSpec
     {

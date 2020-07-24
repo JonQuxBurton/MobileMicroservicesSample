@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MinimalEventBus.JustSaying;
+using MobileTelecomsNetwork.EventHandlers.BackgroundServices;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Domain;
-using MobileTelecomsNetwork.EventHandlers.Services;
 using Moq;
 using Moq.Protected;
 using System;

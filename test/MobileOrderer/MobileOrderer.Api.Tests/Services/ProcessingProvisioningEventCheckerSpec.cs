@@ -18,8 +18,8 @@ namespace MobileOrderer.Api.Tests.Services
             private readonly Mobile expectedMobile;
             private readonly ProcessingProvisioningEventChecker sut;
             private readonly Mock<IGetProcessingProvisioningMobilesQuery> queryMock;
-            private Mock<IRepository<Mobile>> repositoryMock;
-            private Mock<IMessagePublisher> messagePublisherMock;
+            private readonly Mock<IRepository<Mobile>> repositoryMock;
+            private readonly Mock<IMessagePublisher> messagePublisherMock;
 
             public CheckShould()
             {

@@ -7,7 +7,7 @@ using System.Linq;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Domain;
 
-namespace MobileTelecomsNetwork.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
 {
     public class CompletedOrderPollingHostedService : IHostedService, IDisposable
     {

@@ -11,18 +11,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace SimCards.EventHandlers.Tests.Services
+namespace SimCards.EventHandlers.Tests.Domain
 {
-    public class SimCardWholesaleServiceSpec
+    public static class SimCardWholesaleServiceSpec
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class PostOrderShould
         {
-            private Config config;
-            private IOptions<Config> options;
-            private Uri expectedUrl;
-            private SimCardWholesalerOrder expectedOrder;
-            private HttpClient httpClient;
-            private Mock<DelegatingHandler> handlerMock;
+            private readonly Config config;
+            private readonly IOptions<Config> options;
+            private readonly Uri expectedUrl;
+            private readonly SimCardWholesalerOrder expectedOrder;
+            private readonly HttpClient httpClient;
+            private readonly Mock<DelegatingHandler> handlerMock;
 
             public PostOrderShould()
             {
@@ -32,7 +33,8 @@ namespace SimCards.EventHandlers.Tests.Services
                 };
                 options = Options.Create(config);
                 expectedUrl = new Uri($"{config.SimCardWholesalerApiUrl}/api/orders");
-                expectedOrder = new SimCardWholesalerOrder { 
+                expectedOrder = new SimCardWholesalerOrder
+                {
                     Name = "Neil Armstrong",
                     Reference = Guid.NewGuid()
                 };

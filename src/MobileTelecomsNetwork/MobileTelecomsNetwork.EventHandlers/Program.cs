@@ -5,9 +5,9 @@ using Microsoft.Extensions.Hosting;
 using MinimalEventBus;
 using MinimalEventBus.Aws;
 using MinimalEventBus.JustSaying;
+using MobileTelecomsNetwork.EventHandlers.BackgroundServices;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Domain;
-using MobileTelecomsNetwork.EventHandlers.Services;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -32,7 +32,7 @@ namespace MobileTelecomsNetwork.EventHandlers
             {
                 Log.Information("Starting host");
                 Console.Title = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}";
-                BuildHost(args).Run();
+                BuildHost().Run();
                 return 0;
             }
             catch (Exception ex)
@@ -46,7 +46,7 @@ namespace MobileTelecomsNetwork.EventHandlers
             }
         }
 
-        public static IHost BuildHost(string[] args) =>
+        public static IHost BuildHost() =>
             new HostBuilder()
                 .ConfigureServices(services => ConfigureServices(services))
                 .UseSerilog()

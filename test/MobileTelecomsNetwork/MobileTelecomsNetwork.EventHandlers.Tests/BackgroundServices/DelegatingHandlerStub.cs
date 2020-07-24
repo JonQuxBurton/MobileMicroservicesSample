@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MobileTelecomsNetwork.EventHandlers.Tests.Services
+namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
 {
     public class DelegatingHandlerStub : DelegatingHandler
     {

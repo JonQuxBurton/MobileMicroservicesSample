@@ -7,7 +7,7 @@ using SimCards.EventHandlers.Data;
 using System.Linq;
 using SimCards.EventHandlers.Domain;
 
-namespace SimCards.EventHandlers.Services
+namespace SimCards.EventHandlers.BackgroundServices
 {
     public class CompletedOrderPollingHostedService : IHostedService, IDisposable
     {

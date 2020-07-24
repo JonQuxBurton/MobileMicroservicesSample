@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
-using SimCards.EventHandlers.Domain;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 
-namespace SimCards.EventHandlers.Services
+namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
 {
     public class EventListenerHostedService : IHostedService
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MinimalEventBus.JustSaying;
+using MobileTelecomsNetwork.EventHandlers.BackgroundServices;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Messages;
-using MobileTelecomsNetwork.EventHandlers.Services;
 using System;
 using System.Net.Http;
 using System.Text.Json;

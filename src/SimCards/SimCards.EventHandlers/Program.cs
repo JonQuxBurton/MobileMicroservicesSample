@@ -13,6 +13,7 @@ using Serilog.Events;
 using Microsoft.Extensions.Hosting;
 using MinimalEventBus.JustSaying;
 using SimCards.EventHandlers.Domain;
+using SimCards.EventHandlers.BackgroundServices;
 
 namespace SimCards.EventHandlers
 {

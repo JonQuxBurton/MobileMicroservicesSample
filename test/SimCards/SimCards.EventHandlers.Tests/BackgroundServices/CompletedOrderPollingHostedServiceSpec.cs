@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
+using SimCards.EventHandlers.BackgroundServices;
 using SimCards.EventHandlers.Data;
 using SimCards.EventHandlers.Domain;
-using SimCards.EventHandlers.Services;
 using System;
 using Xunit;
 
-namespace SimCards.EventHandlers.Tests
+namespace SimCards.EventHandlers.Tests.BackgroundServices
 {
     public class CompletedOrderPollingHostedServiceSpec
     {

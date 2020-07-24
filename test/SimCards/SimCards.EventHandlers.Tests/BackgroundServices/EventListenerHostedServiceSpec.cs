@@ -3,10 +3,10 @@ using Moq;
 using Xunit;
 using Microsoft.Extensions.Logging;
 using System.Threading;
-using SimCards.EventHandlers.Services;
 using SimCards.EventHandlers.Domain;
+using SimCards.EventHandlers.BackgroundServices;
 
-namespace SimCards.EventHandlers.Tests
+namespace SimCards.EventHandlers.Tests.BackgroundServices
 {
     public class EventListenerHostedServiceSpec
     {
