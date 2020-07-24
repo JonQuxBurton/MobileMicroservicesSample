@@ -10,36 +10,40 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Handlers
 {
-    public class ActivationOrderSentHandler : IHandlerAsync<ActivationOrderSentMessage>
+    public class ProvisionOrderCompletedHandler : IHandlerAsync<ProvisioningOrderCompletedMessage>
     {
-        private readonly ILogger<ActivationOrderSentHandler> logger;
+        private readonly ILogger<ProvisionOrderCompletedHandler> logger;
+        private readonly IMonitoring monitoring;
         private readonly IServiceProvider serviceProvider;
 
-        public ActivationOrderSentHandler(ILogger<ActivationOrderSentHandler> logger,
-            IServiceProvider serviceProvider
-            )
+        public ProvisionOrderCompletedHandler(
+            ILogger<ProvisionOrderCompletedHandler> logger,
+            IMonitoring monitoring,
+            IServiceProvider serviceProvider)
         {
             this.logger = logger;
+            this.monitoring = monitoring;
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<bool> Handle(ActivationOrderSentMessage message)
+        public Task<bool> Handle(ProvisioningOrderCompletedMessage message)
         {
             try
             {
-                logger.LogInformation($"Received [ActivationOrderSent] MobileOrderId={message.MobileOrderId}");
+                logger.LogInformation($"Received [ProvisionOrderCompleted] MobileOrderId={message.MobileOrderId}");
 
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
-            
                 var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
-                mobile.OrderSent();
+                
+                mobile.ProcessingProvisioningCompleted();
                 mobileRepository.Update(mobile);
+                monitoring.ProvisionCompleted();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing ActivationOrderSentMessage");
+                logger.LogError(ex, "Error while processing ProvisioningOrderCompletedMessage");
                 return Task.FromResult(false);
             }
 

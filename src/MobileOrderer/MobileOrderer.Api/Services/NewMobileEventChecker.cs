@@ -1,19 +1,21 @@
 ﻿using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
+using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {
     public class NewMobileEventChecker : IMobileEventsChecker
     {
         private readonly IGetNewMobilesQuery getNewMobilesQuery;
-        private readonly IMobileCommand command;
+        private readonly IRepository<Mobile> mobileRepository;
 
         public NewMobileEventChecker(
             IGetNewMobilesQuery getNewMobilesQuery,
-            IMobileCommand command
+            IRepository<Mobile> mobileRepository
             )
         {
-            this.command = command;
             this.getNewMobilesQuery = getNewMobilesQuery;
+            this.mobileRepository = mobileRepository;
         }
 
         public void Check()
@@ -22,8 +24,14 @@ namespace MobileOrderer.Api.Services
 
             foreach (var newMobile in newMobiles)
             {
-                this.command.Execute(newMobile);
+                Provision(newMobile);
             }
+        }
+
+        private void Provision(Mobile mobile)
+        {
+            mobile.Provision(mobile.InFlightOrder);
+            mobileRepository.Update(mobile);
         }
     }
 }

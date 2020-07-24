@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
@@ -12,24 +13,28 @@ namespace MobileOrderer.Api.Handlers
     public class ActivationOrderCompletedHandler : IHandlerAsync<ActivationOrderCompletedMessage>
     {
         private readonly ILogger<ActivationOrderCompletedHandler> logger;
-        private readonly IRepository<Mobile> mobileRepository;
-        private readonly IGetMobileByOrderIdQuery getMobileByOrderIdQuery;
         private readonly IMonitoring monitoring;
+        private readonly IServiceProvider serviceProvider;
 
-        public ActivationOrderCompletedHandler(ILogger<ActivationOrderCompletedHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery, IMonitoring monitoring)
+        public ActivationOrderCompletedHandler(ILogger<ActivationOrderCompletedHandler> logger,
+            IMonitoring monitoring,
+            IServiceProvider serviceProvider)
         {
             this.logger = logger;
-            this.mobileRepository = mobileRepository;
-            this.getMobileByOrderIdQuery = getMobileByOrderIdQuery;
             this.monitoring = monitoring;
+            this.serviceProvider = serviceProvider;
         }
 
         public Task<bool> Handle(ActivationOrderCompletedMessage message)
         {
-            this.logger.LogInformation($"Received [ActivationOrderCompleted] MobileOrderId={message.MobileOrderId}");
-
             try
             {
+                logger.LogInformation($"Received [ActivationOrderCompleted] MobileOrderId={message.MobileOrderId}");
+
+                using var scope = serviceProvider.CreateScope();
+                var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
+                var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
+
                 var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
                 mobile.ActivateCompleted();
                 mobileRepository.Update(mobile);
@@ -37,7 +42,7 @@ namespace MobileOrderer.Api.Handlers
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error while processing ActivationOrderCompletedMessage");
+                logger.LogError(ex, "Error while processing ActivationOrderCompletedMessage");
                 return Task.FromResult(false);
             }
 

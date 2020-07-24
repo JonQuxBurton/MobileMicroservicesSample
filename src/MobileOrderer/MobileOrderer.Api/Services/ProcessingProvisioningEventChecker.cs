@@ -1,19 +1,26 @@
-﻿using MobileOrderer.Api.Data;
+﻿using MinimalEventBus.JustSaying;
+using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
+using MobileOrderer.Api.Messages;
+using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {
     public class ProcessingProvisioningEventChecker : IMobileEventsChecker
     {
         private readonly IGetProcessingProvisioningMobilesQuery getNewMobilesQuery;
-        private readonly IMobileCommand command;
+        private readonly IRepository<Mobile> mobileRepository;
+        private readonly IMessagePublisher messagePublisher;
 
         public ProcessingProvisioningEventChecker(
             IGetProcessingProvisioningMobilesQuery getProcessingProvisioningMobilesQuery,
-            IMobileCommand command
+            IRepository<Mobile> mobileRepository,
+            IMessagePublisher messagePublisher
             )
         {
-            this.command = command;
             this.getNewMobilesQuery = getProcessingProvisioningMobilesQuery;
+            this.mobileRepository = mobileRepository;
+            this.messagePublisher = messagePublisher;
         }
 
         public void Check()
@@ -22,8 +29,25 @@ namespace MobileOrderer.Api.Services
 
             foreach (var newMobile in newMobiles)
             {
-                this.command.Execute(newMobile);
+                Execute(newMobile);
             }
+        }
+
+        private void Execute(Mobile mobile)
+        {
+            Publish(mobile.InFlightOrder);
+            mobile.OrderProcessing();
+            mobileRepository.Update(mobile);
+        }
+
+        private void Publish(Order order)
+        {
+            messagePublisher.PublishAsync(new MobileRequestedMessage
+            {
+                MobileOrderId = order.GlobalId,
+                Name = order.Name,
+                ContactPhoneNumber = order.ContactPhoneNumber
+            });
         }
     }
 }

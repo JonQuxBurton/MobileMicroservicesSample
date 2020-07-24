@@ -10,7 +10,8 @@ namespace MobileOrderer.Api.Services
         private readonly ILogger<EventsService> logger;
         private readonly IMessageBusListenerBuilder messageBusListenerBuilder;
 
-        public EventsService(ILogger<EventsService> logger, IMessageBusListenerBuilder messageBusListenerBuilder)
+        public EventsService(ILogger<EventsService> logger, 
+            IMessageBusListenerBuilder messageBusListenerBuilder)
         {
             this.logger = logger;
             this.messageBusListenerBuilder = messageBusListenerBuilder;

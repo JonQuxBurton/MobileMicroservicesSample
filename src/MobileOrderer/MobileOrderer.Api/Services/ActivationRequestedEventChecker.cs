@@ -1,29 +1,54 @@
-﻿using MobileOrderer.Api.Data;
+﻿using MinimalEventBus.JustSaying;
+using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
+using MobileOrderer.Api.Messages;
+using System;
+using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {
     public class ActivationRequestedEventChecker : IMobileEventsChecker
     {
         private readonly IGetNewActivationsQuery getNewActivationsQuery;
-        private readonly IMobileCommand command;
+        private readonly IRepository<Mobile> mobileRepository;
+        private readonly IMessagePublisher messagePublisher;
 
         public ActivationRequestedEventChecker(
             IGetNewActivationsQuery getNewActivationsQuery,
-            IMobileCommand command
-            )
+            IRepository<Mobile> mobileRepository,
+            IMessagePublisher messagePublisher
+        )
         {
-            this.command = command;
             this.getNewActivationsQuery = getNewActivationsQuery;
+            this.mobileRepository = mobileRepository;
+            this.messagePublisher = messagePublisher;
         }
 
         public void Check()
         {
-            var newMobiles = this.getNewActivationsQuery.Get();
+            var mobiles = this.getNewActivationsQuery.Get();
 
-            foreach (var newMobile in newMobiles)
+            foreach (var mobile in mobiles)
             {
-                this.command.Execute(newMobile);
+                Execute(mobile);
             }
+        }
+
+        private void Execute(Mobile mobile)
+        {
+            Publish(mobile.InFlightOrder);
+            mobile.OrderProcessing();
+            mobileRepository.Update(mobile);
+        }
+
+        private void Publish(Order order)
+        {
+            messagePublisher.PublishAsync(new ActivationRequestedMessage
+            {
+                MobileOrderId = order.GlobalId,
+                Name = order.Name,
+                ContactPhoneNumber = order.ContactPhoneNumber
+            });
         }
     }
 }

@@ -15,7 +15,7 @@ namespace MobileOrderer.Api.Tests.Handlers
     {
         public class HandleShould
         {
-            private readonly OrderSentHandler sut;
+            private readonly ProvisionOrderSentHandler sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGetMobileByOrderIdQuery> getMobileByOrderIdQueryMock;
 
@@ -40,12 +40,12 @@ namespace MobileOrderer.Api.Tests.Handlers
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 getMobileByOrderIdQueryMock = new Mock<IGetMobileByOrderIdQuery>();
-                var loggerMock = new Mock<ILogger<OrderSentHandler>>();
+                var loggerMock = new Mock<ILogger<ProvisionOrderSentHandler>>();
 
                 this.getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
                     .Returns(expectedMobile);
 
-                sut = new OrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
+                sut = new ProvisionOrderSentHandler(loggerMock.Object, mobileRepositoryMock.Object, getMobileByOrderIdQueryMock.Object);
             }
 
             [Fact]

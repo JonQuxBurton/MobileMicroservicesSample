@@ -1,29 +1,52 @@
-﻿using MobileOrderer.Api.Data;
+﻿using MinimalEventBus.JustSaying;
+using MobileOrderer.Api.Data;
+using MobileOrderer.Api.Domain;
+using MobileOrderer.Api.Messages;
+using System;
+using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {
     public class CeaseRequestedEventChecker : IMobileEventsChecker
     {
         private readonly IGetNewCeasesQuery getMobilesQuery;
-        private readonly IMobileCommand command;
+        private readonly IRepository<Mobile> mobileRepository;
+        private readonly IMessagePublisher messagePublisher;
 
         public CeaseRequestedEventChecker(
             IGetNewCeasesQuery getCeasesMobilesQuery,
-            IMobileCommand command
+            IRepository<Mobile> mobileRepository,
+            IMessagePublisher messagePublisher
             )
         {
-            this.command = command;
+            this.mobileRepository = mobileRepository;
+            this.messagePublisher = messagePublisher;
             this.getMobilesQuery = getCeasesMobilesQuery;
         }
 
         public void Check()
         {
-            var newMobiles = this.getMobilesQuery.Get();
+            var mobiles = this.getMobilesQuery.Get();
 
-            foreach (var newMobile in newMobiles)
+            foreach (var mobile in mobiles)
             {
-                this.command.Execute(newMobile);
+                Execute(mobile);
             }
+        }
+
+        private void Execute(Mobile mobile)
+        {
+            Publish(mobile.InFlightOrder);
+            mobile.OrderProcessing();
+            mobileRepository.Update(mobile);
+        }
+
+        private void Publish(Order order)
+        {
+            messagePublisher.PublishAsync(new CeaseRequestedMessage
+            {
+                MobileOrderId = order.GlobalId
+            });
         }
     }
 }

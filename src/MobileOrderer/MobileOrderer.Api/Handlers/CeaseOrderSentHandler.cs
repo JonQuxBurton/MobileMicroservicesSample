@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
@@ -12,14 +13,14 @@ namespace MobileOrderer.Api.Handlers
     public class CeaseOrderSentHandler : IHandlerAsync<CeaseOrderSentMessage>
     {
         private readonly ILogger<CeaseOrderSentHandler> logger;
-        private readonly IRepository<Mobile> mobileRepository;
-        private readonly IGetMobileByOrderIdQuery getMobileByOrderIdQuery;
+        private readonly IServiceProvider serviceProvider;
 
-        public CeaseOrderSentHandler(ILogger<CeaseOrderSentHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery)
+        public CeaseOrderSentHandler(ILogger<CeaseOrderSentHandler> logger,
+            IServiceProvider serviceProvider
+            )
         {
             this.logger = logger;
-            this.mobileRepository = mobileRepository;
-            this.getMobileByOrderIdQuery = getMobileByOrderIdQuery;
+            this.serviceProvider = serviceProvider;
         }
 
         public Task<bool> Handle(CeaseOrderSentMessage message)
@@ -28,13 +29,17 @@ namespace MobileOrderer.Api.Handlers
             {
                 logger.LogInformation($"Received [CeaseOrderSent] MobileOrderId={message.MobileOrderId}");
 
-                var mobile = this.getMobileByOrderIdQuery.Get(message.MobileOrderId);
+                using var scope = serviceProvider.CreateScope();
+                var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
+                var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
+
+                var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
                 mobile.OrderSent();
-                this.mobileRepository.Update(mobile);
+                mobileRepository.Update(mobile);
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error while processing CeaseOrderSentMessage");
+                logger.LogError(ex, "Error while processing CeaseOrderSentMessage");
                 return Task.FromResult(false);
             }
 

@@ -53,72 +53,41 @@ namespace MobileOrderer.Api
             var config = new Config();
             Configuration.GetSection("Config").Bind(config);
             
-
             services.AddDbContext<MobilesContext>(options =>
-                options.UseSqlServer(config.ConnectionString), ServiceLifetime.Singleton);
-            services.AddSingleton<IRepository<Mobile>, MobileRepository>();
+                options.UseSqlServer(config.ConnectionString));
+            services.AddScoped<IRepository<Mobile>, MobileRepository>();
+
+            // Utilities
             services.AddSingleton<IEnumConverter, EnumConverter>();
+            services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
+            services.AddSingleton<AWSCredentials>(credentials);
 
             // API
             services.AddScoped<IGuidCreator, GuidCreator>();
+            services.AddScoped<IMessagePublisher, MessagePublisher>();
+            services.AddScoped<IGetNewMobilesQuery, GetNewMobilesQuery>();
+            services.AddScoped<IGetProcessingProvisioningMobilesQuery, GetProcessingProvisioningMobilesQuery>();
+            services.AddScoped<IGetNewActivationsQuery, GetNewActivationsQuery>();
+            services.AddScoped<IGetNewCeasesQuery, GetNewCeasesQuery>();
+            services.AddScoped<IGetMobileByOrderIdQuery, GetMobileByOrderIdQuery>();
+            
+            // EventBus
+            services.AddSingleton<ISnsService, SnsService>();
+            services.AddSingleton<ISqsService, SqsService>();
+            services.AddSingleton<IMessageBus, MessageBus>();
+            services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
+            services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
+
+            services.AddSingleton<IMonitoring>(new Monitoring());
+
+            services.AddScoped<IMobileEventsChecker, NewMobileEventChecker>();
+            services.AddScoped<IMobileEventsChecker, ProcessingProvisioningEventChecker>();
+            services.AddScoped<IMobileEventsChecker, ActivationRequestedEventChecker>();
+            services.AddScoped<IMobileEventsChecker, CeaseRequestedEventChecker>();
 
             // HostedService
             services.AddHostedService<EventsService>();
             services.AddHostedService<EventPublisherService>();
-
-            services.AddSingleton<IMessagePublisher, MessagePublisher>();
-            services.AddSingleton<IGetNewMobilesQuery, GetNewMobilesQuery>();
-            services.AddSingleton<IGetProcessingProvisioningMobilesQuery, GetProcessingProvisioningMobilesQuery>();
-            services.AddSingleton<IGetNewActivationsQuery, GetNewActivationsQuery>();
-            services.AddSingleton<IGetNewCeasesQuery, GetNewCeasesQuery>();
-            services.AddSingleton<IMessageBusListenerBuilder, MessageBusListenerBuilder>();
-            services.AddSingleton<ISqsService, SqsService>();
-            services.AddSingleton<IMessageBus, MessageBus>();
-            services.AddSingleton<IGetMobileByOrderIdQuery, GetMobileByOrderIdQuery>();
-            services.AddSingleton<IQueueNamingStrategy, DefaultQueueNamingStrategy>();
-            services.AddSingleton<ISnsService, SnsService>();
-            services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
-            services.AddSingleton<AWSCredentials>(credentials);
-
-            services.AddSingleton<IMonitoring>(new Monitoring());
-
-            services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
-            {
-                var getNewMobilesQuery = serviceProvider.GetService<IGetNewMobilesQuery>();
-                var repository = serviceProvider.GetService<IRepository<Mobile>>();
-                var provisionCommand = new ProvisionCommand(repository);
-
-                return new NewMobileEventChecker(getNewMobilesQuery, provisionCommand);
-            });
-
-            services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
-            {
-                var getProcessingProvisioningMobilesQuery = serviceProvider.GetService<IGetProcessingProvisioningMobilesQuery>();
-                var repository = serviceProvider.GetService<IRepository<Mobile>>();
-                var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
-                var processingProvisioningCommand = new ProcessingProvisioningCommand(repository, messagePublisher);
-
-                return new ProcessingProvisioningEventChecker(getProcessingProvisioningMobilesQuery, processingProvisioningCommand);
-            });
-
-            services.AddSingleton<IMobileEventsChecker>(serviceProvider => {
-                var getNewActivationsQuery = serviceProvider.GetService<IGetNewActivationsQuery>();
-                var repository = serviceProvider.GetService<IRepository<Mobile>>();
-                var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
-                var activationCommand = new ActivationCommand(repository, messagePublisher);
-
-                return new ActivationRequestedEventChecker(getNewActivationsQuery, activationCommand);
-            });
-
-            services.AddSingleton<IMobileEventsChecker>(serviceProvider =>
-            {
-                var getNewCeasesQuery = serviceProvider.GetService<IGetNewCeasesQuery>();
-                var repository = serviceProvider.GetService<IRepository<Mobile>>();
-                var messagePublisher = serviceProvider.GetService<IMessagePublisher>();
-                var ceaseCommand = new CeaseCommand(repository, messagePublisher);
-
-                return new CeaseRequestedEventChecker(getNewCeasesQuery, ceaseCommand);
-            });
 
             services.AddHealthChecks()
                 .ForwardToPrometheus();

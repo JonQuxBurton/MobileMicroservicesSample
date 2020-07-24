@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
@@ -12,24 +13,28 @@ namespace MobileOrderer.Api.Handlers
     public class CeaseOrderCompletedHandler : IHandlerAsync<CeaseOrderCompletedMessage>
     {
         private readonly ILogger<CeaseOrderCompletedHandler> logger;
-        private readonly IRepository<Mobile> mobileRepository;
-        private readonly IGetMobileByOrderIdQuery getMobileByOrderIdQuery;
         private readonly IMonitoring monitoring;
+        private readonly IServiceProvider serviceProvider;
 
-        public CeaseOrderCompletedHandler(ILogger<CeaseOrderCompletedHandler> logger, IRepository<Mobile> mobileRepository, IGetMobileByOrderIdQuery getMobileByOrderIdQuery, IMonitoring monitoring)
+        public CeaseOrderCompletedHandler(ILogger<CeaseOrderCompletedHandler> logger,
+            IMonitoring monitoring,
+            IServiceProvider serviceProvider)
         {
             this.logger = logger;
-            this.mobileRepository = mobileRepository;
-            this.getMobileByOrderIdQuery = getMobileByOrderIdQuery;
             this.monitoring = monitoring;
+            this.serviceProvider = serviceProvider;
         }
 
         public Task<bool> Handle(CeaseOrderCompletedMessage message)
         {
-            this.logger.LogInformation($"Received [CeaseOrderCompleted] MobileOrderId={message.MobileOrderId}");
-
             try
             {
+                logger.LogInformation($"Received [CeaseOrderCompleted] MobileOrderId={message.MobileOrderId}");
+
+                using var scope = serviceProvider.CreateScope();
+                var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
+                var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
+
                 var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
                 mobile.CeaseCompleted();
                 mobileRepository.Update(mobile);
@@ -37,7 +42,7 @@ namespace MobileOrderer.Api.Handlers
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error while processing CeaseOrderCompletedMessage");
+                logger.LogError(ex, "Error while processing CeaseOrderCompletedMessage");
                 return Task.FromResult(false);
             }
 
