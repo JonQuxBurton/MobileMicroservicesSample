@@ -219,7 +219,7 @@ View the metrics using the following PromQL queries:
 | mobile_ceases_completed | Total number of Mobile Ceases requested |
 | mobile_ceases_inprogress | Current number of Mobile Ceases in progress |
 
-#### External SIM Card System
+#### External SIM Cards Provider
 | PromQL | Description |
 | ---- | ---- |
 | simcard_orders_sent | Total number of SIM Card orders sent |
