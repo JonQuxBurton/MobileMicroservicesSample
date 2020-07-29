@@ -8,6 +8,6 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         public MobileDataEntity ActualMobile { get; set; }
         public SimCards.EventHandlers.Data.SimCardOrder ActualSimCardOrder { get; set; }
         public OrderDataEntity ActualMobileOrder { get; set; }
-        public SimCardWholesaler.Api.Data.Order ActualExternalSimCardOrder { get; set; }
+        public ExternalSimCardsProvider.Api.Data.Order ActualExternalSimCardOrder { get; set; }
     }
 }

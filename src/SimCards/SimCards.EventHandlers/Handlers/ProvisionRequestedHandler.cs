@@ -13,11 +13,11 @@ namespace SimCards.EventHandlers.Handlers
     {
         private readonly ILogger<ProvisionRequestedHandler> logger;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
-        private readonly ISimCardWholesaleService simCardWholesaleService;
+        private readonly IExternalSimCardsProviderService simCardWholesaleService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, ISimCardWholesaleService simCardWholesaleService,
+        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, IExternalSimCardsProviderService simCardWholesaleService,
             IMessagePublisher messagePublisher, IMonitoring monitoring)
         {
             this.logger = logger;
@@ -53,7 +53,7 @@ namespace SimCards.EventHandlers.Handlers
 
                 using (var tx = simCardOrdersDataStore.BeginTransaction())
                 {
-                    var result = await simCardWholesaleService.PostOrder(new SimCardWholesalerOrder
+                    var result = await simCardWholesaleService.PostOrder(new ExternalSimCardOrder
                     {
                         Reference = message.MobileOrderId,
                         Name = message.Name

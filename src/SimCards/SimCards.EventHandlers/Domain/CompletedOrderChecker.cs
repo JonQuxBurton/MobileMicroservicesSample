@@ -32,7 +32,7 @@ namespace SimCards.EventHandlers.Domain
             this.simCardOrdersDataStore = simCardOrdersDataStore;
             this.messagePublisher = messagePublisher;
             this.monitoring = monitoring;
-            externalApiUrl = config.Value?.SimCardWholesalerApiUrl;
+            externalApiUrl = config.Value?.ExternalSimCardsProviderApiUrl;
         }
 
         public async Task Check(SimCardOrder sentOrder)
@@ -45,9 +45,9 @@ namespace SimCards.EventHandlers.Domain
             if (response.IsSuccessStatusCode)
             {
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                var simCardOrderFromWholesaler = await JsonSerializer.DeserializeAsync<SimCardOrderFromWholesaler>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var simCardOrderFromExternalProvider = await JsonSerializer.DeserializeAsync<SimCardOrderFromExternalProvider>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (simCardOrderFromWholesaler.Status.Trim() == "Completed")
+                if (simCardOrderFromExternalProvider.Status.Trim() == "Completed")
                 {
                     using var tx = simCardOrdersDataStore.BeginTransaction();
                     simCardOrdersDataStore.Complete(sentOrder.MobileOrderId);

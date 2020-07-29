@@ -2,13 +2,13 @@ using DapperDataAccess;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SimCardWholesaler.Api.Controllers;
-using SimCardWholesaler.Api.Data;
-using SimCardWholesaler.Api.Resources;
+using ExternalSimCardsProvider.Api.Controllers;
+using ExternalSimCardsProvider.Api.Data;
+using ExternalSimCardsProvider.Api.Resources;
 using System;
 using Xunit;
 
-namespace SimCardWholesaler.Api.Tests
+namespace ExternalSimCardsProvider.Api.Tests
 {
     public class OrdersControllerSpec
     {

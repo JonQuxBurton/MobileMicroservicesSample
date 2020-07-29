@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Serilog;
 using Serilog.Events;
 
-namespace SimCardWholesaler.Api
+namespace ExternalSimCardsProvider.Api
 {
     [ExcludeFromCodeCoverage]
     public class Program

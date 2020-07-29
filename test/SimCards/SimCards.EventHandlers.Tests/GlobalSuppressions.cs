@@ -6,9 +6,8 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.BackgroundServices.CompletedOrderPollingHostedServiceSpec.DoWorkShould")]
-[assembly: SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.Domain.SimCardWholesalerServiceSpec")]
+[assembly: SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.Domain.ExternalSimCardsProviderServiceSpec")]
 [assembly: SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.BackgroundServices.CompletedOrderPollingHostedServiceSpec")]
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.BackgroundServices.EventListenerHostedServiceSpec.RunShould")]
-[assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.Domain.SimCardWholesalerServiceSpec.PostOrderShould")]
 [assembly: SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.BackgroundServices.EventListenerHostedServiceSpec")]
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:SimCards.EventHandlers.Tests.Handlers.MobileRequestHandlerSpec.HandleShould")]

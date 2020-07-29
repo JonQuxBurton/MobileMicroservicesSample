@@ -17,7 +17,7 @@ namespace SimCards.EventHandlers.Tests.BackgroundServices
             {
                 var config = new Config
                 {
-                    SimCardWholesalerApiUrl = "http://api:5000"
+                    ExternalSimCardsProviderApiUrl = "http://api:5000"
                 };
                 var expectedOrder = new SimCardOrder()
                 {

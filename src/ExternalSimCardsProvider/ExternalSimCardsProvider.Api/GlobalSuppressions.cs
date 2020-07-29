@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SimCardWholesaler.Api.Controllers.OrdersController.Status~Microsoft.AspNetCore.Mvc.IActionResult")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:ExternalSimCardsProvider.Api.Controllers.OrdersController.Status~Microsoft.AspNetCore.Mvc.IActionResult")]

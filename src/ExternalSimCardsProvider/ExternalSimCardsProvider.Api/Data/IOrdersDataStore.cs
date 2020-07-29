@@ -1,7 +1,7 @@
 ﻿using DapperDataAccess;
 using System;
 
-namespace SimCardWholesaler.Api.Data
+namespace ExternalSimCardsProvider.Api.Data
 {
     public interface IOrdersDataStore
     {

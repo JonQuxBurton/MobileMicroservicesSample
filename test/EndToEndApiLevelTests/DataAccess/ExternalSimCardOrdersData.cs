@@ -1,5 +1,5 @@
 ﻿using System;
-using SimCardWholesaler.Api.Data;
+using ExternalSimCardsProvider.Api.Data;
 using Microsoft.Extensions.Options;
 
 namespace EndToEndApiLevelTests.DataAcess
@@ -10,7 +10,7 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public ExternalSimCardOrdersData(string connectionString)
         {
-            var options = Options.Create<SimCardWholesaler.Api.Configuration.Config>(new SimCardWholesaler.Api.Configuration.Config()
+            var options = Options.Create<ExternalSimCardsProvider.Api.Configuration.Config>(new ExternalSimCardsProvider.Api.Configuration.Config()
             {
                 ConnectionString = connectionString
             });

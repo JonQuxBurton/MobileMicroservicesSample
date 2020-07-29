@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SimCardWholesaler.Api.Data
+namespace ExternalSimCardsProvider.Api.Data
 {
     public class Order
     {

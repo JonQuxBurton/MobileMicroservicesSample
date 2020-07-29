@@ -33,13 +33,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalEventBus.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperDataAccess", "src\Infrastructure\DapperDataAccess\DapperDataAccess.csproj", "{25F87639-938C-44F1-86B1-1A94F3F19DB3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimCardWholesaler", "SimCardWholesaler", "{C8B4E2F3-2F7F-47A2-AA0D-5768ABCA5F39}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalSimCardsProvider", "ExternalSimCardsProvider", "{C8B4E2F3-2F7F-47A2-AA0D-5768ABCA5F39}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimCardWholesaler.Api", "src\SimCardWholesaler\SimCardWholesaler.Api\SimCardWholesaler.Api.csproj", "{A27F3A07-9A5A-492C-820C-349C58D1AF0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalSimCardsProvider.Api", "src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api\ExternalSimCardsProvider.Api.csproj", "{A27F3A07-9A5A-492C-820C-349C58D1AF0B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SimCardWholesaler", "SimCardWholesaler", "{5FED58DA-9143-4562-A5D2-F606F823B8C2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalSimCardsProvider", "ExternalSimCardsProvider", "{5FED58DA-9143-4562-A5D2-F606F823B8C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimCardWholesaler.Api.Tests", "test\SimCardWholesaler\SimCardWholesaler.Api.Tests\SimCardWholesaler.Api.Tests.csproj", "{64475DA3-3BBC-4D5C-8FAD-450BCC722A10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalSimCardsProvider.Api.Tests", "test\ExternalSimCardsProvider\ExternalSimCardsProvider.Api.Tests\ExternalSimCardsProvider.Api.Tests.csproj", "{64475DA3-3BBC-4D5C-8FAD-450BCC722A10}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperDataAccess.Tests", "test\Infrastructure\DapperDataAccess.Tests\DapperDataAccess.Tests.csproj", "{42DA0D96-98B0-4A4E-9B64-EC1B47B2C622}"
 EndProject

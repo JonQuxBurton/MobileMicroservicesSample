@@ -21,14 +21,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardsMicroservice;Password=SimCards@123
-      - Config:SimCardWholesalerApiUrl=http://simcardwholesaler.api
+      - Config:ExternalSimCardsProviderApiUrl=http://externalsimcardsprovider.api
       - EventBusConfig:SnsServiceUrl=http://goaws:4100
       - EventBusConfig:SqsServiceUrl=http://goaws:4100
       
-  simcardwholesaler.api:
+  externalsimcardsprovider.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardWholesalerWebService;Password=SimCardWholesaler@123
+      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=ExternalSimCardsProviderWebService;Password=ExternalSimCardsProvider@123
     ports:
       - "5001:80"
       

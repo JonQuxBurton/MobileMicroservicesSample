@@ -1,4 +1,4 @@
-﻿namespace SimCardWholesaler.Api.Configuration
+﻿namespace ExternalSimCardsProvider.Api.Configuration
 {
     public class Config
     {

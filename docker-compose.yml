@@ -52,11 +52,11 @@ services:
     stdin_open: true
     tty: true
 
-  simcardwholesaler.api:
-    image: ${DOCKER_REGISTRY}simcardwholesalerapi
+  externalsimcardsprovider.api:
+    image: ${DOCKER_REGISTRY}externalsimcardsproviderapi
     build:
       context: .
-      dockerfile: src/SimCardWholesaler/SimCardWholesaler.Api/Dockerfile
+      dockerfile: src/ExternalSimCardsProvider/ExternalSimCardsProvider.Api/Dockerfile
 
   mobiletelecomsnetwork.eventhandlers:
     image: ${DOCKER_REGISTRY}mobiletelecomsnetworkhandlers

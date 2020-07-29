@@ -2,7 +2,7 @@
 
 namespace SimCards.EventHandlers.Domain
 {
-    public class SimCardOrderFromWholesaler
+    public class SimCardOrderFromExternalProvider
     {
         public int Id { get; set; }
         public Guid Reference { get; set; }

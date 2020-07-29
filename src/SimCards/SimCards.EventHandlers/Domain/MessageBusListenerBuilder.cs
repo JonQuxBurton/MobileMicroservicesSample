@@ -12,7 +12,7 @@ namespace SimCards.EventHandlers.Domain
     {
         private readonly ILogger<ProvisionRequestedHandler> logger;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
-        private readonly ISimCardWholesaleService simCardWholesaleService;
+        private readonly IExternalSimCardsProviderService simCardWholesaleService;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
         private readonly IMessagePublisher messagePublisher;
@@ -20,7 +20,7 @@ namespace SimCards.EventHandlers.Domain
 
         public MessageBusListenerBuilder(ILogger<ProvisionRequestedHandler> logger,
             ISimCardOrdersDataStore simCardOrdersDataStore,
-            ISimCardWholesaleService simCardWholesaleService,
+            IExternalSimCardsProviderService simCardWholesaleService,
             IMessageBus messageBus,
             ISqsService sqsService,
             IMessagePublisher messagePublisher,

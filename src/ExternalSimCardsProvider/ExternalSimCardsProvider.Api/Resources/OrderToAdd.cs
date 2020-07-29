@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SimCards.EventHandlers.Domain
+namespace ExternalSimCardsProvider.Api.Resources
 {
-    public class SimCardWholesalerOrder
+    public class OrderToAdd
     {
         public Guid Reference { get; set; }
         public string Name { get; set; }

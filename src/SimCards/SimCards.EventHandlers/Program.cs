@@ -37,7 +37,7 @@ namespace SimCards.EventHandlers
 
             services.Configure<Config>(options => configuration.GetSection("Config").Bind(options));
             services.Configure<EventBusConfig>(options => configuration.GetSection("EventBusConfig").Bind(options));
-            services.AddHttpClient<ISimCardWholesaleService, SimCardWholesaleService>();
+            services.AddHttpClient<IExternalSimCardsProviderService, ExternalSimCardsProviderService>();
 
             services.AddSingleton<AWSCredentials>(credentials);
             services.AddSingleton<ISimCardOrdersDataStore, SimCardOrdersDataStore>();

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -26,10 +26,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api\ExternalMobileTelecomsNetwork.Api.csproj" />
+    <ProjectReference Include="..\..\src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api\ExternalSimCardsProvider.Api.csproj" />
     <ProjectReference Include="..\..\src\MobileOrderer\MobileOrderer.Api\MobileOrderer.Api.csproj" />
     <ProjectReference Include="..\..\src\MobileTelecomsNetwork\MobileTelecomsNetwork.EventHandlers\MobileTelecomsNetwork.EventHandlers.csproj" />
     <ProjectReference Include="..\..\src\SimCards\SimCards.EventHandlers\SimCards.EventHandlers.csproj" />
-    <ProjectReference Include="..\..\src\SimCardWholesaler\SimCardWholesaler.Api\SimCardWholesaler.Api.csproj" />
   </ItemGroup>
 
 </Project>

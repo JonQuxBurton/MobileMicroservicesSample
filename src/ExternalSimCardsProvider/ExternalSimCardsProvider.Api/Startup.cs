@@ -4,11 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using SimCardWholesaler.Api.Configuration;
-using SimCardWholesaler.Api.Data;
+using ExternalSimCardsProvider.Api.Configuration;
+using ExternalSimCardsProvider.Api.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SimCardWholesaler.Api
+namespace ExternalSimCardsProvider.Api
 {
     [ExcludeFromCodeCoverage]
     public class Startup

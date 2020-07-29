@@ -3,7 +3,7 @@
     public class Config
     {
         public string ConnectionString { get; set; }
-        public string SimCardWholesalerApiUrl { get; set; }
+        public string ExternalSimCardsProviderApiUrl { get; set; }
         public int MetricsServerHostPort { get; set; }
     }
 }

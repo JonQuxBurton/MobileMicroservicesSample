@@ -24,7 +24,7 @@ Content-Disposition: form-data; name="Version"
 ### Check Mobile Orderer
 GET http://localhost:5000/api/provisioner/status
 
-### Check SimCard Wholesaler
+### Check ExternalSimCardsProvider
 GET http://localhost:5001/api/orders/status
 
 ### Check ExternalMobileTelecomsNetwork.Api

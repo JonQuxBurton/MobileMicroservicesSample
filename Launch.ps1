@@ -17,9 +17,9 @@ $params=@("/C"; $cdProjectDir; " && dotnet run"; )
 Start-Process -Verb runas "cmd.exe" $params;
 Start-Sleep -Milliseconds 400
 
-# SimCardWholesaler.Api
+# ExternalSimCardsProvider.Api
 # WebApi Port 5001 
-$cdProjectDir = "cd /d $rootPath\src\SimCardWholesaler\SimCardWholesaler.Api";
+$cdProjectDir = "cd /d $rootPath\src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api";
 $params=@("/C"; $cdProjectDir; " && dotnet run"; )
 Start-Process -Verb runas "cmd.exe" $params;
 Start-Sleep -Milliseconds 400

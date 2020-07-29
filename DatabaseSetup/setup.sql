@@ -64,17 +64,17 @@ GO
 
 /*----------*/
 
-CREATE SCHEMA [SimCardWholesaler]
+CREATE SCHEMA [ExternalSimCardsProvider]
 GO
 
-CREATE LOGIN SimCardWholesalerWebService WITH PASSWORD = 'SimCardWholesaler@123';
+CREATE LOGIN ExternalSimCardsProviderWebService WITH PASSWORD = 'ExternalSimCardsProvider@123';
 GO  
-CREATE USER SimCardWholesalerWebService FOR LOGIN SimCardWholesalerWebService
+CREATE USER ExternalSimCardsProviderWebService FOR LOGIN ExternalSimCardsProviderWebService
 GO
-GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: SimCardWholesaler TO SimCardWholesalerWebService;
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: ExternalSimCardsProvider TO ExternalSimCardsProviderWebService;
 GO
 
-CREATE TABLE [SimCardWholesaler].[Orders](
+CREATE TABLE [ExternalSimCardsProvider].[Orders](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,

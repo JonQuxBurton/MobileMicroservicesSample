@@ -13,7 +13,7 @@ using Xunit;
 
 namespace SimCards.EventHandlers.Tests.Domain
 {
-    public static class SimCardWholesaleServiceSpec
+    public static class ExternalSimCardsProviderServiceSpec
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class PostOrderShould
@@ -21,7 +21,7 @@ namespace SimCards.EventHandlers.Tests.Domain
             private readonly Config config;
             private readonly IOptions<Config> options;
             private readonly Uri expectedUrl;
-            private readonly SimCardWholesalerOrder expectedOrder;
+            private readonly ExternalSimCardOrder expectedOrder;
             private readonly HttpClient httpClient;
             private readonly Mock<DelegatingHandler> handlerMock;
 
@@ -29,11 +29,11 @@ namespace SimCards.EventHandlers.Tests.Domain
             {
                 config = new Config
                 {
-                    SimCardWholesalerApiUrl = "http://api:5000"
+                    ExternalSimCardsProviderApiUrl = "http://api:5000"
                 };
                 options = Options.Create(config);
-                expectedUrl = new Uri($"{config.SimCardWholesalerApiUrl}/api/orders");
-                expectedOrder = new SimCardWholesalerOrder
+                expectedUrl = new Uri($"{config.ExternalSimCardsProviderApiUrl}/api/orders");
+                expectedOrder = new ExternalSimCardOrder
                 {
                     Name = "Neil Armstrong",
                     Reference = Guid.NewGuid()
@@ -57,7 +57,7 @@ namespace SimCards.EventHandlers.Tests.Domain
             [Fact]
             public async void CallExternalService()
             {
-                var sut = new SimCardWholesaleService(options, httpClient);
+                var sut = new ExternalSimCardsProviderService(options, httpClient);
 
                 await sut.PostOrder(expectedOrder);
 
@@ -67,7 +67,7 @@ namespace SimCards.EventHandlers.Tests.Domain
             [Fact]
             public async void ReturnTrue()
             {
-                var sut = new SimCardWholesaleService(options, httpClient);
+                var sut = new ExternalSimCardsProviderService(options, httpClient);
 
                 var actual = await sut.PostOrder(expectedOrder);
 
@@ -90,7 +90,7 @@ namespace SimCards.EventHandlers.Tests.Domain
                     ));
                 var httpClientWithError = new HttpClient(handlerWithErrorMock.Object);
 
-                var sut = new SimCardWholesaleService(options, httpClientWithError);
+                var sut = new ExternalSimCardsProviderService(options, httpClientWithError);
 
                 var actual = await sut.PostOrder(expectedOrder);
 

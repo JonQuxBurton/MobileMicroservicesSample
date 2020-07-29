@@ -12,7 +12,7 @@ Given: The Order details are captured
 
 When: The Order is placed
 
-Then: A SimCard Order is sent to the SimCardWholesaler
+Then: A SimCard Order is sent to the ExternalSimCardsProvider
 
 ## Architecture
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram1.png)
@@ -56,7 +56,7 @@ $ docker exec -it goaws bash
 $ /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Pass@word"
 ```
 ```sql
-select * from SimCardWholesaler.Orders;
+select * from ExternalSimCardsProvider.Orders;
 go
 ```
 

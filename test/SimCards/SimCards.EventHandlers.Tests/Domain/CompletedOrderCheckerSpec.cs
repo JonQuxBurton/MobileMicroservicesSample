@@ -22,13 +22,13 @@ namespace SimCards.EventHandlers.Tests.Domain
         {
             var config = new Config
             {
-                SimCardWholesalerApiUrl = "http://api:5000"
+                ExternalSimCardsProviderApiUrl = "http://api:5000"
             };
             var expectedOrder = new SimCardOrder()
             {
                 MobileOrderId = Guid.NewGuid()
             };
-            var expectedUrl = new Uri($"{config.SimCardWholesalerApiUrl}/api/orders/{expectedOrder.MobileOrderId}");
+            var expectedUrl = new Uri($"{config.ExternalSimCardsProviderApiUrl}/api/orders/{expectedOrder.MobileOrderId}");
             var externalOrder = new SimCardOrder
             {
                 Name = "Neil Armstrong",

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\SimCardWholesaler\SimCardWholesaler.Api\SimCardWholesaler.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api\ExternalSimCardsProvider.Api.csproj" />
   </ItemGroup>
 
 </Project>

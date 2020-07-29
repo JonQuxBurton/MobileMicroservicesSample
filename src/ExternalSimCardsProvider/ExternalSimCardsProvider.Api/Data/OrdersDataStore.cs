@@ -1,17 +1,17 @@
 ﻿using Dapper;
 using DapperDataAccess;
 using Microsoft.Extensions.Options;
-using SimCardWholesaler.Api.Configuration;
+using ExternalSimCardsProvider.Api.Configuration;
 using System;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace SimCardWholesaler.Api.Data
+namespace ExternalSimCardsProvider.Api.Data
 {
     public class OrdersDataStore : IOrdersDataStore
     {
-        private const string SchemaName = "SimCardWholesaler";
+        private const string SchemaName = "ExternalSimCardsProvider";
         private const string OrdersTableName = "Orders";
         private readonly string connectionString;
         private DbConnection connection;

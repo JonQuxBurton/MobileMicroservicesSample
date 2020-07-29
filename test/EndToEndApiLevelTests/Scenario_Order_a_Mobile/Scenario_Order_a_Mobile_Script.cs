@@ -52,9 +52,9 @@ namespace EndToEndApiLevelTests
             Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(orderToAdd, mobileGlobalId, orderAMobileOrderReference);
 
             // Step 2 Complete Mobile Order
-            var externalSimCardWholesalerUrl = $"http://localhost:5001/api/orders/{orderAMobileOrderReference}/complete";
+            var externalSimCardsProviderUrl = $"http://localhost:5001/api/orders/{orderAMobileOrderReference}/complete";
 
-            HttpResponseMessage actualCompleteOrderResponse = await client.PostAsync(externalSimCardWholesalerUrl, null);
+            HttpResponseMessage actualCompleteOrderResponse = await client.PostAsync(externalSimCardsProviderUrl, null);
 
             actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SimCardWholesaler.Api.Data;
-using SimCardWholesaler.Api.Resources;
+using ExternalSimCardsProvider.Api.Data;
+using ExternalSimCardsProvider.Api.Resources;
 using System;
 
-namespace SimCardWholesaler.Api.Controllers
+namespace ExternalSimCardsProvider.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
