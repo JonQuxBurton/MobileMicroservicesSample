@@ -19,11 +19,11 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
 
         public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
             IDataStore dataStore,
-            IOrderCompletedChecker activationOrderChecker)
+            IOrderCompletedChecker activatesOrderChecker)
         {
             this.logger = logger;
             this.dataStore = dataStore;
-            orderCompletedChecker = activationOrderChecker;
+            orderCompletedChecker = activatesOrderChecker;
         }
 
         public async void DoWork()

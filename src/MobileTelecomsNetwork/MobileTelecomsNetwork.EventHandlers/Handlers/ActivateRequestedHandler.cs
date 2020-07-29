@@ -8,15 +8,15 @@ using MobileTelecomsNetwork.EventHandlers.Messages;
 
 namespace MobileTelecomsNetwork.EventHandlers.Handlers
 {
-    public class ActivationRequestedHandler : IHandlerAsync<ActivationRequestedMessage>
+    public class ActivateRequestedHandler : IHandlerAsync<ActivateRequestedMessage>
     {
-        private readonly ILogger<ActivationRequestedHandler> logger;
+        private readonly ILogger<ActivateRequestedHandler> logger;
         private readonly IDataStore dataStore;
         private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public ActivationRequestedHandler(ILogger<ActivationRequestedHandler> logger,
+        public ActivateRequestedHandler(ILogger<ActivateRequestedHandler> logger,
             IDataStore dataStore,
             IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService,
             IMessagePublisher messagePublisher,
@@ -30,13 +30,13 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             this.monitoring = monitoring;
         }
 
-        public async Task<bool> Handle(ActivationRequestedMessage message)
+        public async Task<bool> Handle(ActivateRequestedMessage message)
         {
-            logger.LogInformation($"Received [ActivationRequested] {message.Name} {message.ContactPhoneNumber}");
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] {message.Name} {message.ContactPhoneNumber}");
 
             try
             {
-
                 using (var tx = dataStore.BeginTransaction())
                 {
                     dataStore.Add(new Order
@@ -69,7 +69,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.ToString());
+                logger.LogError(ex, $"Error while processing {messageName}");
                 return false;
             }
 
@@ -78,7 +78,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
         private void Publish(Guid mobileGlobalId)
         {
-            messagePublisher.PublishAsync(new ActivationOrderSentMessage
+            messagePublisher.PublishAsync(new ActivateOrderSentMessage
             {
                 MobileOrderId = mobileGlobalId
             });

@@ -29,11 +29,11 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             // Check the Mobile ActivateOrder has been updated to Sent
             snapshot.ActualMobileOrder.State.Should().Be("Sent");
 
-            // Check the Activation Order has been sent to the External Mobile Telecoms Network
+            // Check the Activate Order has been sent to the External Mobile Telecoms Network
             snapshot.ActualMobileTelecomsNetworkOrder.Should().NotBeNull();
             snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be("Sent");
 
-            // Check the Activation Order has been recevied by the External Mobile Telecoms Network
+            // Check the Activate Order has been recevied by the External Mobile Telecoms Network
             snapshot.ActualExternalMobileTelecomsNetworkOrder.Should().NotBeNull();
             snapshot.ActualExternalMobileTelecomsNetworkOrder.Status.Should().Be("New");
         }

@@ -73,8 +73,8 @@ namespace EndToEndApiLevelTests
 
             actualActivateTheMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var actualActivationOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
-            var activateAMobileOrderReference = actualActivationOrderReturned.GlobalId;
+            var actualActivateOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
+            var activateAMobileOrderReference = actualActivateOrderReturned.GlobalId;
 
             // Take Step 3 Snapshot
             Step_3_Snapshot = snapshotFactory.Take_Step_3_Snapshot(mobileGlobalId, activateAMobileOrderReference);

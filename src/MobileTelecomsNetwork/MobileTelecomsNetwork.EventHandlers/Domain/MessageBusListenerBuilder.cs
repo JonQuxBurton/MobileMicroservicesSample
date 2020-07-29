@@ -10,7 +10,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class MessageBusListenerBuilder : IMessageBusListenerBuilder
     {
-        private readonly ILogger<ActivationRequestedHandler> logger;
+        private readonly ILogger<ActivateRequestedHandler> logger;
         private readonly ILogger<CeaseRequestedHandler> ceaseRequestedHandlerLogger;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
@@ -19,7 +19,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
         private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
         private readonly IMonitoring monitoring;
 
-        public MessageBusListenerBuilder(ILogger<ActivationRequestedHandler> logger,
+        public MessageBusListenerBuilder(ILogger<ActivateRequestedHandler> logger,
             ILogger<CeaseRequestedHandler> ceaseRequestedHandlerLogger,
             IMessageBus messageBus,
             ISqsService sqsService,
@@ -40,8 +40,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 
         public IMessageBusListener Build()
         {
-            var handler = new ActivationRequestedHandler(logger, dataStore, externalMobileTelecomsNetworkService, messagePublisher, monitoring);
-            messageBus.Subscribe<ActivationRequestedMessage, IHandlerAsync<ActivationRequestedMessage>>(handler);
+            var handler = new ActivateRequestedHandler(logger, dataStore, externalMobileTelecomsNetworkService, messagePublisher, monitoring);
+            messageBus.Subscribe<ActivateRequestedMessage, IHandlerAsync<ActivateRequestedMessage>>(handler);
 
             var ceaseRequestedHandler = new CeaseRequestedHandler(ceaseRequestedHandlerLogger, dataStore, externalMobileTelecomsNetworkService, messagePublisher, monitoring);
             messageBus.Subscribe<CeaseRequestedMessage, IHandlerAsync<CeaseRequestedMessage>>(ceaseRequestedHandler);

@@ -1,9 +1,9 @@
 ﻿using MinimalEventBus.JustSaying;
 using System;
 
-namespace SimCards.EventHandlers.Messages
+namespace MobileOrderer.Api.Messages
 {
-    public class ProvisioningOrderCompletedMessage : Message
+    public class ActivateOrderCompletedMessage : Message
     {
         public Guid MobileOrderId { get; set; }
     }

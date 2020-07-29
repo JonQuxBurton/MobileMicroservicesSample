@@ -42,7 +42,7 @@ namespace MobileOrderer.Api.Services
 
         private void Publish(Order order)
         {
-            messagePublisher.PublishAsync(new MobileRequestedMessage
+            messagePublisher.PublishAsync(new ProvisionRequestedMessage
             {
                 MobileOrderId = order.GlobalId,
                 Name = order.Name,

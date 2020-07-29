@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Utils.Enums;
+using static MobileOrderer.Api.Domain.Order;
 
 namespace MobileOrderer.Api.Data
 {
-    public class GetNewMobilesQuery : IGetNewMobilesQuery
+    public class GetNewActivatesQuery : IGetNewActivatesQuery
     {
         private readonly MobilesContext mobilesContext;
         private readonly IEnumConverter enumConverter;
 
-        public GetNewMobilesQuery(MobilesContext mobilesContext, IEnumConverter enumConverter)
+        public GetNewActivatesQuery(MobilesContext mobilesContext, 
+            IEnumConverter enumConverter)
         {
             this.mobilesContext = mobilesContext;
             this.enumConverter = enumConverter;
@@ -20,7 +22,12 @@ namespace MobileOrderer.Api.Data
         public IEnumerable<Mobile> Get()
         {
             var newStateName = enumConverter.ToName<Mobile.State>(Mobile.State.New);
-            var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == newStateName).ToList();
+            var activateOrderType = enumConverter.ToName<OrderType>(OrderType.Activate);
+            var mobilesDataEntities = this.mobilesContext.Mobiles
+                .Include(x => x.Orders)
+                .Where(x => x.Orders.Any(y => y.Type == activateOrderType && y.State == newStateName))
+                .ToList();
+
             var mobiles = new List<Mobile>();
 
             foreach (var mobileDataEntity in mobilesDataEntities)
@@ -31,6 +38,7 @@ namespace MobileOrderer.Api.Data
                 {
                     var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
                     var orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
+
                     mobiles.Add(new Mobile(mobileDataEntity, inFlightOrder, orderHistory));
                 }
             }

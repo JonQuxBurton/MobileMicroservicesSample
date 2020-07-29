@@ -3,7 +3,7 @@ using System;
 
 namespace SimCards.EventHandlers.Messages
 {
-    public class OrderSentMessage : Message
+    public class ProvisionOrderCompletedMessage : Message
     {
         public Guid MobileOrderId { get; set; }
     }

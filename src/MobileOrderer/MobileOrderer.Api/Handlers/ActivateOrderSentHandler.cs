@@ -10,12 +10,12 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Handlers
 {
-    public class ActivationOrderSentHandler : IHandlerAsync<ActivationOrderSentMessage>
+    public class ActivateOrderSentHandler : IHandlerAsync<ActivateOrderSentMessage>
     {
-        private readonly ILogger<ActivationOrderSentHandler> logger;
+        private readonly ILogger<ActivateOrderSentHandler> logger;
         private readonly IServiceProvider serviceProvider;
 
-        public ActivationOrderSentHandler(ILogger<ActivationOrderSentHandler> logger,
+        public ActivateOrderSentHandler(ILogger<ActivateOrderSentHandler> logger,
             IServiceProvider serviceProvider
             )
         {
@@ -23,11 +23,12 @@ namespace MobileOrderer.Api.Handlers
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<bool> Handle(ActivationOrderSentMessage message)
+        public Task<bool> Handle(ActivateOrderSentMessage message)
         {
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] MobileOrderId={message.MobileOrderId}");
             try
             {
-                logger.LogInformation($"Received [ActivationOrderSent] MobileOrderId={message.MobileOrderId}");
 
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
@@ -39,7 +40,7 @@ namespace MobileOrderer.Api.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing ActivationOrderSentMessage");
+                logger.LogError(ex, $"Error while processing {messageName}");
                 return Task.FromResult(false);
             }
 

@@ -3,7 +3,7 @@ using MobileOrderer.Api.Domain;
 
 namespace MobileOrderer.Api.Data
 {
-    public interface IGetNewMobilesQuery
+    public interface IGetNeProvisionsQuery
     {
         IEnumerable<Mobile> Get();
     }

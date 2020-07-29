@@ -69,7 +69,7 @@ namespace MobileOrderer.Api.Tests.Services
             {
                 sut.Check();
 
-                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<MobileRequestedMessage>(
+                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ProvisionRequestedMessage>(
                     y => y.MobileOrderId == expectedMobile.InFlightOrder.GlobalId &&
                             y.Name == expectedMobile.InFlightOrder.Name &&
                             y.ContactPhoneNumber == expectedMobile.InFlightOrder.ContactPhoneNumber)));

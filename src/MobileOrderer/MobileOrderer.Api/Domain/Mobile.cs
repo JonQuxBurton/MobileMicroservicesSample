@@ -22,7 +22,7 @@ namespace MobileOrderer.Api.Domain
 
         private readonly StateMachine<State, Trigger> machine;
         private readonly MobileDataEntity mobileDataEntity;
-        private List<Order> orderHistory;
+        private readonly List<Order> orderHistory;
         private Order newOrder;
 
         public Mobile(MobileDataEntity mobileDataEntity, Order inFlightOrder, IEnumerable<Order> orderHistory = null)

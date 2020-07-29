@@ -12,17 +12,17 @@ using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public static class ActivationOrderCompletedHandlerSpec
+    public static class ActivateOrderCompletedHandlerSpec
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class HandleShould
         {
-            private readonly ActivationOrderCompletedHandler sut;
+            private readonly ActivateOrderCompletedHandler sut;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IGetMobileByOrderIdQuery> getMobileByOrderIdQueryMock;
 
             private readonly Mobile expectedMobile;
-            private readonly ActivationOrderCompletedMessage inputMessage;
+            private readonly ActivateOrderCompletedMessage inputMessage;
 
             public HandleShould()
             {
@@ -35,14 +35,14 @@ namespace MobileOrderer.Api.Tests.Handlers
                     GlobalId = Guid.NewGuid(),
                     State = "ProcessingActivation"
                 }, inFlightOrder);
-                inputMessage = new ActivationOrderCompletedMessage()
+                inputMessage = new ActivateOrderCompletedMessage()
                 {
                     MobileOrderId = expectedMobile.GlobalId
                 };
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 getMobileByOrderIdQueryMock = new Mock<IGetMobileByOrderIdQuery>();
-                var loggerMock = new Mock<ILogger<ActivationOrderCompletedHandler>>();
+                var loggerMock = new Mock<ILogger<ActivateOrderCompletedHandler>>();
                 var monitoringMock = new Mock<IMonitoring>();
 
                 getMobileByOrderIdQueryMock.Setup(x => x.Get(inputMessage.MobileOrderId))
@@ -52,7 +52,7 @@ namespace MobileOrderer.Api.Tests.Handlers
                 serviceProviderMock.Setup(x => x.GetService(typeof(IGetMobileByOrderIdQuery))).Returns(getMobileByOrderIdQueryMock.Object);
                 serviceProviderMock.Setup(x => x.GetService(typeof(IRepository<Mobile>))).Returns(mobileRepositoryMock.Object);
 
-                sut = new ActivationOrderCompletedHandler(loggerMock.Object, monitoringMock.Object, serviceProviderMock.Object);
+                sut = new ActivateOrderCompletedHandler(loggerMock.Object, monitoringMock.Object, serviceProviderMock.Object);
             }
 
             [Fact]
@@ -83,7 +83,7 @@ namespace MobileOrderer.Api.Tests.Handlers
             [Fact]
             public async void ReturnFalseWhenNotSuccessful()
             {
-                var nonExistantMobileMessage = new ActivationOrderCompletedMessage()
+                var nonExistantMobileMessage = new ActivateOrderCompletedMessage()
                 {
                     MobileOrderId = Guid.Empty
                 };

@@ -11,22 +11,22 @@ namespace MobileOrderer.Api.Services
 {
     public class MessageBusListenerBuilder : IMessageBusListenerBuilder
     {
-        private readonly ILogger<ProvisionOrderSentHandler> orderSentLogger;
-        private readonly ILogger<ProvisionOrderCompletedHandler> provisioningOrderCompletedLogger;
-        private readonly ILogger<ActivationOrderSentHandler> activationOrderSentLogger;
+        private readonly ILogger<MobileProvisionOrderSentHandler> orderSentLogger;
+        private readonly ILogger<OrderCompletedHandler> provisioningOrderCompletedLogger;
+        private readonly ILogger<ActivateOrderSentHandler> activateOrderSentLogger;
         private readonly ILogger<CeaseOrderSentHandler> ceaseOrderSentLogger;
-        private readonly ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger;
+        private readonly ILogger<ActivateOrderCompletedHandler> activateOrderCompletedLogger;
         private readonly ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
         private readonly IMonitoring monitoring;
         private readonly IServiceProvider serviceProvider;
 
-        public MessageBusListenerBuilder(ILogger<ProvisionOrderSentHandler> orderSentLogger, 
-            ILogger<ProvisionOrderCompletedHandler> provisioningOrderCompletedLogger,
-            ILogger<ActivationOrderSentHandler> activationOrderSentLogger,
+        public MessageBusListenerBuilder(ILogger<MobileProvisionOrderSentHandler> orderSentLogger, 
+            ILogger<OrderCompletedHandler> provisioningOrderCompletedLogger,
+            ILogger<ActivateOrderSentHandler> activateOrderSentLogger,
             ILogger<CeaseOrderSentHandler> ceaseOrderSentLogger,
-            ILogger<ActivationOrderCompletedHandler> activationOrderCompletedLogger,
+            ILogger<ActivateOrderCompletedHandler> activateOrderCompletedLogger,
             ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger,
             IMessageBus messageBus, 
             ISqsService sqsService,
@@ -35,9 +35,9 @@ namespace MobileOrderer.Api.Services
         {
             this.orderSentLogger = orderSentLogger;
             this.provisioningOrderCompletedLogger = provisioningOrderCompletedLogger;
-            this.activationOrderSentLogger = activationOrderSentLogger;
+            this.activateOrderSentLogger = activateOrderSentLogger;
             this.ceaseOrderSentLogger = ceaseOrderSentLogger;
-            this.activationOrderCompletedLogger = activationOrderCompletedLogger;
+            this.activateOrderCompletedLogger = activateOrderCompletedLogger;
             this.ceaseOrderCompletedLogger = ceaseOrderCompletedLogger;
             this.messageBus = messageBus;
             this.sqsService = sqsService;
@@ -47,17 +47,17 @@ namespace MobileOrderer.Api.Services
 
         public IMessageBusListener Build()
         {
-            var provisionOrderHandler = new ProvisionOrderSentHandler(orderSentLogger, serviceProvider);
-            messageBus.Subscribe<OrderSentMessage, IHandlerAsync<OrderSentMessage>>(provisionOrderHandler);
+            var provisionOrderHandler = new MobileProvisionOrderSentHandler(orderSentLogger, serviceProvider);
+            messageBus.Subscribe<ProvisionOrderSentMessage, IHandlerAsync<ProvisionOrderSentMessage>>(provisionOrderHandler);
 
-            var provisionOrderCompletedHandler = new ProvisionOrderCompletedHandler(provisioningOrderCompletedLogger, monitoring, serviceProvider);
-            messageBus.Subscribe<ProvisioningOrderCompletedMessage, IHandlerAsync<ProvisioningOrderCompletedMessage>>(provisionOrderCompletedHandler);
+            var provisionOrderCompletedHandler = new OrderCompletedHandler(provisioningOrderCompletedLogger, monitoring, serviceProvider);
+            messageBus.Subscribe<ProvisionOrderCompletedMessage, IHandlerAsync<ProvisionOrderCompletedMessage>>(provisionOrderCompletedHandler);
 
-            var activationOrderSentHandler = new ActivationOrderSentHandler(activationOrderSentLogger, serviceProvider);
-            messageBus.Subscribe<ActivationOrderSentMessage, IHandlerAsync<ActivationOrderSentMessage>>(activationOrderSentHandler);
+            var activateOrderSentHandler = new ActivateOrderSentHandler(activateOrderSentLogger, serviceProvider);
+            messageBus.Subscribe<ActivateOrderSentMessage, IHandlerAsync<ActivateOrderSentMessage>>(activateOrderSentHandler);
 
-            var activationOrderCompletedHandler = new ActivationOrderCompletedHandler(activationOrderCompletedLogger, monitoring, serviceProvider);
-            messageBus.Subscribe<ActivationOrderCompletedMessage, IHandlerAsync<ActivationOrderCompletedMessage>>(activationOrderCompletedHandler);
+            var activateOrderCompletedHandler = new ActivateOrderCompletedHandler(activateOrderCompletedLogger, monitoring, serviceProvider);
+            messageBus.Subscribe<ActivateOrderCompletedMessage, IHandlerAsync<ActivateOrderCompletedMessage>>(activateOrderCompletedHandler);
 
             var ceaseOrderSentHandler = new CeaseOrderSentHandler(ceaseOrderSentLogger, serviceProvider);
             messageBus.Subscribe<CeaseOrderSentMessage, IHandlerAsync<CeaseOrderSentMessage>>(ceaseOrderSentHandler);

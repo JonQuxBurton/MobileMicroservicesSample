@@ -9,15 +9,15 @@ using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Handlers
 {
-    public class MobileRequestedHandler : IHandlerAsync<MobileRequestedMessage>
+    public class ProvisionRequestedHandler : IHandlerAsync<ProvisionRequestedMessage>
     {
-        private readonly ILogger<MobileRequestedHandler> logger;
+        private readonly ILogger<ProvisionRequestedHandler> logger;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
         private readonly ISimCardWholesaleService simCardWholesaleService;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public MobileRequestedHandler(ILogger<MobileRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, ISimCardWholesaleService simCardWholesaleService,
+        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, ISimCardWholesaleService simCardWholesaleService,
             IMessagePublisher messagePublisher, IMonitoring monitoring)
         {
             this.logger = logger;
@@ -27,9 +27,10 @@ namespace SimCards.EventHandlers.Handlers
             this.monitoring = monitoring;
         }
 
-        public async Task<bool> Handle(MobileRequestedMessage message)
+        public async Task<bool> Handle(ProvisionRequestedMessage message)
         {
-            this.logger.LogInformation($"Received [MobileRequested] {message.Name} {message.ContactPhoneNumber}");
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] {message.Name} {message.ContactPhoneNumber}");
 
             try
             {
@@ -75,14 +76,14 @@ namespace SimCards.EventHandlers.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.ToString());
+                logger.LogError(ex, $"Error while processing {messageName}");
                 return false;
             }
         }
 
         public void Publish(Guid mobileGlobalId)
         {
-            messagePublisher.PublishAsync(new OrderSentMessage
+            messagePublisher.PublishAsync(new ProvisionOrderSentMessage
             {
                 MobileOrderId = mobileGlobalId
             });

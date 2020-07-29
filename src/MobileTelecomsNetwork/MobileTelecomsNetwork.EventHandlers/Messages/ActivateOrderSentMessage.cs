@@ -3,7 +3,7 @@ using System;
 
 namespace MobileTelecomsNetwork.EventHandlers.Messages
 {
-    public class ActivationOrderCompletedMessage : Message
+    public class ActivateOrderSentMessage : Message
     {
         public Guid MobileOrderId { get; set; }
     }

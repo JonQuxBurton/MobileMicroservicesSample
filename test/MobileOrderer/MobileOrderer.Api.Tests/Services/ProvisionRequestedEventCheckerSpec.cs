@@ -14,8 +14,8 @@ namespace MobileOrderer.Api.Tests.Services
         public class CheckShould
         {
             private readonly Mobile expectedNewMobile;
-            private readonly ProvisionRequestedEventChecker sut;
-            private readonly Mock<IGetNewMobilesQuery> getNewMobilesQueryMock;
+            private readonly MobileProvisionRequestedEventChecker sut;
+            private readonly Mock<IGetNeProvisionsQuery> getNewMobilesQueryMock;
             private readonly Mock<IRepository<Mobile>> repositoryMock;
 
             public CheckShould()
@@ -24,12 +24,12 @@ namespace MobileOrderer.Api.Tests.Services
                 {
                     State = "New"
                 }, null);
-                getNewMobilesQueryMock = new Mock<IGetNewMobilesQuery>();
+                getNewMobilesQueryMock = new Mock<IGetNeProvisionsQuery>();
                 getNewMobilesQueryMock.Setup(x => x.Get())
                     .Returns(new[] { expectedNewMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
 
-                sut = new ProvisionRequestedEventChecker(getNewMobilesQueryMock.Object,
+                sut = new MobileProvisionRequestedEventChecker(getNewMobilesQueryMock.Object,
                     repositoryMock.Object);
             }
 

@@ -61,7 +61,7 @@ namespace SimCards.EventHandlers.Domain
         {
             logger.LogInformation($"Publishing ProvisioningOrderCompletedMessage [{mobileGlobalId}]");
 
-            messagePublisher.PublishAsync(new ProvisioningOrderCompletedMessage
+            messagePublisher.PublishAsync(new ProvisionOrderCompletedMessage
             {
                 MobileOrderId = mobileGlobalId
             });

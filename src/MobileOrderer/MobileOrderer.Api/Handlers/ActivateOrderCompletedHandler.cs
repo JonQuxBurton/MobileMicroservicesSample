@@ -10,35 +10,41 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Handlers
 {
-    public class ProvisionOrderSentHandler : IHandlerAsync<OrderSentMessage>
+    public class ActivateOrderCompletedHandler : IHandlerAsync<ActivateOrderCompletedMessage>
     {
-        private readonly ILogger<ProvisionOrderSentHandler> logger;
+        private readonly ILogger<ActivateOrderCompletedHandler> logger;
+        private readonly IMonitoring monitoring;
         private readonly IServiceProvider serviceProvider;
 
-        public ProvisionOrderSentHandler(ILogger<ProvisionOrderSentHandler> logger,
+        public ActivateOrderCompletedHandler(ILogger<ActivateOrderCompletedHandler> logger,
+            IMonitoring monitoring,
             IServiceProvider serviceProvider)
         {
             this.logger = logger;
+            this.monitoring = monitoring;
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<bool> Handle(OrderSentMessage message)
+        public Task<bool> Handle(ActivateOrderCompletedMessage message)
         {
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] MobileOrderId={message.MobileOrderId}");
+
             try
             {
-                logger.LogInformation($"Received [ProvisionOrderSent] MobileOrderId={message.MobileOrderId}");
 
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
-         
+
                 var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
-                mobile.OrderSent();
+                mobile.ActivateCompleted();
                 mobileRepository.Update(mobile);
+                monitoring.ActivateCompleted();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing OrderSentMessage");
+                logger.LogError(ex, $"Error while processing {messageName}");
                 return Task.FromResult(false);
             }
 

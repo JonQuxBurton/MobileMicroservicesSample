@@ -10,7 +10,7 @@ namespace SimCards.EventHandlers.Domain
 {
     public class MessageBusListenerBuilder : IMessageBusListenerBuilder
     {
-        private readonly ILogger<MobileRequestedHandler> logger;
+        private readonly ILogger<ProvisionRequestedHandler> logger;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
         private readonly ISimCardWholesaleService simCardWholesaleService;
         private readonly IMessageBus messageBus;
@@ -18,7 +18,7 @@ namespace SimCards.EventHandlers.Domain
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public MessageBusListenerBuilder(ILogger<MobileRequestedHandler> logger,
+        public MessageBusListenerBuilder(ILogger<ProvisionRequestedHandler> logger,
             ISimCardOrdersDataStore simCardOrdersDataStore,
             ISimCardWholesaleService simCardWholesaleService,
             IMessageBus messageBus,
@@ -37,8 +37,8 @@ namespace SimCards.EventHandlers.Domain
 
         public IMessageBusListener Build()
         {
-            var handler = new MobileRequestedHandler(logger, simCardOrdersDataStore, simCardWholesaleService, messagePublisher, monitoring);
-            messageBus.Subscribe<MobileRequestedMessage, IHandlerAsync<MobileRequestedMessage>>(handler);
+            var handler = new ProvisionRequestedHandler(logger, simCardOrdersDataStore, simCardWholesaleService, messagePublisher, monitoring);
+            messageBus.Subscribe<ProvisionRequestedMessage, IHandlerAsync<ProvisionRequestedMessage>>(handler);
 
             return new MessageBusListener(messageBus, sqsService, new MessageDeserializer());
         }

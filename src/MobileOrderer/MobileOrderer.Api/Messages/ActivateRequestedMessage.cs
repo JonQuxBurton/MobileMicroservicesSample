@@ -3,8 +3,10 @@ using System;
 
 namespace MobileOrderer.Api.Messages
 {
-    public class OrderProcessedMessage : Message
+    public class ActivateRequestedMessage : Message
     {
         public Guid MobileOrderId { get; set; }
+        public string Name { get; set; }
+        public string ContactPhoneNumber { get; set; }
     }
 }

@@ -13,21 +13,21 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 {
-    public class ActivationRequestedHandlerSpec
+    public static class ActivatReqeuestedHandlerSpec
     {
         public class HandleShould
         {
-            private ActivationRequestedHandler sut;
-            private Mock<IDataStore> dataStoreMock;
-            private Mock<ITransaction> transactionMock;
-            private Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkServiceMock;
-            private ActivationRequestedMessage inputMessage;
-            private ExternalMobileTelecomsNetworkOrder expectedExternalServiceOrder;
-            private Mock<IMessagePublisher> messagePublisherMock;
+            private readonly ActivateRequestedHandler sut;
+            private readonly Mock<IDataStore> dataStoreMock;
+            private readonly Mock<ITransaction> transactionMock;
+            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkServiceMock;
+            private readonly ActivateRequestedMessage inputMessage;
+            private readonly ExternalMobileTelecomsNetworkOrder expectedExternalServiceOrder;
+            private readonly Mock<IMessagePublisher> messagePublisherMock;
 
             public HandleShould()
             {
-                inputMessage = new ActivationRequestedMessage
+                inputMessage = new ActivateRequestedMessage
                 {
                     Name = "Neil Armstrong",
                     ContactPhoneNumber = "012345678",
@@ -44,14 +44,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 
                 externalMobileTelecomsNetworkServiceMock = new Mock<IExternalMobileTelecomsNetworkService>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
-                var loggerMock = new Mock<ILogger<ActivationRequestedHandler>>();
+                var loggerMock = new Mock<ILogger<ActivateRequestedHandler>>();
                 var monitoringMock = new Mock<IMonitoring>();
 
-                sut = new ActivationRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
+                sut = new ActivateRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
             }
 
             [Fact]
-            public async void AddActivationToDataStore()
+            public async void AddActivateToDataStore()
             {
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostOrder(It.Is<ExternalMobileTelecomsNetworkOrder>(
                         y => y.Reference == expectedExternalServiceOrder.Reference
@@ -105,7 +105,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 
                 await sut.Handle(inputMessage);
 
-                this.messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ActivationOrderSentMessage>(y => y.MobileOrderId == inputMessage.MobileOrderId)));
+                this.messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ActivateOrderSentMessage>(y => y.MobileOrderId == inputMessage.MobileOrderId)));
             }
 
             [Fact]

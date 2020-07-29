@@ -9,24 +9,24 @@ namespace MobileOrderer.Api.Services
 {
     public class ActivateRequestedEventChecker : IMobileEventsChecker
     {
-        private readonly IGetNewActivationsQuery getNewActivationsQuery;
+        private readonly IGetNewActivatesQuery getNewActivatesQuery;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMessagePublisher messagePublisher;
 
         public ActivateRequestedEventChecker(
-            IGetNewActivationsQuery getNewActivationsQuery,
+            IGetNewActivatesQuery getNewActivatesQuery,
             IRepository<Mobile> mobileRepository,
             IMessagePublisher messagePublisher
         )
         {
-            this.getNewActivationsQuery = getNewActivationsQuery;
+            this.getNewActivatesQuery = getNewActivatesQuery;
             this.mobileRepository = mobileRepository;
             this.messagePublisher = messagePublisher;
         }
 
         public void Check()
         {
-            var mobiles = this.getNewActivationsQuery.Get();
+            var mobiles = this.getNewActivatesQuery.Get();
 
             foreach (var mobile in mobiles)
             {
@@ -43,7 +43,7 @@ namespace MobileOrderer.Api.Services
 
         private void Publish(Order order)
         {
-            messagePublisher.PublishAsync(new ActivationRequestedMessage
+            messagePublisher.PublishAsync(new ActivateRequestedMessage
             {
                 MobileOrderId = order.GlobalId,
                 Name = order.Name,

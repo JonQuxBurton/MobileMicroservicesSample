@@ -1,9 +1,9 @@
 ﻿using MinimalEventBus.JustSaying;
 using System;
 
-namespace MobileTelecomsNetwork.EventHandlers.Messages
+namespace MobileOrderer.Api.Messages
 {
-    public class ActivationRequestedMessage : Message
+    public class ProvisionRequestedMessage : Message
     {
         public Guid MobileOrderId { get; set; }
         public string Name { get; set; }

@@ -17,7 +17,7 @@ namespace MobileOrderer.Api.Tests.Services
         {
             private readonly Mobile expectedMobile;
             private readonly ActivateRequestedEventChecker sut;
-            private readonly Mock<IGetNewActivationsQuery> getNewActivationsQueryMock;
+            private readonly Mock<IGetNewActivatesQuery> getNewActivationsQueryMock;
             private readonly Mock<IRepository<Mobile>> repositoryMock;
             private readonly Mock<IMessagePublisher> messagePublisherMock;
 
@@ -31,7 +31,7 @@ namespace MobileOrderer.Api.Tests.Services
                     State = Order.State.New.ToString()
                 }));
 
-                getNewActivationsQueryMock = new Mock<IGetNewActivationsQuery>();
+                getNewActivationsQueryMock = new Mock<IGetNewActivatesQuery>();
                 getNewActivationsQueryMock.Setup(x => x.Get())
                     .Returns(new[] { expectedMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
@@ -69,7 +69,7 @@ namespace MobileOrderer.Api.Tests.Services
             {
                 sut.Check();
 
-                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ActivationRequestedMessage>(
+                messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ActivateRequestedMessage>(
                     y => y.MobileOrderId == expectedMobile.InFlightOrder.GlobalId &&
                             y.Name == expectedMobile.InFlightOrder.Name &&
                             y.ContactPhoneNumber == expectedMobile.InFlightOrder.ContactPhoneNumber)));

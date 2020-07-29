@@ -13,20 +13,20 @@ using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Tests.Handlers
 {
-    public class MobileRequestHandlerSpec
+    public static class MobileRequestHandlerSpec
     {
         public class HandleShould
         {
-            private MobileRequestedHandler sut;
-            private Mock<ISimCardOrdersDataStore> dataStoreMock;
-            private Mock<ITransaction> transactionMock;
-            private Mock<ISimCardWholesaleService> simCardWholesaleServiceMock;
-            private MobileRequestedMessage inputMessage;
-            private SimCardOrder existingSimCardOrder;
+            private readonly ProvisionRequestedHandler sut;
+            private readonly Mock<ISimCardOrdersDataStore> dataStoreMock;
+            private readonly Mock<ITransaction> transactionMock;
+            private readonly Mock<ISimCardWholesaleService> simCardWholesaleServiceMock;
+            private readonly ProvisionRequestedMessage inputMessage;
+            private readonly SimCardOrder existingSimCardOrder;
 
             public HandleShould()
             {
-                inputMessage = new MobileRequestedMessage
+                inputMessage = new ProvisionRequestedMessage
                 {
                     Name = "Neil Armstrong",
                     MobileOrderId = Guid.NewGuid()
@@ -44,11 +44,11 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 dataStoreMock.Setup(x => x.GetExisting(existingSimCardOrder.MobileOrderId)).Returns(existingSimCardOrder);
 
                 simCardWholesaleServiceMock = new Mock<ISimCardWholesaleService>();
-                var loggerMock = new Mock<ILogger<MobileRequestedHandler>>();
+                var loggerMock = new Mock<ILogger<ProvisionRequestedHandler>>();
                 var messagePublisherMock = new Mock<IMessagePublisher>();
                 var monitoringMock = new Mock<IMonitoring>();
 
-                sut = new MobileRequestedHandler(loggerMock.Object, dataStoreMock.Object, simCardWholesaleServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
+                sut = new ProvisionRequestedHandler(loggerMock.Object, dataStoreMock.Object, simCardWholesaleServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
             }
 
             [Fact]
@@ -103,7 +103,7 @@ namespace SimCards.EventHandlers.Tests.Handlers
             [Fact]
             public async void ReturnTrueWhenOrderAlreadyExists()
             {
-                var existingInputMessage = new MobileRequestedMessage
+                var existingInputMessage = new ProvisionRequestedMessage
                 {
                     Name = existingSimCardOrder.Name,
                     MobileOrderId = existingSimCardOrder.MobileOrderId
@@ -121,7 +121,7 @@ namespace SimCards.EventHandlers.Tests.Handlers
             [Fact]
             public async void DoesNotPostOrderWhenOrderAlreadyExists()
             {
-                var existingInputMessage = new MobileRequestedMessage
+                var existingInputMessage = new ProvisionRequestedMessage
                 {
                     Name = existingSimCardOrder.Name,
                     MobileOrderId = existingSimCardOrder.MobileOrderId

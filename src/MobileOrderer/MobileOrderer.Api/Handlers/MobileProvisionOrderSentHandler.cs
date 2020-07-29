@@ -10,40 +10,37 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Handlers
 {
-    public class ProvisionOrderCompletedHandler : IHandlerAsync<ProvisioningOrderCompletedMessage>
+    public class MobileProvisionOrderSentHandler : IHandlerAsync<ProvisionOrderSentMessage>
     {
-        private readonly ILogger<ProvisionOrderCompletedHandler> logger;
-        private readonly IMonitoring monitoring;
+        private readonly ILogger<MobileProvisionOrderSentHandler> logger;
         private readonly IServiceProvider serviceProvider;
 
-        public ProvisionOrderCompletedHandler(
-            ILogger<ProvisionOrderCompletedHandler> logger,
-            IMonitoring monitoring,
+        public MobileProvisionOrderSentHandler(ILogger<MobileProvisionOrderSentHandler> logger,
             IServiceProvider serviceProvider)
         {
             this.logger = logger;
-            this.monitoring = monitoring;
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<bool> Handle(ProvisioningOrderCompletedMessage message)
+        public Task<bool> Handle(ProvisionOrderSentMessage message)
         {
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] MobileOrderId={message.MobileOrderId}");
+
             try
             {
-                logger.LogInformation($"Received [ProvisionOrderCompleted] MobileOrderId={message.MobileOrderId}");
 
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
+         
                 var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
-                
-                mobile.ProcessingProvisioningCompleted();
+                mobile.OrderSent();
                 mobileRepository.Update(mobile);
-                monitoring.ProvisionCompleted();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing ProvisioningOrderCompletedMessage");
+                logger.LogError(ex, $"Error while processing {messageName}");
                 return Task.FromResult(false);
             }
 

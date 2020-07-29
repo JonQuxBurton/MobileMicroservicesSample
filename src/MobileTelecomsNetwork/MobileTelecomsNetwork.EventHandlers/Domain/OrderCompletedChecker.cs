@@ -56,16 +56,16 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
                     if (sentOrder.Type.Trim() == "Cease")
                         PublishCeaseOrderCompleted(sentOrder.MobileOrderId);
                     else
-                        PublishActivationOrderCompleted(sentOrder.MobileOrderId);
+                        PublishActivateOrderCompleted(sentOrder.MobileOrderId);
                 }
             }
         }
 
-        private void PublishActivationOrderCompleted(Guid mobileGlobalId)
+        private void PublishActivateOrderCompleted(Guid mobileGlobalId)
         {
-            logger.LogInformation($"Publishing ActivationOrderCompletedMessage [{mobileGlobalId}]");
+            logger.LogInformation($"Publishing ActivateOrderCompletedMessage [{mobileGlobalId}]");
 
-            messagePublisher.PublishAsync(new ActivationOrderCompletedMessage
+            messagePublisher.PublishAsync(new ActivateOrderCompletedMessage
             {
                 MobileOrderId = mobileGlobalId
             });

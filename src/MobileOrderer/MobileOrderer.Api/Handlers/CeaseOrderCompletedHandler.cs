@@ -27,9 +27,11 @@ namespace MobileOrderer.Api.Handlers
 
         public Task<bool> Handle(CeaseOrderCompletedMessage message)
         {
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] MobileOrderId={message.MobileOrderId}");
+
             try
             {
-                logger.LogInformation($"Received [CeaseOrderCompleted] MobileOrderId={message.MobileOrderId}");
 
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
@@ -42,7 +44,7 @@ namespace MobileOrderer.Api.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing CeaseOrderCompletedMessage");
+                logger.LogError(ex, $"Error while processing {messageName}");
                 return Task.FromResult(false);
             }
 

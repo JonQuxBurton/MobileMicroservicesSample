@@ -4,13 +4,13 @@ using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
 {
-    public class ProvisionRequestedEventChecker : IMobileEventsChecker
+    public class MobileProvisionRequestedEventChecker : IMobileEventsChecker
     {
-        private readonly IGetNewMobilesQuery getNewMobilesQuery;
+        private readonly IGetNeProvisionsQuery getNewMobilesQuery;
         private readonly IRepository<Mobile> mobileRepository;
 
-        public ProvisionRequestedEventChecker(
-            IGetNewMobilesQuery getNewMobilesQuery,
+        public MobileProvisionRequestedEventChecker(
+            IGetNeProvisionsQuery getNewMobilesQuery,
             IRepository<Mobile> mobileRepository
             )
         {

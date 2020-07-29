@@ -3,7 +3,7 @@ using System;
 
 namespace MobileOrderer.Api.Messages
 {
-    public class ActivationOrderSentMessage : Message
+    public class ActivateOrderSentMessage : Message
     {
         public Guid MobileOrderId { get; set; }
     }

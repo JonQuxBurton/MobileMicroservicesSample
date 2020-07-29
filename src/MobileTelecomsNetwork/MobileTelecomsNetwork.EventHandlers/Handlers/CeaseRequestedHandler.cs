@@ -16,7 +16,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public CeaseRequestedHandler(ILogger<CeaseRequestedHandler> logger, 
+        public CeaseRequestedHandler(ILogger<CeaseRequestedHandler> logger,
             IDataStore dataStore,
             IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService,
             IMessagePublisher messagePublisher,
@@ -32,41 +32,41 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
         public async Task<bool> Handle(CeaseRequestedMessage message)
         {
-            logger.LogInformation($"Received [CeaseRequested] {message.MobileOrderId}");
+            var messageName = message.GetType().Name;
+            logger.LogInformation($"Received [{messageName}] {message.MobileOrderId}");
 
             try
             {
-
-            using (var tx = dataStore.BeginTransaction())
-            {
-                dataStore.Add(new Order
+                using (var tx = dataStore.BeginTransaction())
                 {
-                    MobileOrderId = message.MobileOrderId,
-                    Status = "New",
-                    Type = "Cease"
-                });
-            }
-
-            using (var tx = dataStore.BeginTransaction())
-            {
-                var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
-                {
-                    Reference = message.MobileOrderId
-                });
-
-                if (!result)
-                {
-                    logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
-
-                    tx.Rollback();
-                    monitoring.CeaseOrderFailed();
-                    return false;
+                    dataStore.Add(new Order
+                    {
+                        MobileOrderId = message.MobileOrderId,
+                        Status = "New",
+                        Type = "Cease"
+                    });
                 }
 
-                dataStore.Sent(message.MobileOrderId);
-                Publish(message.MobileOrderId);
-                monitoring.CeaseOrderSent();
-            }
+                using (var tx = dataStore.BeginTransaction())
+                {
+                    var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
+                    {
+                        Reference = message.MobileOrderId
+                    });
+
+                    if (!result)
+                    {
+                        logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
+
+                        tx.Rollback();
+                        monitoring.CeaseOrderFailed();
+                        return false;
+                    }
+
+                    dataStore.Sent(message.MobileOrderId);
+                    Publish(message.MobileOrderId);
+                    monitoring.CeaseOrderSent();
+                }
             }
             catch (Exception ex)
             {

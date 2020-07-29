@@ -65,9 +65,9 @@ namespace MobileOrderer.Api
             // API
             services.AddScoped<IGuidCreator, GuidCreator>();
             services.AddScoped<IMessagePublisher, MessagePublisher>();
-            services.AddScoped<IGetNewMobilesQuery, GetNewMobilesQuery>();
+            services.AddScoped<IGetNeProvisionsQuery, GetNewProvisionsQuery>();
             services.AddScoped<IGetProcessingProvisioningMobilesQuery, GetProcessingProvisioningMobilesQuery>();
-            services.AddScoped<IGetNewActivationsQuery, GetNewActivationsQuery>();
+            services.AddScoped<IGetNewActivatesQuery, GetNewActivatesQuery>();
             services.AddScoped<IGetNewCeasesQuery, GetNewCeasesQuery>();
             services.AddScoped<IGetMobileByOrderIdQuery, GetMobileByOrderIdQuery>();
             
@@ -80,7 +80,7 @@ namespace MobileOrderer.Api
 
             services.AddSingleton<IMonitoring>(new Monitoring());
 
-            services.AddScoped<IMobileEventsChecker, ProvisionRequestedEventChecker>();
+            services.AddScoped<IMobileEventsChecker, MobileProvisionRequestedEventChecker>();
             services.AddScoped<IMobileEventsChecker, ProcessingProvisioningEventChecker>();
             services.AddScoped<IMobileEventsChecker, ActivateRequestedEventChecker>();
             services.AddScoped<IMobileEventsChecker, CeaseRequestedEventChecker>();

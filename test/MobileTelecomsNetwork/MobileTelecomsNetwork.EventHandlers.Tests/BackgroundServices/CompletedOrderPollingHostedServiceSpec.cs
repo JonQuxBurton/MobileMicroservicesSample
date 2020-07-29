@@ -26,15 +26,15 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
                 var dataStoreMock = new Mock<IDataStore>();
                 dataStoreMock.Setup(x => x.GetSent())
                     .Returns(new[] { expectedOrder });
-                var activationOrderChecker = new Mock<IOrderCompletedChecker>();
+                var activateOrderChecker = new Mock<IOrderCompletedChecker>();
 
                 var sut = new CompletedOrderPollingHostedService(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
                     dataStoreMock.Object,
-                    activationOrderChecker.Object);
+                    activateOrderChecker.Object);
 
                 sut.DoWork();
 
-                activationOrderChecker.Verify(x => x.Check(expectedOrder));
+                activateOrderChecker.Verify(x => x.Check(expectedOrder));
             }
         }
     }

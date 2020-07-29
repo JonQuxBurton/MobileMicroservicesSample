@@ -6,7 +6,7 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Domain
 {
-    public class MobileSpec
+    public static class MobileSpec
     {
         public class ConstructorShould
         {
@@ -79,7 +79,7 @@ namespace MobileOrderer.Api.Tests.Domain
             }
         }
         
-        public class ActivationCompletedShould
+        public class ActivateCompletedShould
         {
             [Fact]
             public void ChangeCurrentStateToLive()
