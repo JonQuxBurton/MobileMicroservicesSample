@@ -23,24 +23,24 @@ namespace MobileOrderer.Api.Handlers
             this.serviceProvider = serviceProvider;
         }
 
-        public Task<bool> Handle(ActivateOrderSentMessage message)
+        public Task<bool> Handle(ActivateOrderSentMessage receivedEvent)
         {
-            var messageName = message.GetType().Name;
-            logger.LogInformation($"Received [{messageName}] MobileOrderId={message.MobileOrderId}");
+            var eventName = receivedEvent.GetType().Name;
+            logger.LogInformation("Received event [{eventName}] - MobileOrderId={MobileOrderId}", eventName, receivedEvent.MobileOrderId);
+
             try
             {
-
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
             
-                var mobile = getMobileByOrderIdQuery.Get(message.MobileOrderId);
+                var mobile = getMobileByOrderIdQuery.Get(receivedEvent.MobileOrderId);
                 mobile.OrderSent();
                 mobileRepository.Update(mobile);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error while processing {messageName}");
+                logger.LogError(ex, "Error while processing event [{eventName}]", eventName);
                 return Task.FromResult(false);
             }
 

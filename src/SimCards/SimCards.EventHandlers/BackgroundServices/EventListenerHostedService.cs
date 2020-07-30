@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
 using SimCards.EventHandlers.Domain;
+using System;
 
 namespace SimCards.EventHandlers.BackgroundServices
 {
@@ -17,17 +18,28 @@ namespace SimCards.EventHandlers.BackgroundServices
             this.messageBusListenerBuilder = messageBusListenerBuilder;
         }
 
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            logger.LogInformation("EventListenerHostedService Starting...");
-            messageBusListenerBuilder.Build().StartListening();
+            try
+            {
+                logger.LogInformation("{ServiceName} starting...", ServiceName);
+                messageBusListenerBuilder.Build().StartListening();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error when {ServiceName} starting", ServiceName);
+            }
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            logger.LogInformation("EventListenerHostedService Stopping...");
+            logger.LogInformation("{ServiceName} stopping...", ServiceName);
             return Task.CompletedTask;
         }
+
+        private string ServiceName => GetType().Name;
     }
 }

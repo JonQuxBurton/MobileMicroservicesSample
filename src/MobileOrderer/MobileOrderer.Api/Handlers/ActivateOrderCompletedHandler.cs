@@ -28,11 +28,10 @@ namespace MobileOrderer.Api.Handlers
         public Task<bool> Handle(ActivateOrderCompletedMessage message)
         {
             var messageName = message.GetType().Name;
-            logger.LogInformation($"Received [{messageName}] MobileOrderId={message.MobileOrderId}");
+            logger.LogInformation("Received event [{MessageName}] - MobileOrderId={MobileOrderId}", messageName, message.MobileOrderId);
 
             try
             {
-
                 using var scope = serviceProvider.CreateScope();
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
@@ -44,7 +43,7 @@ namespace MobileOrderer.Api.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error while processing {messageName}");
+                logger.LogError(ex, "Error while processing event [{MessageName}]", messageName);
                 return Task.FromResult(false);
             }
 

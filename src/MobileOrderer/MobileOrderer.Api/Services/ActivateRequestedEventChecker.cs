@@ -1,4 +1,6 @@
-﻿using MinimalEventBus.JustSaying;
+﻿using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Logging;
+using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
@@ -9,16 +11,19 @@ namespace MobileOrderer.Api.Services
 {
     public class ActivateRequestedEventChecker : IMobileEventsChecker
     {
+        private readonly ILogger<ActivateRequestedEventChecker> logger;
         private readonly IGetNewActivatesQuery getNewActivatesQuery;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMessagePublisher messagePublisher;
 
         public ActivateRequestedEventChecker(
+            ILogger<ActivateRequestedEventChecker> logger,
             IGetNewActivatesQuery getNewActivatesQuery,
             IRepository<Mobile> mobileRepository,
             IMessagePublisher messagePublisher
         )
         {
+            this.logger = logger;
             this.getNewActivatesQuery = getNewActivatesQuery;
             this.mobileRepository = mobileRepository;
             this.messagePublisher = messagePublisher;
@@ -43,6 +48,8 @@ namespace MobileOrderer.Api.Services
 
         private void Publish(Order order)
         {
+            logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}" , typeof(ActivateRequestedMessage).Name, order.GlobalId);
+
             messagePublisher.PublishAsync(new ActivateRequestedMessage
             {
                 MobileOrderId = order.GlobalId,

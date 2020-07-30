@@ -59,7 +59,7 @@ namespace SimCards.EventHandlers.Domain
 
         private void PublishProvisioningOrderCompleted(Guid mobileGlobalId)
         {
-            logger.LogInformation($"Publishing ProvisioningOrderCompletedMessage [{mobileGlobalId}]");
+            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", typeof(ProvisionOrderCompletedMessage).Name, mobileGlobalId);
 
             messagePublisher.PublishAsync(new ProvisionOrderCompletedMessage
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,15 +20,24 @@ namespace MobileOrderer.Api.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            this.logger.LogInformation("EventsService Starting...");
-            this.messageBusListenerBuilder.Build().StartListening();
+            try
+            {
+                logger.LogInformation("{ServiceName} starting...", ServiceName);
+                messageBusListenerBuilder.Build().StartListening();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error when {ServiceName} starting", ServiceName);
+            }
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            this.logger.LogInformation("EventsService Stopping...");
+            logger.LogInformation("{ServiceName} stopping...", ServiceName);
             return Task.CompletedTask;
         }
+
+        private string ServiceName => GetType().Name;
     }
 }

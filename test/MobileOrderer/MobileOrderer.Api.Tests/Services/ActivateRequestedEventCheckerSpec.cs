@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
@@ -36,8 +37,9 @@ namespace MobileOrderer.Api.Tests.Services
                     .Returns(new[] { expectedMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
+                var loggerMock = new Mock<ILogger<ActivateRequestedEventChecker>>();
 
-                sut = new ActivateRequestedEventChecker(getNewActivationsQueryMock.Object, repositoryMock.Object, messagePublisherMock.Object);
+                sut = new ActivateRequestedEventChecker(loggerMock.Object, getNewActivationsQueryMock.Object, repositoryMock.Object, messagePublisherMock.Object);
             }
 
             [Fact]

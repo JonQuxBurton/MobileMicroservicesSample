@@ -4,7 +4,6 @@ using MinimalEventBus.JustSaying;
 using SimCards.EventHandlers.Data;
 using SimCards.EventHandlers.Messages;
 using System;
-using Prometheus;
 using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Handlers
@@ -27,14 +26,14 @@ namespace SimCards.EventHandlers.Handlers
             this.monitoring = monitoring;
         }
 
-        public async Task<bool> Handle(ProvisionRequestedMessage message)
+        public async Task<bool> Handle(ProvisionRequestedMessage receivedEvent)
         {
-            var messageName = message.GetType().Name;
-            logger.LogInformation($"Received [{messageName}] {message.Name} {message.ContactPhoneNumber}");
+            var eventName = receivedEvent.GetType().Name;
+            logger.LogInformation("Received event [{eventName}] with Name={Name}, ContactPhoneNumber={ContactPhoneNumber}", eventName, receivedEvent.Name, receivedEvent.ContactPhoneNumber);
 
             try
             {
-                var existingOrder = simCardOrdersDataStore.GetExisting(message.MobileOrderId);
+                var existingOrder = simCardOrdersDataStore.GetExisting(receivedEvent.MobileOrderId);
 
                 if (existingOrder != null)
                 {
@@ -45,8 +44,8 @@ namespace SimCards.EventHandlers.Handlers
                 {
                     simCardOrdersDataStore.Add(new SimCardOrder()
                     {
-                        Name = message.Name,
-                        MobileOrderId = message.MobileOrderId,
+                        Name = receivedEvent.Name,
+                        MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New"
                     });
                 }
@@ -55,8 +54,8 @@ namespace SimCards.EventHandlers.Handlers
                 {
                     var result = await simCardWholesaleService.PostOrder(new ExternalSimCardOrder
                     {
-                        Reference = message.MobileOrderId,
-                        Name = message.Name
+                        Reference = receivedEvent.MobileOrderId,
+                        Name = receivedEvent.Name
                     });
 
                     if (!result)
@@ -66,9 +65,9 @@ namespace SimCards.EventHandlers.Handlers
                         return false;
                     }
 
-                    this.simCardOrdersDataStore.Sent(message.MobileOrderId);
+                    simCardOrdersDataStore.Sent(receivedEvent.MobileOrderId);
 
-                    this.Publish(message.MobileOrderId);
+                    Publish(receivedEvent.MobileOrderId);
                     monitoring.SimCardOrderSent();
                 }
 
@@ -76,13 +75,15 @@ namespace SimCards.EventHandlers.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error while processing {messageName}");
+                logger.LogError(ex, "Error while processing {messageName}", eventName);
                 return false;
             }
         }
 
         public void Publish(Guid mobileGlobalId)
         {
+            logger.LogInformation("Publishing event [{event}]", typeof(ProvisionOrderSentMessage).Name);
+
             messagePublisher.PublishAsync(new ProvisionOrderSentMessage
             {
                 MobileOrderId = mobileGlobalId

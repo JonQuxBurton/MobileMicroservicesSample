@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
@@ -35,8 +36,9 @@ namespace MobileOrderer.Api.Tests.Services
                 getMobilesQueryMock = new Mock<IGetNewCeasesQuery>();
                 getMobilesQueryMock.Setup(x => x.Get())
                     .Returns(new[] { expectedMobile });
+                var loggerMock = new Mock<ILogger<CeaseRequestedEventChecker>>();
 
-                sut = new CeaseRequestedEventChecker(getMobilesQueryMock.Object,
+                sut = new CeaseRequestedEventChecker(loggerMock.Object, getMobilesQueryMock.Object,
                     repositoryMock.Object,
                     messagePublisherMock.Object);
             }

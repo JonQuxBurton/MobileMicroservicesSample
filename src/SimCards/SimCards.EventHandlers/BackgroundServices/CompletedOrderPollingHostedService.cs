@@ -6,21 +6,26 @@ using System;
 using SimCards.EventHandlers.Data;
 using System.Linq;
 using SimCards.EventHandlers.Domain;
+using Microsoft.Extensions.Options;
 
 namespace SimCards.EventHandlers.BackgroundServices
 {
     public class CompletedOrderPollingHostedService : BackgroundService
     {
-        public const int BatchSize = 10;
-
         private readonly ILogger<CompletedOrderPollingHostedService> logger;
+        private readonly TimeSpan pollingInterval;
+        private readonly int batchSize;
+
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
         private readonly ICompletedOrderChecker completedOrderCheker;
 
-        public CompletedOrderPollingHostedService(ILogger<CompletedOrderPollingHostedService> logger,
+        public CompletedOrderPollingHostedService(IOptions<Config> options, 
+            ILogger<CompletedOrderPollingHostedService> logger,
             ISimCardOrdersDataStore simCardOrdersDataStore,
             ICompletedOrderChecker completedOrderCheker)
         {
+            pollingInterval = TimeSpan.FromSeconds(options.Value.CompletedOrderPollingIntervalSeconds);
+            batchSize = options.Value.CompletedOrderPollingBatchSize;
             this.logger = logger;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
             this.completedOrderCheker = completedOrderCheker;
@@ -28,31 +33,39 @@ namespace SimCards.EventHandlers.BackgroundServices
 
         public async void DoWork()
         {
-            try
-            {
-                var sentOrders = simCardOrdersDataStore.GetSent().Take(BatchSize);
+            var sentOrders = simCardOrdersDataStore.GetSent().Take(batchSize);
 
-                foreach (var sentOrder in sentOrders)
-                {
-                    await completedOrderCheker.Check(sentOrder);
-                }
-            }
-            catch (Exception ex)
+            foreach (var sentOrder in sentOrders)
             {
-                logger.LogError(ex.ToString());
+                await completedOrderCheker.Check(sentOrder);
             }
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("CompletedOrderPollingHostedService executing...");
+            logger.LogInformation("{ServiceName} starting...", ServiceName);
 
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                DoWork();
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    logger.LogInformation("{ServiceName} ExecuteAsync...", ServiceName);
 
-                await Task.Delay(10 * 1000, stoppingToken);
+                    DoWork();
+
+                    await Task.Delay(pollingInterval, stoppingToken);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                logger.LogInformation("{ServiceName} stopping...", ServiceName);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error when {ServiceName} ExecuteAsync", ServiceName);
             }
         }
+
+        private string ServiceName => GetType().Name;
     }
 }

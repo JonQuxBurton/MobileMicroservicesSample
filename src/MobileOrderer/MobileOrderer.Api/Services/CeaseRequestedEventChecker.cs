@@ -1,4 +1,6 @@
-﻿using MinimalEventBus.JustSaying;
+﻿using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Logging;
+using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
@@ -9,11 +11,13 @@ namespace MobileOrderer.Api.Services
 {
     public class CeaseRequestedEventChecker : IMobileEventsChecker
     {
+        private readonly ILogger<CeaseRequestedEventChecker> logger;
         private readonly IGetNewCeasesQuery getMobilesQuery;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMessagePublisher messagePublisher;
 
         public CeaseRequestedEventChecker(
+            ILogger<CeaseRequestedEventChecker> logger,
             IGetNewCeasesQuery getCeasesMobilesQuery,
             IRepository<Mobile> mobileRepository,
             IMessagePublisher messagePublisher
@@ -21,6 +25,7 @@ namespace MobileOrderer.Api.Services
         {
             this.mobileRepository = mobileRepository;
             this.messagePublisher = messagePublisher;
+            this.logger = logger;
             this.getMobilesQuery = getCeasesMobilesQuery;
         }
 
@@ -43,6 +48,8 @@ namespace MobileOrderer.Api.Services
 
         private void Publish(Order order)
         {
+            logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}", typeof(CeaseRequestedMessage).Name, order.GlobalId);
+
             messagePublisher.PublishAsync(new CeaseRequestedMessage
             {
                 MobileOrderId = order.GlobalId

@@ -16,3 +16,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:MobileOrderer.Api.Tests.Domain.MobileSpec.OrderSentShould")]
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:MobileOrderer.Api.Tests.Domain.MobileSpec.CeaseShould")]
 [assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:MobileOrderer.Api.Tests.Domain.MobileSpec.CeaseCompletedShould")]
+[assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:MobileOrderer.Api.Tests.Controllers.MobilesControllerSpec.GetShould")]
+[assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:MobileOrderer.Api.Tests.Controllers.MobilesControllerSpec.ActivateShould")]
+[assembly: SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>", Scope = "type", Target = "~T:MobileOrderer.Api.Tests.Controllers.MobilesControllerSpec.CeaseShould")]

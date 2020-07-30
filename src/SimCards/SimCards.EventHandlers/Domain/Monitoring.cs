@@ -4,11 +4,10 @@ namespace SimCards.EventHandlers.Domain
 {
     public class Monitoring : IMonitoring
     {
-        private Counter simcardOrdersSent;
-        private Counter simcardOrdersCompleted;
-        private Gauge simcardOrdersInProgress;
-
-        private Counter simcardOrdersFailed;
+        private readonly Counter simcardOrdersSent;
+        private readonly Counter simcardOrdersCompleted;
+        private readonly Gauge simcardOrdersInProgress;
+        private readonly Counter simcardOrdersFailed;
 
         public Monitoring()
         {

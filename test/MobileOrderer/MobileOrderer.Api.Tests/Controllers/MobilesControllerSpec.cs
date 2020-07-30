@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MobileOrderer.Api.Configuration;
 using MobileOrderer.Api.Controllers;
@@ -14,7 +15,7 @@ using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Tests.Controllers
 {
-    public class MobilesControllerSpec
+    public static class MobilesControllerSpec
     {
         public class GetShould
         {
@@ -25,8 +26,9 @@ namespace MobileOrderer.Api.Tests.Controllers
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
+                var loggingMock = new Mock<ILogger<MobilesController>>();
 
-                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
+                sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
 
                 expectedMobile = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
 
@@ -97,14 +99,15 @@ namespace MobileOrderer.Api.Tests.Controllers
                 mobileRepositoryMock.Setup(x => x.GetById(expectedGlobalId))
                     .Returns(expectedMobile);
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
+                var loggerMock = new Mock<ILogger<MobilesController>>();
 
-                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
+                sut = new MobilesController(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
             }
 
             [Fact]
             public void ActivateTheMobile()
             {
-                sut.Post(expectedGlobalId, expectedOrder);
+                sut.Activate(expectedGlobalId, expectedOrder);
 
                 expectedMobile.CurrentState.Should().Be(State.ProcessingActivation);
                 expectedMobile.InFlightOrder.GlobalId.Should().Be(expectedGlobalId);
@@ -115,7 +118,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void UpdatesTheMobileInTheRepository()
             {
-                sut.Post(expectedGlobalId, expectedOrder);
+                sut.Activate(expectedGlobalId, expectedOrder);
 
                 this.mobileRepositoryMock.Verify(x => x.Update(expectedMobile));
             }
@@ -123,7 +126,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Post(expectedGlobalId, new OrderToAdd());
+                var actual = sut.Activate(expectedGlobalId, new OrderToAdd());
 
                 actual.Should().BeOfType<OkObjectResult>();
             }
@@ -137,7 +140,7 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 guidCreatorMock.Setup(x => x.Create()).Returns(notFoundGlobalId);
 
-                var actual = sut.Post(notFoundGlobalId, new OrderToAdd());
+                var actual = sut.Activate(notFoundGlobalId, new OrderToAdd());
 
                 actual.Should().BeOfType<NotFoundResult>();
             }
@@ -168,8 +171,9 @@ namespace MobileOrderer.Api.Tests.Controllers
                 mobileRepositoryMock.Setup(x => x.GetById(expectedReference))
                     .Returns(expectedMobile);
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedReference);
+                var loggerMock = new Mock<ILogger<MobilesController>>();
 
-                sut = new MobilesController(mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
+                sut = new MobilesController(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
             }
 
             [Fact]

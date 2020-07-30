@@ -38,22 +38,20 @@ namespace SimCards.EventHandlers.Data
         {
             var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileOrderId=@MobileOrderId";
 
-            using (var conn = new SqlConnection(connectionString))
+            using var conn = new SqlConnection(connectionString);
+            var dbOrder = conn.QueryFirstOrDefault(sql, new { MobileOrderId = mobileOrderId.ToString() });
+
+            if (dbOrder == null)
+                return null;
+
+            return new SimCardOrder
             {
-                var dbOrder = conn.QueryFirstOrDefault(sql, new { MobileOrderId = mobileOrderId.ToString() });
-
-                if (dbOrder == null)
-                    return null;
-
-                return new SimCardOrder
-                {
-                    MobileOrderId = dbOrder.MobileOrderId,
-                    Name = dbOrder.Name,
-                    Status = dbOrder.Status,
-                    CreatedAt = dbOrder.CreatedAt,
-                    UpdatedAt = dbOrder.UpdatedAt
-                };
-            }
+                MobileOrderId = dbOrder.MobileOrderId,
+                Name = dbOrder.Name,
+                Status = dbOrder.Status,
+                CreatedAt = dbOrder.CreatedAt,
+                UpdatedAt = dbOrder.UpdatedAt
+            };
         }
 
         public void Sent(Guid mobileOrderId)

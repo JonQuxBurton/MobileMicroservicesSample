@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using SimCards.EventHandlers.BackgroundServices;
 using SimCards.EventHandlers.Data;
@@ -30,7 +31,7 @@ namespace SimCards.EventHandlers.Tests.BackgroundServices
                     .Returns(new[] { expectedOrder });
                 var completedOrderChecker = new Mock<ICompletedOrderChecker>();
 
-                var sut = new CompletedOrderPollingHostedService(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
+                var sut = new CompletedOrderPollingHostedService(Options.Create(config), Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
                     dataStoreMock.Object,
                     completedOrderChecker.Object);
 
