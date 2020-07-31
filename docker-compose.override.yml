@@ -37,6 +37,7 @@ services:
   mobiletelecomsnetwork.eventhandlers:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Config:LogFilePath=/logs/
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileTelecomsNetworkMicroservice;Password=MobileTelecomsNetwork@123
       - Config:ExternalMobileTelecomsNetworkApiUrl=http://externalmobiletelecomsnetwork.api
       - EventBusConfig:SnsServiceUrl=http://goaws:4100

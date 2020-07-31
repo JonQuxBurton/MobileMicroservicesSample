@@ -63,7 +63,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 
         private void PublishActivateOrderCompleted(Guid mobileGlobalId)
         {
-            logger.LogInformation($"Publishing ActivateOrderCompletedMessage [{mobileGlobalId}]");
+            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", typeof(ActivateOrderCompletedMessage).Name, mobileGlobalId);
 
             messagePublisher.PublishAsync(new ActivateOrderCompletedMessage
             {
@@ -74,7 +74,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 
         private void PublishCeaseOrderCompleted(Guid mobileGlobalId)
         {
-            logger.LogInformation($"Publishing CeaseOrderCompletedMessage [{mobileGlobalId}]");
+            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", typeof(CeaseOrderCompletedMessage).Name, mobileGlobalId);
 
             messagePublisher.PublishAsync(new CeaseOrderCompletedMessage
             {

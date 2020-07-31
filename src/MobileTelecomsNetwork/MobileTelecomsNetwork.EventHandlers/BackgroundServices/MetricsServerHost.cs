@@ -11,7 +11,7 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
     public class MetricsServerHost : IHostedService
     {
         private MetricServer metricServer;
-        private Config config;
+        private readonly Config config;
         private readonly ILogger<MetricsServerHost> logger;
 
         public MetricsServerHost(IOptions<Config> configOptions, ILogger<MetricsServerHost> logger)
@@ -24,9 +24,9 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
         {
             try
             {
+                logger.LogInformation("{ServiceName} starting...", ServiceName);
                 metricServer = new MetricServer(port: config.MetricsServerHostPort);
                 metricServer.Start();
-
             }
             catch (Exception ex)
             {

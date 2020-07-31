@@ -8,11 +8,11 @@ using MinimalEventBus.JustSaying;
 using MobileTelecomsNetwork.EventHandlers.BackgroundServices;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Domain;
-using Serilog;
-using Serilog.Events;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Serilog;
+using Serilog.Formatting.Json;
 
 namespace MobileTelecomsNetwork.EventHandlers
 {
@@ -21,12 +21,26 @@ namespace MobileTelecomsNetwork.EventHandlers
     {
         public static int Main(string[] args)
         {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var programName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{environmentName}.json", true, true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+
+            var config = new Config();
+            Configuration.GetSection("Config").Bind(config);
+            var logFilePath = $"{config.LogFilePath}{programName }.json";
+
             Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .CreateLogger();
+                .ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File(new JsonFormatter(), logFilePath, shared: true)
+                .CreateLogger();
 
             try
             {
@@ -46,28 +60,16 @@ namespace MobileTelecomsNetwork.EventHandlers
             }
         }
 
-        public static IHost BuildHost() =>
-            new HostBuilder()
-                .ConfigureServices(services => ConfigureServices(services))
-                .UseSerilog()
-                .Build();
+        private static IConfiguration Configuration;
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            var builder = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile($"appsettings.json", true, true)
-                        .AddJsonFile($"appsettings.{environmentName}.json", true, true)
-                        .AddEnvironmentVariables();
-            var configuration = builder.Build();
-
             var eventBusConfig = new EventBusConfig();
-            configuration.GetSection("EventBusConfig").Bind(eventBusConfig);
+            Configuration.GetSection("EventBusConfig").Bind(eventBusConfig);
             var credentials = new BasicAWSCredentials(eventBusConfig.AccessKey, eventBusConfig.SecretKey);
-            services.Configure<EventBusConfig>(options => configuration.GetSection("EventBusConfig").Bind(options));
-            services.Configure<Config>(options => configuration.GetSection("Config").Bind(options));
+            
+            services.Configure<EventBusConfig>(options => Configuration.GetSection("EventBusConfig").Bind(options));
+            services.Configure<Config>(options => Configuration.GetSection("Config").Bind(options));
             services.AddHttpClient<IExternalMobileTelecomsNetworkService, ExternalMobileTelecomsNetworkService>();
 
             services.AddSingleton<AWSCredentials>(credentials);
@@ -85,5 +87,11 @@ namespace MobileTelecomsNetwork.EventHandlers
             services.AddHostedService<EventListenerHostedService>();
             services.AddHostedService<CompletedOrderPollingHostedService>();
         }
+
+        public static IHost BuildHost() =>
+            new HostBuilder()
+                .ConfigureServices(services => ConfigureServices(services))
+                .UseSerilog()
+                .Build();
     }
 }

@@ -30,10 +30,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             this.monitoring = monitoring;
         }
 
-        public async Task<bool> Handle(CeaseRequestedMessage message)
+        public async Task<bool> Handle(CeaseRequestedMessage receivedEvent)
         {
-            var messageName = message.GetType().Name;
-            logger.LogInformation($"Received [{messageName}] {message.MobileOrderId}");
+            var eventName = receivedEvent.GetType().Name;
+            logger.LogInformation("Received event [{eventName}] with MobileOrderId={MobileOrderId}", eventName, receivedEvent.MobileOrderId);
 
             try
             {
@@ -41,7 +41,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     dataStore.Add(new Order
                     {
-                        MobileOrderId = message.MobileOrderId,
+                        MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New",
                         Type = "Cease"
                     });
@@ -51,26 +51,26 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
                     {
-                        Reference = message.MobileOrderId
+                        Reference = receivedEvent.MobileOrderId
                     });
 
                     if (!result)
                     {
-                        logger.LogInformation($"Failed to PostCease to externalMobileTelecomsNetworkService");
+                        logger.LogInformation("Failed to PostCease to externalMobileTelecomsNetworkService");
 
                         tx.Rollback();
                         monitoring.CeaseOrderFailed();
                         return false;
                     }
 
-                    dataStore.Sent(message.MobileOrderId);
-                    Publish(message.MobileOrderId);
+                    dataStore.Sent(receivedEvent.MobileOrderId);
+                    Publish(receivedEvent.MobileOrderId);
                     monitoring.CeaseOrderSent();
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.ToString());
+                logger.LogError(ex, "Error while processing {eventName}", eventName);
                 return false;
             }
 
@@ -79,6 +79,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
         private void Publish(Guid mobileGlobalId)
         {
+            logger.LogInformation("Publishing event [{event}]", typeof(CeaseOrderSentMessage).Name);
+
             messagePublisher.PublishAsync(new CeaseOrderSentMessage
             {
                 MobileOrderId = mobileGlobalId

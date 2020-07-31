@@ -6,7 +6,6 @@ using SimCards.EventHandlers.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Amazon.Runtime;
 using MinimalEventBus.Aws;
-using SimCards.EventHandlers.Services;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
 using MinimalEventBus.JustSaying;
@@ -65,18 +64,6 @@ namespace SimCards.EventHandlers
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            //var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            //var builder = new ConfigurationBuilder()
-            //            .SetBasePath(Directory.GetCurrentDirectory())
-            //            .AddJsonFile($"appsettings.json", true, true)
-            //            .AddJsonFile($"appsettings.{environmentName}.json", true, true)
-            //            .AddEnvironmentVariables();
-            ////var configuration = builder.Build();
-            //Configuration = builder.Build();
-
-            //var configuration = Configuration;
-
             var eventBusConfig = new EventBusConfig();
             Configuration.GetSection("EventBusConfig").Bind(eventBusConfig);
             var credentials = new BasicAWSCredentials(eventBusConfig.AccessKey, eventBusConfig.SecretKey);
@@ -102,10 +89,9 @@ namespace SimCards.EventHandlers
         }
 
         public static IHost BuildHost(string[] args) =>
-        new HostBuilder()
-            .ConfigureServices(services => ConfigureServices(services))
-            .UseSerilog()
-            .Build();
-
+            new HostBuilder()
+                .ConfigureServices(services => ConfigureServices(services))
+                .UseSerilog()
+                .Build();
     }
 }

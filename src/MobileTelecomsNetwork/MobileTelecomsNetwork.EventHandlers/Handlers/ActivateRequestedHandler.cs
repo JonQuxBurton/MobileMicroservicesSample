@@ -30,10 +30,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             this.monitoring = monitoring;
         }
 
-        public async Task<bool> Handle(ActivateRequestedMessage message)
+        public async Task<bool> Handle(ActivateRequestedMessage receivedEvent)
         {
-            var messageName = message.GetType().Name;
-            logger.LogInformation($"Received [{messageName}] {message.Name} {message.ContactPhoneNumber}");
+            var eventName = receivedEvent.GetType().Name;
+            logger.LogInformation("Received event [{eventName}] with Name={Name}, ContactPhoneNumber={ContactPhoneNumber}", eventName, receivedEvent.Name, receivedEvent.ContactPhoneNumber);
 
             try
             {
@@ -41,8 +41,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     dataStore.Add(new Order
                     {
-                        Name = message.Name,
-                        MobileOrderId = message.MobileOrderId,
+                        Name = receivedEvent.Name,
+                        MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New",
                         Type = "Activate",
                     });
@@ -52,7 +52,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
                     {
-                        Reference = message.MobileOrderId
+                        Reference = receivedEvent.MobileOrderId
                     });
 
                     if (!result)
@@ -62,14 +62,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                         return false;
                     }
 
-                    dataStore.Sent(message.MobileOrderId);
-                    Publish(message.MobileOrderId);
+                    dataStore.Sent(receivedEvent.MobileOrderId);
+                    Publish(receivedEvent.MobileOrderId);
                     monitoring.ActivateOrderSent();
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error while processing {messageName}");
+                logger.LogError(ex, "Error while processing {eventName}", eventName);
                 return false;
             }
 
@@ -78,6 +78,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
 
         private void Publish(Guid mobileGlobalId)
         {
+            logger.LogInformation("Publishing event [{event}]", typeof(ActivateOrderSentMessage).Name);
+
             messagePublisher.PublishAsync(new ActivateOrderSentMessage
             {
                 MobileOrderId = mobileGlobalId

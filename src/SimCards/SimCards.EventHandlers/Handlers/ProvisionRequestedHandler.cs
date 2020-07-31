@@ -75,7 +75,7 @@ namespace SimCards.EventHandlers.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing {messageName}", eventName);
+                logger.LogError(ex, "Error while processing {eventName}", eventName);
                 return false;
             }
         }

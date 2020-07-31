@@ -18,7 +18,6 @@ namespace SimCards.EventHandlers.BackgroundServices
             this.messageBusListenerBuilder = messageBusListenerBuilder;
         }
 
-
         public Task StartAsync(CancellationToken cancellationToken)
         {
             try

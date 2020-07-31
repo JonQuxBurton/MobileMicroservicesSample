@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SimCards.EventHandlers.Services
+namespace SimCards.EventHandlers.BackgroundServices
 {
     public class MetricsServerHost : IHostedService
     {
@@ -32,7 +32,7 @@ namespace SimCards.EventHandlers.Services
             {
                 logger.LogError(ex, "Error when {ServiceName} starting", ServiceName);
             }
-                
+
             return Task.CompletedTask;
         }
 

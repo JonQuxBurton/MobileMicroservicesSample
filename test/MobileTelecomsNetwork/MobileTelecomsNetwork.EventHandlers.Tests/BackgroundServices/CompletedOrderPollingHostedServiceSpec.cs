@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MobileTelecomsNetwork.EventHandlers.BackgroundServices;
 using MobileTelecomsNetwork.EventHandlers.Data;
 using MobileTelecomsNetwork.EventHandlers.Domain;
@@ -13,7 +14,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
         public class DoWorkShould
         {
             [Fact]
-            public void CallExternalService()
+            public async void CallExternalService()
             {
                 var config = new Config
                 {
@@ -27,12 +28,13 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
                 dataStoreMock.Setup(x => x.GetSent())
                     .Returns(new[] { expectedOrder });
                 var activateOrderChecker = new Mock<IOrderCompletedChecker>();
+                var options = Options.Create(config);
 
-                var sut = new CompletedOrderPollingHostedService(Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
+                var sut = new CompletedOrderPollingHostedService(options, Mock.Of<ILogger<CompletedOrderPollingHostedService>>(),
                     dataStoreMock.Object,
                     activateOrderChecker.Object);
 
-                sut.DoWork();
+                await sut.DoWork();
 
                 activateOrderChecker.Verify(x => x.Check(expectedOrder));
             }
