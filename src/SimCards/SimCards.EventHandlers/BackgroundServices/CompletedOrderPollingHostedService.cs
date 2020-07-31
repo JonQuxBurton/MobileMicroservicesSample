@@ -19,7 +19,7 @@ namespace SimCards.EventHandlers.BackgroundServices
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
         private readonly ICompletedOrderChecker completedOrderCheker;
 
-        public CompletedOrderPollingHostedService(IOptions<Config> options, 
+        public CompletedOrderPollingHostedService(IOptions<Config> options,
             ILogger<CompletedOrderPollingHostedService> logger,
             ISimCardOrdersDataStore simCardOrdersDataStore,
             ICompletedOrderChecker completedOrderCheker)
@@ -31,7 +31,7 @@ namespace SimCards.EventHandlers.BackgroundServices
             this.completedOrderCheker = completedOrderCheker;
         }
 
-        public async void DoWork()
+        public async Task DoWork()
         {
             var sentOrders = simCardOrdersDataStore.GetSent().Take(batchSize);
 
@@ -44,26 +44,33 @@ namespace SimCards.EventHandlers.BackgroundServices
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             logger.LogInformation("{ServiceName} starting...", ServiceName);
-
+            
             try
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     logger.LogInformation("{ServiceName} ExecuteAsync...", ServiceName);
 
-                    DoWork();
+                    try
+                    {
+                        await DoWork();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Error when {ServiceName} ExecuteAsync", ServiceName);
+                    }
 
                     await Task.Delay(pollingInterval, stoppingToken);
                 }
             }
             catch (TaskCanceledException)
-            {
-                logger.LogInformation("{ServiceName} stopping...", ServiceName);
-            }
+            { }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error when {ServiceName} ExecuteAsync", ServiceName);
+                logger.LogError(ex, "Error when {ServiceName} stopping", ServiceName);
             }
+
+            logger.LogInformation("{ServiceName} stopping...", ServiceName);
         }
 
         private string ServiceName => GetType().Name;

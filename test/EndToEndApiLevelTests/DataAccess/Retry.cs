@@ -15,14 +15,20 @@ namespace EndToEndApiLevelTests.DataAcess
               .Handle<Exception>()
               .WaitAndRetry(retryCount: RetryAttempts, retryNumber => TimeSpan.FromSeconds(RetryIntervalSeconds));
 
-            policy.Execute(() =>
+            try
             {
-                result = func();
+                policy.Execute(() =>
+                    {
+                        result = func();
 
-                if (result == null)
-                    throw new Exception();
-
-            });
+                        if (result == null)
+                            throw new Exception();
+                    });
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             return result;
         }

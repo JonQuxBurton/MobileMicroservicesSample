@@ -26,33 +26,47 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
             orderCompletedChecker = activatesOrderChecker;
         }
 
-        public async void DoWork()
+        public async Task DoWork()
         {
-            try
-            {
-                var orders = dataStore.GetSent().Take(BatchSize);
+            var orders = dataStore.GetSent().Take(BatchSize);
 
-                foreach (var sentOrder in orders)
-                {
-                    await orderCompletedChecker.Check(sentOrder);
-                }
-            }
-            catch (Exception ex)
+            foreach (var sentOrder in orders)
             {
-                logger.LogError(ex.ToString());
+                await orderCompletedChecker.Check(sentOrder);
             }
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("CompletedOrderPollingHostedService executing...");
+            logger.LogInformation("{ServiceName} starting...", ServiceName);
 
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                DoWork();
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        await DoWork();
 
-                await Task.Delay(10 * 1000, stoppingToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Error when {ServiceName} ExecuteAsync", ServiceName);
+                    }
+
+                    await Task.Delay(10 * 1000, stoppingToken);
+                }
             }
+            catch (TaskCanceledException)
+            { }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error when {ServiceName} stopping", ServiceName);
+            }
+
+            logger.LogInformation("{ServiceName} stopping...", ServiceName);
         }
+
+        private string ServiceName => GetType().Name;
     }
 }

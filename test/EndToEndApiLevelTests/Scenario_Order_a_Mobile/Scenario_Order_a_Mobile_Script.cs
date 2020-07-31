@@ -19,6 +19,7 @@ namespace EndToEndApiLevelTests
         public Scenario_Order_a_Mobile_Script()
         {
             Execute().Wait();
+            //await Execute();
         }
 
         private async Task Execute()

@@ -11,6 +11,7 @@ services:
   mobileorderer.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Config:LogFilePath=/logs/
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileOrdererMicroservice;Password=MobileOrderer@123
       - EventBusConfig:SnsServiceUrl=http://goaws:4100
       - EventBusConfig:SqsServiceUrl=http://goaws:4100
@@ -20,6 +21,7 @@ services:
   simcards.eventhandlers:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Config:LogFilePath=/logs/
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardsMicroservice;Password=SimCards@123
       - Config:ExternalSimCardsProviderApiUrl=http://externalsimcardsprovider.api
       - EventBusConfig:SnsServiceUrl=http://goaws:4100

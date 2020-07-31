@@ -4,8 +4,8 @@ using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using MobileOrderer.Api.Configuration;
 using Serilog;
-using Serilog.Events;
 using Serilog.Formatting.Json;
 
 namespace MobileOrderer.Api
@@ -23,11 +23,15 @@ namespace MobileOrderer.Api
         {
             var programName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
+            var config = new Config();
+            Configuration.GetSection("Config").Bind(config);
+            var logFilePath = $"{config.LogFilePath}{programName }.json";
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.File(new JsonFormatter(), $"D:\\Temp\\Logs\\{programName }.json", shared: true)
+                .WriteTo.File(new JsonFormatter(), logFilePath, shared: true)
                 .CreateLogger();
             try
             {

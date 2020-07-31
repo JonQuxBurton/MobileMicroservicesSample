@@ -30,14 +30,17 @@ namespace SimCards.EventHandlers
                 .AddJsonFile($"appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{environmentName}.json", true, true)
                 .AddEnvironmentVariables();
-                //var configuration = builder.Build();
             Configuration = builder.Build();
+
+            var config = new Config();
+            Configuration.GetSection("Config").Bind(config);
+            var logFilePath = $"{config.LogFilePath}{programName }.json";
 
             Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(Configuration)
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.File(new JsonFormatter(), $"D:\\Temp\\Logs\\{programName }.json", shared: true)
+            .WriteTo.File(new JsonFormatter(), logFilePath, shared: true)
             .CreateLogger();
 
             try
