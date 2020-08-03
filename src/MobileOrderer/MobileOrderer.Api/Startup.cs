@@ -101,23 +101,17 @@ namespace MobileOrderer.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSerilogRequestLogging();
-            app.UseMvc();
-
             app.UseHealthChecks("/health");
-
             app.UseMetricServer();
             app.UseHttpMetrics();
+            app.UseSerilogRequestLogging();
+            app.UseMvc();
 
             var eventBusConfig = new EventBusConfig();
             Configuration.GetSection("EventBusConfig").Bind(eventBusConfig);
 
-            logger.LogInformation($"SnsServiceUrl: {eventBusConfig.SnsServiceUrl}");
-            logger.LogInformation($"SqsServiceUrl: {eventBusConfig.SqsServiceUrl}");
-
-            var config = new Config();
-            Configuration.GetSection("Config").Bind(config);
-            logger.LogInformation($"ConnectionString: {config.ConnectionString}");
+            logger.LogDebug($"SnsServiceUrl: {eventBusConfig.SnsServiceUrl}");
+            logger.LogDebug($"SqsServiceUrl: {eventBusConfig.SqsServiceUrl}");
         }
     }
 }

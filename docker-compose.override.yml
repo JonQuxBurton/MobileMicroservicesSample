@@ -13,6 +13,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Config:LogFilePath=/logs/
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileOrdererMicroservice;Password=MobileOrderer@123
+      - Config:SeqUrl=http://seq:5341
       - EventBusConfig:SnsServiceUrl=http://goaws:4100
       - EventBusConfig:SqsServiceUrl=http://goaws:4100
     ports:
@@ -24,6 +25,7 @@ services:
       - Config:LogFilePath=/logs/
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=SimCardsMicroservice;Password=SimCards@123
       - Config:ExternalSimCardsProviderApiUrl=http://externalsimcardsprovider.api
+      - Config:SeqUrl=http://seq:5341
       - EventBusConfig:SnsServiceUrl=http://goaws:4100
       - EventBusConfig:SqsServiceUrl=http://goaws:4100
       
@@ -40,6 +42,7 @@ services:
       - Config:LogFilePath=/logs/
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileTelecomsNetworkMicroservice;Password=MobileTelecomsNetwork@123
       - Config:ExternalMobileTelecomsNetworkApiUrl=http://externalmobiletelecomsnetwork.api
+      - Config:SeqUrl=http://seq:5341
       - EventBusConfig:SnsServiceUrl=http://goaws:4100
       - EventBusConfig:SqsServiceUrl=http://goaws:4100
       

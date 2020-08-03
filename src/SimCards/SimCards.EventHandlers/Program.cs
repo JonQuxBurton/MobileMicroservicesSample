@@ -40,6 +40,7 @@ namespace SimCards.EventHandlers
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .WriteTo.File(new JsonFormatter(), logFilePath, shared: true)
+            .WriteTo.Seq(config.SeqUrl)
             .CreateLogger();
 
             try

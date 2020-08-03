@@ -40,7 +40,7 @@ namespace MobileOrderer.Api.Services
                     {
                         foreach (var checker in checkers)
                         {
-                            logger.LogInformation("Checking for events with {checker}...", checker.GetType().Name);
+                            logger.LogDebug("Checking for events with {checker}...", checker.GetType().Name);
                             checker.Check();
                         }
                     }

@@ -4,6 +4,13 @@ volumes:
     prometheus_data: {}
     
 services:
+  seq:
+    image: datalust/seq:latest
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:80
+
   prometheus:
     image: prom/prometheus
     volumes:
