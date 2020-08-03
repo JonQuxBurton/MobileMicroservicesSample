@@ -45,14 +45,14 @@ namespace MobileTelecomsNetwork.EventHandlers
 
             try
             {
-                Log.Information("Starting host");
+                Log.ForContext<Program>().Information("Starting host");
                 Console.Title = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}";
                 BuildHost().Run();
                 return 0;
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Host terminated unexpectedly");
+                Log.ForContext<Program>().Fatal(ex, "Host terminated unexpectedly");
                 return 1;
             }
             finally

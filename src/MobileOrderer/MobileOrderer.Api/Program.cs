@@ -34,17 +34,18 @@ namespace MobileOrderer.Api
                 .WriteTo.File(new JsonFormatter(), logFilePath, shared: true)
                 .WriteTo.Seq(config.SeqUrl)
                 .CreateLogger();
+
             try
             {
                 Console.Title = $"{programName }";
 
-                Log.Information("Starting web host");
+                Log.ForContext<Program>().Information("Starting web host");
                 CreateWebHostBuilder(args).Build().Run();
                 return 0;
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Host terminated unexpectedly");
+                Log.ForContext<Program>().Fatal(ex, "Host terminated unexpectedly");
                 return 1;
             }
             finally
