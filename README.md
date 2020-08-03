@@ -191,6 +191,19 @@ Outputs:
 	* Mobile State to Live
 	* Order State to Completed
 
+## Logging
+
+Logging in the system uses the Serilog library. This supports strutured logging in which log entries include data, rather than being just plain text. This allows the logs to be more easily searched, filtered and analysed to assist in diagnosing problems.
+
+Theses logs are also push ed to Seq which produces a dashboard where they can be viewed and queried.
+
+The Seq Dashboard can be viewed at:
+```
+http://localhost:5341
+```
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/SeqDashboard.png)
+
 ## Monitoring
 
 The system is monitored, so we can verify that it is functioning correctly and prevent problems before they escalate. System Metrics are gathered using Prometheus and displayed in Grafana Dashboards.
