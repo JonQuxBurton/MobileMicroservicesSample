@@ -49,7 +49,7 @@ namespace SimCards.EventHandlers.BackgroundServices
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    logger.LogInformation("{ServiceName} ExecuteAsync...", ServiceName);
+                    logger.LogDebug("{ServiceName} ExecuteAsync...", ServiceName);
 
                     try
                     {
