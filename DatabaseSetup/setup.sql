@@ -17,11 +17,21 @@ GO
 GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: MobileOrderer TO MobileOrdererMicroservice;
 GO
 
+CREATE TABLE [MobileOrderer].[Customers](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[GlobalId] [uniqueidentifier] NOT NULL,
+	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[UpdatedAt] datetime,
+	[Name] [nvarchar](100) NULL
+)
+GO
+
 CREATE TABLE [MobileOrderer].[Mobiles](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
+	[CustomerId] int not null,
 	[State] [nvarchar](100) NOT NULL
 )
 GO

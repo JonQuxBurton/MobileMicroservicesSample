@@ -4,6 +4,8 @@ namespace MobileOrderer.Api.Domain
 {
     public class Monitoring : IMonitoring
     {
+        private readonly Counter customersCreated;
+        
         private readonly Counter provisions;
         private readonly Counter provisionsCompleted;
         private readonly Gauge provisionsInProgress;
@@ -18,6 +20,8 @@ namespace MobileOrderer.Api.Domain
 
         public Monitoring()
         {
+            customersCreated = Metrics.CreateCounter("customers_created", "Number of Customers created");
+            
             provisions = Metrics.CreateCounter("mobile_provisions", "Number of Mobile Provisions");
             provisionsCompleted = Metrics.CreateCounter("mobile_provisions_completed", "Number of Mobile Provisions completed");
             provisionsInProgress = Metrics.CreateGauge("mobile_provisions_inprogress", "Number of Mobile Provisions in progress");
@@ -65,6 +69,11 @@ namespace MobileOrderer.Api.Domain
         {
             ceasesCompletedCounter.Inc(1);
             ceasesInProgress.Dec();
+        }
+
+        public void CreateCustomer()
+        {
+            customersCreated.Inc();
         }
     }
 }

@@ -56,6 +56,7 @@ namespace MobileOrderer.Api
             services.AddDbContext<MobilesContext>(options =>
                 options.UseSqlServer(config.ConnectionString));
             services.AddScoped<IRepository<Mobile>, MobileRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             // Utilities
             services.AddSingleton<IEnumConverter, EnumConverter>();

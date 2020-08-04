@@ -22,9 +22,23 @@ GET http://localhost:5000/api/provisioner/status
 ### Health Check
 GET http://localhost:5000/health
 
-
 ### Get Prometheus metrics
 GET http://localhost:5000/metrics
+
+### Get Customers
+GET http://localhost:5000/api/customers
+
+### Create a Customer
+POST http://localhost:5000/api/customers
+content-type: application/json
+
+{
+	"Name" : "Armstrong Corporation"
+}
+
+### Get a Customer
+GET http://localhost:5000/api/customers/a4ba8933-5754-44d8-9068-b2b698af3d6f
+
 
 ### Order a Mobile
 POST http://localhost:5000/api/provisioner

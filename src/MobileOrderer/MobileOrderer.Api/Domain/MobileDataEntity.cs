@@ -11,6 +11,8 @@ namespace MobileOrderer.Api.Domain
         public Guid GlobalId { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public Customer Customer { get; set; }
+
         public string State { get; set; }
 
         public List<OrderDataEntity> Orders { get; set; }

@@ -8,5 +8,6 @@
         void CeaseCompleted();
         void Provision();
         void ProvisionCompleted();
+        void CreateCustomer();
     }
 }
