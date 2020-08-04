@@ -31,7 +31,7 @@ CREATE TABLE [MobileOrderer].[Mobiles](
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
-	[CustomerId] int not null,
+	[CustomerId] [uniqueidentifier] not null,
 	[State] [nvarchar](100) NOT NULL
 )
 GO

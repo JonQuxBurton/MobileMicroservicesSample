@@ -17,9 +17,6 @@ GET 192.168.65.1:9323/metrics
 ###==================================================
 
 ### Health Check
-GET http://localhost:5000/api/provisioner/status
-
-### Health Check
 GET http://localhost:5000/health
 
 ### Get Prometheus metrics
@@ -41,7 +38,7 @@ GET http://localhost:5000/api/customers/a4ba8933-5754-44d8-9068-b2b698af3d6f
 
 
 ### Order a Mobile
-POST http://localhost:5000/api/provisioner
+POST http://localhost:5000/api/a4ba8933-5754-44d8-9068-b2b698af3d6f/provision
 content-type: application/json
 
 {

@@ -9,14 +9,16 @@ namespace MobileOrderer.Api.Domain
     public class MobileWhenNewBuilder : IMobileWhenNewBuilder
     {
         private readonly Guid globalId;
+        private readonly Guid customerId;
         private Order inFlightOrder;
         private readonly List<Order> orderHistory = new List<Order>();
-        private EnumConverter enumConverter;
-        private State initialState = State.New;
+        private readonly EnumConverter enumConverter;
+        private readonly State initialState = State.New;
 
-        public MobileWhenNewBuilder(Guid globalId)
+        public MobileWhenNewBuilder(Guid globalId, Guid customerId)
         {
             this.globalId = globalId;
+            this.customerId = customerId;
             this.enumConverter = new EnumConverter();
 
         }
@@ -40,7 +42,13 @@ namespace MobileOrderer.Api.Domain
         public Mobile Build()
         {
             var state = enumConverter.ToName<State>(initialState);
-            var mobileDataEntity = new MobileDataEntity() { Id = 0, GlobalId = globalId, State = state };
+            var mobileDataEntity = new MobileDataEntity() 
+            {
+                Id = 0,
+                GlobalId = globalId,
+                State = state,
+                CustomerId = customerId
+            };
             return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
         }
     }

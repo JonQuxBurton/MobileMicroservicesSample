@@ -30,7 +30,13 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
 
-                expectedMobile = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
+                expectedMobile = new Mobile(
+                    new MobileDataEntity {
+                        Id = 101,
+                        GlobalId = Guid.NewGuid(),
+                        CustomerId = Guid.NewGuid(),
+                        State = "New"
+                    }, null, null);
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobile.GlobalId))
                     .Returns(expectedMobile);

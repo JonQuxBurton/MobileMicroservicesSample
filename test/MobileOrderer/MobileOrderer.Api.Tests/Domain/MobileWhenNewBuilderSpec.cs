@@ -17,14 +17,16 @@ namespace MobileOrderer.Api.Tests.Domain
                 var expectedId = 0;
                 var expectedInFlightOrderGuid = Guid.NewGuid();
                 var expectedOrderToAdd = new OrderToAdd() { Name = "Neil", ContactPhoneNumber = "01234" };
+                var expectedCustomerId = Guid.NewGuid();
 
-                var sut = new MobileWhenNewBuilder(expectedGuid)
+                var sut = new MobileWhenNewBuilder(expectedGuid, expectedCustomerId)
                     .AddInFlightOrder(expectedOrderToAdd, expectedInFlightOrderGuid);
                 var actual = sut.Build();
 
                 actual.CurrentState.Should().Be(Mobile.State.New);
                 actual.Id.Should().Be(expectedId);
                 actual.GlobalId.Should().Be(expectedGuid);
+                actual.CustomerId.Should().Be(expectedCustomerId);
                 actual.InFlightOrder.GlobalId.Should().Be(expectedInFlightOrderGuid);
                 actual.InFlightOrder.Name.Should().Be(expectedOrderToAdd.Name);
                 actual.InFlightOrder.ContactPhoneNumber.Should().Be(expectedOrderToAdd.ContactPhoneNumber);

@@ -1,4 +1,6 @@
-﻿namespace MobileOrderer.Api.Resources
+﻿using System;
+
+namespace MobileOrderer.Api.Resources
 {
     public class OrderToAdd
     {
