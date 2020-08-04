@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Resources;
 using System;
+using System.Linq;
 using Utils.Guids;
 
 namespace MobileOrderer.Api.Controllers
@@ -25,11 +26,11 @@ namespace MobileOrderer.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<Customer> GetAll()
+        public ActionResult<Customer[]> GetAll()
         {
-            var entity = this.repository.GetAll();
+            var entities = this.repository.GetAll();
 
-            return new OkObjectResult(entity);
+            return new OkObjectResult(entities.ToArray());
         }
 
         [HttpGet("{id}")]
@@ -61,7 +62,7 @@ namespace MobileOrderer.Api.Controllers
             return new OkObjectResult(new CustomerResource
             {
                 GlobalId = created.GlobalId,
-                Nameof = created.Name,
+                Name = created.Name,
                 CreatedAt = created.CreatedAt,
                 UpdatedAt = created.UpdatedAt
             });
