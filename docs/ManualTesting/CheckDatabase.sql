@@ -1,3 +1,4 @@
+select * from MobileOrderer.Customers;
 select * from MobileOrderer.Mobiles;
 select * from MobileOrderer.Orders;
 select * from SimCards.Orders;

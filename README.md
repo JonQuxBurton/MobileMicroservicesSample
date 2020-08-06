@@ -35,30 +35,8 @@ $ docker-compose up
 ```
 
 ## Walkthrough
-(See Walkthrough.http)
 
-### Order a Mobile:
-```http
-POST http://localhost:5000/api/provisioner
-content-type: application/json
-
-{
-	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "30123456789"
-}
-```
-
-### Verify that the Order was created:
-```shell
-$ docker exec -it goaws bash
-```
-```shell
-$ /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Pass@word"
-```
-```sql
-select * from ExternalSimCardsProvider.Orders;
-go
-```
+Walkthrough the system by executing the scenarios described in the Manual testing section, see Executing the Tests - [3. API level Manual Tests](#3._API_level_Manual_Tests)
 
 ## Testing Strategy
 
@@ -134,18 +112,26 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 
 * Open \docs\ManualTesting\ExecuteScenarios.http in Visual Studio Code
 * Click 'Send Request' against the first Scenario
-* Verify the changes in the database by running the SQL script: \docs\ManualTesting\ClearDatabase.sql
+* Verify the changes in the database by running the SQL script: \docs\ManualTesting\CheckDatabase.sql
 * Repeat for the other Scenarios
 
 ### The Scenarios
 
-1. Order a Mobile	
-2. Mobile Order Completed
-3. Activate a Mobile
-4. Activate Order Completed
+1. Create a Customer
+1. Order a Mobile
+1. Mobile Order Completed
+1. Activate a Mobile
+1. Activate Order Completed
 
+#### 1. Create a Mobile
+Inputs:
+* POST Customer to the Mobile Orderer Web Service
 
-#### 1. Order a Mobile
+Outputs:
+* Updates Mobiles database
+	* Creates a Customer
+
+#### 2. Order a Mobile
 Inputs:
 * POST Order to the Mobile Orderer Web Service
 
@@ -157,7 +143,7 @@ Outputs:
 	* Order State to Sent
 * Calls External SIM Card system
 
-#### 2. Mobile Order Completed
+#### 3. Mobile Order Completed
 Inputs:
 * Complete the Mobile Order in the External SIM Card system
 
@@ -168,7 +154,7 @@ Outputs:
 	* Mobile State to WaitingForActivation
 	* Order State to Completed
 	
-#### 3. Activate a Mobile
+#### 4. Activate a Mobile
 Inputs:
 * POST Activate Order to the Mobile Orderer Web Service
 
@@ -180,7 +166,7 @@ Outputs:
 	* Order State to Sent
 * Calls External Mobile Telecoms Network system
 
-#### 4. Activate Order Completed
+#### 5. Activate Order Completed
 Inputs:
 * Complete the Activate Order in the External Mobile Telecoms Network system
 
