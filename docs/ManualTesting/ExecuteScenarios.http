@@ -1,41 +1,73 @@
 
 ###
-### Sceanrio 1. Order a Mobile
+### Scenario 1. Order a Mobile
 ###
 
-### Step 1 - Order a Mobile
-POST http://localhost:5000/api/provisioner
+### Step 1 - Create a Customer
+# @name createCustomer
+POST http://localhost:5000/api/customers
+content-type: application/json
+
+{
+	"Name" : "Armstrong Corporation"
+}
+
+###
+@customerId = {{createCustomer.response.body.$.globalId}}
+
+### Step 2 - Order a Mobile
+# @name orderMobile
+POST http://localhost:5000/api/customers/{{customerId}}/provision
 content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
 	"ContactPhoneNumber" : "00123456789"
 }
+
+###
+@mobileId = {{orderMobile.response.body.$.globalId}}
 
 ### Get the Mobile, so we can get the Order Reference (orderHistory.globalId)
-GET http://localhost:5000/api/mobiles/F435B4A8-98E4-44BF-BB43-F0A3A0CB12AE
+# @name getOrder
+GET http://localhost:5000/api/mobiles/{{mobileId}}
 
-### Step 2 - Mobile Provision Order has been Completed
-POST http://localhost:5001/api/orders/9EF44F47-D0E3-44CC-9426-696FED8F63A2/complete
+###
+@orderId = {{getOrder.response.body.$.orderHistory.$[0].globalId}}
 
-### Step 3 - Activate a Mobile
-POST http://localhost:5000/api/mobiles/F1355242-4B75-4BDA-96B6-674B0B273BAF/activate
+### Step 3 - Mobile Provision Order has been Completed
+POST http://localhost:5001/api/orders/{{orderId}}/complete
+
+### Step 4 - Activate a Mobile
+# @name activateMobile
+POST http://localhost:5000/api/mobiles/{{mobileId}}/activate
 content-type: application/json
 
 {
 	"Name" : "Neil Armstrong",
 	"ContactPhoneNumber" : "00123456789"
 }
+###
+@activateOrderId = {{activateMobile.response.body.$.globalId}}
 
-### Step  4 - Mobile Activate Order has been Completed
-POST http://localhost:5002/api/orders/FBED43AB-CF54-4A65-ABEA-82FCA30FEA2D/complete
+
+### Step  5 - Mobile Activate Order has been Completed
+POST http://localhost:5002/api/orders/{{activateOrderId}}/complete
 
 ###
-### Sceanrio 2. Cease a Mobile
+### Scenario 2. Cease a Mobile
 ###
 
 ### Step 1 - Cease a Mobile
-DELETE http://localhost:5000/api/mobiles/714C0D05-DF75-4FBB-83BA-CE68B943DA0D
+DELETE http://localhost:5000/api/mobiles/{{mobileId}}
+
+### Get the Mobile, so we can get the Order Reference (orderHistory.globalId)
+# @name getCeaseOrder
+GET http://localhost:5000/api/mobiles/{{mobileId}}
+
+###
+@ceaseOrderId = {{getCeaseOrder.response.body.$.orderHistory[?(@.type==2)].globalId}}
 
 ### Step 2 - Cease Order has been Completed
-POST http://localhost:5002/api/orders/AEC96534-179B-4C91-8AA3-C4309B191A7B/complete
+POST http://localhost:5002/api/orders/{{ceaseOrderId}}/complete
+

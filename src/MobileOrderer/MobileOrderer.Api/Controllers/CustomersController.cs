@@ -44,7 +44,7 @@ namespace MobileOrderer.Api.Controllers
         [HttpGet("{id}")]
         public ActionResult<Customer> Get(Guid id)
         {
-            var entity = this.repository.GetById(id);
+            var entity = repository.GetById(id);
 
             if (entity == null)
                 return NotFound();

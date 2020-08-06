@@ -19,13 +19,11 @@ namespace EndToEndApiLevelTests
         public Scenario_Order_a_Mobile_Script()
         {
             Execute().Wait();
-            //await Execute();
         }
 
         private async Task Execute()
         {
             var config = new Config();
-            //var mobilesData = new MobilesData(config.ConnectionString);
             var data = new Data(config);
             var snapshotFactory = new SnapshotFactory(config, data);
 
