@@ -5,11 +5,11 @@ using Utils.Enums;
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
     [Collection("Scenario Order_a_Mobile collection")]
-    public class Step_1_Order_a_Mobile
+    public class Step_2_Order_a_Mobile
     {
         private readonly Scenario_Order_a_Mobile_Script fixture;
 
-        public Step_1_Order_a_Mobile(Scenario_Order_a_Mobile_Script fixture)
+        public Step_2_Order_a_Mobile(Scenario_Order_a_Mobile_Script fixture)
         {
             this.fixture = fixture;
         }
@@ -18,7 +18,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         [Fact]
         public void Execute()
         {
-            var snapshot = fixture.Step_1_Snapshot;
+            var snapshot = fixture.Step_2_Snapshot;
             var enumConverter = new EnumConverter();
             var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingProvisioning);
             var expectedOrderMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Sent);
@@ -27,6 +27,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             var expectedOrder = snapshot.OrderToAdd;
             snapshot.ActualMobile.Should().NotBeNull();
             snapshot.ActualMobile.State.Should().Be(expectedMobileState);
+            snapshot.ActualMobile.CustomerId.Should().Be(snapshot.ActualCustomer.GlobalId);
 
             // Check Mobile Order has been updated
             snapshot.ActualMobileOrder.Should().NotBeNull();

@@ -4,9 +4,8 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
     public class Step_3_Snapshot
     {
-        public OrderDataEntity ActualMobileOrder { get; set; }
         public MobileDataEntity ActualMobile { get; set; }
-        public MobileTelecomsNetwork.EventHandlers.Data.Order ActualMobileTelecomsNetworkOrder { get; set; }
-        public ExternalMobileTelecomsNetwork.Api.Data.Order ActualExternalMobileTelecomsNetworkOrder { get; set; }
+        public SimCards.EventHandlers.Data.SimCardOrder ActualSimCardOrder { get; set; }
+        public OrderDataEntity ActualMobileOrder { get; set; }
     }
 }

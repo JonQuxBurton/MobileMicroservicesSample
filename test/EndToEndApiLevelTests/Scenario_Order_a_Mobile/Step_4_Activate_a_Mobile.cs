@@ -5,11 +5,11 @@ using Utils.Enums;
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
     [Collection("Scenario Order_a_Mobile collection")]
-    public class Step_3_Activate_a_Mobile
+    public class Step_4_Activate_a_Mobile
     {
         private readonly Scenario_Order_a_Mobile_Script fixture;
 
-        public Step_3_Activate_a_Mobile(Scenario_Order_a_Mobile_Script fixture)
+        public Step_4_Activate_a_Mobile(Scenario_Order_a_Mobile_Script fixture)
         {
             this.fixture = fixture;
         }
@@ -18,7 +18,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         [Fact]
         public void Execute()
         {
-            var snapshot = fixture.Step_3_Snapshot;
+            var snapshot = fixture.Step_4_Snapshot;
             var enumConverter = new EnumConverter();
             var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.ProcessingActivation);
 

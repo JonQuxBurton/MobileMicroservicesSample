@@ -15,6 +15,7 @@ namespace EndToEndApiLevelTests
         public Step_2_Snapshot Step_2_Snapshot { get; private set; }
         public Step_3_Snapshot Step_3_Snapshot { get; private set; }
         public Step_4_Snapshot Step_4_Snapshot { get; private set; }
+        public Step_5_Snapshot Step_5_Snapshot { get; private set; }
 
         public Scenario_Order_a_Mobile_Script()
         {
@@ -26,10 +27,26 @@ namespace EndToEndApiLevelTests
             var config = new Config();
             var data = new Data(config);
             var snapshotFactory = new SnapshotFactory(config, data);
-
-            // Step 1 Order a Mobile
             var client = new HttpClient();
-            var url = "http://localhost:5000/api/provisioner";
+
+            // Step 1 Create a Customer
+            var customersUrl = "http://localhost:5000/api/customers";
+
+            var customerToAdd = new MobileOrderer.Api.Resources.CustomerToAdd
+            {
+                Name = "Armstrong Corporation"
+            };
+
+            HttpResponseMessage createCustomerResponse = await client.PostAsJsonAsync(customersUrl, customerToAdd);
+
+            createCustomerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var actualCustomerReturned = await DeserializeResponse<MobileOrderer.Api.Resources.CustomerResource>(createCustomerResponse);
+
+            Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(customerToAdd, actualCustomerReturned);
+
+            // Step 2 Order a Mobile
+            var url = $"http://localhost:5000/api/customers/{actualCustomerReturned.GlobalId}/provision";
 
             var orderToAdd = new MobileOrderer.Api.Resources.OrderToAdd
             {
@@ -47,20 +64,18 @@ namespace EndToEndApiLevelTests
             var mobileGlobalId = actualMobileReturned.GlobalId;
             var orderAMobileOrderReference = actualMobileOrder.GlobalId;
 
-            // Take Step 1 Snapshot
-            Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(orderToAdd, mobileGlobalId, orderAMobileOrderReference);
+            Step_2_Snapshot = snapshotFactory.Take_Step_2_Snapshot(orderToAdd, mobileGlobalId, orderAMobileOrderReference, actualCustomerReturned);
 
-            // Step 2 Complete Mobile Order
+            // Step 3 Complete Mobile Order
             var externalSimCardsProviderUrl = $"http://localhost:5001/api/orders/{orderAMobileOrderReference}/complete";
 
             HttpResponseMessage actualCompleteOrderResponse = await client.PostAsync(externalSimCardsProviderUrl, null);
 
             actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            // Take Step 2 Snapshot
-            Step_2_Snapshot = snapshotFactory.Take_Step_2_Snapshot(mobileGlobalId, orderAMobileOrderReference);
+            Step_3_Snapshot = snapshotFactory.Take_Step_3_Snapshot(mobileGlobalId, orderAMobileOrderReference);
 
-            // Step 3 Activate a Mobile
+            // Step 4 Activate a Mobile
             var activateTheMobileUrl = $"http://localhost:5000/api/mobiles/{mobileGlobalId}/activate";
             var activateTheMobileOrder = new MobileOrderer.Api.Resources.OrderToAdd
             {
@@ -75,10 +90,9 @@ namespace EndToEndApiLevelTests
             var actualActivateOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
             var activateAMobileOrderReference = actualActivateOrderReturned.GlobalId;
 
-            // Take Step 3 Snapshot
-            Step_3_Snapshot = snapshotFactory.Take_Step_3_Snapshot(mobileGlobalId, activateAMobileOrderReference);
+            Step_4_Snapshot = snapshotFactory.Take_Step_4_Snapshot(mobileGlobalId, activateAMobileOrderReference);
 
-            // Step 4 Complete Activate Order
+            // Step 5 Complete Activate Order
             var externalMobileTelecomsNetworkUrl = $"http://localhost:5002/api/orders/{activateAMobileOrderReference}/complete";
 
             HttpResponseMessage actualCompleteActivateOrderResponse = await client.PostAsync(externalMobileTelecomsNetworkUrl, null);
@@ -86,7 +100,7 @@ namespace EndToEndApiLevelTests
             actualCompleteActivateOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Take Step 4 Snapshot
-            Step_4_Snapshot = snapshotFactory.Take_Step_4_Snapshot(mobileGlobalId, activateAMobileOrderReference);
+            Step_5_Snapshot = snapshotFactory.Take_Step_5_Snapshot(mobileGlobalId, activateAMobileOrderReference);
         }
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)

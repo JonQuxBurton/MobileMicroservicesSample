@@ -18,7 +18,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         [Fact]
         public void Execute()
         {
-            var snapshot = fixture.Step_4_Snapshot;
+            var snapshot = fixture.Step_5_Snapshot;
             var enumConverter = new EnumConverter();
             var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.Live);
             var expectedMobileOrderState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Completed);

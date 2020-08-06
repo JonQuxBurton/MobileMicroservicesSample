@@ -1,5 +1,6 @@
 ﻿using EndToEndApiLevelTests.DataAcess;
 using FluentAssertions;
+using MobileOrderer.Api.Resources;
 using System;
 
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
@@ -16,29 +17,39 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             this.data = data;
         }
 
-        public Step_1_Snapshot Take_Step_1_Snapshot(MobileOrderer.Api.Resources.OrderToAdd orderToAdd, Guid mobileGlobalId, Guid orderAMobileOrderReference)
+        public Step_1_Snapshot Take_Step_1_Snapshot(CustomerToAdd customerToAdd, CustomerResource actualCustomerReturned)
+        {
+            return new Step_1_Snapshot
+            {
+                CustomerToAdd = customerToAdd,
+                ActualCustomer = data.MobilesData.GetCustomerByGlobalId(actualCustomerReturned.GlobalId)
+            };
+        }
+
+        public Step_2_Snapshot Take_Step_2_Snapshot(MobileOrderer.Api.Resources.OrderToAdd orderToAdd, Guid mobileGlobalId, Guid orderAMobileOrderReference, CustomerResource actualCustomerReturned)
         {
             // Wait for final action... Mobile ProvisionOrder updated to Sent
             var sentMobileOrder = data.MobilesData.TryGetMobileOrderInState(orderAMobileOrderReference, "Sent", config.FinalActionCheckDelay);
             sentMobileOrder.Should().NotBeNull("Failed to complete Step 1 final action (Mobile ProvisionOrder updated to Sent)");
 
-            return new Step_1_Snapshot
+            return new Step_2_Snapshot
             {
                 OrderToAdd = orderToAdd,
                 ActualMobile = Snapshot(data.MobilesData.GetMobileByGlobalId(mobileGlobalId)),
                 ActualMobileOrder = Snapshot(sentMobileOrder),
                 ActualExternalSimCardOrder = data.ExternalSimCardOrdersData.TryGetExternalSimCardOrder(orderAMobileOrderReference),
-                ActualSimCardOrder = data.SimCardsData.TryGetSimCardOrder(orderAMobileOrderReference)
+                ActualSimCardOrder = data.SimCardsData.TryGetSimCardOrder(orderAMobileOrderReference),
+                ActualCustomer = actualCustomerReturned
             };
         }
 
-        public Step_2_Snapshot Take_Step_2_Snapshot(Guid mobileGlobalId, Guid orderAMobileOrderReference)
+        public Step_3_Snapshot Take_Step_3_Snapshot(Guid mobileGlobalId, Guid orderAMobileOrderReference)
         {
             // Wait for final action... Mobile ProvisionOrder updated to Completed
             var completedMobileOrder = data.MobilesData.TryGetMobileOrderInState(orderAMobileOrderReference, "Completed", config.FinalActionCheckDelay);
             completedMobileOrder.Should().NotBeNull("Failed to complete Step 2 final action (Mobile ProvisionOrder updated to Completed)");
             
-            return new Step_2_Snapshot
+            return new Step_3_Snapshot
             {
                 ActualMobileOrder = Snapshot(completedMobileOrder),
                 ActualMobile = Snapshot(data.MobilesData.GetMobileByGlobalId(mobileGlobalId)),
@@ -46,13 +57,13 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             };
         }
 
-        public Step_3_Snapshot Take_Step_3_Snapshot(Guid mobileGlobalId, Guid activateAMobileOrderReference)
+        public Step_4_Snapshot Take_Step_4_Snapshot(Guid mobileGlobalId, Guid activateAMobileOrderReference)
         {
             // Wait for final action... Mobile ActivateOrder updated to Sent
             var sentMobileOrder = data.MobilesData.TryGetMobileOrderInState(activateAMobileOrderReference, "Sent", config.FinalActionCheckDelay);
             sentMobileOrder.Should().NotBeNull("Failed to complete Step 3 final action (Mobile ActivateOrder updated to sent)");
 
-            return new Step_3_Snapshot
+            return new Step_4_Snapshot
             {
                 ActualMobileOrder = Snapshot(sentMobileOrder),
                 ActualMobile = Snapshot(data.MobilesData.GetMobileByGlobalId(mobileGlobalId)),
@@ -61,13 +72,13 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             };
         }
 
-        public Step_4_Snapshot Take_Step_4_Snapshot(Guid mobileGlobalId, Guid activateAMobileOrderReference)
+        public Step_5_Snapshot Take_Step_5_Snapshot(Guid mobileGlobalId, Guid activateAMobileOrderReference)
         {
             // Wait for final action... Mobile ActivateOrder updated to Completed
             var completedMobileOrder = data.MobilesData.TryGetMobileOrderInState(activateAMobileOrderReference, "Completed", config.FinalActionCheckDelay);
             completedMobileOrder.Should().NotBeNull("Failed to complete Step 4 final action (Mobile ActivateOrder updated to Completed)");
 
-            return new Step_4_Snapshot
+            return new Step_5_Snapshot
             {
                 ActualMobileActivateOrderSnapshot = Snapshot(completedMobileOrder),
                 ActualMobile = Snapshot(data.MobilesData.GetMobileByGlobalId(mobileGlobalId)),

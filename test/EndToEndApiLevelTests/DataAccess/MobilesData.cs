@@ -10,8 +10,8 @@ namespace EndToEndApiLevelTests.DataAcess
 {
     public class MobilesData : Retry
     {
-        private string connectionString;
-        private DbContextOptions<MobilesContext> contextOptions;
+        private readonly string connectionString;
+        private readonly DbContextOptions<MobilesContext> contextOptions;
 
         public MobilesData(string connectionString)
         {
@@ -19,6 +19,27 @@ namespace EndToEndApiLevelTests.DataAcess
             var optionsBuilder = new DbContextOptionsBuilder<MobilesContext>();
             optionsBuilder.UseSqlServer(connectionString);
             contextOptions = optionsBuilder.Options;
+        }
+
+        public Customer GetCustomerByGlobalId(Guid globalId)
+        {
+            using var mobilesContext = new MobilesContext(contextOptions);
+            var sql = $"select * from MobileOrderer.Customers where GlobalId=@globalId";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var dbRow = conn.QueryFirstOrDefault(sql, new { globalId });
+
+                if (dbRow == null)
+                    return null;
+
+                var customer = new Customer
+                {
+                    GlobalId = dbRow.GlobalId,
+                    Name = dbRow.Name
+                };
+                return customer;
+            }
         }
 
         public bool CreateMobile(Guid globalId, string state)
