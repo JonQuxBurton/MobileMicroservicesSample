@@ -2,6 +2,7 @@
 using ExternalSimCardsProvider.Api.Data;
 using ExternalSimCardsProvider.Api.Resources;
 using System;
+using ExternalSimCardsProvider.Api.Domain;
 
 namespace ExternalSimCardsProvider.Api.Controllers
 {
@@ -10,10 +11,12 @@ namespace ExternalSimCardsProvider.Api.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrdersDataStore ordersDataStore;
+        private readonly IActivationCodeGenerator activationCodeGenerator;
 
-        public OrdersController(IOrdersDataStore ordersDataStore)
+        public OrdersController(IOrdersDataStore ordersDataStore, IActivationCodeGenerator activationCodeGenerator)
         {
             this.ordersDataStore = ordersDataStore;
+            this.activationCodeGenerator = activationCodeGenerator;
         }
 
         [HttpGet("status")]
@@ -34,7 +37,7 @@ namespace ExternalSimCardsProvider.Api.Controllers
 
             using (this.ordersDataStore.BeginTransaction())
             {
-                this.ordersDataStore.Add(order);
+                ordersDataStore.Add(order);
             }
 
             return new OkResult();
@@ -61,10 +64,25 @@ namespace ExternalSimCardsProvider.Api.Controllers
 
             using (this.ordersDataStore.BeginTransaction())
             {
+                order.ActivationCode = activationCodeGenerator.Generate();
                 this.ordersDataStore.Complete(order);
             }
 
             return new OkObjectResult(order);
+        }
+
+        [HttpGet("{reference}/activationcode")]
+        public IActionResult GetActivationCode(Guid reference)
+        {
+            var order = this.ordersDataStore.GetByReference(reference);
+
+            if (order == null)
+                return NotFound();
+
+            if (order.ActivationCode == null)
+                return NoContent();
+
+            return new OkObjectResult(order.ActivationCode);
         }
     }
 }

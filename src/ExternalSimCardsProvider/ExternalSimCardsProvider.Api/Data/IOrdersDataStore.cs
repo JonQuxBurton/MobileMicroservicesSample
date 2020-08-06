@@ -10,5 +10,6 @@ namespace ExternalSimCardsProvider.Api.Data
 
         Order GetByReference(Guid globalId);
         ITransaction BeginTransaction();
+        int GetMaxId();
     }
 }

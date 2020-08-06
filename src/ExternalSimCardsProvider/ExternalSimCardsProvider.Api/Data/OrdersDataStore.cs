@@ -46,6 +46,7 @@ namespace ExternalSimCardsProvider.Api.Data
                     {
                         Reference= dbOrder.Reference,
                         Status = dbOrder.Status,
+                        ActivationCode = dbOrder.ActivationCode,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
                     };
@@ -53,6 +54,14 @@ namespace ExternalSimCardsProvider.Api.Data
 
                 return order;
             }
+        }
+
+        public int GetMaxId()
+        {
+            var sql = $"select max(id) from {SchemaName}.{OrdersTableName}";
+
+            using var conn = new SqlConnection(connectionString);
+            return conn.ExecuteScalar<int>(sql, this.currentTransaction.Get());
         }
 
         public void Add(Order order)
@@ -63,8 +72,8 @@ namespace ExternalSimCardsProvider.Api.Data
 
         public void Complete(Order order)
         {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where Reference=@Reference";
-            this.connection.Execute(sql, new { Reference = order.Reference.ToString() }, this.currentTransaction.Get());
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed', ActivationCode=@ActivationCode where Reference=@Reference";
+            this.connection.Execute(sql, new { Reference = order.Reference.ToString(), order.ActivationCode }, this.currentTransaction.Get());
         }
     }
 }

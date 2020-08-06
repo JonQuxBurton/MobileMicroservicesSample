@@ -7,6 +7,7 @@ using Serilog;
 using ExternalSimCardsProvider.Api.Configuration;
 using ExternalSimCardsProvider.Api.Data;
 using System.Diagnostics.CodeAnalysis;
+using ExternalSimCardsProvider.Api.Domain;
 
 namespace ExternalSimCardsProvider.Api
 {
@@ -36,6 +37,8 @@ namespace ExternalSimCardsProvider.Api
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddSingleton<IOrdersDataStore, OrdersDataStore>();
+            services.AddSingleton<IRandomCharCodesGenerator, RandomCharCodesGenerator>();
+            services.AddSingleton<IActivationCodeGenerator, ActivationCodeGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

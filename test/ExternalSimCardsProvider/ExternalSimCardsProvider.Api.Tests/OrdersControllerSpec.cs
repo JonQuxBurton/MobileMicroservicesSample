@@ -7,6 +7,7 @@ using ExternalSimCardsProvider.Api.Data;
 using ExternalSimCardsProvider.Api.Resources;
 using System;
 using Xunit;
+using ExternalSimCardsProvider.Api.Domain;
 
 namespace ExternalSimCardsProvider.Api.Tests
 {
@@ -17,8 +18,9 @@ namespace ExternalSimCardsProvider.Api.Tests
             public StatusShould()
             {
                 ordersDataStoreMock = new Mock<IOrdersDataStore>();
+                var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
 
-                sut = new OrdersController(ordersDataStoreMock.Object);
+                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
             }
 
             private readonly OrdersController sut;
@@ -49,7 +51,9 @@ namespace ExternalSimCardsProvider.Api.Tests
                 var ordersDataStoreMock = new Mock<IOrdersDataStore>();
                 ordersDataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
                     .Returns(expectedOrder);
-                sut = new OrdersController(ordersDataStoreMock.Object);
+                var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
+
+                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
             }
 
             [Fact]
@@ -90,8 +94,9 @@ namespace ExternalSimCardsProvider.Api.Tests
                 ordersDataStoreMock = new Mock<IOrdersDataStore>();
                 ordersDataStoreMock.Setup(x => x.BeginTransaction())
                     .Returns(transactionMock.Object);
+                var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
 
-                sut = new OrdersController(ordersDataStoreMock.Object);
+                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
             }
 
             [Fact]
@@ -119,6 +124,63 @@ namespace ExternalSimCardsProvider.Api.Tests
 
                 ordersDataStoreMock.Verify(x => x.Add(It.Is<Order>(y => y.Reference == expectedOrder.Reference && y.Status == "New")));
                 transactionMock.Verify(x => x.Dispose());
+            }
+        }
+
+        public class GetActivationCodeShould
+        {
+            private readonly Order expectedOrder;
+            private readonly OrdersController sut;
+
+            public GetActivationCodeShould()
+            {
+                expectedOrder = new Order
+                {
+                    Id = 101,
+                    Reference = Guid.NewGuid(),
+                    Status = "Processing",
+                    ActivationCode = "BAC132"
+                };
+                var ordersDataStoreMock = new Mock<IOrdersDataStore>();
+                ordersDataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
+                    .Returns(expectedOrder);
+                var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
+                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
+            }
+
+            [Fact]
+            public void ReturnOkObjectResult()
+            {
+                var actual = sut.GetActivationCode(expectedOrder.Reference);
+
+                actual.Should().BeOfType<OkObjectResult>();
+            }
+
+            [Fact]
+            public void ReturnActivationCode()
+            {
+                var actualActionResult = sut.GetActivationCode(expectedOrder.Reference);
+
+                var actual = actualActionResult.As<OkObjectResult>().Value;
+                actual.Should().Be(expectedOrder.ActivationCode);
+            }
+
+            [Fact]
+            public void ReturnNoContentWhenNoActivationCode()
+            {
+                expectedOrder.ActivationCode = null;
+
+                var actual = sut.GetActivationCode(expectedOrder.Reference);
+
+                actual.Should().BeOfType<NoContentResult>();
+            }
+
+            [Fact]
+            public void ReturnNotFoundWhenOrderNotFound()
+            {
+                var actual = sut.GetActivationCode(Guid.Empty);
+
+                actual.Should().BeOfType<NotFoundResult>();
             }
         }
     }
