@@ -44,10 +44,12 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public bool CreateMobile(Guid globalId, string state)
         {
+            var dummyCustomerId = Guid.NewGuid();
+
             using (var connection = new SqlConnection(connectionString))
             {
-                var sql = $"insert into MobileOrderer.Mobiles (GlobalId, State) values (@globalId, @state)";
-                connection.Execute(sql, new { globalId, state });
+                var sql = $"insert into MobileOrderer.Mobiles (GlobalId, State, CustomerId) values (@globalId, @state, @customerId)";
+                connection.Execute(sql, new { globalId, state, customerId = dummyCustomerId });
             }
 
             return true;
