@@ -114,8 +114,7 @@ CREATE TABLE [MobileTelecomsNetwork].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[Name] [nvarchar](100) NULL,
-	[Status] [nvarchar](100) NOT NULL,
-	[ActivationCode] [nvarchar](50) NULL
+	[Status] [nvarchar](100) NOT NULL
 )
 GO
 
