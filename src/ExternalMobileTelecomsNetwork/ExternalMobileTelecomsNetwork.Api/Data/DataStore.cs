@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DapperDataAccess;
 using ExternalMobileTelecomsNetwork.Api.Configuration;
+using ExternalMobileTelecomsNetwork.Api.Resources;
 using Microsoft.Extensions.Options;
 using System;
 using System.Data.Common;
@@ -77,5 +78,12 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
             var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status) values (@Reference, @Type, @Status)";
             connection.Execute(sql, new { reference, type, status }, currentTransaction.Get());
         }
+
+        public void AddActivationCode(ActivationCodeToAdd activationCodeToAdd)
+        {
+            var sql = $"insert into {SchemaName}.ActivationCodes (Reference, ActivationCode) values (@Reference, @ActivationCode)";
+            connection.Execute(sql, new { activationCodeToAdd.Reference, activationCodeToAdd.ActivationCode }, currentTransaction.Get());
+        }
+
     }
 }

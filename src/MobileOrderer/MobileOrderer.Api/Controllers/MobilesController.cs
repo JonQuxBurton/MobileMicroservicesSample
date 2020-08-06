@@ -38,7 +38,7 @@ namespace MobileOrderer.Api.Controllers
         }
 
         [HttpPost("{id}/activate")]
-        public IActionResult Activate(Guid id, [FromBody] OrderToAdd orderToAdd)
+        public IActionResult Activate(Guid id, [FromBody] ActivateRequest activateRequest)
         {
             var mobile = this.mobileRepository.GetById(id);
 
@@ -48,13 +48,12 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
             }
 
-            var newStateName = new EnumConverter().ToName<Order.State>(Order.State.New);
-            var orderType = new EnumConverter().ToName<Order.OrderType>(Order.OrderType.Activate);
+            var newStateName = Order.State.New.ToString();
+            var orderType = Order.OrderType.Activate.ToString();
             var dataEntity = new OrderDataEntity()
             {
                 GlobalId = this.guidCreator.Create(),
-                Name = orderToAdd.Name,
-                ContactPhoneNumber = orderToAdd.ContactPhoneNumber,
+                ActivationCode = activateRequest.ActivationCode,
                 State = newStateName,
                 Type = orderType
             };
@@ -88,8 +87,8 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
             }
 
-            var newStateName = new EnumConverter().ToName<Order.State>(Order.State.New);
-            var orderType = new EnumConverter().ToName<Order.OrderType>(Order.OrderType.Cease);
+            var newStateName = Order.State.New.ToString();
+            var orderType = Order.OrderType.Cease.ToString();
             var dataEntity = new OrderDataEntity()
             {
                 GlobalId = this.guidCreator.Create(),

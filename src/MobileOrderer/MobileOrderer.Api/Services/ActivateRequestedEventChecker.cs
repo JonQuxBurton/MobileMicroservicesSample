@@ -1,10 +1,8 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using MobileOrderer.Api.Data;
 using MobileOrderer.Api.Domain;
 using MobileOrderer.Api.Messages;
-using System;
 using Utils.DomainDrivenDesign;
 
 namespace MobileOrderer.Api.Services
@@ -53,8 +51,7 @@ namespace MobileOrderer.Api.Services
             messagePublisher.PublishAsync(new ActivateRequestedMessage
             {
                 MobileOrderId = order.GlobalId,
-                Name = order.Name,
-                ContactPhoneNumber = order.ContactPhoneNumber
+                ActivationCode = order.ActivationCode
             });
         }
     }

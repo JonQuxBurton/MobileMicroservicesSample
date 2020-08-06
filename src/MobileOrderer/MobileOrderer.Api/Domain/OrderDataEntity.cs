@@ -17,5 +17,6 @@ namespace MobileOrderer.Api.Domain
 
         public int MobileId { get; set; }
         public MobileDataEntity Mobile { get; set; }
+        public string ActivationCode { get; set; }
     }
 }

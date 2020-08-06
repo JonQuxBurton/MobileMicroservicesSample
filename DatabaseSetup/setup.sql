@@ -44,6 +44,7 @@ CREATE TABLE [MobileOrderer].[Orders](
 	[UpdatedAt] datetime,
 	[Name] [nvarchar](100) NULL,
 	[ContactPhoneNumber] [nvarchar](50) NULL,
+	[ActivationCode] [nvarchar](50) NULL,
 	[State] [nvarchar](100) NOT NULL,
 	[Type] [nvarchar](100) NOT NULL,
 	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [MobileOrderer].[Mobiles](Id)
@@ -113,7 +114,16 @@ CREATE TABLE [MobileTelecomsNetwork].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[Name] [nvarchar](100) NULL,
-	[Status] [nvarchar](100) NOT NULL
+	[Status] [nvarchar](100) NOT NULL,
+	[ActivationCode] [nvarchar](50) NULL
+)
+GO
+
+CREATE TABLE [MobileTelecomsNetwork].[ActivationCodes](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY,
+	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[Reference] [uniqueidentifier] NOT NULL,
+	[ActivationCode] [nvarchar](50) NULL
 )
 GO
 

@@ -3,6 +3,8 @@ using ExternalSimCardsProvider.Api.Data;
 using ExternalSimCardsProvider.Api.Resources;
 using System;
 using ExternalSimCardsProvider.Api.Domain;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ExternalSimCardsProvider.Api.Controllers
 {
@@ -12,11 +14,15 @@ namespace ExternalSimCardsProvider.Api.Controllers
     {
         private readonly IOrdersDataStore ordersDataStore;
         private readonly IActivationCodeGenerator activationCodeGenerator;
+        private readonly IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService;
 
-        public OrdersController(IOrdersDataStore ordersDataStore, IActivationCodeGenerator activationCodeGenerator)
+        public OrdersController(IOrdersDataStore ordersDataStore, 
+            IActivationCodeGenerator activationCodeGenerator,
+            IExternalMobileTelecomsNetworkService externalMobileTelecomsNetworkService)
         {
             this.ordersDataStore = ordersDataStore;
             this.activationCodeGenerator = activationCodeGenerator;
+            this.externalMobileTelecomsNetworkService = externalMobileTelecomsNetworkService;
         }
 
         [HttpGet("status")]
@@ -35,7 +41,7 @@ namespace ExternalSimCardsProvider.Api.Controllers
                 Status = "New"
             };
 
-            using (this.ordersDataStore.BeginTransaction())
+            using (ordersDataStore.BeginTransaction())
             {
                 ordersDataStore.Add(order);
             }
@@ -46,7 +52,7 @@ namespace ExternalSimCardsProvider.Api.Controllers
         [HttpGet("{reference}")]
         public IActionResult Get(Guid reference)
         {
-            var order = this.ordersDataStore.GetByReference(reference);
+            var order = ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
@@ -55,17 +61,24 @@ namespace ExternalSimCardsProvider.Api.Controllers
         }
 
         [HttpPost("{reference}/complete")]
-        public IActionResult Complete(Guid reference)
+        public async Task<IActionResult> Complete(Guid reference)
         {
             var order = this.ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
 
-            using (this.ordersDataStore.BeginTransaction())
+            var activationCode = activationCodeGenerator.Generate();
+
+            var result = await externalMobileTelecomsNetworkService.PostActivationCode(reference, activationCode);
+
+            if (!result)
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+
+            using (ordersDataStore.BeginTransaction())
             {
                 order.ActivationCode = activationCodeGenerator.Generate();
-                this.ordersDataStore.Complete(order);
+                ordersDataStore.Complete(order);
             }
 
             return new OkObjectResult(order);

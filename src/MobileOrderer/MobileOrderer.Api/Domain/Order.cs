@@ -49,7 +49,8 @@ namespace MobileOrderer.Api.Domain
         public OrderType Type => enumConverter.ToEnum<OrderType>(this.orderDataEntity.Type);
         public DateTime? CreatedAt => this.orderDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.orderDataEntity.UpdatedAt;
-        
+        public string ActivationCode => this.orderDataEntity.ActivationCode;
+
         public OrderDataEntity GetDataEntity()
         {
             return this.orderDataEntity;

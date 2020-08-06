@@ -83,7 +83,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             private readonly Mock<IMonitoring> monitoringMock;
             private readonly Mobile expectedMobile;
             private readonly Guid expectedGlobalId;
-            private readonly OrderToAdd expectedOrder;
+            private readonly ActivateRequest expectedActivateRequest;
 
             public ActivateShould()
             {
@@ -92,10 +92,9 @@ namespace MobileOrderer.Api.Tests.Controllers
                     State = "WaitingForActivation"
                 }, null);
                 expectedGlobalId = Guid.NewGuid();
-                expectedOrder = new OrderToAdd()
+                expectedActivateRequest = new ActivateRequest()
                 {
-                    Name = "Neil Armstrong",
-                    ContactPhoneNumber = "0123456789"
+                    ActivationCode = "BAS132"
                 };
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
@@ -113,18 +112,17 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void ActivateTheMobile()
             {
-                sut.Activate(expectedGlobalId, expectedOrder);
+                sut.Activate(expectedGlobalId, expectedActivateRequest);
 
                 expectedMobile.CurrentState.Should().Be(State.ProcessingActivation);
                 expectedMobile.InFlightOrder.GlobalId.Should().Be(expectedGlobalId);
-                expectedMobile.InFlightOrder.Name.Should().Be(expectedOrder.Name);
-                expectedMobile.InFlightOrder.ContactPhoneNumber.Should().Be(expectedOrder.ContactPhoneNumber);
+                expectedMobile.InFlightOrder.ActivationCode.Should().Be(expectedActivateRequest.ActivationCode);
             }
 
             [Fact]
             public void UpdatesTheMobileInTheRepository()
             {
-                sut.Activate(expectedGlobalId, expectedOrder);
+                sut.Activate(expectedGlobalId, expectedActivateRequest);
 
                 this.mobileRepositoryMock.Verify(x => x.Update(expectedMobile));
             }
@@ -132,7 +130,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Activate(expectedGlobalId, new OrderToAdd());
+                var actual = sut.Activate(expectedGlobalId, new ActivateRequest());
 
                 actual.Should().BeOfType<OkObjectResult>();
             }
@@ -146,7 +144,7 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 guidCreatorMock.Setup(x => x.Create()).Returns(notFoundGlobalId);
 
-                var actual = sut.Activate(notFoundGlobalId, new OrderToAdd());
+                var actual = sut.Activate(notFoundGlobalId, new ActivateRequest());
 
                 actual.Should().BeOfType<NotFoundResult>();
             }

@@ -41,7 +41,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     dataStore.Add(new Order
                     {
-                        Name = receivedEvent.Name,
+                        ActivationCode = receivedEvent.ActivatationCode,
                         MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New",
                         Type = "Activate",
