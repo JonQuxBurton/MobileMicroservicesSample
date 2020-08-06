@@ -36,7 +36,7 @@ $ docker-compose up
 
 ## Walkthrough
 
-Walkthrough the system by executing the scenarios described in the Manual testing section, see Executing the Tests - [3. API level Manual Tests](#3._API_level_Manual_Tests)
+You can walkthrough the system by executing the scenarios described in the Manual testing section below, see Executing the Tests - [3. API level Manual Tests](#3-api-level-manual-tests-1)
 
 ## Testing Strategy
 
@@ -123,7 +123,7 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 1. Activate a Mobile
 1. Activate Order Completed
 
-#### 1. Create a Mobile
+#### 1. Create a Customer
 Inputs:
 * POST Customer to the Mobile Orderer Web Service
 
