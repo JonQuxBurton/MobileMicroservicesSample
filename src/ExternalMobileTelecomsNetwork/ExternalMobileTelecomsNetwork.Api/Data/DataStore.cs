@@ -82,14 +82,9 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
 
         public bool InsertActivationCode(ActivationCode activationCode)
         {
-            var id = connection.Insert(
-                new ActivationCode
-                {
-                    Reference = activationCode.Reference,
-                    Code = activationCode.Code
-                });
-
-            return id > 0;
+            var sql = $"insert into {SchemaName}.ActivationCodes (Reference, Code) values (@Reference, @Code)";
+            var rows = connection.Execute(sql, new { activationCode.Reference, activationCode.Code}, currentTransaction.Get());
+            return rows > 0;
         }
 
         public bool UpdateActivationCode(ActivationCode existing)
@@ -100,7 +95,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
                 Reference = existing.Reference,
                 Code = existing.Code,
                 UpdatedAt = DateTime.Now
-            });
+            }, currentTransaction.Get());
         }
 
         public ActivationCode GetActivationCode(Guid reference)

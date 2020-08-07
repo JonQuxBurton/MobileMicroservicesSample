@@ -91,7 +91,7 @@ CREATE TABLE [ExternalSimCardsProvider].[Orders](
 	[UpdatedAt] datetime,
 	[Reference] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](100) NOT NULL,
-	[ActivationCode] [nvarchar](100) NULL
+	[ActivationCode] [nvarchar](50) NULL
 )
 GO
 
@@ -118,15 +118,6 @@ CREATE TABLE [MobileTelecomsNetwork].[Orders](
 )
 GO
 
-CREATE TABLE [MobileTelecomsNetwork].[ActivationCodes](
-	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
-	[UpdatedAt] datetime,
-	[Reference] [uniqueidentifier] NOT NULL,
-	[Code] [nvarchar](50) NULL
-)
-GO
-
 /*----------*/
 
 CREATE SCHEMA [ExternalMobileTelecomsNetwork]
@@ -146,6 +137,15 @@ CREATE TABLE [ExternalMobileTelecomsNetwork].[Orders](
 	[Reference] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](100) NOT NULL,
 	[Type]  [nvarchar](100) NOT NULL
+)
+GO
+
+CREATE TABLE [ExternalMobileTelecomsNetwork].[ActivationCodes](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[UpdatedAt] datetime,
+	[Reference] [uniqueidentifier] NOT NULL,
+	[Code] [nvarchar](50) NULL
 )
 GO
 

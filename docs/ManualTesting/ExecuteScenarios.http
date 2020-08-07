@@ -36,7 +36,10 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 @orderId = {{getOrder.response.body.$.orderHistory.$[0].globalId}}
 
 ### Step 3 - Mobile Provision Order has been Completed
+# @name completeProvision
 POST http://localhost:5001/api/orders/{{orderId}}/complete
+
+@activationCode = {{completeProvision.response.body.$.activationCode}}
 
 ### Step 4 - Activate a Mobile
 # @name activateMobile
@@ -44,8 +47,7 @@ POST http://localhost:5000/api/mobiles/{{mobileId}}/activate
 content-type: application/json
 
 {
-	"Name" : "Neil Armstrong",
-	"ContactPhoneNumber" : "00123456789"
+	"ActivationCode" : "{{activationCode}}"
 }
 ###
 @activateOrderId = {{activateMobile.response.body.$.globalId}}

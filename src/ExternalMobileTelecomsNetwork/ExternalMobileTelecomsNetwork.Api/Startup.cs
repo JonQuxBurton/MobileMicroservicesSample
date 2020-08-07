@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
+using Utils.DateTimes;
 
 namespace ExternalMobileTelecomsNetwork.Api
 {
@@ -28,6 +29,7 @@ namespace ExternalMobileTelecomsNetwork.Api
 
             services.Configure<Config>(options => Configuration.GetSection("Config").Bind(options));
             services.AddScoped<IDataStore, DataStore>();
+            services.AddSingleton<IDateTimeCreator, DateTimeCreator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
