@@ -15,16 +15,21 @@ namespace ExternalSimCardsProvider.Api.Tests
     {
         public class StatusShould
         {
+            private readonly OrdersController sut;
+            private readonly Mock<IOrdersDataStore> ordersDataStoreMock;
+            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkService;
+
             public StatusShould()
             {
                 ordersDataStoreMock = new Mock<IOrdersDataStore>();
                 var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
+                externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
 
-                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
+                sut = new OrdersController(ordersDataStoreMock.Object, 
+                    activationCodeGeneratorMock.Object,
+                    externalMobileTelecomsNetworkService.Object);
             }
 
-            private readonly OrdersController sut;
-            private readonly Mock<IOrdersDataStore> ordersDataStoreMock;
 
             [Fact]
             public void ReturnOk()
@@ -39,6 +44,7 @@ namespace ExternalSimCardsProvider.Api.Tests
         {
             private readonly Order expectedOrder;
             private readonly OrdersController sut;
+            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkService;
 
             public GetShould()
             {
@@ -52,8 +58,11 @@ namespace ExternalSimCardsProvider.Api.Tests
                 ordersDataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
                     .Returns(expectedOrder);
                 var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
+                externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
 
-                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
+                sut = new OrdersController(ordersDataStoreMock.Object, 
+                    activationCodeGeneratorMock.Object,
+                    externalMobileTelecomsNetworkService.Object);
             }
 
             [Fact]
@@ -87,6 +96,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             private readonly OrdersController sut;
             private readonly Mock<IOrdersDataStore> ordersDataStoreMock;
             private readonly Mock<ITransaction> transactionMock;
+            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkService;
 
             public CreateShould()
             {
@@ -95,8 +105,11 @@ namespace ExternalSimCardsProvider.Api.Tests
                 ordersDataStoreMock.Setup(x => x.BeginTransaction())
                     .Returns(transactionMock.Object);
                 var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
+                externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
 
-                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
+                sut = new OrdersController(ordersDataStoreMock.Object, 
+                    activationCodeGeneratorMock.Object,
+                    externalMobileTelecomsNetworkService.Object);
             }
 
             [Fact]
@@ -131,6 +144,7 @@ namespace ExternalSimCardsProvider.Api.Tests
         {
             private readonly Order expectedOrder;
             private readonly OrdersController sut;
+            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkService;
 
             public GetActivationCodeShould()
             {
@@ -145,7 +159,11 @@ namespace ExternalSimCardsProvider.Api.Tests
                 ordersDataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
                     .Returns(expectedOrder);
                 var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
-                sut = new OrdersController(ordersDataStoreMock.Object, activationCodeGeneratorMock.Object);
+                externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
+
+                sut = new OrdersController(ordersDataStoreMock.Object, 
+                    activationCodeGeneratorMock.Object,
+                    externalMobileTelecomsNetworkService.Object);
             }
 
             [Fact]

@@ -29,7 +29,8 @@ namespace MobileOrderer.Api.Tests.Services
                     State = Mobile.State.ProcessingActivation.ToString()
                 }, new Order(new OrderDataEntity
                 {
-                    State = Order.State.New.ToString()
+                    State = Order.State.New.ToString(),
+                    ActivationCode = "BAC132"
                 }));
 
                 getNewActivationsQueryMock = new Mock<IGetNewActivatesQuery>();
@@ -73,8 +74,7 @@ namespace MobileOrderer.Api.Tests.Services
 
                 messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ActivateRequestedMessage>(
                     y => y.MobileOrderId == expectedMobile.InFlightOrder.GlobalId &&
-                            y.Name == expectedMobile.InFlightOrder.Name &&
-                            y.ContactPhoneNumber == expectedMobile.InFlightOrder.ContactPhoneNumber)));
+                            y.ActivationCode == expectedMobile.InFlightOrder.ActivationCode)));
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using DapperDataAccess;
 using ExternalMobileTelecomsNetwork.Api.Configuration;
 using ExternalMobileTelecomsNetwork.Api.Resources;
@@ -79,10 +80,49 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
             connection.Execute(sql, new { reference, type, status }, currentTransaction.Get());
         }
 
-        public void AddActivationCode(ActivationCodeToAdd activationCodeToAdd)
+        public bool InsertActivationCode(ActivationCode activationCode)
         {
-            var sql = $"insert into {SchemaName}.ActivationCodes (Reference, ActivationCode) values (@Reference, @ActivationCode)";
-            connection.Execute(sql, new { activationCodeToAdd.Reference, activationCodeToAdd.ActivationCode }, currentTransaction.Get());
+            var id = connection.Insert(
+                new ActivationCode
+                {
+                    Reference = activationCode.Reference,
+                    Code = activationCode.Code
+                });
+
+            return id > 0;
+        }
+
+        public bool UpdateActivationCode(ActivationCode existing)
+        {
+            return connection.Update(new ActivationCode
+            {
+                Id = existing.Id,
+                Reference = existing.Reference,
+                Code = existing.Code,
+                UpdatedAt = DateTime.Now
+            });
+        }
+
+        public ActivationCode GetActivationCode(Guid reference)
+        {
+            var sql = $"select * from {SchemaName}.ActivationCodes where Reference=@reference";
+            var dbEntities = connection.Query(sql, new { reference }, currentTransaction.Get());
+            var dbEntity = dbEntities.FirstOrDefault();
+
+            ActivationCode entity = null;
+
+            if (dbEntity != null)
+            {
+                entity = new ActivationCode
+                {
+                    Reference = dbEntity.Reference,
+                    CreatedAt = dbEntity.CreatedAt,
+                    UpdatedAt = dbEntity.UpdatedAt,
+                    Code = dbEntity.Code
+                };
+            }
+
+            return entity;
         }
 
     }

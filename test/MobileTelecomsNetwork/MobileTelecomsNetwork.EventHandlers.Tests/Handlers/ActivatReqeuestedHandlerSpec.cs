@@ -29,9 +29,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             {
                 inputMessage = new ActivateRequestedMessage
                 {
-                    Name = "Neil Armstrong",
-                    ContactPhoneNumber = "012345678",
-                    MobileOrderId = Guid.NewGuid()
+                    MobileOrderId = Guid.NewGuid(),
+                    ActivatationCode = "BAC132"
                 };
                 expectedExternalServiceOrder = new ExternalMobileTelecomsNetworkOrder
                 {

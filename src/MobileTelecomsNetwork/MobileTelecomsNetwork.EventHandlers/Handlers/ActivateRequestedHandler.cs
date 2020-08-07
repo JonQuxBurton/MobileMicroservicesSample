@@ -33,7 +33,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         public async Task<bool> Handle(ActivateRequestedMessage receivedEvent)
         {
             var eventName = receivedEvent.GetType().Name;
-            logger.LogInformation("Received event [{eventName}] with Name={Name}, ContactPhoneNumber={ContactPhoneNumber}", eventName, receivedEvent.Name, receivedEvent.ContactPhoneNumber);
+            logger.LogInformation("Received event [{eventName}] with MobileOrderId={}", eventName, receivedEvent.MobileOrderId);
 
             try
             {

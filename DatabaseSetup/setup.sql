@@ -121,8 +121,9 @@ GO
 CREATE TABLE [MobileTelecomsNetwork].[ActivationCodes](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
+	[UpdatedAt] datetime,
 	[Reference] [uniqueidentifier] NOT NULL,
-	[ActivationCode] [nvarchar](50) NULL
+	[Code] [nvarchar](50) NULL
 )
 GO
 
