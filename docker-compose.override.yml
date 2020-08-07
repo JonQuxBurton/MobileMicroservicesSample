@@ -33,7 +33,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=ExternalSimCardsProviderWebService;Password=ExternalSimCardsProvider@123
-      - Config:ExternalSimCardsProviderApiUrl=http://externalsimcardsprovider.api
+      - Config:ExternalMobileTelecomsNetworkApiUrl=http://externalmobiletelecomsnetwork.api
     ports:
       - "5001:80"
       
