@@ -13,7 +13,7 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Controllers
 {
-    public static class CustomersControllerSpec
+    namespace CustomersControllerSpec
     {
         public class GetShould
         {
@@ -53,22 +53,6 @@ namespace MobileOrderer.Api.Tests.Controllers
                 actual.Result.Should().BeOfType<OkObjectResult>();
             }
 
-            [Fact]
-            public void ReturnCustomer()
-            {
-                var actual = sut.Get(expected.GlobalId);
-
-                var actualResult = actual.Result as OkObjectResult;
-                actualResult.Value.Should().Be(expected);
-            }
-
-            [Fact]
-            public void ReturnNotFound()
-            {
-                var actual = sut.Get(Guid.NewGuid());
-
-                actual.Result.Should().BeOfType<NotFoundResult>();
-            }
         }
 
         public class GetAllShould
@@ -118,7 +102,7 @@ namespace MobileOrderer.Api.Tests.Controllers
 
                 var actualResult = actualActionResult.Result as OkObjectResult;
                 var actual = actualResult.Value as Customer[];
-                
+
                 actual.Should().Equal(expected);
             }
         }
@@ -204,7 +188,7 @@ namespace MobileOrderer.Api.Tests.Controllers
             {
                 customerRepositoryMock = new Mock<ICustomerRepository>();
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-                
+
                 guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
 
@@ -213,7 +197,7 @@ namespace MobileOrderer.Api.Tests.Controllers
                 var loggingMock = new Mock<ILogger<CustomersController>>();
 
                 expectedCustomer = new Customer
-                { 
+                {
                     Name = "Armstrong Corporation",
                     GlobalId = Guid.NewGuid()
                 };

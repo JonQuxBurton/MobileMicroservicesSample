@@ -36,8 +36,9 @@ namespace ExternalSimCardsProvider.Api.Controllers
         {
             var order = new Order
             {
+                PhoneNumber = orderToAdd.PhoneNumber,
                 Name = orderToAdd.Name,
-                Reference = orderToAdd.Reference,
+                MobileReference = orderToAdd.MobileReference,
                 Status = "New"
             };
 
@@ -49,10 +50,10 @@ namespace ExternalSimCardsProvider.Api.Controllers
             return new OkResult();
         }
 
-        [HttpGet("{reference}")]
-        public IActionResult Get(Guid reference)
+        [HttpGet("{mobileReference}")]
+        public IActionResult Get(Guid mobileReference)
         {
-            var order = ordersDataStore.GetByReference(reference);
+            var order = ordersDataStore.GetByMobileReference(mobileReference);
 
             if (order == null)
                 return NotFound();
@@ -60,34 +61,34 @@ namespace ExternalSimCardsProvider.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpPost("{reference}/complete")]
-        public async Task<IActionResult> Complete(Guid reference)
+        [HttpPost("{mobileReference}/complete")]
+        public async Task<IActionResult> Complete(Guid mobileReference)
         {
-            var order = this.ordersDataStore.GetByReference(reference);
+            var order = this.ordersDataStore.GetByMobileReference(mobileReference);
 
             if (order == null)
                 return NotFound();
 
             var activationCode = activationCodeGenerator.Generate();
 
-            var result = await externalMobileTelecomsNetworkService.PostActivationCode(reference, activationCode);
+            var result = await externalMobileTelecomsNetworkService.PostActivationCode(order.PhoneNumber, activationCode);
 
             if (!result)
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
 
             using (ordersDataStore.BeginTransaction())
             {
-                order.ActivationCode = activationCodeGenerator.Generate();
+                order.ActivationCode = activationCode;
                 ordersDataStore.Complete(order);
             }
 
             return new OkObjectResult(order);
         }
 
-        [HttpGet("{reference}/activationcode")]
-        public IActionResult GetActivationCode(Guid reference)
+        [HttpGet("{mobileReference}/activationcode")]
+        public IActionResult GetActivationCode(Guid mobileReference)
         {
-            var order = this.ordersDataStore.GetByReference(reference);
+            var order = this.ordersDataStore.GetByMobileReference(mobileReference);
 
             if (order == null)
                 return NotFound();

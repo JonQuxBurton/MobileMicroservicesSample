@@ -36,7 +36,7 @@ namespace SimCards.EventHandlers.Tests.Domain
                 expectedOrder = new ExternalSimCardOrder
                 {
                     Name = "Neil Armstrong",
-                    Reference = Guid.NewGuid()
+                    PhoneNumber = "07930123456"
                 };
                 handlerMock = new Mock<DelegatingHandler>();
                 handlerMock.Protected()
@@ -50,8 +50,6 @@ namespace SimCards.EventHandlers.Tests.Domain
                     }
                     ));
                 httpClient = new HttpClient(handlerMock.Object);
-
-
             }
 
             [Fact]

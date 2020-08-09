@@ -29,9 +29,9 @@ namespace ExternalSimCardsProvider.Api.Data
             return this.currentTransaction;
         }
 
-        public Order GetByReference(Guid reference)
+        public Order GetByMobileReference(Guid reference)
         {
-            var sql = $"select * from {SchemaName}.{OrdersTableName} where Reference=@reference";
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileReference=@reference";
 
             using (var conn = new SqlConnection(connectionString))
             {
@@ -44,7 +44,8 @@ namespace ExternalSimCardsProvider.Api.Data
                 {
                     order = new Order
                     {
-                        Reference= dbOrder.Reference,
+                        PhoneNumber = dbOrder.PhoneNumber,
+                        MobileReference= dbOrder.MobileReference,
                         Status = dbOrder.Status,
                         ActivationCode = dbOrder.ActivationCode,
                         CreatedAt = dbOrder.CreatedAt,
@@ -61,19 +62,19 @@ namespace ExternalSimCardsProvider.Api.Data
             var sql = $"select max(id) from {SchemaName}.{OrdersTableName}";
 
             using var conn = new SqlConnection(connectionString);
-            return conn.ExecuteScalar<int>(sql, this.currentTransaction.Get());
+            return conn.ExecuteScalar<int>(sql);
         }
 
         public void Add(Order order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Status) values (@Reference, @Status)";
-            this.connection.Execute(sql, new { order.Reference, order.Status }, this.currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(PhoneNumber, MobileReference, Status) values (@PhoneNumber, @MobileReference, @Status)";
+            this.connection.Execute(sql, new { order.PhoneNumber, order.MobileReference, order.Status }, this.currentTransaction.Get());
         }
 
         public void Complete(Order order)
         {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed', ActivationCode=@ActivationCode where Reference=@Reference";
-            this.connection.Execute(sql, new { Reference = order.Reference.ToString(), order.ActivationCode }, this.currentTransaction.Get());
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed', ActivationCode=@ActivationCode where MobileReference=@MobileReference";
+            this.connection.Execute(sql, new { MobileReference = order.MobileReference.ToString(), order.ActivationCode }, this.currentTransaction.Get());
         }
     }
 }

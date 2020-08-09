@@ -6,7 +6,11 @@ namespace EndToEndApiLevelTests
     {
         public Config()
         {
-            ConnectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
+            // Running against Docker stack
+            //ConnectionString = "Server=localhost,5433;Database=Mobile;User Id=SA;Password=Pass@word";
+            
+            // Running against Localdev
+            ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Mobile;Integrated Security=True";
             FinalActionCheckDelay = TimeSpan.FromSeconds(10);
         }
 

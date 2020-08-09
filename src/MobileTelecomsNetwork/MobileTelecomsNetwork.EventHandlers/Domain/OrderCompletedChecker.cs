@@ -38,7 +38,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 
         public async Task Check(Order sentOrder)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileId}");
             var client = clientFactory.CreateClient();
 
             var response = await client.SendAsync(request);

@@ -26,12 +26,12 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
 
                 expected = new ActivationCodeToAdd
                 {
-                    Reference = Guid.NewGuid(),
+                    PhoneNumber = "07930123456",
                     ActivationCode = "BAC132"
                 };
                 dataStoreMock = new Mock<IDataStore>();
                 dataStoreMock.Setup(x => x.InsertActivationCode(
-                        It.Is<ActivationCode>(y => y.Reference == expected.Reference
+                        It.Is<ActivationCode>(y => y.PhoneNumber == expected.PhoneNumber
                                                    && y.Code == expected.ActivationCode)))
                              .Returns(true);
 
@@ -80,22 +80,22 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                 dateTimeCreatorMock = new Mock<IDateTimeCreator>();
                 expected = new ActivationCodeToAdd
                 {
-                    Reference = Guid.NewGuid(),
+                    PhoneNumber = "07930123456",
                     ActivationCode = "BAC132"
                 };
                 var existing = new ActivationCode
                 {
                     Id = 101,
-                    Reference = expected.Reference,
+                    PhoneNumber = "07930123456",
                     Code = "ABC0405"
                 };
                 var expectedDateTime = new DateTime(2001, 5, 4);
                 dataStoreMock = new Mock<IDataStore>();
-                dataStoreMock.Setup(x => x.GetActivationCode(expected.Reference))
+                dataStoreMock.Setup(x => x.GetActivationCode(expected.PhoneNumber))
                     .Returns(existing);
                 dataStoreMock.Setup(x => x.UpdateActivationCode(
                         It.Is<ActivationCode>(y => y.Id == existing.Id &&
-                        y.Reference == expected.Reference &&
+                        y.PhoneNumber == expected.PhoneNumber &&
                         y.Code == expected.ActivationCode &&
                         y.UpdatedAt == expectedDateTime)))
                              .Returns(true);
@@ -127,10 +127,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                 var existing = new ActivationCode
                 {
                     Id = 101,
-                    Reference = expected.Reference,
+                    PhoneNumber = expected.PhoneNumber,
                     Code = "ABC0405"
                 };
-                dataStoreMock.Setup(x => x.GetActivationCode(expected.Reference))
+                dataStoreMock.Setup(x => x.GetActivationCode(expected.PhoneNumber))
                     .Returns(existing);
                 dataStoreMock.Setup(x => x.UpdateActivationCode(
                         It.IsAny<ActivationCode>()))

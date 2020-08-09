@@ -41,6 +41,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     dataStore.Add(new Order
                     {
+                        MobileId = receivedEvent.MobileId,
+                        PhoneNumber = receivedEvent.PhoneNumber,
                         ActivationCode = receivedEvent.ActivatationCode,
                         MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New",
@@ -52,7 +54,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
                     {
-                        Reference = receivedEvent.MobileOrderId
+                        PhoneNumber = receivedEvent.PhoneNumber,
+                        MobileReference = receivedEvent.MobileId
                     });
 
                     if (!result)

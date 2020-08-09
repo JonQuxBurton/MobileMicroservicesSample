@@ -21,10 +21,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             {
                 expectedOrder = new Order
                 {
-                    Reference = Guid.NewGuid()
+                    MobileReference = Guid.NewGuid()
                 };
                 dataStoreMock = new Mock<IDataStore>();
-                dataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
+                dataStoreMock.Setup(x => x.GetByReference(expectedOrder.MobileReference))
                     .Returns(expectedOrder);
                 sut = new OrdersController(dataStoreMock.Object);
             }
@@ -32,7 +32,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Get(expectedOrder.Reference);
+                var actual = sut.Get(expectedOrder.MobileReference);
 
                 actual.Result.Should().BeOfType<OkObjectResult>();
             }
@@ -40,7 +40,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void ReturnExpectedOrder()
             {
-                var actual = sut.Get(expectedOrder.Reference);
+                var actual = sut.Get(expectedOrder.MobileReference);
 
                 var actualResult = actual.Result as OkObjectResult;
                 actualResult.Value.Should().Be(expectedOrder);
@@ -67,7 +67,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             {
                 expectedOrderToAdd = new OrderToAdd()
                 {
-                    Reference = Guid.NewGuid()
+                    MobileReference = Guid.NewGuid()
                 };
                 dataStoreMock = new Mock<IDataStore>();
                 
@@ -81,7 +81,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(It.Is<Order>(
-                    y => y.Reference == expectedOrderToAdd.Reference &&
+                    y => y.MobileReference == expectedOrderToAdd.MobileReference &&
                     y.Type == "Provision" &&
                     y.Status == "New"
                 )));

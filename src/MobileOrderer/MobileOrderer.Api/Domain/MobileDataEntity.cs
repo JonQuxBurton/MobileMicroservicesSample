@@ -14,6 +14,7 @@ namespace MobileOrderer.Api.Domain
         public Guid CustomerId { get; set; }
 
         public string State { get; set; }
+        public string PhoneNumber{ get; set; }
 
         public List<OrderDataEntity> Orders { get; set; }
 

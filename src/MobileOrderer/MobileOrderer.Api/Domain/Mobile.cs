@@ -15,6 +15,7 @@ namespace MobileOrderer.Api.Domain
         public override int Id { get => this.mobileDataEntity.Id; protected set => base.Id = value; }
         public Guid GlobalId => this.mobileDataEntity.GlobalId;
         public Guid CustomerId => this.mobileDataEntity.CustomerId;
+        public string PhoneNumber => this.mobileDataEntity.PhoneNumber;
         public DateTime? CreatedAt => this.mobileDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.mobileDataEntity.UpdatedAt;
         public Order InFlightOrder { get; private set; }

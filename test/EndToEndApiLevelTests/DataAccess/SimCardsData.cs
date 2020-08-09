@@ -17,14 +17,14 @@ namespace EndToEndApiLevelTests.DataAcess
             simCardOrdersDataStore = new SimCardOrdersDataStore(options);
         }
 
-        public SimCardOrder TryGetSimCardOrder(Guid mobileOrderId)
+        public SimCardOrder TryGetSimCardOrder(Guid mobileId, Guid mobileOrderId)
         {
-            return TryGet(() => GetSimCardOrder(mobileOrderId));
+            return TryGet(() => GetSimCardOrder(mobileId, mobileOrderId));
         }
 
-        public SimCardOrder GetSimCardOrder(Guid mobileOrderId)
+        public SimCardOrder GetSimCardOrder(Guid mobileId, Guid mobileOrderId)
         {
-            return simCardOrdersDataStore.GetExisting(mobileOrderId);
+            return simCardOrdersDataStore.GetExisting(mobileId, mobileOrderId);
         }
     }
 }

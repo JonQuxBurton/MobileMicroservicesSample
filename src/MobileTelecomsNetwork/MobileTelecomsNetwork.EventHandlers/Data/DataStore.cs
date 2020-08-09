@@ -30,8 +30,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 
         public void Add(Order order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status, Type) values (@Name, @MobileOrderId, @Status, @Type)";
-            connection.Execute(sql, new { order.Name, order.MobileOrderId, order.Status, order.Type }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, PhoneNumber, MobileId, MobileOrderId, Status, Type) values (@Name, @PhoneNumber, @MobileId, @MobileOrderId, @Status, @Type)";
+            connection.Execute(sql, new { order.Name, order.PhoneNumber, order.MobileId, order.MobileOrderId, order.Status, order.Type }, currentTransaction.Get());
         }
 
         public void Sent(Guid mobileOrderId)
@@ -59,6 +59,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
                 {
                     orders.Add(new Order
                     {
+                        MobileId = dbOrder.MobileId,
                         MobileOrderId = dbOrder.MobileOrderId,
                         Name = dbOrder.Name,
                         Status = dbOrder.Status,

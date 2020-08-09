@@ -1,19 +1,18 @@
 ﻿using DapperDataAccess;
-using ExternalMobileTelecomsNetwork.Api.Resources;
 using System;
 
 namespace ExternalMobileTelecomsNetwork.Api.Data
 {
     public interface IDataStore
     {
-        Order GetByReference(Guid reference);
         void Add(Order order);
         ITransaction BeginTransaction();
-        void Cease(Guid reference);
-        void Complete(Guid reference);
+        void Complete(Guid mobileReference);
 
-        ActivationCode GetActivationCode(Guid reference);
+        ActivationCode GetActivationCode(string phoneNumber);
         bool UpdateActivationCode(ActivationCode existing);
         bool InsertActivationCode(ActivationCode activationCode);
+        void Cease(Guid mobileReference, string phoneNumber);
+        Order GetByReference(Guid mobileReference, string status = "New");
     }
 }

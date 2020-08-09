@@ -27,7 +27,8 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
         {
             var order = new Order
             {
-                Reference = orderToAdd.Reference,
+                PhoneNumber = orderToAdd.PhoneNumber,
+                MobileReference = orderToAdd.MobileReference,
                 Type = "Provision",
                 Status = "New"
             };
@@ -40,10 +41,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             return new OkResult();
         }
 
-        [HttpGet("{reference}")]
-        public ActionResult<Order> Get(Guid reference)
+        [HttpGet("{mobileReference}")]
+        public ActionResult<Order> Get(Guid mobileReference)
         {
-            var order = dataStore.GetByReference(reference);
+            var order = dataStore.GetByReference(mobileReference);
 
             if (order == null)
                 return NotFound();
@@ -51,28 +52,28 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpPost("{reference}/complete")]
-        public IActionResult Complete(Guid reference)
+        [HttpPost("{mobileReference}/complete")]
+        public IActionResult Complete(Guid mobileReference)
         {
-            var order = dataStore.GetByReference(reference);
+            var order = dataStore.GetByReference(mobileReference);
 
             if (order == null)
                 return NotFound();
 
             using (dataStore.BeginTransaction())
             {
-                dataStore.Complete(reference);
+                dataStore.Complete(mobileReference);
             }
 
             return Ok();
         }
 
-        [HttpDelete("{reference}")]
-        public IActionResult Cease(Guid reference)
+        [HttpDelete("{phoneNumber}/{mobileReference}")]
+        public IActionResult Cease(string phoneNumber, Guid mobileReference)
         {
             using (dataStore.BeginTransaction())
             {
-                dataStore.Cease(reference);
+                dataStore.Cease(mobileReference, phoneNumber);
             }
 
             return new NoContentResult();

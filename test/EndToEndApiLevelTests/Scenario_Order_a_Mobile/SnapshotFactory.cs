@@ -38,7 +38,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
                 ActualMobile = Snapshot(data.MobilesData.GetMobileByGlobalId(mobileGlobalId)),
                 ActualMobileOrder = Snapshot(sentMobileOrder),
                 ActualExternalSimCardOrder = data.ExternalSimCardOrdersData.TryGetExternalSimCardOrder(orderAMobileOrderReference),
-                ActualSimCardOrder = data.SimCardsData.TryGetSimCardOrder(orderAMobileOrderReference),
+                ActualSimCardOrder = data.SimCardsData.TryGetSimCardOrder(mobileGlobalId, orderAMobileOrderReference),
                 ActualCustomer = actualCustomerReturned
             };
         }
@@ -53,7 +53,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             {
                 ActualMobileOrder = Snapshot(completedMobileOrder),
                 ActualMobile = Snapshot(data.MobilesData.GetMobileByGlobalId(mobileGlobalId)),
-                ActualSimCardOrder = Snapshot(data.SimCardsData.TryGetSimCardOrder(orderAMobileOrderReference))
+                ActualSimCardOrder = Snapshot(data.SimCardsData.TryGetSimCardOrder(mobileGlobalId, orderAMobileOrderReference))
             };
         }
 

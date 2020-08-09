@@ -7,7 +7,7 @@ namespace SimCards.EventHandlers.Data
     public interface ISimCardOrdersDataStore
     {
         void Add(SimCardOrder order);
-        SimCardOrder GetExisting(Guid mobileOrderId);
+        SimCardOrder GetExisting(Guid mobileId, Guid mobileOrderId);
         IEnumerable<SimCardOrder> GetSent();
 
         ITransaction BeginTransaction();

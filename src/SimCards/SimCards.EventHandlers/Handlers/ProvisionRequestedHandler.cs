@@ -12,16 +12,16 @@ namespace SimCards.EventHandlers.Handlers
     {
         private readonly ILogger<ProvisionRequestedHandler> logger;
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
-        private readonly IExternalSimCardsProviderService simCardWholesaleService;
+        private readonly IExternalSimCardsProviderService externalSimCardsProvider;
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, IExternalSimCardsProviderService simCardWholesaleService,
+        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, IExternalSimCardsProviderService externalSimCardsProvider,
             IMessagePublisher messagePublisher, IMonitoring monitoring)
         {
             this.logger = logger;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
-            this.simCardWholesaleService = simCardWholesaleService;
+            this.externalSimCardsProvider = externalSimCardsProvider;
             this.messagePublisher = messagePublisher;
             this.monitoring = monitoring;
         }
@@ -33,7 +33,7 @@ namespace SimCards.EventHandlers.Handlers
 
             try
             {
-                var existingOrder = simCardOrdersDataStore.GetExisting(receivedEvent.MobileOrderId);
+                var existingOrder = simCardOrdersDataStore.GetExisting(receivedEvent.MobileId, receivedEvent.MobileOrderId);
 
                 if (existingOrder != null)
                 {
@@ -44,7 +44,9 @@ namespace SimCards.EventHandlers.Handlers
                 {
                     simCardOrdersDataStore.Add(new SimCardOrder()
                     {
+                        PhoneNumber = receivedEvent.PhoneNumber,
                         Name = receivedEvent.Name,
+                        MobileId = receivedEvent.MobileId,
                         MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New"
                     });
@@ -52,9 +54,10 @@ namespace SimCards.EventHandlers.Handlers
 
                 using (var tx = simCardOrdersDataStore.BeginTransaction())
                 {
-                    var result = await simCardWholesaleService.PostOrder(new ExternalSimCardOrder
+                    var result = await externalSimCardsProvider.PostOrder(new ExternalSimCardOrder
                     {
-                        Reference = receivedEvent.MobileOrderId,
+                        PhoneNumber = receivedEvent.PhoneNumber,
+                        MobileReference = receivedEvent.MobileId,
                         Name = receivedEvent.Name
                     });
 

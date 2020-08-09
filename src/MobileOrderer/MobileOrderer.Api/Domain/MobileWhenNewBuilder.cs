@@ -14,13 +14,14 @@ namespace MobileOrderer.Api.Domain
         private readonly List<Order> orderHistory = new List<Order>();
         private readonly EnumConverter enumConverter;
         private readonly State initialState = State.New;
+        private readonly string phoneNumber;
 
-        public MobileWhenNewBuilder(Guid globalId, Guid customerId)
+        public MobileWhenNewBuilder(Guid globalId, Guid customerId, string phoneNumber)
         {
             this.globalId = globalId;
             this.customerId = customerId;
             this.enumConverter = new EnumConverter();
-
+            this.phoneNumber = phoneNumber;
         }
 
         public MobileWhenNewBuilder AddInFlightOrder(OrderToAdd order, Guid globalId)
@@ -47,7 +48,8 @@ namespace MobileOrderer.Api.Domain
                 Id = 0,
                 GlobalId = globalId,
                 State = state,
-                CustomerId = customerId
+                CustomerId = customerId,
+                PhoneNumber = phoneNumber
             };
             return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
         }

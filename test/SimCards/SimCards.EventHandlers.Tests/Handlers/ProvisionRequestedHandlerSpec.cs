@@ -29,19 +29,21 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 inputMessage = new ProvisionRequestedMessage
                 {
                     Name = "Neil Armstrong",
+                    MobileId = Guid.NewGuid(),
                     MobileOrderId = Guid.NewGuid()
                 };
 
                 existingSimCardOrder = new SimCardOrder
                 {
                     Name = "Alan Turing",
+                    MobileId = Guid.NewGuid(),
                     MobileOrderId = Guid.NewGuid()
                 };
 
                 transactionMock = new Mock<ITransaction>();
                 dataStoreMock = new Mock<ISimCardOrdersDataStore>();
                 dataStoreMock.Setup(x => x.BeginTransaction()).Returns(transactionMock.Object);
-                dataStoreMock.Setup(x => x.GetExisting(existingSimCardOrder.MobileOrderId)).Returns(existingSimCardOrder);
+                dataStoreMock.Setup(x => x.GetExisting(existingSimCardOrder.MobileId, existingSimCardOrder.MobileOrderId)).Returns(existingSimCardOrder);
 
                 externalSimCardProviderServiceMock = new Mock<IExternalSimCardsProviderService>();
                 var loggerMock = new Mock<ILogger<ProvisionRequestedHandler>>();
@@ -68,10 +70,10 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 var expectedExternalSimCardOrder = new ExternalSimCardOrder
                 {
                     Name = inputMessage.Name,
-                    Reference = inputMessage.MobileOrderId
+                    MobileReference = inputMessage.MobileId,
                 };
                 externalSimCardProviderServiceMock.Setup(x => x.PostOrder(It.Is<ExternalSimCardOrder>(
-                        y => y.Name == expectedExternalSimCardOrder.Name && y.Reference == expectedExternalSimCardOrder.Reference
+                        y => y.Name == expectedExternalSimCardOrder.Name && y.MobileReference == expectedExternalSimCardOrder.MobileReference
                     )))
                     .Returns(Task.FromResult(true));
 
@@ -86,17 +88,18 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 var expectedExternalSimCardOrder = new ExternalSimCardOrder
                 {
                     Name = inputMessage.Name,
-                    Reference = inputMessage.MobileOrderId
+                    MobileReference = inputMessage.MobileId,
                 };
                 externalSimCardProviderServiceMock.Setup(x => x.PostOrder(It.Is<ExternalSimCardOrder>(
-                        y => y.Name == expectedExternalSimCardOrder.Name && y.Reference == expectedExternalSimCardOrder.Reference
+                        y => y.Name == expectedExternalSimCardOrder.Name && y.MobileReference == expectedExternalSimCardOrder.MobileReference
                     )))
                     .Returns(Task.FromResult(true));
 
                 var actual = await sut.Handle(inputMessage);
 
                 dataStoreMock.Verify(x => x.Add(
-                    It.Is<SimCardOrder>(y => y.Name == expectedExternalSimCardOrder.Name && y.MobileOrderId == expectedExternalSimCardOrder.Reference)));
+                    It.Is<SimCardOrder>(y => y.Name == expectedExternalSimCardOrder.Name && 
+                                                        y.MobileId == expectedExternalSimCardOrder.MobileReference)));
                 transactionMock.Verify(x => x.Dispose());
             }
 
@@ -142,7 +145,7 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 var expectedExternalSimCardOrder = new ExternalSimCardOrder
                 {
                     Name = inputMessage.Name,
-                    Reference = inputMessage.MobileOrderId
+                    MobileReference = inputMessage.MobileId,
                 };
                 externalSimCardProviderServiceMock.Setup(x => x.PostOrder(It.IsAny<ExternalSimCardOrder>()))
                     .Returns(Task.FromResult(false));
@@ -158,7 +161,7 @@ namespace SimCards.EventHandlers.Tests.Handlers
                 var expectedExternalSimCardOrder = new ExternalSimCardOrder
                 {
                     Name = inputMessage.Name,
-                    Reference = inputMessage.MobileOrderId
+                    MobileReference = inputMessage.MobileId,
                 };
                 externalSimCardProviderServiceMock.Setup(x => x.PostOrder(It.IsAny<ExternalSimCardOrder>()))
                     .Returns(Task.FromResult(false));

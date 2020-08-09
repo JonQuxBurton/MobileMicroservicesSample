@@ -41,6 +41,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     dataStore.Add(new Order
                     {
+                        PhoneNumber = receivedEvent.PhoneNumber,
+                        MobileId = receivedEvent.MobileId,
                         MobileOrderId = receivedEvent.MobileOrderId,
                         Status = "New",
                         Type = "Cease"
@@ -51,7 +53,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                 {
                     var result = await externalMobileTelecomsNetworkService.PostCease(new ExternalMobileTelecomsNetworkOrder
                     {
-                        Reference = receivedEvent.MobileOrderId
+                        PhoneNumber = receivedEvent.PhoneNumber,
+                        MobileReference = receivedEvent.MobileId
                     });
 
                     if (!result)

@@ -2,7 +2,6 @@
 using ExternalSimCardsProvider.Api.Resources;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -19,11 +18,11 @@ namespace ExternalSimCardsProvider.Api.Domain
             this.httpClient = httpClient;
         }
 
-        public async Task<bool> PostActivationCode(Guid reference, string activationCode)
+        public async Task<bool> PostActivationCode(string phoneNumber, string activationCode)
         {
             var activationCodeToAdd = new ActivationCodeToAdd
             {
-                Reference = reference,
+                PhoneNumber = phoneNumber,
                 ActivationCode = activationCode
             };
             var json = JsonConvert.SerializeObject(activationCodeToAdd);

@@ -27,7 +27,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             var isSuccess = false;
             using (dataStore.BeginTransaction())
             {
-                var existing = dataStore.GetActivationCode(activationCodeToAdd.Reference);
+                var existing = dataStore.GetActivationCode(activationCodeToAdd.PhoneNumber);
 
                 if (existing != null)
                 {
@@ -35,7 +35,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
                         new ActivationCode
                         {
                             Id = existing.Id,
-                            Reference = existing.Reference,
+                            PhoneNumber = existing.PhoneNumber,
                             Code = activationCodeToAdd.ActivationCode,
                             UpdatedAt = dateTimeCreator.Create()
                         });
@@ -45,7 +45,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
                     isSuccess = dataStore.InsertActivationCode(
                         new ActivationCode
                         {
-                            Reference = activationCodeToAdd.Reference,
+                            PhoneNumber = activationCodeToAdd.PhoneNumber,
                             Code = activationCodeToAdd.ActivationCode
                         });
                 }

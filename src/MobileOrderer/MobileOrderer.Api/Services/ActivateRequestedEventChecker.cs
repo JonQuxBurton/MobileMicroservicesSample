@@ -39,17 +39,19 @@ namespace MobileOrderer.Api.Services
 
         private void Execute(Mobile mobile)
         {
-            Publish(mobile.InFlightOrder);
+            Publish(mobile, mobile.InFlightOrder);
             mobile.OrderProcessing();
             mobileRepository.Update(mobile);
         }
 
-        private void Publish(Order order)
+        private void Publish(Mobile mobile, Order order)
         {
             logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}" , typeof(ActivateRequestedMessage).Name, order.GlobalId);
 
             messagePublisher.PublishAsync(new ActivateRequestedMessage
             {
+                MobileId = mobile.GlobalId,
+                PhoneNumber = mobile.PhoneNumber,
                 MobileOrderId = order.GlobalId,
                 ActivationCode = order.ActivationCode
             });

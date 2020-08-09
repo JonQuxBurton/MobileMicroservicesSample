@@ -23,29 +23,31 @@ namespace SimCards.EventHandlers.Data
 
         public ITransaction BeginTransaction()
         {
-            this.connection = new SqlConnection(connectionString);
-            this.currentTransaction = new Transaction(this.connection);
-            return this.currentTransaction;
+            connection = new SqlConnection(connectionString);
+            currentTransaction = new Transaction(connection);
+            return currentTransaction;
         }
 
         public void Add(SimCardOrder order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileOrderId, Status) values (@Name, @MobileOrderId, @Status)";
-            this.connection.Execute( sql, new { order.Name, order.MobileOrderId, order.Status }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileId, MobileOrderId, Status, PhoneNumber) values (@Name, @MobileId, @MobileOrderId, @Status, @PhoneNumber)";
+            this.connection.Execute( sql, new { order.Name, order.MobileId, order.MobileOrderId, order.Status, order.PhoneNumber }, currentTransaction.Get());
         }
 
-        public SimCardOrder GetExisting(Guid mobileOrderId)
+        public SimCardOrder GetExisting(Guid mobileId, Guid mobileOrderId)
         {
-            var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileOrderId=@MobileOrderId";
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileId=@mobileId and MobileOrderId=@mobileOrderId";
 
             using var conn = new SqlConnection(connectionString);
-            var dbOrder = conn.QueryFirstOrDefault(sql, new { MobileOrderId = mobileOrderId.ToString() });
+            var dbOrder = conn.QueryFirstOrDefault(sql, new { mobileId = mobileId.ToString() , mobileOrderId = mobileOrderId.ToString() });
 
             if (dbOrder == null)
                 return null;
 
             return new SimCardOrder
             {
+                PhoneNumber = dbOrder.PhoneNumber,
+                MobileId = dbOrder.MobileId,
                 MobileOrderId = dbOrder.MobileOrderId,
                 Name = dbOrder.Name,
                 Status = dbOrder.Status,
@@ -79,6 +81,8 @@ namespace SimCards.EventHandlers.Data
                 {
                     orders.Add(new SimCardOrder
                     {
+                        PhoneNumber = dbOrder.PhoneNumber,
+                        MobileId = dbOrder.MobileId,
                         MobileOrderId = dbOrder.MobileOrderId,
                         Name = dbOrder.Name,
                         Status = dbOrder.Status,

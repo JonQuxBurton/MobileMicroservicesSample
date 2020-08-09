@@ -78,7 +78,7 @@ content-type: application/json
 }
 
 ### Get an Order
-GET http://localhost:5001/api/orders/6C1622FB-70FB-4A02-89F2-780AF670149E
+GET http://localhost:5001/api/orders/7783E7B1-98F1-4064-853C-D1FE5808CE1B
 
 ### Complete an Order
 POST http://localhost:5001/api/orders/6C1622FB-70FB-4A02-89F2-780AF670149E/complete
@@ -100,7 +100,7 @@ content-type: application/json
 }
 
 ### Get an Order
-GET http://localhost:5002/api/orders/CF94A4CA-7CAD-467B-946C-ED4642280033
+GET http://localhost:5002/api/orders/7783E7B1-98F1-4064-853C-D1FE5808CE1B
 
 ### Complete an Order
 POST http://localhost:5002/api/orders/FDAA0F93-ADAA-4A20-B6D1-48255CE28B3E/complete

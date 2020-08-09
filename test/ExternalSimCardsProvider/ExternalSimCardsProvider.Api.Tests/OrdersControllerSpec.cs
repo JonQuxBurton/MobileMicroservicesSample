@@ -51,11 +51,11 @@ namespace ExternalSimCardsProvider.Api.Tests
                 expectedOrder = new Order
                 {
                     Id = 101,
-                    Reference = Guid.NewGuid(),
+                    MobileReference = Guid.NewGuid(),
                     Status = "Processing"
                 };
                 var ordersDataStoreMock = new Mock<IOrdersDataStore>();
-                ordersDataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
+                ordersDataStoreMock.Setup(x => x.GetByMobileReference(expectedOrder.MobileReference))
                     .Returns(expectedOrder);
                 var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
                 externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
@@ -68,7 +68,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             [Fact]
             public void ReturnOkObjectResult()
             {
-                var actual = sut.Get(expectedOrder.Reference);
+                var actual = sut.Get(expectedOrder.MobileReference);
 
                 actual.Should().BeOfType<OkObjectResult>();
             }
@@ -76,7 +76,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             [Fact]
             public void ReturnOrder()
             {
-                var actual = sut.Get(expectedOrder.Reference);
+                var actual = sut.Get(expectedOrder.MobileReference);
 
                 var actualOrder = actual.As<OkObjectResult>().Value;
                 actualOrder.Should().Be(expectedOrder);
@@ -117,7 +117,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             {
                 var expectedOrder = new OrderToAdd
                 {
-                    Reference = Guid.NewGuid()
+                    MobileReference = Guid.NewGuid()
                 };
 
                 var actual = sut.Create(expectedOrder);
@@ -130,12 +130,12 @@ namespace ExternalSimCardsProvider.Api.Tests
             {
                 var expectedOrder = new OrderToAdd
                 {
-                    Reference = Guid.NewGuid()
+                    MobileReference = Guid.NewGuid()
                 };
 
                 sut.Create(expectedOrder);
 
-                ordersDataStoreMock.Verify(x => x.Add(It.Is<Order>(y => y.Reference == expectedOrder.Reference && y.Status == "New")));
+                ordersDataStoreMock.Verify(x => x.Add(It.Is<Order>(y => y.MobileReference == expectedOrder.MobileReference && y.Status == "New")));
                 transactionMock.Verify(x => x.Dispose());
             }
         }
@@ -151,12 +151,12 @@ namespace ExternalSimCardsProvider.Api.Tests
                 expectedOrder = new Order
                 {
                     Id = 101,
-                    Reference = Guid.NewGuid(),
+                    MobileReference = Guid.NewGuid(),
                     Status = "Processing",
                     ActivationCode = "BAC132"
                 };
                 var ordersDataStoreMock = new Mock<IOrdersDataStore>();
-                ordersDataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
+                ordersDataStoreMock.Setup(x => x.GetByMobileReference(expectedOrder.MobileReference))
                     .Returns(expectedOrder);
                 var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
                 externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
@@ -169,7 +169,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             [Fact]
             public void ReturnOkObjectResult()
             {
-                var actual = sut.GetActivationCode(expectedOrder.Reference);
+                var actual = sut.GetActivationCode(expectedOrder.MobileReference);
 
                 actual.Should().BeOfType<OkObjectResult>();
             }
@@ -177,7 +177,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             [Fact]
             public void ReturnActivationCode()
             {
-                var actualActionResult = sut.GetActivationCode(expectedOrder.Reference);
+                var actualActionResult = sut.GetActivationCode(expectedOrder.MobileReference);
 
                 var actual = actualActionResult.As<OkObjectResult>().Value;
                 actual.Should().Be(expectedOrder.ActivationCode);
@@ -188,7 +188,7 @@ namespace ExternalSimCardsProvider.Api.Tests
             {
                 expectedOrder.ActivationCode = null;
 
-                var actual = sut.GetActivationCode(expectedOrder.Reference);
+                var actual = sut.GetActivationCode(expectedOrder.MobileReference);
 
                 actual.Should().BeOfType<NoContentResult>();
             }
