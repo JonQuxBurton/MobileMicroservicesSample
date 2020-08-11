@@ -8,7 +8,7 @@ namespace ExternalSimCardsProvider.Api.Data
         void Add(Order order);
         void Complete(Order order);
 
-        Order GetByMobileReference(Guid globalId);
+        Order GetByReference(Guid globalId);
         ITransaction BeginTransaction();
         int GetMaxId();
     }

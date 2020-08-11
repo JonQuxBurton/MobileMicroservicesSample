@@ -34,11 +34,11 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 
 ###
 #@phoneNumber = {{getOrder.response.body.$.phoneNumber}}
-@orderId = {{getOrder.response.body.$.orderHistory.$[0].globalId}}
+@provisionOrderId = {{getOrder.response.body.$.orderHistory.$[0].globalId}}
 
 ### Step 3 - Mobile Provision Order has been Completed
 # @name completeProvision
-POST http://localhost:5001/api/orders/{{mobileId}}/complete
+POST http://localhost:5001/api/orders/{{provisionOrderId}}/complete
 
 @activationCode = {{completeProvision.response.body.$.activationCode}}
 
@@ -55,7 +55,7 @@ content-type: application/json
 
 
 ### Step  5 - Mobile Activate Order has been Completed
-POST http://localhost:5002/api/orders/{{mobileId}}/complete
+POST http://localhost:5002/api/orders/{{activateOrderId}}/complete
 
 ###
 ### Scenario 2. Cease a Mobile
@@ -72,5 +72,5 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 @ceaseOrderId = {{getCeaseOrder.response.body.$.orderHistory[?(@.type==2)].globalId}}
 
 ### Step 2 - Cease Order has been Completed
-POST http://localhost:5002/api/orders/{{mobileId}}/complete
+POST http://localhost:5002/api/orders/{{ceaseOrderId}}/complete
 

@@ -111,7 +111,7 @@ CREATE TABLE [ExternalSimCardsProvider].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[PhoneNumber] [nvarchar](50) NOT NULL,
-	[MobileReference] [uniqueidentifier] NOT NULL,
+	[Reference] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](100) NOT NULL,
 	[ActivationCode] [nvarchar](50) NULL
 )
@@ -135,7 +135,7 @@ CREATE TABLE [ExternalMobileTelecomsNetwork].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[PhoneNumber] [nvarchar](50) NOT NULL,
-	[MobileReference] [uniqueidentifier] NOT NULL,
+	[Reference] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](100) NOT NULL,
 	[Type]  [nvarchar](100) NOT NULL
 )

@@ -25,7 +25,7 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public Order GetNewExternalSimCardOrder(Guid reference)
         {
-            var order = ordersDataStore.GetByMobileReference(reference);
+            var order = ordersDataStore.GetByReference(reference);
 
             if (order.Status.Trim() == "New")
                 return order;

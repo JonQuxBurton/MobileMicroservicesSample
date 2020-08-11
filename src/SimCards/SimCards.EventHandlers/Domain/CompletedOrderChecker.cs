@@ -37,7 +37,7 @@ namespace SimCards.EventHandlers.Domain
 
         public async Task Check(SimCardOrder sentOrder)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
             var client = clientFactory.CreateClient();
 
             var response = await client.SendAsync(request);

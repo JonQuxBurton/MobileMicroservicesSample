@@ -38,7 +38,7 @@ namespace ExternalSimCardsProvider.Api.Controllers
             {
                 PhoneNumber = orderToAdd.PhoneNumber,
                 Name = orderToAdd.Name,
-                MobileReference = orderToAdd.MobileReference,
+                Reference = orderToAdd.Reference,
                 Status = "New"
             };
 
@@ -50,10 +50,10 @@ namespace ExternalSimCardsProvider.Api.Controllers
             return new OkResult();
         }
 
-        [HttpGet("{mobileReference}")]
-        public IActionResult Get(Guid mobileReference)
+        [HttpGet("{reference}")]
+        public IActionResult Get(Guid reference)
         {
-            var order = ordersDataStore.GetByMobileReference(mobileReference);
+            var order = ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
@@ -61,10 +61,10 @@ namespace ExternalSimCardsProvider.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpPost("{mobileReference}/complete")]
-        public async Task<IActionResult> Complete(Guid mobileReference)
+        [HttpPost("{reference}/complete")]
+        public async Task<IActionResult> Complete(Guid reference)
         {
-            var order = this.ordersDataStore.GetByMobileReference(mobileReference);
+            var order = this.ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
@@ -85,10 +85,10 @@ namespace ExternalSimCardsProvider.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpGet("{mobileReference}/activationcode")]
-        public IActionResult GetActivationCode(Guid mobileReference)
+        [HttpGet("{reference}/activationcode")]
+        public IActionResult GetActivationCode(Guid reference)
         {
-            var order = this.ordersDataStore.GetByMobileReference(mobileReference);
+            var order = this.ordersDataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();

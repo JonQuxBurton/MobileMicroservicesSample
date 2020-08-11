@@ -21,10 +21,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             {
                 expectedOrder = new Order
                 {
-                    MobileReference = Guid.NewGuid()
+                    Reference = Guid.NewGuid()
                 };
                 dataStoreMock = new Mock<IDataStore>();
-                dataStoreMock.Setup(x => x.GetByReference(expectedOrder.MobileReference))
+                dataStoreMock.Setup(x => x.GetByReference(expectedOrder.Reference))
                     .Returns(expectedOrder);
                 sut = new OrdersController(dataStoreMock.Object);
             }
@@ -32,7 +32,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Get(expectedOrder.MobileReference);
+                var actual = sut.Get(expectedOrder.Reference);
 
                 actual.Result.Should().BeOfType<OkObjectResult>();
             }
@@ -40,7 +40,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void ReturnExpectedOrder()
             {
-                var actual = sut.Get(expectedOrder.MobileReference);
+                var actual = sut.Get(expectedOrder.Reference);
 
                 var actualResult = actual.Result as OkObjectResult;
                 actualResult.Value.Should().Be(expectedOrder);
@@ -67,7 +67,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             {
                 expectedOrderToAdd = new OrderToAdd()
                 {
-                    MobileReference = Guid.NewGuid()
+                    Reference = Guid.NewGuid()
                 };
                 dataStoreMock = new Mock<IDataStore>();
                 
@@ -81,7 +81,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(It.Is<Order>(
-                    y => y.MobileReference == expectedOrderToAdd.MobileReference &&
+                    y => y.Reference == expectedOrderToAdd.Reference &&
                     y.Type == "Provision" &&
                     y.Status == "New"
                 )));
@@ -150,10 +150,12 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             private readonly Mock<IDataStore> dataStoreMock;
             private readonly Order expectedOrder;
             private readonly Guid expectedReference;
+            private readonly string expectedPhoneNumber;
 
             public CeaseShould()
             {
                 expectedReference = Guid.NewGuid();
+                expectedPhoneNumber = "077900123456";
                 expectedOrder = new Order { };
                 dataStoreMock = new Mock<IDataStore>();
                 dataStoreMock.Setup(x => x.GetByReference(expectedReference))
@@ -165,16 +167,16 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
             [Fact]
             public void CreateTheCeaseOrder()
             {
-                sut.Cease(expectedReference);
+                sut.Cease(expectedPhoneNumber , expectedReference);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
-                dataStoreMock.Verify(x => x.Cease( expectedReference));
+                dataStoreMock.Verify(x => x.Cease(expectedPhoneNumber, expectedReference));
             }
 
             [Fact]
             public void ReturnNoContent()
             {
-                var actual = sut.Cease(expectedReference);
+                var actual = sut.Cease(expectedPhoneNumber, expectedReference);
 
                 actual.Should().BeOfType<NoContentResult>();
             }

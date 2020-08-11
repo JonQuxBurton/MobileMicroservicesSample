@@ -38,7 +38,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 
         public async Task Check(Order sentOrder)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{externalApiUrl}/api/orders/{sentOrder.MobileOrderId}");
             var client = clientFactory.CreateClient();
 
             var response = await client.SendAsync(request);
@@ -58,6 +58,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
                     else
                         PublishActivateOrderCompleted(sentOrder.MobileOrderId);
                 }
+            }
+            else
+            {
+                logger.LogWarning("Could not get MobileOrder from External SIM Card service - MobileOrderId {MobileOrderId}, response.StatusCode {StatusCode}", sentOrder.MobileOrderId, response.StatusCode);
             }
         }
 

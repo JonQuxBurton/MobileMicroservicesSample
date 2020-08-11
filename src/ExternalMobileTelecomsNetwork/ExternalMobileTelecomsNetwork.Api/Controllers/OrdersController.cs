@@ -28,7 +28,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             var order = new Order
             {
                 PhoneNumber = orderToAdd.PhoneNumber,
-                MobileReference = orderToAdd.MobileReference,
+                Reference = orderToAdd.Reference,
                 Type = "Provision",
                 Status = "New"
             };
@@ -41,10 +41,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             return new OkResult();
         }
 
-        [HttpGet("{mobileReference}")]
-        public ActionResult<Order> Get(Guid mobileReference)
+        [HttpGet("{reference}")]
+        public ActionResult<Order> Get(Guid reference)
         {
-            var order = dataStore.GetByReference(mobileReference);
+            var order = dataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
@@ -52,17 +52,17 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             return new OkObjectResult(order);
         }
 
-        [HttpPost("{mobileReference}/complete")]
-        public IActionResult Complete(Guid mobileReference)
+        [HttpPost("{reference}/complete")]
+        public IActionResult Complete(Guid reference)
         {
-            var order = dataStore.GetByReference(mobileReference);
+            var order = dataStore.GetByReference(reference);
 
             if (order == null)
                 return NotFound();
 
             using (dataStore.BeginTransaction())
             {
-                dataStore.Complete(mobileReference);
+                dataStore.Complete(reference);
             }
 
             return Ok();
@@ -73,7 +73,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
         {
             using (dataStore.BeginTransaction())
             {
-                dataStore.Cease(mobileReference, phoneNumber);
+                dataStore.Cease(phoneNumber, mobileReference);
             }
 
             return new NoContentResult();

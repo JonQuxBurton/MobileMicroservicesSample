@@ -16,8 +16,11 @@ namespace SimCards.EventHandlers.Handlers
         private readonly IMessagePublisher messagePublisher;
         private readonly IMonitoring monitoring;
 
-        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, ISimCardOrdersDataStore simCardOrdersDataStore, IExternalSimCardsProviderService externalSimCardsProvider,
-            IMessagePublisher messagePublisher, IMonitoring monitoring)
+        public ProvisionRequestedHandler(ILogger<ProvisionRequestedHandler> logger, 
+            ISimCardOrdersDataStore simCardOrdersDataStore, 
+            IExternalSimCardsProviderService externalSimCardsProvider,
+            IMessagePublisher messagePublisher, 
+            IMonitoring monitoring)
         {
             this.logger = logger;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
@@ -57,7 +60,7 @@ namespace SimCards.EventHandlers.Handlers
                     var result = await externalSimCardsProvider.PostOrder(new ExternalSimCardOrder
                     {
                         PhoneNumber = receivedEvent.PhoneNumber,
-                        MobileReference = receivedEvent.MobileId,
+                        Reference = receivedEvent.MobileOrderId,
                         Name = receivedEvent.Name
                     });
 

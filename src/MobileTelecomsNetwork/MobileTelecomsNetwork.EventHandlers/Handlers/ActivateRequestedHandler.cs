@@ -55,7 +55,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
                     {
                         PhoneNumber = receivedEvent.PhoneNumber,
-                        MobileReference = receivedEvent.MobileId
+                        Reference = receivedEvent.MobileOrderId
                     });
 
                     if (!result)

@@ -33,7 +33,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 };
                 expectedExternalServiceOrder = new ExternalMobileTelecomsNetworkOrder
                 {
-                    MobileReference = inputMessage.MobileOrderId
+                    Reference = inputMessage.MobileOrderId
                 };
 
                 transactionMock = new Mock<ITransaction>();
@@ -46,7 +46,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 var monitoringMock = new Mock<IMonitoring>();
 
                 externalMobileTelecomsNetworkServiceMock.Setup(x => x.PostCease(It.Is<ExternalMobileTelecomsNetworkOrder>(
-                    y => y.MobileReference == expectedExternalServiceOrder.MobileReference)))
+                    y => y.Reference == expectedExternalServiceOrder.Reference)))
                         .Returns(Task.FromResult(true));
 
                 sut = new CeaseRequestedHandler(loggerMock.Object, dataStoreMock.Object, externalMobileTelecomsNetworkServiceMock.Object, messagePublisherMock.Object, monitoringMock.Object);
@@ -59,7 +59,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(
-                    It.Is<Order>(y => y.MobileOrderId == expectedExternalServiceOrder.MobileReference &&
+                    It.Is<Order>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
                                                 y.Type == "Cease" &&
                                                 y.Status == "New")));
                 transactionMock.Verify(x => x.Dispose());
@@ -79,7 +79,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 var actual = await sut.Handle(inputMessage);
 
                 dataStoreMock.Verify(x => x.BeginTransaction());
-                dataStoreMock.Verify(x => x.Sent(expectedExternalServiceOrder.MobileReference));
+                dataStoreMock.Verify(x => x.Sent(expectedExternalServiceOrder.Reference));
                 transactionMock.Verify(x => x.Dispose());
             }
 

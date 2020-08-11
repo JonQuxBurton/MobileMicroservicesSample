@@ -30,13 +30,13 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
             return currentTransaction;
         }
 
-        public Order GetByReference(Guid mobileReference, string status="New")
+        public Order GetByReference(Guid reference)
         {
-            var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileReference=@mobileReference and Status=@status";
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where Reference=@reference";
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var dbOrders = conn.Query(sql, new { mobileReference, status });
+                var dbOrders = conn.Query(sql, new { reference });
                 var dbOrder = dbOrders.FirstOrDefault();
 
                 Order order = null;
@@ -45,7 +45,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
                 {
                     order = new Order
                     {
-                        MobileReference = dbOrder.MobileReference,
+                        Reference = dbOrder.Reference,
                         Type = dbOrder.Type,
                         Status = dbOrder.Status,
                         CreatedAt = dbOrder.CreatedAt,
@@ -61,22 +61,22 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
         {
             var type = "Provision";
             var status = "New";
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(MobileReference, Type, Status, PhoneNumber) values (@MobileReference, @Type, @Status, @PhoneNumber)";
-            connection.Execute(sql, new { order.MobileReference, type, status, order.PhoneNumber }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status, PhoneNumber) values (@Reference, @Type, @Status, @PhoneNumber)";
+            connection.Execute(sql, new { order.Reference, type, status, order.PhoneNumber }, currentTransaction.Get());
         }
 
-        public void Complete(Guid mobileReference)
+        public void Complete(Guid reference)
         {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where MobileReference=@MobileReference";
-            connection.Execute(sql, new { mobileReference }, currentTransaction.Get());
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where Reference=@Reference";
+            connection.Execute(sql, new { reference }, currentTransaction.Get());
         }
 
-        public void Cease(Guid mobileReference, string phoneNumber)
+        public void Cease(string phoneNumber, Guid reference)
         {
             var type = "Cease";
             var status = "New";
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(MobileReference, Type, Status, PhoneNumber) values (@MobileReference, @Type, @Status, @PhoneNumber)";
-            connection.Execute(sql, new { mobileReference, type, status, phoneNumber }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status, PhoneNumber) values (@Reference, @Type, @Status, @PhoneNumber)";
+            connection.Execute(sql, new { reference, type, status, phoneNumber }, currentTransaction.Get());
         }
 
         public bool InsertActivationCode(ActivationCode activationCode)
