@@ -87,7 +87,7 @@ namespace MobileOrderer.Api.Controllers
                 return NotFound();
             }
 
-            var mobile = new MobileWhenNewBuilder(this.guidCreator.Create(), id, orderToAdd.PhoneNumber)
+            var mobile = new MobileWhenNewBuilder(this.guidCreator.Create(), id, new PhoneNumber(orderToAdd.PhoneNumber))
                             .AddInFlightOrder(orderToAdd, this.guidCreator.Create())
                             .Build();
             mobileRepository.Add(mobile);

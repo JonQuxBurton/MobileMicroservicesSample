@@ -6,7 +6,7 @@ namespace EndToEndApiLevelTests.DataAcess
 {
     public class ExternalMobileTelecomsNetworkData : Retry
     {
-        private DataStore dataStore;
+        private readonly DataStore dataStore;
 
         public ExternalMobileTelecomsNetworkData(string connectionString)
         {

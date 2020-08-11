@@ -1,5 +1,4 @@
-﻿using MobileTelecomsNetwork.EventHandlers.Data;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace MobileTelecomsNetwork.EventHandlers.Domain
 {

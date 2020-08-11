@@ -48,12 +48,12 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 var externalOrder = await JsonSerializer.DeserializeAsync<ExternalOrder>(responseStream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (externalOrder.Status.Trim() == "Completed")
+                if (externalOrder.Status == OrderStatus.Completed.ToString())
                 {
                     using var tx = dataStore.BeginTransaction();
                     dataStore.Complete(sentOrder.MobileOrderId);
 
-                    if (sentOrder.Type.Trim() == "Cease")
+                    if (sentOrder.Type == OrderType.Cease)
                         PublishCeaseOrderCompleted(sentOrder.MobileOrderId);
                     else
                         PublishActivateOrderCompleted(sentOrder.MobileOrderId);

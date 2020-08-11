@@ -50,6 +50,7 @@ namespace EndToEndApiLevelTests
 
             var orderToAdd = new MobileOrderer.Api.Resources.OrderToAdd
             {
+                PhoneNumber = "0701000001",
                 Name = "Neil Armstrong",
                 ContactPhoneNumber = "0123456789"
             };

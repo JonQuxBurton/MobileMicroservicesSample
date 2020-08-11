@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
 using Dapper;
 using DapperDataAccess;
 using Microsoft.Extensions.Options;
+using MobileTelecomsNetwork.EventHandlers.Domain;
+using Utils.Enums;
 
 namespace MobileTelecomsNetwork.EventHandlers.Data
 {
@@ -13,12 +16,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
         private const string SchemaName = "MobileTelecomsNetwork";
         private const string OrdersTableName = "Orders";
         private readonly string connectionString;
+        private readonly IEnumConverter enumConverter;
         private DbConnection connection;
         private Transaction currentTransaction;
 
-        public DataStore(IOptions<Config> config)
+        public DataStore(IOptions<Config> config, IEnumConverter enumConverter)
         {
             connectionString = config.Value.ConnectionString;
+            this.enumConverter = enumConverter;
         }
 
         public ITransaction BeginTransaction()
@@ -57,13 +62,15 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 
                 foreach (var dbOrder in dbOrders)
                 {
+                    var orderType = enumConverter.ToEnum<OrderType>(dbOrder.ToString().Type.Trim());
+
                     orders.Add(new Order
                     {
                         MobileId = dbOrder.MobileId,
                         MobileOrderId = dbOrder.MobileOrderId,
                         Name = dbOrder.Name,
                         Status = dbOrder.Status,
-                        Type = dbOrder.Type,
+                        Type = orderType,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
                     });

@@ -45,8 +45,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                         PhoneNumber = receivedEvent.PhoneNumber,
                         ActivationCode = receivedEvent.ActivatationCode,
                         MobileOrderId = receivedEvent.MobileOrderId,
-                        Status = "New",
-                        Type = "Activate",
+                        Status = OrderStatus.New,
+                        Type = OrderType.Activate,
                     });
                 }
 

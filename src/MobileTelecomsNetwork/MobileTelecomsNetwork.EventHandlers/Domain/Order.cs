@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace MobileTelecomsNetwork.EventHandlers.Data
+namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class Order
     {
         public string Name { get; set; }
         public Guid MobileOrderId { get; set; }
-        public string Status { get; set; }
-        public string Type { get; set; }
+        public OrderStatus Status { get; set; }
+        public OrderType Type { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string ActivationCode { get; set; }

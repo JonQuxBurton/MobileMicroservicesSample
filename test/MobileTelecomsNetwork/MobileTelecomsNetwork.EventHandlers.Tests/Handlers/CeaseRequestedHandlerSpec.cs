@@ -60,8 +60,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(
                     It.Is<Order>(y => y.MobileOrderId == expectedExternalServiceOrder.Reference &&
-                                                y.Type == "Cease" &&
-                                                y.Status == "New")));
+                                                y.Type == OrderType.Cease &&
+                                                y.Status == OrderStatus.New)));
                 transactionMock.Verify(x => x.Dispose());
             }
 

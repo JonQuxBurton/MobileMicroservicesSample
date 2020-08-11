@@ -13,9 +13,9 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
     {
         public class GetShould
         {
-            private Order expectedOrder;
+            private readonly Order expectedOrder;
             private Mock<IDataStore> dataStoreMock;
-            private OrdersController sut;
+            private readonly OrdersController sut;
 
             public GetShould()
             {

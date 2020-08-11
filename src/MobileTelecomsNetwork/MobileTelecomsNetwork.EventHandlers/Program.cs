@@ -13,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Serilog;
 using Serilog.Formatting.Json;
+using Utils.Enums;
 
 namespace MobileTelecomsNetwork.EventHandlers
 {
@@ -83,6 +84,7 @@ namespace MobileTelecomsNetwork.EventHandlers
             services.AddSingleton<IDataStore, DataStore>();
             services.AddSingleton<IOrderCompletedChecker, OrderCompletedChecker>();
             services.AddSingleton<IMonitoring, Monitoring>();
+            services.AddSingleton<IEnumConverter, EnumConverter>();
 
             services.AddHostedService<MetricsServerHost>();
             services.AddHostedService<EventListenerHostedService>();

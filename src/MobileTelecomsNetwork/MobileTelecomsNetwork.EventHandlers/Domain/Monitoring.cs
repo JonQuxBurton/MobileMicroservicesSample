@@ -4,16 +4,16 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
 {
     public class Monitoring : IMonitoring
     {
-        private Counter activateOrdersSent;
-        private Counter activateOrdersCompleted;
-        private Gauge activateOrdersInProgess;
+        private readonly Counter activateOrdersSent;
+        private readonly Counter activateOrdersCompleted;
+        private readonly Gauge activateOrdersInProgess;
         
-        private Counter ceaseOrdersSent;
-        private Counter ceaseOrdersCompleted;
-        private Gauge ceaseOrdersInProgess;
+        private readonly Counter ceaseOrdersSent;
+        private readonly Counter ceaseOrdersCompleted;
+        private readonly Gauge ceaseOrdersInProgess;
 
-        private Counter activateOrdersFailed;
-        private Counter ceaseOrdersFailed;
+        private readonly Counter activateOrdersFailed;
+        private readonly Counter ceaseOrdersFailed;
 
         public Monitoring()
         {

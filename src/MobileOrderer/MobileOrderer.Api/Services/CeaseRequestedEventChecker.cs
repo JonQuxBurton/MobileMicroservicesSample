@@ -52,7 +52,7 @@ namespace MobileOrderer.Api.Services
 
             messagePublisher.PublishAsync(new CeaseRequestedMessage
             {
-                PhoneNumber = mobile.PhoneNumber,
+                PhoneNumber = mobile.PhoneNumber.ToString(),
                 MobileId = mobile.GlobalId,
                 MobileOrderId = order.GlobalId
             });

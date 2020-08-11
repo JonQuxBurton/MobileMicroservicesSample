@@ -6,6 +6,6 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
     {
         public MobileDataEntity ActualMobile { get; set; }
         public OrderDataEntity ActualMobileActivateOrderSnapshot { get; set; }
-        public MobileTelecomsNetwork.EventHandlers.Data.Order ActualMobileTelecomsNetworkOrderSnapshot { get; set; }
+        public MobileTelecomsNetwork.EventHandlers.Domain.Order ActualMobileTelecomsNetworkOrderSnapshot { get; set; }
     }
 }

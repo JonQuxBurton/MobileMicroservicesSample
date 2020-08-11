@@ -44,8 +44,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                         PhoneNumber = receivedEvent.PhoneNumber,
                         MobileId = receivedEvent.MobileId,
                         MobileOrderId = receivedEvent.MobileOrderId,
-                        Status = "New",
-                        Type = "Cease"
+                        Status = OrderStatus.New,
+                        Type = OrderType.Cease
                     });
                 }
 

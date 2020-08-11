@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using Dapper;
-using MobileTelecomsNetwork.EventHandlers.Data;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 
 namespace EndToEndApiLevelTests.DataAcess
 {

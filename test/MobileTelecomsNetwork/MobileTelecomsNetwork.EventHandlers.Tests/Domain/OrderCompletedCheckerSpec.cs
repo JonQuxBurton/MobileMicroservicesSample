@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Utils.Enums;
 using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.Domain
@@ -27,13 +28,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Domain
             {
                 ExternalMobileTelecomsNetworkApiUrl = "http://api:5000"
             };
+            var enumConverter = new EnumConverter();
             var expectedOrder = new Order()
             {
                 MobileOrderId = Guid.NewGuid(),
-                Type = orderType
+                Type = enumConverter.ToEnum<OrderType>(orderType)
             };
             var expectedUrl = new Uri($"{config.ExternalMobileTelecomsNetworkApiUrl}/api/orders/{expectedOrder.MobileOrderId}");
-            var externalOrder = new ExternalOrder
+            var externalOrder = new EventHandlers.Domain.ExternalOrder
             {
                 Name = "Neil Armstrong",
                 Status = "Completed"

@@ -51,7 +51,7 @@ namespace MobileOrderer.Api.Services
 
             messagePublisher.PublishAsync(new ProvisionRequestedMessage
             {
-                PhoneNumber = mobile.PhoneNumber,
+                PhoneNumber = mobile.PhoneNumber.ToString(),
                 MobileId = mobile.GlobalId,
                 MobileOrderId = order.GlobalId,
                 Name = order.Name,

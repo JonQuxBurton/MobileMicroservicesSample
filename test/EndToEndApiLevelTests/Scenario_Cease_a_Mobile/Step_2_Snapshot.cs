@@ -7,6 +7,6 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
         public MobileDataEntity ActualMobile { get; set; }
         public OrderDataEntity ActualMobileOrder { get; set; }
 
-        public MobileTelecomsNetwork.EventHandlers.Data.Order ActualMobileTelecomsNetworkOrder { get; set; }
+        public MobileTelecomsNetwork.EventHandlers.Domain.Order ActualMobileTelecomsNetworkOrder { get; set; }
     }
 }
