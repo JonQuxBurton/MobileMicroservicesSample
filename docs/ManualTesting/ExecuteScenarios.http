@@ -14,6 +14,7 @@ content-type: application/json
 
 ###
 @customerId = {{createCustomer.response.body.$.globalId}}
+@phoneNumber = "07777000001"
 
 ### Step 2 - Order a Mobile
 # @name orderMobile
@@ -21,6 +22,7 @@ POST http://localhost:5000/api/customers/{{customerId}}/provision
 content-type: application/json
 
 {
+	"PhoneNumber": {{phoneNumber}},
 	"Name" : "Neil Armstrong",
 	"ContactPhoneNumber" : "00123456789"
 }

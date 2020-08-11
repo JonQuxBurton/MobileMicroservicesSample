@@ -42,6 +42,7 @@ POST http://localhost:5000/api/customers/a4ba8933-5754-44d8-9068-b2b698af3d6f/pr
 content-type: application/json
 
 {
+	"PhoneNumber": "07777000001",
 	"Name" : "Neil Armstrong",
 	"ContactPhoneNumber" : "00123456789"
 }
