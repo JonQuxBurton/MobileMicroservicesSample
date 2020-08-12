@@ -74,14 +74,16 @@ namespace EndToEndApiLevelTests
 
             actualCompleteOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
+            // Gather needed data
+            var actualExternalSimCardOrder = await DeserializeResponse<ExternalSimCardsProvider.Api.Data.Order>(actualCompleteOrderResponse);
+
             Step_3_Snapshot = snapshotFactory.Take_Step_3_Snapshot(mobileGlobalId, orderAMobileOrderReference);
 
             // Step 4 Activate a Mobile
             var activateTheMobileUrl = $"http://localhost:5000/api/mobiles/{mobileGlobalId}/activate";
-            var activateTheMobileOrder = new MobileOrderer.Api.Resources.OrderToAdd
+            var activateTheMobileOrder = new MobileOrderer.Api.Resources.ActivateRequest
             {
-                Name = "Neil Armstrong",
-                ContactPhoneNumber = "0123456789"
+                ActivationCode = actualExternalSimCardOrder.ActivationCode
             };
 
             HttpResponseMessage actualActivateTheMobileResponse = await client.PostAsJsonAsync(activateTheMobileUrl, activateTheMobileOrder);
