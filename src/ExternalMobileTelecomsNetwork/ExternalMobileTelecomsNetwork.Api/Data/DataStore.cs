@@ -88,13 +88,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
 
         public bool UpdateActivationCode(ActivationCode existing)
         {
-            return connection.Update(new ActivationCode
-            {
-                Id = existing.Id,
-                PhoneNumber = existing.PhoneNumber,
-                Code = existing.Code,
-                UpdatedAt = DateTime.Now
-            }, currentTransaction.Get());
+            var sql = $"update {SchemaName}.ActivationCodes set Code=@code, UpdatedAt=@updatedAt where PhoneNumber=@phoneNumber";
+            var rows = connection.Execute(sql, new { existing.Code, existing.UpdatedAt, phoneNumber = existing.PhoneNumber }, currentTransaction.Get());
+
+            return rows > 0;
         }
 
         public ActivationCode GetActivationCode(string phoneNumber)

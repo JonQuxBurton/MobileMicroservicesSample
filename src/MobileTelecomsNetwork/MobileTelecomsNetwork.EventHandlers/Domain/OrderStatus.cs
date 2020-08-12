@@ -2,7 +2,8 @@
 {
     public enum OrderStatus
     {
-        New, 
+        New,
+        Sent,
         Completed
     }
 }

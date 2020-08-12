@@ -4,6 +4,7 @@ using System.Net.Http;
 using System;
 using System.Threading.Tasks;
 using EndToEndApiLevelTests.DataAcess;
+using MobileOrderer.Api.Domain;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
@@ -23,8 +24,9 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
             var data = new Data(config);
             var snapshotFactory = new SnapshotFactory(config, data);
 
+            var phoneNumber = new PhoneNumber("09001000001");
             var mobileGlobalId = Guid.NewGuid();
-            data.MobilesData.CreateMobile(mobileGlobalId, "Live");
+            data.MobilesData.CreateMobile(phoneNumber, mobileGlobalId, "Live");
             var mobileWhichIsLive = data.MobilesData.GetMobileByGlobalId(mobileGlobalId);
 
             // Step 1 - Cease a Mobile

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 using Utils.Enums;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
@@ -33,7 +34,7 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 
             // Check MobileTelecomsNetwork Order has been updated
             snapshot.ActualMobileTelecomsNetworkOrder.Should().NotBeNull();
-            snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be("Completed");
+            snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be(OrderStatus.Completed);
         }
     }
 }

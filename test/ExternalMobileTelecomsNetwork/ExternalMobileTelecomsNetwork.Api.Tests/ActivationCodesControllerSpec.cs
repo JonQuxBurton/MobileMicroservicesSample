@@ -1,9 +1,11 @@
+using Castle.Core.Logging;
 using ExternalMobileTelecomsNetwork.Api.Controllers;
 using ExternalMobileTelecomsNetwork.Api.Data;
 using ExternalMobileTelecomsNetwork.Api.Resources;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using Utils.DateTimes;
@@ -17,6 +19,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
         {
             private Mock<IDataStore> dataStoreMock;
             private Mock<IDateTimeCreator> dateTimeCreatorMock;
+            private Mock<ILogger<ActivationCodesController>> loggerMock;
             private ActivationCodeToAdd expected;
             private ActivationCodesController sut;
 
@@ -34,8 +37,9 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                         It.Is<ActivationCode>(y => y.PhoneNumber == expected.PhoneNumber
                                                    && y.Code == expected.ActivationCode)))
                              .Returns(true);
+                loggerMock = new Mock<ILogger<ActivationCodesController>>();
 
-                sut = new ActivationCodesController(dataStoreMock.Object, dateTimeCreatorMock.Object);
+                sut = new ActivationCodesController(loggerMock.Object, dataStoreMock.Object, dateTimeCreatorMock.Object);
             }
 
             [Fact]
@@ -72,6 +76,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
         {
             private Mock<IDataStore> dataStoreMock;
             private Mock<IDateTimeCreator> dateTimeCreatorMock;
+            private Mock<ILogger<ActivationCodesController>> loggerMock;
             private ActivationCodeToAdd expected;
             private ActivationCodesController sut;
 
@@ -101,8 +106,9 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                              .Returns(true);
                 dateTimeCreatorMock.Setup(x => x.Create())
                     .Returns(expectedDateTime);
+                loggerMock = new Mock<ILogger<ActivationCodesController>>();
 
-                sut = new ActivationCodesController(dataStoreMock.Object, dateTimeCreatorMock.Object);
+                sut = new ActivationCodesController(loggerMock.Object, dataStoreMock.Object, dateTimeCreatorMock.Object);
             }
 
             [Fact]

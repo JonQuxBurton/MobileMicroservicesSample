@@ -30,11 +30,15 @@ namespace EndToEndApiLevelTests.DataAcess
                 if (dbRow == null)
                     return null;
 
+                var orderStatus = Enum.Parse(typeof(OrderStatus), dbRow.Status.ToString().Trim());
+                var orderType = Enum.Parse(typeof(OrderType), dbRow.Type.ToString().Trim());
+
                 return new Order
                 {
                     MobileOrderId = dbRow.MobileOrderId,
                     Name = dbRow.Name,
-                    Status = dbRow.Status,
+                    Status = orderStatus,
+                    Type = orderType, 
                     CreatedAt = dbRow.CreatedAt,
                     UpdatedAt = dbRow.UpdatedAt
                 };

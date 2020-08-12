@@ -62,14 +62,15 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 
                 foreach (var dbOrder in dbOrders)
                 {
-                    var orderType = enumConverter.ToEnum<OrderType>(dbOrder.ToString().Type.Trim());
+                    var orderType = enumConverter.ToEnum<OrderType>(dbOrder.Type.ToString().Trim());
+                    var orderStatus = enumConverter.ToEnum<OrderStatus>(dbOrder.Status.ToString().Trim());
 
                     orders.Add(new Order
                     {
                         MobileId = dbOrder.MobileId,
                         MobileOrderId = dbOrder.MobileOrderId,
                         Name = dbOrder.Name,
-                        Status = dbOrder.Status,
+                        Status = orderStatus,
                         Type = orderType,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt

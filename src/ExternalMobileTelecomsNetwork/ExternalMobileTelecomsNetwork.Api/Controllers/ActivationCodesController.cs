@@ -2,7 +2,7 @@
 using ExternalMobileTelecomsNetwork.Api.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.Extensions.Logging;
 using Utils.DateTimes;
 
 namespace ExternalMobileTelecomsNetwork.Api.Controllers
@@ -11,12 +11,15 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
     [ApiController]
     public class ActivationCodesController : ControllerBase
     {
+        private readonly ILogger<ActivationCodesController> logger;
         private readonly IDataStore dataStore;
         private readonly IDateTimeCreator dateTimeCreator;
 
-        public ActivationCodesController(IDataStore dataStore, 
+        public ActivationCodesController(ILogger<ActivationCodesController> logger, 
+            IDataStore dataStore, 
             IDateTimeCreator dateTimeCreator)
         {
+            this.logger = logger;
             this.dataStore = dataStore;
             this.dateTimeCreator = dateTimeCreator;
         }
@@ -31,13 +34,17 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
 
                 if (existing != null)
                 {
+                    logger.LogDebug("Existing Activation Code for PhoneNumber {phoneNumber}", activationCodeToAdd.PhoneNumber);
+                    var updatedAt = dateTimeCreator.Create();
+                    logger.LogDebug("Updating Activation Code at {updatedAt}", updatedAt);
+
                     isSuccess = dataStore.UpdateActivationCode(
                         new ActivationCode
                         {
                             Id = existing.Id,
                             PhoneNumber = existing.PhoneNumber,
                             Code = activationCodeToAdd.ActivationCode,
-                            UpdatedAt = dateTimeCreator.Create()
+                            UpdatedAt = updatedAt
                         });
                 }
                 else
@@ -52,7 +59,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             }
 
             if (!isSuccess)
+            {
+                logger.LogError("Failed to save ActivationCode for PhoneNumber {phoneNumber}", activationCodeToAdd.PhoneNumber);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
 
             return new OkResult();
         }

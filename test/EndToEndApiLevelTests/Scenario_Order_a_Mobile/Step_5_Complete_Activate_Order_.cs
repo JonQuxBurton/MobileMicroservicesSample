@@ -1,15 +1,16 @@
 ﻿using FluentAssertions;
 using Xunit;
 using Utils.Enums;
+using MobileTelecomsNetwork.EventHandlers.Domain;
 
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
     [Collection("Scenario Order_a_Mobile collection")]
-    public class Step_4_Complete_Activate_Order
+    public class Step_5_Complete_Activate_Order
     {
         private readonly Scenario_Order_a_Mobile_Script fixture;
 
-        public Step_4_Complete_Activate_Order(Scenario_Order_a_Mobile_Script fixture)
+        public Step_5_Complete_Activate_Order(Scenario_Order_a_Mobile_Script fixture)
         {
             this.fixture = fixture;
         }
@@ -28,12 +29,12 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 
             // Check the Activation Order has updated to Completed
-            snapshot.ActualMobileActivateOrderSnapshot.Should().NotBeNull();
-            snapshot.ActualMobileActivateOrderSnapshot.State.Should().Be(expectedMobileOrderState);
+            snapshot.ActualMobileActivateOrder.Should().NotBeNull();
+            snapshot.ActualMobileActivateOrder.State.Should().Be(expectedMobileOrderState);
 
             // Check the MobileTelecomsNetwork Order has updated to Completed
-            snapshot.ActualMobileTelecomsNetworkOrderSnapshot.Should().NotBeNull();
-            snapshot.ActualMobileTelecomsNetworkOrderSnapshot.Status.Should().Be("Completed");
+            snapshot.ActualMobileTelecomsNetworkOrder.Should().NotBeNull();
+            snapshot.ActualMobileTelecomsNetworkOrder.Status.Should().Be(OrderStatus.Completed);
         }
     }
 }

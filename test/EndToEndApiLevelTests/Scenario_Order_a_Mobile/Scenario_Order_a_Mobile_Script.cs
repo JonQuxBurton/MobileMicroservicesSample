@@ -100,7 +100,6 @@ namespace EndToEndApiLevelTests
 
             actualCompleteActivateOrderResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            // Take Step 4 Snapshot
             Step_5_Snapshot = snapshotFactory.Take_Step_5_Snapshot(mobileGlobalId, activateAMobileOrderReference);
         }
 
