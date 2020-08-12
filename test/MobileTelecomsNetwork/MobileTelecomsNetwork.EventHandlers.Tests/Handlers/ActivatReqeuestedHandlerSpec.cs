@@ -30,7 +30,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
                 inputMessage = new ActivateRequestedMessage
                 {
                     MobileOrderId = Guid.NewGuid(),
-                    ActivatationCode = "BAC132"
+                    ActivationCode = "BAC132"
                 };
                 expectedExternalServiceOrder = new ExternalMobileTelecomsNetworkOrder
                 {

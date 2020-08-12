@@ -9,5 +9,6 @@
         void Provision();
         void ProvisionCompleted();
         void CreateCustomer();
+        void ActivateRejected();
     }
 }

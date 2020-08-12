@@ -58,6 +58,14 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
                     else
                         PublishActivateOrderCompleted(sentOrder.MobileOrderId);
                 }
+                else if (externalOrder.Status == OrderStatus.Rejected.ToString())
+                {
+                    using var tx = dataStore.BeginTransaction();
+                    dataStore.Complete(sentOrder.MobileOrderId);
+
+                    if (sentOrder.Type == OrderType.Activate)
+                        PublishActivateOrderRejected(sentOrder.PhoneNumber, sentOrder.MobileOrderId, externalOrder.Reason);
+                }
             }
             else
             {
@@ -72,6 +80,19 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
             messagePublisher.PublishAsync(new ActivateOrderCompletedMessage
             {
                 MobileOrderId = mobileGlobalId
+            });
+            monitoring.ActivateOrderCompleted();
+        }        
+        
+        private void PublishActivateOrderRejected(string phoneNumber, Guid mobileGlobalId, string reason)
+        {
+            logger.LogInformation("Publishing event [{event}]", typeof(ActivateOrderRejectedMessage).Name);
+
+            messagePublisher.PublishAsync(new ActivateOrderRejectedMessage
+            {
+                PhoneNumber = phoneNumber,
+                MobileOrderId = mobileGlobalId,
+                Reason = reason
             });
             monitoring.ActivateOrderCompleted();
         }

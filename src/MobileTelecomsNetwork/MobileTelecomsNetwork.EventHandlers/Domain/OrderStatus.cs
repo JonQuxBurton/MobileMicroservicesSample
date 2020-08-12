@@ -4,6 +4,7 @@
     {
         New,
         Sent,
-        Completed
+        Completed,
+        Rejected
     }
 }

@@ -49,6 +49,8 @@ namespace MobileTelecomsNetwork.EventHandlers.BackgroundServices
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
+                    logger.LogDebug("{ServiceName} ExecuteAsync...", ServiceName);
+
                     try
                     {
                         await DoWork();

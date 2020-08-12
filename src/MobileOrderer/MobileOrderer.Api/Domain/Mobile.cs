@@ -9,8 +9,8 @@ namespace MobileOrderer.Api.Domain
 {
     public class Mobile : AggregateRoot
     {
-        public enum State { New, ProcessingProvisioning, WaitingForActivation, ProcessingActivation, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
-        public enum Trigger { Provision, ProcessingProvisioningCompleted, PortIn, Activate, ActivationCompleted, PortInCompleted, Cease, Suspend, ReplaceSim, Resume, RequestPac, CeaseCompleted, PortOutCompleted }
+        public enum State { New, ProcessingProvisioning, WaitingForActivation, ProcessingActivation, ActivationRejected, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
+        public enum Trigger { Provision, ProcessingProvisioningCompleted, PortIn, Activate, ActivationCompleted, ActivationRejected, PortInCompleted, Cease, Suspend, ReplaceSim, Resume, RequestPac, CeaseCompleted, PortOutCompleted }
 
         public override int Id { get => this.mobileDataEntity.Id; protected set => base.Id = value; }
         public Guid GlobalId => this.mobileDataEntity.GlobalId;
@@ -61,12 +61,19 @@ namespace MobileOrderer.Api.Domain
                 });
             machine.Configure(State.ProcessingActivation)
                 .Permit(Trigger.ActivationCompleted, State.Live)
+                .Permit(Trigger.ActivationRejected, State.ActivationRejected)
                 .OnEntry(() => {
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.ProcessingActivation);
                     this.CreateNewOrder();
                 })
                 .OnExit(() => {
                     this.CompleteInFlightOrder();
+                });
+            machine.Configure(State.ActivationRejected)
+                .Permit(Trigger.Activate, State.ProcessingActivation)
+                .OnEntry(() =>
+                {
+                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.ActivationRejected);
                 });
             machine.Configure(State.Live)
                 .Permit(Trigger.Cease, State.ProcessingCease)
@@ -121,6 +128,7 @@ namespace MobileOrderer.Api.Domain
         }
         public void ProcessingProvisioningCompleted() => this.machine.Fire(Trigger.ProcessingProvisioningCompleted);
         public void ActivateCompleted() => this.machine.Fire(Trigger.ActivationCompleted);
+        public void ActivateRejected() => this.machine.Fire(Trigger.ActivationRejected);
         public void PortIn() => this.machine.Fire(Trigger.PortIn);
         public void PortInCompleted() => this.machine.Fire(Trigger.PortInCompleted);
         public void Suspend() => this.machine.Fire(Trigger.Suspend);

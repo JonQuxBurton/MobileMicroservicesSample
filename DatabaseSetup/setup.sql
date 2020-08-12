@@ -137,7 +137,9 @@ CREATE TABLE [ExternalMobileTelecomsNetwork].[Orders](
 	[PhoneNumber] [nvarchar](50) NOT NULL,
 	[Reference] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](100) NOT NULL,
-	[Type]  [nvarchar](100) NOT NULL
+	[Type]  [nvarchar](100) NOT NULL,
+	[ActivationCode] [nvarchar](50) NULL,
+	[Reason] [nvarchar](100) NULL
 )
 GO
 

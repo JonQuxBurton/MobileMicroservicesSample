@@ -33,7 +33,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
         public async Task<bool> Handle(ActivateRequestedMessage receivedEvent)
         {
             var eventName = receivedEvent.GetType().Name;
-            logger.LogInformation("Received event [{eventName}] with MobileOrderId={}", eventName, receivedEvent.MobileOrderId);
+            logger.LogInformation("Received event [{eventName}] with MobileOrderId {} ActivationCode {}", eventName, receivedEvent.MobileOrderId, receivedEvent.ActivationCode);
 
             try
             {
@@ -43,7 +43,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     {
                         MobileId = receivedEvent.MobileId,
                         PhoneNumber = receivedEvent.PhoneNumber,
-                        ActivationCode = receivedEvent.ActivatationCode,
+                        ActivationCode = receivedEvent.ActivationCode,
                         MobileOrderId = receivedEvent.MobileOrderId,
                         Status = OrderStatus.New,
                         Type = OrderType.Activate,
@@ -55,7 +55,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
                     var result = await externalMobileTelecomsNetworkService.PostOrder(new ExternalMobileTelecomsNetworkOrder
                     {
                         PhoneNumber = receivedEvent.PhoneNumber,
-                        Reference = receivedEvent.MobileOrderId
+                        Reference = receivedEvent.MobileOrderId,
+                        ActivationCode = receivedEvent.ActivationCode
                     });
 
                     if (!result)

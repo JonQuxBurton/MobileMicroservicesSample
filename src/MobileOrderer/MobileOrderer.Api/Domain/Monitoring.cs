@@ -12,6 +12,7 @@ namespace MobileOrderer.Api.Domain
 
         private readonly Counter activates;
         private readonly Counter activatesCompleted;
+        private readonly Counter activatesRejected;
         private readonly Gauge activatesInProgress;
 
         private readonly Counter ceases;
@@ -28,6 +29,7 @@ namespace MobileOrderer.Api.Domain
 
             activates = Metrics.CreateCounter("mobile_activates", "Number of Mobile Activates");
             activatesCompleted = Metrics.CreateCounter("mobile_activates_completed", "Number of Mobile Activates completed");
+            activatesRejected = Metrics.CreateCounter("mobile_activates_rejected", "Number of Mobile Activates rejected");
             activatesInProgress = Metrics.CreateGauge("mobile_activates_inprogress", "Number of Mobile Activates in progress");
 
             ceases = Metrics.CreateCounter("mobile_ceases", "Number of Mobile Ceases");
@@ -56,6 +58,12 @@ namespace MobileOrderer.Api.Domain
         public void ActivateCompleted()
         {
             activatesCompleted.Inc(1);
+            activatesInProgress.Dec();
+        }
+
+        public void ActivateRejected()
+        {
+            activatesRejected.Inc(1);
             activatesInProgress.Dec();
         }
         

@@ -16,6 +16,7 @@ namespace MobileOrderer.Api.Services
         private readonly ILogger<ActivateOrderSentHandler> activateOrderSentLogger;
         private readonly ILogger<CeaseOrderSentHandler> ceaseOrderSentLogger;
         private readonly ILogger<ActivateOrderCompletedHandler> activateOrderCompletedLogger;
+        private readonly ILogger<ActivateOrderRejectedHandler> activateOrderRejectedLogger;
         private readonly ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger;
         private readonly IMessageBus messageBus;
         private readonly ISqsService sqsService;
@@ -27,6 +28,7 @@ namespace MobileOrderer.Api.Services
             ILogger<ActivateOrderSentHandler> activateOrderSentLogger,
             ILogger<CeaseOrderSentHandler> ceaseOrderSentLogger,
             ILogger<ActivateOrderCompletedHandler> activateOrderCompletedLogger,
+            ILogger<ActivateOrderRejectedHandler> activateOrderRejectedLogger,
             ILogger<CeaseOrderCompletedHandler> ceaseOrderCompletedLogger,
             IMessageBus messageBus, 
             ISqsService sqsService,
@@ -38,6 +40,7 @@ namespace MobileOrderer.Api.Services
             this.activateOrderSentLogger = activateOrderSentLogger;
             this.ceaseOrderSentLogger = ceaseOrderSentLogger;
             this.activateOrderCompletedLogger = activateOrderCompletedLogger;
+            this.activateOrderRejectedLogger = activateOrderRejectedLogger;
             this.ceaseOrderCompletedLogger = ceaseOrderCompletedLogger;
             this.messageBus = messageBus;
             this.sqsService = sqsService;
@@ -58,6 +61,9 @@ namespace MobileOrderer.Api.Services
 
             var activateOrderCompletedHandler = new ActivateOrderCompletedHandler(activateOrderCompletedLogger, monitoring, serviceProvider);
             messageBus.Subscribe<ActivateOrderCompletedMessage, IHandlerAsync<ActivateOrderCompletedMessage>>(activateOrderCompletedHandler);
+            
+            var activateOrderRejectedHandler = new ActivateOrderRejectedHandler(activateOrderRejectedLogger, monitoring, serviceProvider);
+            messageBus.Subscribe<ActivateOrderRejectedMessage, IHandlerAsync<ActivateOrderRejectedMessage>>(activateOrderRejectedHandler);
 
             var ceaseOrderSentHandler = new CeaseOrderSentHandler(ceaseOrderSentLogger, serviceProvider);
             messageBus.Subscribe<CeaseOrderSentMessage, IHandlerAsync<CeaseOrderSentMessage>>(ceaseOrderSentHandler);

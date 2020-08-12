@@ -14,6 +14,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
         }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string Reason { get; set; }
 
         private string status;
     }

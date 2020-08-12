@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Dapper.Contrib.Extensions;
 using DapperDataAccess;
 using ExternalMobileTelecomsNetwork.Api.Configuration;
 using Microsoft.Extensions.Options;
@@ -45,9 +44,40 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
                 {
                     order = new Order
                     {
+                        PhoneNumber = dbOrder.PhoneNumber,
                         Reference = dbOrder.Reference,
                         Type = dbOrder.Type,
                         Status = dbOrder.Status,
+                        ActivationCode = dbOrder.ActivationCode,
+                        CreatedAt = dbOrder.CreatedAt,
+                        UpdatedAt = dbOrder.UpdatedAt
+                    };
+                }
+
+                return order;
+            }
+        }        
+        
+        public Order GetByPhoneNumber(string phoneNumber, string status)
+        {
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where PhoneNumber=@phoneNumber and Status=@status";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var dbOrders = conn.Query(sql, new { phoneNumber, status });
+                var dbOrder = dbOrders.FirstOrDefault();
+
+                Order order = null;
+
+                if (dbOrder != null)
+                {
+                    order = new Order
+                    {
+                        PhoneNumber = dbOrder.PhoneNumber,
+                        Reference = dbOrder.Reference,
+                        Type = dbOrder.Type,
+                        Status = dbOrder.Status,
+                        ActivationCode = dbOrder.ActivationCode,
                         CreatedAt = dbOrder.CreatedAt,
                         UpdatedAt = dbOrder.UpdatedAt
                     };
@@ -61,14 +91,20 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
         {
             var type = "Provision";
             var status = "New";
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status, PhoneNumber) values (@Reference, @Type, @Status, @PhoneNumber)";
-            connection.Execute(sql, new { order.Reference, type, status, order.PhoneNumber }, currentTransaction.Get());
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status, PhoneNumber, ActivationCode) values (@Reference, @Type, @Status, @PhoneNumber, @ActivationCode)";
+            connection.Execute(sql, new { order.Reference, type, status, order.PhoneNumber, order.ActivationCode }, currentTransaction.Get());
         }
 
         public void Complete(Guid reference)
         {
             var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where Reference=@Reference";
             connection.Execute(sql, new { reference }, currentTransaction.Get());
+        }
+
+        public void Reject(Guid reference, string reason)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Rejected', Reason=@Reason  where Reference=@Reference";
+            connection.Execute(sql, new { reference, reason }, currentTransaction.Get());
         }
 
         public void Cease(string phoneNumber, Guid reference)

@@ -30,7 +30,8 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
                 PhoneNumber = orderToAdd.PhoneNumber,
                 Reference = orderToAdd.Reference,
                 Type = "Provision",
-                Status = "New"
+                Status = "New",
+                ActivationCode = orderToAdd.ActivationCode
             };
 
             using (dataStore.BeginTransaction())
@@ -60,6 +61,22 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             if (order == null)
                 return NotFound();
 
+            if (order.Type == "Provision")
+            {
+                using (dataStore.BeginTransaction())
+                {
+                    var activationCode = dataStore.GetActivationCode(order.PhoneNumber);
+
+                    if (activationCode.Code != order.ActivationCode)
+                    {
+                        var reason = "Invalid ActivationCode";
+                        dataStore.Reject(order.Reference, reason);
+
+                        return new BadRequestObjectResult(reason);
+                    }
+                }
+            }
+
             using (dataStore.BeginTransaction())
             {
                 dataStore.Complete(reference);
@@ -67,6 +84,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
 
             return Ok();
         }
+
 
         [HttpDelete("{phoneNumber}/{mobileReference}")]
         public IActionResult Cease(string phoneNumber, Guid mobileReference)

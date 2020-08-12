@@ -14,7 +14,7 @@ content-type: application/json
 
 ###
 @customerId = {{createCustomer.response.body.$.globalId}}
-@phoneNumber = "07777000001"
+@phoneNumber = "07001000001"
 
 ### Step 2 - Order a Mobile
 # @name orderMobile
