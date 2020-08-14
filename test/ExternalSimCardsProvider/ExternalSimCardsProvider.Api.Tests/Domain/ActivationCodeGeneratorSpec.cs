@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ExternalSimCardsProvider.Api.Tests.Domain
 {
-    public class ActivationCodeGeneratorSpec
+    namespace ActivationCodeGeneratorSpec
     {
         public class GenerateShould
         {

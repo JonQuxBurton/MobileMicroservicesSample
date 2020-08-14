@@ -9,7 +9,7 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
 {
-    public class CompletedOrderPollingHostedServiceSpec
+    namespace CompletedOrderPollingHostedServiceSpec
     {
         public class DoWorkShould
         {

@@ -13,17 +13,17 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 {
-    public class CeaseRequestedHandlerSpec
+    namespace CeaseRequestedHandlerSpec
     {
         public class HandleShould
         {
-            private CeaseRequestedHandler sut;
-            private Mock<IDataStore> dataStoreMock;
-            private Mock<ITransaction> transactionMock;
-            private Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkServiceMock;
-            private CeaseRequestedMessage inputMessage;
-            private ExternalMobileTelecomsNetworkOrder expectedExternalServiceOrder;
-            private Mock<IMessagePublisher> messagePublisherMock;
+            private readonly CeaseRequestedHandler sut;
+            private readonly Mock<IDataStore> dataStoreMock;
+            private readonly Mock<ITransaction> transactionMock;
+            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkServiceMock;
+            private readonly CeaseRequestedMessage inputMessage;
+            private readonly ExternalMobileTelecomsNetworkOrder expectedExternalServiceOrder;
+            private readonly Mock<IMessagePublisher> messagePublisherMock;
 
             public HandleShould()
             {
@@ -68,7 +68,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
             [Fact]
             public async void SendOrderToExternalService()
             {
-                var actual = await sut.Handle(inputMessage);
+                await sut.Handle(inputMessage);
 
                 externalMobileTelecomsNetworkServiceMock.VerifyAll();
             }

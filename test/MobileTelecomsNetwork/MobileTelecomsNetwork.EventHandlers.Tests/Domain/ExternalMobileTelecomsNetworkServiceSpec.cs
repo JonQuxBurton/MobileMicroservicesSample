@@ -16,10 +16,10 @@ namespace MobileTelecomsNetwork.EventHandlers.Tests.Domain
 {
     public class ExternalMobileTelecomsNetworkServiceSpec
     {
-        private Config config;
-        private ExternalMobileTelecomsNetworkOrder expectedOrder;
-        private IOptions<Config> options;
-        private Uri expectedUrl;
+        private readonly Config config;
+        private readonly ExternalMobileTelecomsNetworkOrder expectedOrder;
+        private readonly IOptions<Config> options;
+        private readonly Uri expectedUrl;
 
         public ExternalMobileTelecomsNetworkServiceSpec()
         {

@@ -9,12 +9,12 @@ using Xunit;
 
 namespace SimCards.EventHandlers.Tests.BackgroundServices
 {
-    public class CompletedOrderPollingHostedServiceSpec
+    namespace CompletedOrderPollingHostedServiceSpec
     {
         public class DoWorkShould
         {
             [Fact]
-            public void CallCompletedOrderCheker()
+            public async void CallCompletedOrderCheker()
             {
                 var config = new Config
                 {
@@ -35,7 +35,7 @@ namespace SimCards.EventHandlers.Tests.BackgroundServices
                     dataStoreMock.Object,
                     completedOrderChecker.Object);
 
-                sut.DoWork();
+                await sut.DoWork();
 
                 completedOrderChecker.Verify(x => x.Check(expectedOrder));
             }

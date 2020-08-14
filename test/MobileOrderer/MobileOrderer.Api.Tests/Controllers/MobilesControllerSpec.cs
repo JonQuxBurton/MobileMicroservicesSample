@@ -15,7 +15,7 @@ using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Tests.Controllers
 {
-    public static class MobilesControllerSpec
+   namespace MobilesControllerSpec
     {
         public class GetShould
         {

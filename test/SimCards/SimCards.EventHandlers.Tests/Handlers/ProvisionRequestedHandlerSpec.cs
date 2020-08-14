@@ -13,7 +13,7 @@ using SimCards.EventHandlers.Domain;
 
 namespace SimCards.EventHandlers.Tests.Handlers
 {
-    public static class MobileRequestHandlerSpec
+    namespace MobileRequestHandlerSpec
     {
         public class HandleShould
         {

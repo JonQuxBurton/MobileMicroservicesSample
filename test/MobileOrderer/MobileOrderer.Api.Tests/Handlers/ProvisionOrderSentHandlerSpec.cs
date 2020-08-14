@@ -11,7 +11,7 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public static class ProvisionOrderSentHandlerSpec
+    namespace ProvisionOrderSentHandlerSpec
     {
         public class HandleShould
         {

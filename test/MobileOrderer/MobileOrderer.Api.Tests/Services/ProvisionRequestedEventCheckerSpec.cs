@@ -8,9 +8,8 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Services
 {
-    public static class ProvisionRequestedEventCheckerSpec
+    namespace ProvisionRequestedEventCheckerSpec
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class CheckShould
         {
             private readonly Mobile expectedNewMobile;

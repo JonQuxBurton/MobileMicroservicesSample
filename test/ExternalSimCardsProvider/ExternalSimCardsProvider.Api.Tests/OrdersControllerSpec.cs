@@ -11,7 +11,7 @@ using ExternalSimCardsProvider.Api.Domain;
 
 namespace ExternalSimCardsProvider.Api.Tests
 {
-    public class OrdersControllerSpec
+    namespace OrdersControllerSpec
     {
         public class StatusShould
         {

@@ -9,12 +9,12 @@ using Xunit;
 
 namespace ExternalMobileTelecomsNetwork.Api.Tests
 {
-    public class OrdersControllerSpec
+    namespace OrdersControllerSpec
     {
         public class GetShould
         {
             private readonly Order expectedOrder;
-            private Mock<IDataStore> dataStoreMock;
+            private readonly Mock<IDataStore> dataStoreMock;
             private readonly OrdersController sut;
 
             public GetShould()

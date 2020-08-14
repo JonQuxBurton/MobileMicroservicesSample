@@ -12,9 +12,8 @@ using static MobileOrderer.Api.Domain.Mobile;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public static class ActivateOrderCompletedHandlerSpec
+    namespace ActivateOrderCompletedHandlerSpec
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class HandleShould
         {
             private readonly ActivateOrderCompletedHandler sut;

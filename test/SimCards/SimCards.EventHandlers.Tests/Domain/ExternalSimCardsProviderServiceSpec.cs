@@ -13,9 +13,8 @@ using Xunit;
 
 namespace SimCards.EventHandlers.Tests.Domain
 {
-    public static class ExternalSimCardsProviderServiceSpec
+    namespace ExternalSimCardsProviderServiceSpec
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class PostOrderShould
         {
             private readonly Config config;

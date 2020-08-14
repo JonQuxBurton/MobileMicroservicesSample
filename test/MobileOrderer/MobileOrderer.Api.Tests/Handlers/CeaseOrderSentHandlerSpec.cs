@@ -11,9 +11,8 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Handlers
 {
-    public static class CeaseOrderSentHandlerSpec
+    namespace CeaseOrderSentHandlerSpec
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "<Pending>")]
         public class HandleShould
         {
             private readonly CeaseOrderSentHandler sut;

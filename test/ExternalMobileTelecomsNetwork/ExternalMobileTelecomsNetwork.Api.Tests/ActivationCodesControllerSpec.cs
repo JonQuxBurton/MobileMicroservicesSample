@@ -1,4 +1,3 @@
-using Castle.Core.Logging;
 using ExternalMobileTelecomsNetwork.Api.Controllers;
 using ExternalMobileTelecomsNetwork.Api.Data;
 using ExternalMobileTelecomsNetwork.Api.Resources;
@@ -13,15 +12,15 @@ using Xunit;
 
 namespace ExternalMobileTelecomsNetwork.Api.Tests
 {
-    public class ActivationCodesControllerSpec
+    namespace ActivationCodesControllerSpec
     {
         public class Post_When_Inserting_Should
         {
-            private Mock<IDataStore> dataStoreMock;
-            private Mock<IDateTimeCreator> dateTimeCreatorMock;
-            private Mock<ILogger<ActivationCodesController>> loggerMock;
-            private ActivationCodeToAdd expected;
-            private ActivationCodesController sut;
+            private readonly Mock<IDataStore> dataStoreMock;
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+            private readonly Mock<ILogger<ActivationCodesController>> loggerMock;
+            private readonly ActivationCodeToAdd expected;
+            private readonly ActivationCodesController sut;
 
             public Post_When_Inserting_Should()
             {
@@ -74,11 +73,11 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
 
         public class Post_When_Existing_Should
         {
-            private Mock<IDataStore> dataStoreMock;
-            private Mock<IDateTimeCreator> dateTimeCreatorMock;
-            private Mock<ILogger<ActivationCodesController>> loggerMock;
-            private ActivationCodeToAdd expected;
-            private ActivationCodesController sut;
+            private readonly Mock<IDataStore> dataStoreMock;
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+            private readonly Mock<ILogger<ActivationCodesController>> loggerMock;
+            private readonly ActivationCodeToAdd expected;
+            private readonly ActivationCodesController sut;
 
             public Post_When_Existing_Should()
             {

@@ -13,7 +13,7 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.Handlers
 {
-    public static class ActivatReqeuestedHandlerSpec
+    namespace ActivatReqeuestedHandlerSpec
     {
         public class HandleShould
         {

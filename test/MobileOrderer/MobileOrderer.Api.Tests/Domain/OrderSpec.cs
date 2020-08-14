@@ -5,7 +5,7 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Domain
 {
-    public class OrderSpec
+    namespace OrderSpec
     {
         public class ProcessShould
         {

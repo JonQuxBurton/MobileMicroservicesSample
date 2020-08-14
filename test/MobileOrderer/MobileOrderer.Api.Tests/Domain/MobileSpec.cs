@@ -6,7 +6,7 @@ using Xunit;
 
 namespace MobileOrderer.Api.Tests.Domain
 {
-    public static class MobileSpec
+    namespace MobileSpec
     {
         public class ConstructorShould
         {

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace MobileTelecomsNetwork.EventHandlers.Tests.BackgroundServices
 {
-    public class EventListenerHostedServiceSpec
+    namespace EventListenerHostedServiceSpec
     {
         public class RunShould
         {

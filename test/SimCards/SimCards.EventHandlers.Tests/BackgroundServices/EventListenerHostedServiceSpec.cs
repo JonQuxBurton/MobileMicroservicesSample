@@ -8,7 +8,7 @@ using SimCards.EventHandlers.BackgroundServices;
 
 namespace SimCards.EventHandlers.Tests.BackgroundServices
 {
-    public class EventListenerHostedServiceSpec
+    namespace EventListenerHostedServiceSpec
     {
         public class RunShould
         {
