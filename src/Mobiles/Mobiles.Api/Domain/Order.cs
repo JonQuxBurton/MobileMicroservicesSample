@@ -28,19 +28,24 @@ namespace Mobiles.Api.Domain
             machine.Configure(State.New).Permit(Trigger.Process, State.Processing);
             machine.Configure(State.Processing)
                 .OnEntry(() => {
-                    this.orderDataEntity.State = enumConverter.ToName<State>(State.Processing);
+                    this.orderDataEntity.State = State.Processing.ToString();
                 })
                 .Permit(Trigger.Send, State.Sent);
             machine.Configure(State.Sent)
                 .OnEntry(() => {
-                    this.orderDataEntity.State = enumConverter.ToName<State>(State.Sent);
+                    this.orderDataEntity.State = State.Sent.ToString();
                 })
                 .Permit(Trigger.Complete, State.Completed)
                 .Permit(Trigger.Reject, State.Rejected);
             machine.Configure(State.Completed)
                 .OnEntry(() =>
                 {
-                    this.orderDataEntity.State = enumConverter.ToName<State>(State.Completed);
+                    this.orderDataEntity.State = State.Completed.ToString();
+                });
+            machine.Configure(State.Rejected)
+                .OnEntry(() =>
+                {
+                    this.orderDataEntity.State = State.Rejected.ToString();
                 });
         }
 

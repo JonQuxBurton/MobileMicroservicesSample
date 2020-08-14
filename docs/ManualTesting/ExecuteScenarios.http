@@ -50,8 +50,11 @@ POST http://localhost:5000/api/mobiles/{{mobileId}}/activate
 content-type: application/json
 
 {
-	"ActivationCode" : "{{activationCode}}"
+	//"ActivationCode" : "{{activationCode}}"
+	// Invalid Code - Reject
+	"ActivationCode" : "ZZZ{{activationCode}}"
 }
+
 ###
 @activateOrderId = {{activateMobile.response.body.$.globalId}}
 
