@@ -7,8 +7,10 @@ namespace Mobiles.Api.Domain
 {
     public class Order : Entity
     {
-        public enum State { New, Processing, Sent, Completed, Failed, Cancelled }
-        public enum Trigger { Process, Send, Complete, Fail, Cancel }
+        public enum State { New, Processing, Sent, Completed, Failed, Cancelled, Rejected
+        }
+        public enum Trigger { Process, Send, Complete, Fail, Cancel, Reject
+        }
         public enum OrderType { Provision, Activate, Cease }
 
         private readonly StateMachine<State, Trigger> machine;
@@ -33,7 +35,8 @@ namespace Mobiles.Api.Domain
                 .OnEntry(() => {
                     this.orderDataEntity.State = enumConverter.ToName<State>(State.Sent);
                 })
-                .Permit(Trigger.Complete, State.Completed);
+                .Permit(Trigger.Complete, State.Completed)
+                .Permit(Trigger.Reject, State.Rejected);
             machine.Configure(State.Completed)
                 .OnEntry(() =>
                 {
@@ -69,6 +72,11 @@ namespace Mobiles.Api.Domain
         public void Complete()
         {
             this.machine.Fire(Trigger.Complete);
+        }
+
+        public void Reject()
+        {
+            this.machine.Fire(Trigger.Reject);
         }
     }
 }

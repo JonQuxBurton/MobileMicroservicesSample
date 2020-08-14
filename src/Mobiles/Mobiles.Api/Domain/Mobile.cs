@@ -9,7 +9,7 @@ namespace Mobiles.Api.Domain
 {
     public class Mobile : AggregateRoot
     {
-        public enum State { New, ProcessingProvision, WaitingForActivate, ProcessingActivate, ActivateRejected, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
+        public enum State { New, ProcessingProvision, WaitingForActivate, ProcessingActivate, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
         public enum Trigger { Provision, ProcessingProvisionCompleted, PortIn, Activate, ActivateCompleted, ActivateRejected, PortInCompleted, Cease, Suspend, ReplaceSim, Resume, RequestPac, CeaseCompleted, PortOutCompleted }
 
         public override int Id { get => this.mobileDataEntity.Id; protected set => base.Id = value; }
@@ -26,6 +26,7 @@ namespace Mobiles.Api.Domain
         private readonly MobileDataEntity mobileDataEntity;
         private readonly List<Order> orderHistory;
         private Order newOrder;
+        private bool isOrderRejected = false;
 
         public Mobile(MobileDataEntity mobileDataEntity, Order inFlightOrder, IEnumerable<Order> orderHistory = null)
         {
@@ -61,19 +62,16 @@ namespace Mobiles.Api.Domain
                 });
             machine.Configure(State.ProcessingActivate)
                 .Permit(Trigger.ActivateCompleted, State.Live)
-                .Permit(Trigger.ActivateRejected, State.ActivateRejected)
+                .Permit(Trigger.ActivateRejected, State.WaitingForActivate)
                 .OnEntry(() => {
                     this.mobileDataEntity.State = State.ProcessingActivate.ToString();
                     this.CreateNewOrder();
                 })
                 .OnExit(() => {
-                    this.CompleteInFlightOrder();
-                });
-            machine.Configure(State.ActivateRejected)
-                .Permit(Trigger.Activate, State.ProcessingActivate)
-                .OnEntry(() =>
-                {
-                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.ActivateRejected);
+                    if (isOrderRejected)
+                        RejectInFlightOrder();
+                    else
+                        CompleteInFlightOrder();
                 });
             machine.Configure(State.Live)
                 .Permit(Trigger.Cease, State.ProcessingCease)
@@ -126,9 +124,19 @@ namespace Mobiles.Api.Domain
             this.newOrder = order;
             this.machine.Fire(Trigger.Cease);
         }
+
+        public void ActivateCompleted() 
+        {
+            isOrderRejected = false;
+            machine.Fire(Trigger.ActivateCompleted);
+        }
+
+        public void ActivateRejected() 
+        {
+            isOrderRejected = true;
+            this.machine.Fire(Trigger.ActivateRejected);
+        }
         public void ProcessingProvisionCompleted() => this.machine.Fire(Trigger.ProcessingProvisionCompleted);
-        public void ActivateCompleted() => this.machine.Fire(Trigger.ActivateCompleted);
-        public void ActivateRejected() => this.machine.Fire(Trigger.ActivateRejected);
         public void PortIn() => this.machine.Fire(Trigger.PortIn);
         public void PortInCompleted() => this.machine.Fire(Trigger.PortInCompleted);
         public void Suspend() => this.machine.Fire(Trigger.Suspend);
@@ -155,6 +163,16 @@ namespace Mobiles.Api.Domain
             if (this.InFlightOrder != null)
             {
                 this.InFlightOrder.Complete();
+                this.orderHistory.Add(this.InFlightOrder);
+                this.InFlightOrder = null;
+            }
+        }
+
+        private void RejectInFlightOrder()
+        {
+            if (this.InFlightOrder != null)
+            {
+                this.InFlightOrder.Reject();
                 this.orderHistory.Add(this.InFlightOrder);
                 this.InFlightOrder = null;
             }
