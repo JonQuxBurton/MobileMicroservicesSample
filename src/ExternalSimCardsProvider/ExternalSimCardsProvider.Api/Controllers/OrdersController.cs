@@ -25,12 +25,6 @@ namespace ExternalSimCardsProvider.Api.Controllers
             this.externalMobileTelecomsNetworkService = externalMobileTelecomsNetworkService;
         }
 
-        [HttpGet("status")]
-        public IActionResult Status()
-        {
-            return new OkResult();
-        }
-
         [HttpPost]
         public IActionResult Create([FromBody] OrderToAdd orderToAdd)
         {

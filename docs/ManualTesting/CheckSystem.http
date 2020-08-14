@@ -21,11 +21,11 @@ Content-Disposition: form-data; name="Version"
 ### Check Services
 ###==================================================
 
-### Check Mobile Orderer
-GET http://localhost:5000/api/provisioner/status
+### Check Mobiles
+GET http://localhost:5000/health
 
 ### Check ExternalSimCardsProvider
-GET http://localhost:5001/api/orders/status
+GET http://localhost:5001/health
 
 ### Check ExternalMobileTelecomsNetwork.Api
-GET http://localhost:5002/api/orders/status
+GET http://localhost:5002/health

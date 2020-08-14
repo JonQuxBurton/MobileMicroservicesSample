@@ -5,7 +5,7 @@ $reports = New-Object System.Collections.Generic.List[hashtable]
 $reports.Add(@{ Project="MinimalEventBus"; Folder="Infrastructure"})
 $reports.Add(@{ Project="DapperDataAccess"; Folder="Infrastructure"})
 $reports.Add(@{ Project="SimCards.EventHandlers"; Folder="SimCards"})
-$reports.Add(@{ Project="MobileOrderer.Api"; Folder="MobileOrderer"})
+$reports.Add(@{ Project="Mobiles.Api"; Folder="Mobiles"})
 $reports.Add(@{ Project="SimCardWholesaler.Api"; Folder="SimCardWholesaler"})
 
 $reportFiles = New-Object System.Collections.Generic.List[string]

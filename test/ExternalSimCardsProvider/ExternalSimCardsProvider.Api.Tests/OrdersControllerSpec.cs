@@ -13,33 +13,6 @@ namespace ExternalSimCardsProvider.Api.Tests
 {
     namespace OrdersControllerSpec
     {
-        public class StatusShould
-        {
-            private readonly OrdersController sut;
-            private readonly Mock<IOrdersDataStore> ordersDataStoreMock;
-            private readonly Mock<IExternalMobileTelecomsNetworkService> externalMobileTelecomsNetworkService;
-
-            public StatusShould()
-            {
-                ordersDataStoreMock = new Mock<IOrdersDataStore>();
-                var activationCodeGeneratorMock = new Mock<IActivationCodeGenerator>();
-                externalMobileTelecomsNetworkService = new Mock<IExternalMobileTelecomsNetworkService>();
-
-                sut = new OrdersController(ordersDataStoreMock.Object, 
-                    activationCodeGeneratorMock.Object,
-                    externalMobileTelecomsNetworkService.Object);
-            }
-
-
-            [Fact]
-            public void ReturnOk()
-            {
-                var actual = sut.Status();
-
-                actual.Should().BeOfType<OkResult>();
-            }
-        }
-
         public class GetShould
         {
             private readonly Order expectedOrder;

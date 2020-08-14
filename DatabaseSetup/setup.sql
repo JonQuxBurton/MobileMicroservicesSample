@@ -7,14 +7,14 @@ GO
 
 /*----------*/
 
-CREATE SCHEMA [MobileOrderer]
+CREATE SCHEMA [Mobiles]
 GO
 
-CREATE LOGIN MobileOrdererMicroservice WITH PASSWORD = 'MobileOrderer@123';
+CREATE LOGIN MobilesMicroservice WITH PASSWORD = 'Mobiles@123';
 GO  
-CREATE USER MobileOrdererMicroservice FOR LOGIN MobileOrdererMicroservice
+CREATE USER MobilesMicroservice FOR LOGIN MobilesMicroservice
 GO
-GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: MobileOrderer TO MobileOrdererMicroservice;
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA :: Mobiles TO MobilesMicroservice;
 GO
 
 CREATE SCHEMA [SimCards]
@@ -59,7 +59,7 @@ GO
 
 /*----------*/
 
-CREATE TABLE [MobileOrderer].[Customers](
+CREATE TABLE [Mobiles].[Customers](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE [MobileOrderer].[Customers](
 )
 GO
 
-CREATE TABLE [MobileOrderer].[Mobiles](
+CREATE TABLE [Mobiles].[Mobiles](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[GlobalId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE [MobileOrderer].[Mobiles](
 )
 GO
 
-CREATE TABLE [MobileOrderer].[Orders](
+CREATE TABLE [Mobiles].[Orders](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[MobileId] [int] NOT NULL,
 	[GlobalId] [uniqueidentifier] NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE [MobileOrderer].[Orders](
 	[ActivationCode] [nvarchar](50) NULL,
 	[State] [nvarchar](100) NOT NULL,
 	[Type] [nvarchar](100) NOT NULL,
-	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [MobileOrderer].[Mobiles](Id)
+	CONSTRAINT FK_Orders_Mobiles FOREIGN KEY (MobileId) REFERENCES [Mobiles].[Mobiles](Id)
 )
 GO
 

@@ -1,4 +1,4 @@
-﻿using MobileOrderer.Api.Domain;
+﻿using Mobiles.Api.Domain;
 
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {

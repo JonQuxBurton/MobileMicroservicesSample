@@ -181,18 +181,5 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                 actual.Should().BeOfType<NoContentResult>();
             }
         }
-
-        public class StatusShould
-        {
-            [Fact]
-            public void ReturnOk()
-            {
-                var dataStoreMock = new Mock<IDataStore>();
-                var sut = new OrdersController(dataStoreMock.Object);
-                var actual = sut.Status();
-
-                actual.Should().BeOfType<OkResult>();
-            }
-        }
     }
 }

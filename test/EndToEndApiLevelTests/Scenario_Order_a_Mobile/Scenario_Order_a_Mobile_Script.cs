@@ -32,7 +32,7 @@ namespace EndToEndApiLevelTests
             // Step 1 Create a Customer
             var customersUrl = "http://localhost:5000/api/customers";
 
-            var customerToAdd = new MobileOrderer.Api.Resources.CustomerToAdd
+            var customerToAdd = new Mobiles.Api.Resources.CustomerToAdd
             {
                 Name = "Armstrong Corporation"
             };
@@ -41,16 +41,16 @@ namespace EndToEndApiLevelTests
 
             createCustomerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var actualCustomerReturned = await DeserializeResponse<MobileOrderer.Api.Resources.CustomerResource>(createCustomerResponse);
+            var actualCustomerReturned = await DeserializeResponse<Mobiles.Api.Resources.CustomerResource>(createCustomerResponse);
 
             Step_1_Snapshot = snapshotFactory.Take_Step_1_Snapshot(customerToAdd, actualCustomerReturned);
 
             // Step 2 Order a Mobile
             var url = $"http://localhost:5000/api/customers/{actualCustomerReturned.GlobalId}/provision";
 
-            var orderToAdd = new MobileOrderer.Api.Resources.OrderToAdd
+            var orderToAdd = new Mobiles.Api.Resources.OrderToAdd
             {
-                PhoneNumber = "0701000001",
+                PhoneNumber = "07001000001",
                 Name = "Neil Armstrong",
                 ContactPhoneNumber = "0123456789"
             };
@@ -60,7 +60,7 @@ namespace EndToEndApiLevelTests
             orderAMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             // Gather needed data
-            var actualMobileReturned = await DeserializeResponse<MobileOrderer.Api.Resources.MobileResource>(orderAMobileResponse);
+            var actualMobileReturned = await DeserializeResponse<Mobiles.Api.Resources.MobileResource>(orderAMobileResponse);
             var actualMobileOrder = data.MobilesData.GetMobileOrder(actualMobileReturned.Id);
             var mobileGlobalId = actualMobileReturned.GlobalId;
             var orderAMobileOrderReference = actualMobileOrder.GlobalId;
@@ -81,7 +81,7 @@ namespace EndToEndApiLevelTests
 
             // Step 4 Activate a Mobile
             var activateTheMobileUrl = $"http://localhost:5000/api/mobiles/{mobileGlobalId}/activate";
-            var activateTheMobileOrder = new MobileOrderer.Api.Resources.ActivateRequest
+            var activateTheMobileOrder = new Mobiles.Api.Resources.ActivateRequest
             {
                 ActivationCode = actualExternalSimCardOrder.ActivationCode
             };
@@ -90,7 +90,7 @@ namespace EndToEndApiLevelTests
 
             actualActivateTheMobileResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             
-            var actualActivateOrderReturned = await DeserializeResponse<MobileOrderer.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
+            var actualActivateOrderReturned = await DeserializeResponse<Mobiles.Api.Resources.OrderResource>(actualActivateTheMobileResponse);
             var activateAMobileOrderReference = actualActivateOrderReturned.GlobalId;
 
             Step_4_Snapshot = snapshotFactory.Take_Step_4_Snapshot(mobileGlobalId, activateAMobileOrderReference);

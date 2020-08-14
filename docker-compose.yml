@@ -45,11 +45,11 @@ services:
     ports:
       - "4100:4100"
       
-  mobileorderer.api:
-    image: ${DOCKER_REGISTRY}mobileordererapi
+  mobiles.api:
+    image: ${DOCKER_REGISTRY}mobilesapi
     build:
       context: .
-      dockerfile: src/MobileOrderer/MobileOrderer.Api/Dockerfile
+      dockerfile: src/Mobiles/Mobiles.Api/Dockerfile
 
   simcards.eventhandlers:
     image: ${DOCKER_REGISTRY}simcardseventhandlers

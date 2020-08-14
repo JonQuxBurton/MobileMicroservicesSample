@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using MobileOrderer.Api.Domain;
+using Mobiles.Api.Domain;
 using EndToEndApiLevelTests.DataAcess;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile

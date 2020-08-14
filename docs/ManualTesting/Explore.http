@@ -13,7 +13,7 @@ GET localhost:3000
 GET 192.168.65.1:9323/metrics
 
 ###==================================================
-### Mobile Orderer
+### Mobiles
 ###==================================================
 
 ### Health Check
@@ -67,7 +67,7 @@ DELETE http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
 ###==================================================
 
 ### Health check
-GET http://localhost:5001/api/orders/status
+GET http://localhost:5001/health
 
 ### Create an Order
 POST http://localhost:5001/api/orders
@@ -89,7 +89,7 @@ POST http://localhost:5001/api/orders/6C1622FB-70FB-4A02-89F2-780AF670149E/compl
 ###==================================================
 
 ### Health check
-GET http://localhost:5002/api/orders/status
+GET http://localhost:5002/health
 
 ### Create an Order
 POST http://localhost:5002/api/orders

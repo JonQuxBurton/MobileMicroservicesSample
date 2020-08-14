@@ -23,13 +23,13 @@ namespace ExternalMobileTelecomsNetwork.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
-
             services.AddControllers();
 
             services.Configure<Config>(options => Configuration.GetSection("Config").Bind(options));
             services.AddScoped<IDataStore, DataStore>();
             services.AddSingleton<IDateTimeCreator, DateTimeCreator>();
+
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,8 +41,9 @@ namespace ExternalMobileTelecomsNetwork.Api
             }
 
             app.UseRouting();
-
             app.UseAuthorization();
+
+            app.UseHealthChecks("/health");
 
             app.UseEndpoints(endpoints =>
             {

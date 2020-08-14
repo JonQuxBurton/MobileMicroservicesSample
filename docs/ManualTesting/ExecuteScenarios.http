@@ -38,7 +38,7 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 #@phoneNumber = {{getOrder.response.body.$.phoneNumber}}
 @provisionOrderId = {{getOrder.response.body.$.orderHistory.$[0].globalId}}
 
-### Step 3 - Mobile Provision Order has been Completed
+### Step 3 - The External Service has completed the Mobile Provision Order
 # @name completeProvision
 POST http://localhost:5001/api/orders/{{provisionOrderId}}/complete
 
@@ -56,7 +56,7 @@ content-type: application/json
 @activateOrderId = {{activateMobile.response.body.$.globalId}}
 
 
-### Step  5 - Mobile Activate Order has been Completed
+### Step  5 - The External Service has completed the Mobile Activate Order
 POST http://localhost:5002/api/orders/{{activateOrderId}}/complete
 
 ###
@@ -73,6 +73,6 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 ###
 @ceaseOrderId = {{getCeaseOrder.response.body.$.orderHistory[?(@.type==2)].globalId}}
 
-### Step 2 - Cease Order has been Completed
+### Step 2 - The External Service has completed the Mobile Cease Order
 POST http://localhost:5002/api/orders/{{ceaseOrderId}}/complete
 

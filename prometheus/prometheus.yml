@@ -8,9 +8,9 @@ scrape_configs:
 
   - job_name: mobiles
     static_configs:
-      - targets: ["mobileorderer.api"]
+      - targets: ["mobiles.api"]
         labels:
-          alias: "mobileorderer.api"
+          alias: "mobiles.api"
 
   - job_name: simcards
     static_configs:

@@ -16,12 +16,6 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             this.dataStore = dataStore;
         }
 
-        [HttpGet("status")]
-        public IActionResult Status()
-        {
-            return new OkResult();
-        }
-
         [HttpPost]
         public IActionResult Create([FromBody] OrderToAdd orderToAdd)
         {

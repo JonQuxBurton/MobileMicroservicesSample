@@ -8,11 +8,11 @@ services:
     ports:
       - "5433:1433"    # Important: In a production environment your should remove the external port
       
-  mobileorderer.api:
+  mobiles.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Config:LogFilePath=/logs/
-      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobileOrdererMicroservice;Password=MobileOrderer@123
+      - Config:ConnectionString=Server=sql.data,1433;Initial Catalog=Mobile;User Id=MobilesMicroservice;Password=Mobiles@123
       - Config:SeqUrl=http://seq:5341
       - EventBusConfig:SnsServiceUrl=http://goaws:4100
       - EventBusConfig:SqsServiceUrl=http://goaws:4100

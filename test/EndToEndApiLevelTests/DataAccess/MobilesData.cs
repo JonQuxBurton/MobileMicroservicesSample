@@ -3,8 +3,8 @@ using System.Data.SqlClient;
 using System.Threading;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using MobileOrderer.Api.Data;
-using MobileOrderer.Api.Domain;
+using Mobiles.Api.Data;
+using Mobiles.Api.Domain;
 
 namespace EndToEndApiLevelTests.DataAcess
 {
@@ -24,22 +24,20 @@ namespace EndToEndApiLevelTests.DataAcess
         public Customer GetCustomerByGlobalId(Guid globalId)
         {
             using var mobilesContext = new MobilesContext(contextOptions);
-            var sql = $"select * from MobileOrderer.Customers where GlobalId=@globalId";
+            var sql = $"select * from Mobiles.Customers where GlobalId=@globalId";
 
-            using (var conn = new SqlConnection(connectionString))
+            using var conn = new SqlConnection(connectionString);
+            var dbRow = conn.QueryFirstOrDefault(sql, new { globalId });
+
+            if (dbRow == null)
+                return null;
+
+            var customer = new Customer
             {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { globalId });
-
-                if (dbRow == null)
-                    return null;
-
-                var customer = new Customer
-                {
-                    GlobalId = dbRow.GlobalId,
-                    Name = dbRow.Name
-                };
-                return customer;
-            }
+                GlobalId = dbRow.GlobalId,
+                Name = dbRow.Name
+            };
+            return customer;
         }
 
         public bool CreateMobile(PhoneNumber phoneNumber, Guid globalId, string state)
@@ -48,7 +46,7 @@ namespace EndToEndApiLevelTests.DataAcess
 
             using (var connection = new SqlConnection(connectionString))
             {
-                var sql = $"insert into MobileOrderer.Mobiles (PhoneNumber, GlobalId, State, CustomerId) values (@phoneNumber, @globalId, @state, @customerId)";
+                var sql = $"insert into Mobiles.Mobiles (PhoneNumber, GlobalId, State, CustomerId) values (@phoneNumber, @globalId, @state, @customerId)";
                 connection.Execute(sql, new { phoneNumber = phoneNumber.ToString(), globalId, state, customerId = dummyCustomerId });
             }
 
@@ -57,12 +55,10 @@ namespace EndToEndApiLevelTests.DataAcess
 
         public MobileDataEntity GetMobileByGlobalId(Guid globalId)
         {
-            using (var mobilesContext = new MobilesContext(contextOptions)) 
-            {
-                var mobilesRepo = new MobileRepository(mobilesContext, new Utils.Enums.EnumConverter());
+            using var mobilesContext = new MobilesContext(contextOptions);
+            var mobilesRepo = new MobileRepository(mobilesContext, new Utils.Enums.EnumConverter());
 
-                return mobilesRepo.GetById(globalId).GetDataEntity();
-            }
+            return mobilesRepo.GetById(globalId).GetDataEntity();
         }
 
         public OrderDataEntity TryGetMobileOrderInState(Guid mobileOrderGlobalId, string state, TimeSpan? delay = null)
@@ -75,71 +71,65 @@ namespace EndToEndApiLevelTests.DataAcess
 
         private  OrderDataEntity GetMobileOrderInState(Guid globalId, string state)
         {
-            var sql = $"select * from MobileOrderer.Orders where GlobalId=@globalId and State=@state";
+            var sql = $"select * from Mobiles.Orders where GlobalId=@globalId and State=@state";
 
-            using (var conn = new SqlConnection(connectionString))
+            using var conn = new SqlConnection(connectionString);
+            var dbRow = conn.QueryFirstOrDefault(sql, new { globalId, state });
+
+            if (dbRow == null)
+                return null;
+
+            var order = new OrderDataEntity
             {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { globalId, state });
-
-                if (dbRow == null)
-                    return null;
-
-                var order = new OrderDataEntity
-                {
-                    Id = dbRow.Id,
-                    GlobalId = dbRow.GlobalId,
-                    Name = dbRow.Name,
-                    ContactPhoneNumber = dbRow.ContactPhoneNumber,
-                    State = dbRow.State
-                };
-                return order;
-            }
+                Id = dbRow.Id,
+                GlobalId = dbRow.GlobalId,
+                Name = dbRow.Name,
+                ContactPhoneNumber = dbRow.ContactPhoneNumber,
+                State = dbRow.State
+            };
+            return order;
         }
 
         public OrderDataEntity GetMobileOrder(int mobileId)
         {
-            var sql = $"select * from MobileOrderer.Orders where MobileId=@mobileId";
+            var sql = $"select * from Mobiles.Orders where MobileId=@mobileId";
 
-            using (var conn = new SqlConnection(connectionString))
+            using var conn = new SqlConnection(connectionString);
+            var dbRow = conn.QueryFirstOrDefault(sql, new { mobileId });
+
+            if (dbRow == null)
+                return null;
+
+            var order = new OrderDataEntity
             {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { mobileId });
-
-                if (dbRow == null)
-                    return null;
-
-                var order = new OrderDataEntity
-                {
-                    Id = dbRow.Id,
-                    GlobalId = dbRow.GlobalId,
-                    Name = dbRow.Name,
-                    ContactPhoneNumber = dbRow.ContactPhoneNumber,
-                    State = dbRow.State
-                };
-                return order;
-            }
+                Id = dbRow.Id,
+                GlobalId = dbRow.GlobalId,
+                Name = dbRow.Name,
+                ContactPhoneNumber = dbRow.ContactPhoneNumber,
+                State = dbRow.State
+            };
+            return order;
         }
 
         public OrderDataEntity GetMobileOrderByGlobalId(Guid gloablId)
         {
-            var sql = $"select * from MobileOrderer.Orders where GlobalId=@gloablId";
+            var sql = $"select * from Mobiles.Orders where GlobalId=@gloablId";
 
-            using (var conn = new SqlConnection(connectionString))
+            using var conn = new SqlConnection(connectionString);
+            var dbRow = conn.QueryFirstOrDefault(sql, new { gloablId });
+
+            if (dbRow == null)
+                return null;
+
+            var order = new OrderDataEntity
             {
-                var dbRow = conn.QueryFirstOrDefault(sql, new { gloablId });
-
-                if (dbRow == null)
-                    return null;
-
-                var order = new OrderDataEntity
-                {
-                    Id = dbRow.Id,
-                    GlobalId = dbRow.GlobalId,
-                    Name = dbRow.Name,
-                    ContactPhoneNumber = dbRow.ContactPhoneNumber,
-                    State = dbRow.State
-                };
-                return order;
-            }
+                Id = dbRow.Id,
+                GlobalId = dbRow.GlobalId,
+                Name = dbRow.Name,
+                ContactPhoneNumber = dbRow.ContactPhoneNumber,
+                State = dbRow.State
+            };
+            return order;
         }
     }
 }

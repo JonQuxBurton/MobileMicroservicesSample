@@ -1,6 +1,6 @@
 ﻿using EndToEndApiLevelTests.DataAcess;
 using FluentAssertions;
-using MobileOrderer.Api.Resources;
+using Mobiles.Api.Resources;
 using System;
 
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
@@ -26,7 +26,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
             };
         }
 
-        public Step_2_Snapshot Take_Step_2_Snapshot(MobileOrderer.Api.Resources.OrderToAdd orderToAdd, Guid mobileGlobalId, Guid orderAMobileOrderReference, CustomerResource actualCustomerReturned)
+        public Step_2_Snapshot Take_Step_2_Snapshot(Mobiles.Api.Resources.OrderToAdd orderToAdd, Guid mobileGlobalId, Guid orderAMobileOrderReference, CustomerResource actualCustomerReturned)
         {
             // Wait for final action... Mobile ProvisionOrder updated to Sent
             var sentMobileOrder = data.MobilesData.TryGetMobileOrderInState(orderAMobileOrderReference, "Sent", config.FinalActionCheckDelay);

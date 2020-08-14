@@ -3,9 +3,9 @@
 
 $rootPath = "D:\Projects\GitHub\MobileMicroservicesSample"
 
-# MobileOrderer.Api
+# Mobiles.Api
 # WebApi Port 5000 
-$cdProjectDir = "cd /d $rootPath\src\MobileOrderer\MobileOrderer.Api";
+$cdProjectDir = "cd /d $rootPath\src\Mobiles\Mobiles.Api";
 $params=@("/C"; $cdProjectDir; " && dotnet run"; )
 Start-Process -Verb runas "cmd.exe" $params;
 Start-Sleep -Milliseconds 400

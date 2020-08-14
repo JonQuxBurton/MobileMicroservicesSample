@@ -20,8 +20,8 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         {
             var snapshot = fixture.Step_3_Snapshot;
             var enumConverter = new EnumConverter();
-            var expectedMobileState = enumConverter.ToName<MobileOrderer.Api.Domain.Mobile.State>(MobileOrderer.Api.Domain.Mobile.State.WaitingForActivation);
-            var expectedMobileOrderState = enumConverter.ToName<MobileOrderer.Api.Domain.Order.State>(MobileOrderer.Api.Domain.Order.State.Completed);
+            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.State>(Mobiles.Api.Domain.Mobile.State.WaitingForActivation);
+            var expectedMobileOrderState = enumConverter.ToName<Mobiles.Api.Domain.Order.State>(Mobiles.Api.Domain.Order.State.Completed);
 
             // Check Order is Completed in the SIM Cards database
             snapshot.ActualSimCardOrder.Should().NotBeNull();

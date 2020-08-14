@@ -4,7 +4,7 @@ using System.Net.Http;
 using System;
 using System.Threading.Tasks;
 using EndToEndApiLevelTests.DataAcess;
-using MobileOrderer.Api.Domain;
+using Mobiles.Api.Domain;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
 {
