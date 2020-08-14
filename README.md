@@ -125,7 +125,7 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 
 #### 1. Create a Customer
 Inputs:
-* POST Customer to the Mobile Orderer Web Service
+* POST Customer to the Mobiles Web Service
 
 Outputs:
 * Updates Mobiles database
@@ -133,7 +133,7 @@ Outputs:
 
 #### 2. Order a Mobile
 Inputs:
-* POST Order to the Mobile Orderer Web Service
+* POST Order to the Mobiles Web Service
 
 Outputs:
 * Updates Mobiles database
@@ -156,7 +156,7 @@ Outputs:
 	
 #### 4. Activate a Mobile
 Inputs:
-* POST Activate Order to the Mobile Orderer Web Service
+* POST Activate Order to the Mobiles Web Service
 
 Outputs:
 * Updates Mobiles database
