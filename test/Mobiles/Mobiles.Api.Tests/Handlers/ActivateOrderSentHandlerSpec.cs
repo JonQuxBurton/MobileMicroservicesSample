@@ -31,7 +31,7 @@ namespace Mobiles.Api.Tests.Handlers
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
                     GlobalId = Guid.NewGuid(),
-                    State = "ProcessingActivation"
+                    State = Mobile.State.ProcessingActivate.ToString()
                 }, inFlightOrder);
                 inputMessage = new ActivateOrderSentMessage()
                 {
@@ -57,7 +57,7 @@ namespace Mobiles.Api.Tests.Handlers
             {
                 await sut.Handle(inputMessage);
 
-                expectedMobile.CurrentState.Should().Be(Mobile.State.ProcessingActivation);
+                expectedMobile.CurrentState.Should().Be(Mobile.State.ProcessingActivate);
                 expectedMobile.InFlightOrder.CurrentState.Should().Be(Order.State.Sent);
             }
 

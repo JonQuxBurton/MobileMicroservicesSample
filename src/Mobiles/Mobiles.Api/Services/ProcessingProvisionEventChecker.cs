@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
@@ -8,22 +7,22 @@ using Utils.DomainDrivenDesign;
 
 namespace Mobiles.Api.Services
 {
-    public class ProcessingProvisioningEventChecker : IMobileEventsChecker
+    public class ProcessingProvisionEventChecker : IMobileEventsChecker
     {
-        private readonly ILogger<ProcessingProvisioningEventChecker> logger;
-        private readonly IGetProcessingProvisioningMobilesQuery getNewMobilesQuery;
+        private readonly ILogger<ProcessingProvisionEventChecker> logger;
+        private readonly IGetProcessingProvisionMobilesQuery getNewMobilesQuery;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMessagePublisher messagePublisher;
 
-        public ProcessingProvisioningEventChecker(
-            ILogger<ProcessingProvisioningEventChecker> logger,
-            IGetProcessingProvisioningMobilesQuery getProcessingProvisioningMobilesQuery,
+        public ProcessingProvisionEventChecker(
+            ILogger<ProcessingProvisionEventChecker> logger,
+            IGetProcessingProvisionMobilesQuery getProcessingProvisionMobilesQuery,
             IRepository<Mobile> mobileRepository,
             IMessagePublisher messagePublisher
             )
         {
             this.logger = logger;
-            this.getNewMobilesQuery = getProcessingProvisioningMobilesQuery;
+            this.getNewMobilesQuery = getProcessingProvisionMobilesQuery;
             this.mobileRepository = mobileRepository;
             this.messagePublisher = messagePublisher;
         }

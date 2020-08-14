@@ -11,13 +11,13 @@ using Xunit;
 
 namespace Mobiles.Api.Tests.Services
 {
-    namespace ProcessingProvisioningEventCheckerSpec
+    namespace ProcessingProvisionEventCheckerSpec
     {
         public class CheckShould
         {
             private readonly Mobile expectedMobile;
-            private readonly ProcessingProvisioningEventChecker sut;
-            private readonly Mock<IGetProcessingProvisioningMobilesQuery> queryMock;
+            private readonly ProcessingProvisionEventChecker sut;
+            private readonly Mock<IGetProcessingProvisionMobilesQuery> queryMock;
             private readonly Mock<IRepository<Mobile>> repositoryMock;
             private readonly Mock<IMessagePublisher> messagePublisherMock;
 
@@ -25,28 +25,28 @@ namespace Mobiles.Api.Tests.Services
             {
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
-                    State = Mobile.State.ProcessingActivation.ToString()
+                    State = Mobile.State.ProcessingActivate.ToString()
                 }, new Order(new OrderDataEntity
                 {
                     State = Order.State.New.ToString()
                 }));
 
-                queryMock = new Mock<IGetProcessingProvisioningMobilesQuery>();
+                queryMock = new Mock<IGetProcessingProvisionMobilesQuery>();
                 queryMock.Setup(x => x.Get())
                     .Returns(new[] { expectedMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
-                var loggerMock = new Mock<ILogger<ProcessingProvisioningEventChecker>>();
+                var loggerMock = new Mock<ILogger<ProcessingProvisionEventChecker>>();
 
-                sut = new ProcessingProvisioningEventChecker(loggerMock.Object, queryMock.Object, repositoryMock.Object, messagePublisherMock.Object);
+                sut = new ProcessingProvisionEventChecker(loggerMock.Object, queryMock.Object, repositoryMock.Object, messagePublisherMock.Object);
             }
 
             [Fact]
-            public void SetTheMobileToProcessingActivation()
+            public void SetTheMobileToProcessingActivate()
             {
                 sut.Check();
 
-                expectedMobile.CurrentState.Should().Be(Mobile.State.ProcessingActivation);
+                expectedMobile.CurrentState.Should().Be(Mobile.State.ProcessingActivate);
             }
 
             [Fact]

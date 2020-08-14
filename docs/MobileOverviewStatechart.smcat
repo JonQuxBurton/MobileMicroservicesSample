@@ -1,21 +1,28 @@
 /* 
-Last modified: 08/02/2020
+Render at: https://state-machine-cat.js.org/
 */
 
+ProcessingPortIn [color="gray"],
+ProcessingPortOut [color="gray"],
+Suspended [color="gray"],
+PortedOut [color="gray"];
+
 initial => New;
-New => ProcessingProvisioning : Provision;
-ProcessingProvisioning => WaitingForActivation: ProcessingProvisioningCompleted;
-WaitingForActivation => ProcessingActivation: Activate;
-ProcessingActivation => Live: ActivationCompleted;
+New => ProcessingProvision : Provision;
+ProcessingProvision => WaitingForActivate: ProvisionCompleted;
+WaitingForActivate => ProcessingActivate: Activate;
+ProcessingActivate => WaitingForActivate : ActivateRejected;
+ProcessingActivate => Live: ActivateCompleted;
 Live => ProcessingCease  : Cease;
-Live => Suspended : Suspend;
-Live => Suspended : ReplaceSim;
-Suspended => Live : Resume;
+Live => Suspended [color="gray"] : Suspend;
+Live => Suspended [color="gray"] : ReplaceSim;
+Suspended => Live [color="gray"] : Resume;
 ProcessingCease => Ceased : CeaseCompleted;
 Ceased => final;
 
-Live => ProcessingPortOut : RequestPAC;
-New => ProcessingPortIn : PortIn;
-ProcessingPortIn => Live : PortInCompleted (Polling);
-ProcessingPortOut => PortedOut : PortOutCompleted (Polling);
+
+Live => ProcessingPortOut [color="gray"] : RequestPAC;
+New => ProcessingPortIn [color="gray"] : PortIn;
+ProcessingPortIn => Live [color="gray"] : PortInCompleted (Polling);
+ProcessingPortOut => PortedOut [color="gray"] : PortOutCompleted (Polling);
 PortedOut => final;

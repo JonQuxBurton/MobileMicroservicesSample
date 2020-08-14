@@ -32,7 +32,7 @@ namespace Mobiles.Api.Tests.Handlers
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
                     GlobalId = Guid.NewGuid(),
-                    State = "ProcessingActivation"
+                    State = State.ProcessingActivate.ToString()
                 }, inFlightOrder);
                 inputMessage = new ActivateOrderCompletedMessage()
                 {

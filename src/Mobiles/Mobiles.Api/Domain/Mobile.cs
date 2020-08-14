@@ -9,8 +9,8 @@ namespace Mobiles.Api.Domain
 {
     public class Mobile : AggregateRoot
     {
-        public enum State { New, ProcessingProvisioning, WaitingForActivation, ProcessingActivation, ActivationRejected, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
-        public enum Trigger { Provision, ProcessingProvisioningCompleted, PortIn, Activate, ActivationCompleted, ActivationRejected, PortInCompleted, Cease, Suspend, ReplaceSim, Resume, RequestPac, CeaseCompleted, PortOutCompleted }
+        public enum State { New, ProcessingProvision, WaitingForActivate, ProcessingActivate, ActivateRejected, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
+        public enum Trigger { Provision, ProcessingProvisionCompleted, PortIn, Activate, ActivateCompleted, ActivateRejected, PortInCompleted, Cease, Suspend, ReplaceSim, Resume, RequestPac, CeaseCompleted, PortOutCompleted }
 
         public override int Id { get => this.mobileDataEntity.Id; protected set => base.Id = value; }
         public Guid GlobalId => this.mobileDataEntity.GlobalId;
@@ -43,9 +43,9 @@ namespace Mobiles.Api.Domain
             machine = new StateMachine<State, Trigger>(initialState);
 
             machine.Configure(State.New)
-                .Permit(Trigger.Provision, State.ProcessingProvisioning);
-            machine.Configure(State.ProcessingProvisioning)
-                .Permit(Trigger.ProcessingProvisioningCompleted, State.WaitingForActivation)
+                .Permit(Trigger.Provision, State.ProcessingProvision);
+            machine.Configure(State.ProcessingProvision)
+                .Permit(Trigger.ProcessingProvisionCompleted, State.WaitingForActivate)
                 .OnEntry(() => {
                     this.mobileDataEntity.State = enumConverter.ToName<State>(this.CurrentState);
                 })
@@ -53,27 +53,27 @@ namespace Mobiles.Api.Domain
                 {
                     this.CompleteInFlightOrder();
                 });
-            machine.Configure(State.WaitingForActivation)
-                .Permit(Trigger.Activate, State.ProcessingActivation)
+            machine.Configure(State.WaitingForActivate)
+                .Permit(Trigger.Activate, State.ProcessingActivate)
                 .OnEntry(() =>
                 {
                     this.mobileDataEntity.State = enumConverter.ToName<State>(this.CurrentState);
                 });
-            machine.Configure(State.ProcessingActivation)
-                .Permit(Trigger.ActivationCompleted, State.Live)
-                .Permit(Trigger.ActivationRejected, State.ActivationRejected)
+            machine.Configure(State.ProcessingActivate)
+                .Permit(Trigger.ActivateCompleted, State.Live)
+                .Permit(Trigger.ActivateRejected, State.ActivateRejected)
                 .OnEntry(() => {
-                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.ProcessingActivation);
+                    this.mobileDataEntity.State = State.ProcessingActivate.ToString();
                     this.CreateNewOrder();
                 })
                 .OnExit(() => {
                     this.CompleteInFlightOrder();
                 });
-            machine.Configure(State.ActivationRejected)
-                .Permit(Trigger.Activate, State.ProcessingActivation)
+            machine.Configure(State.ActivateRejected)
+                .Permit(Trigger.Activate, State.ProcessingActivate)
                 .OnEntry(() =>
                 {
-                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.ActivationRejected);
+                    this.mobileDataEntity.State = enumConverter.ToName<State>(State.ActivateRejected);
                 });
             machine.Configure(State.Live)
                 .Permit(Trigger.Cease, State.ProcessingCease)
@@ -126,9 +126,9 @@ namespace Mobiles.Api.Domain
             this.newOrder = order;
             this.machine.Fire(Trigger.Cease);
         }
-        public void ProcessingProvisioningCompleted() => this.machine.Fire(Trigger.ProcessingProvisioningCompleted);
-        public void ActivateCompleted() => this.machine.Fire(Trigger.ActivationCompleted);
-        public void ActivateRejected() => this.machine.Fire(Trigger.ActivationRejected);
+        public void ProcessingProvisionCompleted() => this.machine.Fire(Trigger.ProcessingProvisionCompleted);
+        public void ActivateCompleted() => this.machine.Fire(Trigger.ActivateCompleted);
+        public void ActivateRejected() => this.machine.Fire(Trigger.ActivateRejected);
         public void PortIn() => this.machine.Fire(Trigger.PortIn);
         public void PortInCompleted() => this.machine.Fire(Trigger.PortInCompleted);
         public void Suspend() => this.machine.Fire(Trigger.Suspend);

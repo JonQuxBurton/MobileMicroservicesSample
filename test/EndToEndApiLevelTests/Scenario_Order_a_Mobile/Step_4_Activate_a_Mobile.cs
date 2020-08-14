@@ -20,9 +20,9 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         {
             var snapshot = fixture.Step_4_Snapshot;
             var enumConverter = new EnumConverter();
-            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.State>(Mobiles.Api.Domain.Mobile.State.ProcessingActivation);
+            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.State>(Mobiles.Api.Domain.Mobile.State.ProcessingActivate);
 
-            // Check the Mobile has been updated to ProcessingActivation
+            // Check the Mobile has been updated to ProcessingActivate
             snapshot.ActualMobile.Should().NotBeNull();
             snapshot.ActualMobile.State.Should().Be(expectedMobileState);
 

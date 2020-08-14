@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Mobiles.Api.Data
 {
-    public interface IGetProcessingProvisioningMobilesQuery
+    public interface IGetProcessingProvisionMobilesQuery
     {
         IEnumerable<Mobile> Get();
     }

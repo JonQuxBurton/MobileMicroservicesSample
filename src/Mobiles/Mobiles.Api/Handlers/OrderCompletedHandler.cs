@@ -38,7 +38,7 @@ namespace Mobiles.Api.Handlers
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
                 var mobile = getMobileByOrderIdQuery.Get(receivedEvent.MobileOrderId);
                 
-                mobile.ProcessingProvisioningCompleted();
+                mobile.ProcessingProvisionCompleted();
                 mobileRepository.Update(mobile);
                 monitoring.ProvisionCompleted();
             }

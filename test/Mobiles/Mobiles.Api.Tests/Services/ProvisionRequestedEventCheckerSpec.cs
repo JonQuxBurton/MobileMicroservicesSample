@@ -33,11 +33,11 @@ namespace Mobiles.Api.Tests.Services
             }
 
             [Fact]
-            public void SetTheMobileToProcessingProvisioning()
+            public void SetTheMobileToProcessingProvision()
             {
                 sut.Check();
 
-                expectedNewMobile.CurrentState.Should().Be(Api.Domain.Mobile.State.ProcessingProvisioning);
+                expectedNewMobile.CurrentState.Should().Be(Api.Domain.Mobile.State.ProcessingProvision);
             }
 
             [Fact]

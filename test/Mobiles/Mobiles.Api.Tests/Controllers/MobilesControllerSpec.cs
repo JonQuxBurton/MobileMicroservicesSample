@@ -89,7 +89,7 @@ namespace Mobiles.Api.Tests.Controllers
             {
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
-                    State = "WaitingForActivation"
+                    State = State.WaitingForActivate.ToString()
                 }, null);
                 expectedGlobalId = Guid.NewGuid();
                 expectedActivateRequest = new ActivateRequest()
@@ -114,7 +114,7 @@ namespace Mobiles.Api.Tests.Controllers
             {
                 sut.Activate(expectedGlobalId, expectedActivateRequest);
 
-                expectedMobile.CurrentState.Should().Be(State.ProcessingActivation);
+                expectedMobile.CurrentState.Should().Be(State.ProcessingActivate);
                 expectedMobile.InFlightOrder.GlobalId.Should().Be(expectedGlobalId);
                 expectedMobile.InFlightOrder.ActivationCode.Should().Be(expectedActivateRequest.ActivationCode);
             }
