@@ -1,24 +1,113 @@
 # Mobile Microservices Sample
-A small sample of a Microservices architecture for a simple Mobile Phone/Telecoms domain.
+
+# Overview
+
+A sample of a Microservices architecture for the domain of a simple Mobile Phone/Telecoms domain.
+To explore and the different aspect of microservices.
 
 (Warning: This code is not suitable for Production use)
 
-## Domain
-User Story #1
+# What are Microservices?
+Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are
 
-As a SalesAgent I want to Order a Mobile.
+* Highly maintainable and testable
+* Loosely coupled
+* Independently deployable
+* Organized around business capabilities
+* Owned by a small team
 
-Given: The Order details are captured
+The microservice architecture enables the rapid, frequent and reliable delivery of large, complex applications. It also enables an organization to evolve its technology stack. 
 
-When: The Order is placed
+[From https://microservices.io/]
 
-Then: A SimCard Order is sent to the ExternalSimCardsProvider
+# Aspects of Microservices
+| Aspect        |               	| Implementation
+| ------------- | ------------------|------------- |
+|Data			| 					|SQL Server, Dapper, Entity Framework
+|				|Sovereignty		|Seperate schemas
+|Communication	|					|
+|				|Event Bus			|AWS SNQ, SQS. JustSaying. Minimal Event Bus. Goaws
+|				|Outbox Pattern		|In Mobiles.API, EventPublisherService and Checkers
+|API Gateway	|					|Not Implemented
+|Resiliency		|					|
+|				|Retry				|Polly/HttpClientFactory
+|				|Health Monitoring	|ASP.NET Core Health Checks Middleware
+|				|Observability		|Promethues, Grafana
+|Security		|					|Not Implemented
+|Testing		|					|
+|				|Manual				|VS Code REST Walkthroughs
+|				|Unit tests			|xUnit, Moq, Fluent assertions
+|				|End-to-end tests	|Scenario Scripts in EndToEndApiLevelTests
+|				|Load tests			|TODO
+|Deployment		|					|
+|				|Containers			|Docker compose
+|Documentation	|					|Markdown, Readme.md
+|				|Domain				|Sequence diagrams (sequencediagram.org), Statecharts (smcat)
+|				|Architecture		|4+1, LADRs
 
-## Architecture
+## Descriptions of the Aspects of Microservices
+
+### Data
+Each microservice should be independent from all the others, so it should own it's own data, this is know as Data Soveriengty. This allows the data to evolve without impacting any other services.
+
+### Communication
+As the services should be loosley coupled, we avoid long chain of service calls which could result in temporal coupling. Instead services exchange messages asynchronously using an Event Bus (also known as Message Bus).
+
+### API Gateway
+TODO
+### Resiliency
+TODO
+### Security
+TODO
+## Testing
+TODO
+### Deployment
+TODO
+
+### Documentation
+Not directly related to Microservices, but documentation is essential for future developers to quickly familiarise themselves with the system and long term maintainability.
+
+
+# The Domain
+
+The system is a Mobile Mobile Phone/Telecoms which supports the ordering and cancelling of Mobile Phones. The Ordering process is descibed in the following diagram and User Stories:
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/Order_a_Mobile.png)
+
+User Story - Order a Mobile
+
+As a SalesAgent I want to Order a Mobile.  
+Given: The Order details are captured  
+When: The Order is placed  
+Then: A SimCard Order is sent to the ExternalSimCardsProvider  
+Then: The Mobile is saved in state AwaitingActivation  
+
+User Story - Activate a Mobile
+
+As a Sales Agent I want to Activate a Mobile.  
+Given The Activation Code is supplied  
+When: The Activation is placed  
+Then: The Mobile is in state Live  
+
+## Mobile States
+During it's lifecycle a Mobile can transition between a number of states, as shown in the statcharts below. The Mobile can be in the top level states such as New, ProcessingProvision, Live, etc. as shown in Top level Mobile States diagram.
+
+In order to transition to a new state an Order must be sent to an External system. This In-flight order then progresses through it's own states of New, Processing, Sent, Completed, adding these into the diagram produces the Detailed Mobile States diagram.
+
+The greyed out states have not been implemented at present.
+
+### Top level Mobiles States
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileOverviewStatechart.png)
+
+## Detailed Mobile States
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileDetailedStatechart.png)
+
+
+# Architecture
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram1.png)
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram2.png)
 
-## Technologies:
+# Technologies:
 |               |               |
 | ------------- | ------------- |
 | Cloud         | [GoAWS](https://github.com/p4tin/goaws) - local AWS SNS/SQS system |
@@ -28,16 +117,17 @@ Then: A SimCard Order is sent to the ExternalSimCardsProvider
 | Unit tests    | Moq, xUnit, FluentAssertions |
 | Containers    | Docker        |
 
-## Launching
+# Launching
 Launch the system using docker:
 ```shell
 $ docker-compose up
 ```
 
-## Walkthrough
+# Walkthrough
 
 You can walkthrough the system by executing the scenarios described in the Manual testing section below, see Executing the Tests - [3. API level Manual Tests](#3-api-level-manual-tests-1)
 
+# Testing
 ## Testing Strategy
 
 My plan is to test the system from the bottom with unit tests and from the top with manual and automated tests. 
@@ -51,11 +141,11 @@ The rough positions of the three types of tests are shown with the numbers:
 3. API level Manual Tests
 
 
-#### 1. Unit Tests
+### 1. Unit Tests
 
 These are standard unit tests which test individual units in isolation and are fast running. 
 
-#### 2. API level End-to-end Tests
+### 2. API level End-to-end Tests
 These test each of the most important Scenarios which the system can perform. 
 
 These are not true "End-to-end" tests since they are at the API level rather than the UI. I choose to use the API level as a seam to test against as this should provide confidence that the back-end system has not regressed.
@@ -67,7 +157,7 @@ The tests are executed against a test system which is started using docker-compo
 
 The tests are then executed against this test system and verified by querying the database.
 
-#### 3. API level Manual Tests
+### 3. API level Manual Tests
 These also test the most important Scenarios which the system can perform.
 
 They are run against the same test system as above, launched through docker-compose.
@@ -75,13 +165,14 @@ Once the system is running they are executed manually by using the Visual Studio
 \docs\ManualTesting\ExecuteScenarios.http
 
 
-### Executing the Tests
 
-#### 1. Unit Tests
+## Executing the Tests
+
+### 1. Unit Tests
 
 Execute using the Visual Studio test runner.
 
-#### 2. API level End-to-end Tests
+### 2. API level End-to-end Tests
 * Start Docker Desktop
 * Build the test system: 
 ```
@@ -97,7 +188,7 @@ docker-compose -f docker-compose-test.yml -f docker-compose-test.override.yml up
 
 Execute the tests in the EndToEndApiLevelTests project using the Visual Studio test runner.
 
-#### 3. API level Manual Tests
+### 3. API level Manual Tests
 * Start Docker Desktop
 * Build the test system: 
 ```
@@ -115,7 +206,7 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 * Verify the changes in the database by running the SQL script: \docs\ManualTesting\CheckDatabase.sql
 * Repeat for the other Scenarios
 
-### The Scenarios
+## The Scenarios
 
 1. Create a Customer
 1. Order a Mobile
@@ -123,7 +214,7 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 1. Activate a Mobile
 1. Activate Order Completed
 
-#### 1. Create a Customer
+### 1. Create a Customer
 Inputs:
 * POST Customer to the Mobiles Web Service
 
@@ -131,7 +222,7 @@ Outputs:
 * Updates Mobiles database
 	* Creates a Customer
 
-#### 2. Order a Mobile
+### 2. Order a Mobile
 Inputs:
 * POST Order to the Mobiles Web Service
 
@@ -143,7 +234,7 @@ Outputs:
 	* Order State to Sent
 * Calls External SIM Card system
 
-#### 3. Mobile Order Completed
+### 3. Mobile Order Completed
 Inputs:
 * Complete the Mobile Order in the External SIM Card system
 
@@ -154,7 +245,7 @@ Outputs:
 	* Mobile State to WaitingForActivation
 	* Order State to Completed
 	
-#### 4. Activate a Mobile
+### 4. Activate a Mobile
 Inputs:
 * POST Activate Order to the Mobiles Web Service
 
@@ -166,7 +257,7 @@ Outputs:
 	* Order State to Sent
 * Calls External Mobile Telecoms Network system
 
-#### 5. Activate Order Completed
+### 5. Activate Order Completed
 Inputs:
 * Complete the Activate Order in the External Mobile Telecoms Network system
 
@@ -177,7 +268,7 @@ Outputs:
 	* Mobile State to Live
 	* Order State to Completed
 
-## Logging
+# Logging
 
 Logging in the system uses the Serilog library. This supports strutured logging in which log entries include data, rather than being just plain text. This allows the logs to be more easily searched, filtered and analysed to assist in diagnosing problems.
 
@@ -190,13 +281,13 @@ http://localhost:5341
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/SeqDashboard.png)
 
-## Monitoring
+# Monitoring
 
 The system is monitored, so we can verify that it is functioning correctly and prevent problems before they escalate. System Metrics are gathered using Prometheus and displayed in Grafana Dashboards.
 
 To test the system and generate metrics, run the End-to-end tests, then observe in the Prometheus Control Panel and Grafana Dashboard.
 
-### Prometheus Control Panel
+## Prometheus Control Panel
 The Prometheus Control Panel can be viewed at:
 ```
 http://localhost:9090
@@ -204,7 +295,7 @@ http://localhost:9090
 
 View the metrics using the following PromQL queries:
 
-#### Mobiles System
+### Mobiles System
 
 | PromQL | Description |
 | ---- | ---- |
@@ -218,7 +309,7 @@ View the metrics using the following PromQL queries:
 | mobile_ceases_completed | Total number of Mobile Ceases requested |
 | mobile_ceases_inprogress | Current number of Mobile Ceases in progress |
 
-#### External SIM Cards Provider
+### External SIM Cards Provider
 | PromQL | Description |
 | ---- | ---- |
 | simcard_orders_sent | Total number of SIM Card orders sent |
@@ -226,7 +317,7 @@ View the metrics using the following PromQL queries:
 | simcard_orders_inprogress | Current number of SIM Card orders in progress |
 | simcard_orders_failed| Total number of SIM Card orders which failed |
 
-#### External Mobile Telecoms Network
+### External Mobile Telecoms Network
 | PromQL | Description |
 | ---- | ---- |
 | mobiletelecomsnetwork_activate_orders_sent | Total number of Activate orders sent |
@@ -238,7 +329,7 @@ View the metrics using the following PromQL queries:
 | mobiletelecomsnetwork_cease_orders_inprogress | Current number of Cease orders in progress |
 | mobiletelecomsnetwork_cease_orders_failed | Total number of Cease orders which failed |
 
-### Grafana Dashboard
+## Grafana Dashboard
 The Grafana Dashboard can be viewed at:
 ```
 http://localhost:3000
@@ -247,5 +338,9 @@ http://localhost:3000
 
 
 
+# References:
 
+Kruchten, Philippe (1995, November). Architectural Blueprints — The “4+1” View Model of Software Architecture
+https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf
+https://en.wikipedia.org/wiki/4%2B1_architectural_view_model
 

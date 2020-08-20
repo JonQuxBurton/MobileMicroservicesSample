@@ -1,0 +1,36 @@
+title Order a Mobile
+
+//http://sequencediagram.org/
+
+bottomparticipants
+
+participantspacing equal
+actor "Customer" as C
+actor "Sales Agent" as SA
+participant "Mobile\n System" as MS
+boundary "External\n SIM Cards\n System" as ESCS
+boundary "External\n Mobile Telecoms\n System" as EMTS
+
+group Provision the Mobile
+
+C->SA: "I would like a Mobile"
+SA->MS:Click: Order a Mobile
+MS->ESCS:Provision
+ESCS->MS:Accepted
+MS->SA:Accepted
+C<-SA: "When the SIM card\n arrives in the mail \nplease Activate it"
+note over ESCS: SIM Card Order\ncompleted
+ESCS->C:Mail SIM card
+end
+
+box over C:Customer receives \nthe SIM card \nin the mail
+
+group Activate the SIM
+
+C->SA:"I would like\n to Activate my SIM"
+SA->MS:Click: Activate
+MS->EMTS:Activate
+EMTS->MS:Success
+SA<-MS:Success
+C<-SA:"Activation is in progress \nit may take up to 90 minutes \nto complete"
+end
