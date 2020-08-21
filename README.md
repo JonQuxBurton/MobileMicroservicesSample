@@ -3,11 +3,36 @@
 # Overview
 
 A sample of a Microservices architecture for the domain of a simple Mobile Phone/Telecoms domain.
-To explore and the different aspect of microservices.
+To explore some of the different aspects of a microservices architecture.
 
 (Warning: This code is not suitable for Production use)
 
-# What are Microservices?
+## Walkthrough
+
+You can try out the system by executing a Walkthrough of the Sceanrio - Order a Mobile, as follows:
+
+Prerequissites:
+Install and launch Docker
+Install Visual Studio Code
+Install REST Client Visual Studio Code plugin
+
+1. Launch the system using docker: `$ docker-compose up`
+1. Wait a minute
+1. Verify the test system has successfully launched by  executing the checks in the file `\docs\ManualTesting\CheckSystem.http`
+1. Connect to the SQL Server database using the Admin account: `localhost,5433`, Login: `SA`, Password: `Pass@word`
+1. Verify the database is running by running the SQL script `\docs\ManualTesting\CheckDatabase.sql`
+1. Open the file `docs\ManualTesting\ExecuteScenarios.http`
+1. Create a Customer - Click `Send Request` under `### Step 1 - Create a Customer`
+1. Observe the Customer was created with the SQL: `select * from Mobiles.Customers`
+1. Order a Mobile - Click `Send Request` under `### Step 2 - Order a Mobile`
+1. Observe the Mobile was created with the SQL: `select * from Mobiles.Mobiles`
+1. Observe the Mobile Order was created with the SQL: `select * from Mobiles.Orders`
+1. Simulate the External SIM Card System completing the Mobile Provision Order - Click `Send Request` under `### Step 3 - The External Service has completed the Mobile Provision Order`
+1. Observe that the Mobile is `WaitingForActivate` with the SQL: `select * from Mobiles.Mobiles`
+1. When the External SIM Card System has processed the Order the Activation Code would then be mailed to the Customer to complete the Activaion
+
+# Background
+## What are Microservices?
 Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are
 
 * Highly maintainable and testable
@@ -16,121 +41,147 @@ Microservices - also known as the microservice architecture - is an architectura
 * Organized around business capabilities
 * Owned by a small team
 
-The microservice architecture enables the rapid, frequent and reliable delivery of large, complex applications. It also enables an organization to evolve its technology stack. 
+The microservice architecture enables the rapid, frequent and reliable delivery of large, complex applications. It also enables an organization to evolve its technology stack.   
+From [microservices.io](#microservices.io)
 
-[From https://microservices.io/]
-
-# Aspects of Microservices
+## Aspects of Microservices
 | Aspect        |               	| Implementation
 | ------------- | ------------------|------------- |
 |Data			| 					|SQL Server, Dapper, Entity Framework
-|				|Sovereignty		|Seperate schemas
+|				|Sovereignty		|Seperate database schemas adn logins
 |Communication	|					|
-|				|Event Bus			|AWS SNQ, SQS. JustSaying. Minimal Event Bus. Goaws
+|				|Event Bus			|AWS SNQ, SQS. JustSaying. Minimal Event Bus. GoAws
 |				|Outbox Pattern		|In Mobiles.API, EventPublisherService and Checkers
 |API Gateway	|					|Not Implemented
 |Resiliency		|					|
 |				|Retry				|Polly/HttpClientFactory
 |				|Health Monitoring	|ASP.NET Core Health Checks Middleware
 |				|Observability		|Promethues, Grafana
+|				|Structured Logging	|Serilog, Seq
+|				|Distributed Tracing|Not Implemented
 |Security		|					|Not Implemented
 |Testing		|					|
-|				|Manual				|VS Code REST Walkthroughs
+|				|Manual				|Walkthroughs using the [REST Client Visual Studio Code plugin](#REST-client)
 |				|Unit tests			|xUnit, Moq, Fluent assertions
 |				|End-to-end tests	|Scenario Scripts in EndToEndApiLevelTests
 |				|Load tests			|TODO
 |Deployment		|					|
-|				|Containers			|Docker compose
-|Documentation	|					|Markdown, Readme.md
+|				|Containers			|docker-compose
+|Documentation	|					|Markdown, Readme.md (this document)
 |				|Domain				|Sequence diagrams (sequencediagram.org), Statecharts (smcat)
-|				|Architecture		|4+1, LADRs
+|				|Architecture		|[4+1 Model](#4+1-Model), [C4 Model](#C4-Model), [C4 PlantUML Visual Studio Code plugin](#C4-PlantUML), LADRs (TODO)
 
 ## Descriptions of the Aspects of Microservices
 
 ### Data
-Each microservice should be independent from all the others, so it should own it's own data, this is know as Data Soveriengty. This allows the data to evolve without impacting any other services.
+Each microservice should be independent from all the others, so it should own it's own data, this is known as Data Soveriengty. This allows the schema of the data to evolve without impacting any other services.
 
 ### Communication
-As the services should be loosley coupled, we avoid long chain of service calls which could result in temporal coupling. Instead services exchange messages asynchronously using an Event Bus (also known as Message Bus).
+As the services should be loosley coupled, we avoid long chains of service calls which could result in temporal coupling. Instead services use the Publish/Subscribe pattern to communicate asynchronously using an Event Bus (also known as Message Bus).
 
 ### API Gateway
-TODO
+If the Front end apps call the microservices directly, then they are coupled and changes to the back end will also require updates to the front end. 
+An API Gateway (also known as a Back end-for-Front end (BFF)) can sit inbetween and act as a facade for the front end. It can perform re-routing of inbound requests and aggregating together the responses into a single response. The back end microservices can then evolve independently from the front end.
+
 ### Resiliency
-TODO
+To keep the system resilient we should provide:
+* Retry mechnism - retry failed requests, so that temporary or intermittent faults do not cause downtime
+* Health checks - a way to check on the health of services
+* Structured logging - log the details of what the service has done, in a format which ca be easily searched
+* Metrics - to observe the functioning of the system as a whole
+
 ### Security
-TODO
+Microservices should perform the standard security practices of Authentication (verifying  identify) and Authroization (verifying the principal has the correct claims). Performance shoud also be considered since multiple microservices may be involved in processing a request, each needing to do security checks. Also microservices should not be abe to access each others data.
+
 ## Testing
-TODO
+Indivudal microservices can be tested with automated, fast running unit tests. These can keep the code from breaking and also help improve the design and keep components loosely coupled. 
+Testing multiple services interacting with each other is more complicated. There are multiple ideas about how to do this, such as:
+* End-to-end tests driven through a UI automation tool
+* Testing services using faked dependencies such as the EF Core In-Memory database
+* Running tests againat a simulated system running in Docker containers. For example using GoAws to simulate AWS SNS/SQS
+
+Ultimately whatever approach is taken the goal is to have tests which can give confidence that the system as a whole works (and has not regressed) and are automated so they reduce the need for manual testing.
+
 ### Deployment
-TODO
+Microservices can be deployed in many ways. One way is by using containers, which allow each instance of a service to run in isolation from all others. The container can also be restarted if it crashes, by an Orchestrator. Another benefit of this approach is that test systems can be easily created and deployed using the same techniques.
 
 ### Documentation
-Not directly related to Microservices, but documentation is essential for future developers to quickly familiarise themselves with the system and long term maintainability.
+Not directly related to microservices, but documentation is essential for future developers to quickly familiarise themselves with the system and for long term maintainability.
+We should document:
+* The domain - record the business processes so future developers can see what problem the system is solving
+* The architecutre - record the high level structure of the system so future developers can see how the pieces fit together
 
+# Documentation
+## The Domain
 
-# The Domain
-
-The system is a Mobile Mobile Phone/Telecoms which supports the ordering and cancelling of Mobile Phones. The Ordering process is descibed in the following diagram and User Stories:
+The system is a Mobile Mobile Phone/Telecoms which supports the ordering and cancelling of Mobile Phones. The Ordering process is illustrated in the following diagram and User Stories:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/Order_a_Mobile.png)
 
+```
 User Story - Order a Mobile
 
 As a SalesAgent I want to Order a Mobile.  
 Given: The Order details are captured  
 When: The Order is placed  
-Then: A SimCard Order is sent to the ExternalSimCardsProvider  
-Then: The Mobile is saved in state AwaitingActivation  
+Then: A SimCard Order is sent to the External Sim Cards Provider  
+Then: The Mobile is saved in state WaitingForActivation  
+```
 
+```
 User Story - Activate a Mobile
 
 As a Sales Agent I want to Activate a Mobile.  
-Given The Activation Code is supplied  
-When: The Activation is placed  
+Given: The Mobile is in state AwaitingActivation
+When: The Activation Code is supplied  
+Then: The Activation Code is sent to the External Mobile Telecoms Network  
 Then: The Mobile is in state Live  
+```
 
-## Mobile States
-During it's lifecycle a Mobile can transition between a number of states, as shown in the statcharts below. The Mobile can be in the top level states such as New, ProcessingProvision, Live, etc. as shown in Top level Mobile States diagram.
+### Mobile States
+During it's lifecycle a Mobile can transition between a number of states. These states such as New, ProcessingProvision, Live, etc. are shown in the Mobile States diagram.
 
-In order to transition to a new state an Order must be sent to an External system. This In-flight order then progresses through it's own states of New, Processing, Sent, Completed, adding these into the diagram produces the Detailed Mobile States diagram.
+In order to transition to a new state an Order must be sent to an External system. This In-flight order then progresses through it's own states of New, Processing, Sent and Completed. Adding these into the diagram results in the Mobile States with In-flight Order States diagram.
 
 The greyed out states have not been implemented at present.
 
-### Top level Mobiles States
+#### Mobile States
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileOverviewStatechart.png)
 
-## Detailed Mobile States
+### Mobile States with In-flight Order States
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileDetailedStatechart.png)
 
 
-# Architecture
+## Architecture
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram1.png)
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram2.png)
 
-# Technologies:
-|               |               |
-| ------------- | ------------- |
-| Cloud         | [GoAWS](https://github.com/p4tin/goaws) - local AWS SNS/SQS system |
-| WebApi        | ASP.NET Core  |
-| Data access   | Dapper        |
-| Event-based collaboration | AWS SNS and SQS. JustSaying message bus |
-| Unit tests    | Moq, xUnit, FluentAssertions |
-| Containers    | Docker        |
+### Visualisation
+The following diagrams map the architecture of the system.
+They following the [4+1 Model](#4+1-Model), the [C4 Model](#C4-Model) and us the [C4 PlantUML Visual Studio Code plugin](#C4-PlantUML).
 
-# Launching
-Launch the system using docker:
-```shell
-$ docker-compose up
-```
+#### System Context Diagram
 
-# Walkthrough
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/C4Diagrams/System%20Context%20diagram%20for%20the%20Mobile%20system.png)
 
-You can walkthrough the system by executing the scenarios described in the Manual testing section below, see Executing the Tests - [3. API level Manual Tests](#3-api-level-manual-tests-1)
+Source: \docs\MobileC4Context.puml
+
+#### Containers Diagram
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/C4Diagrams/Containers%20diagram%20for%20the%20Mobile%20system.png)
+
+Source: \docs\MobileC4Containers.puml
+
+#### Components Diagram
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/C4Diagrams/Components%20diagram%20for%20the%20Mobile%20system%20-%20Mobiles%20Microservice.png)
+
+Source: \docs\MobileC4Components.puml
 
 # Testing
 ## Testing Strategy
 
-My plan is to test the system from the bottom with unit tests and from the top with manual and automated tests. 
+My plan is to test the system from the bottom up, with unit tests and from the top down with manual and automated tests. 
 These are illustrated on the standard testing pyramid:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/TestingStrategy.png)
@@ -148,12 +199,12 @@ These are standard unit tests which test individual units in isolation and are f
 ### 2. API level End-to-end Tests
 These test each of the most important Scenarios which the system can perform. 
 
-These are not true "End-to-end" tests since they are at the API level rather than the UI. I choose to use the API level as a seam to test against as this should provide confidence that the back-end system has not regressed.
+These are not true "End-to-end" tests since they are at the API level rather than the UI. I choose to use the API level as a seam to test against as this should provide confidence that the back end system has not regressed.
 
 The tests are executed against a test system which is started using docker-compose. This launches the following:
-* each service in a seperate containers
-* the SQL Server database in a container
-* GoAws - a simulation of AWS SNS/SQS in a container
+* each service running in a seperate container
+* the SQL Server database running in a container
+* GoAws - a simulation of AWS SNS/SQS running in a container
 
 The tests are then executed against this test system and verified by querying the database.
 
@@ -161,10 +212,8 @@ The tests are then executed against this test system and verified by querying th
 These also test the most important Scenarios which the system can perform.
 
 They are run against the same test system as above, launched through docker-compose.
-Once the system is running they are executed manually by using the Visual Studio Code [REST client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and executing the Scenarios in the file:
+Once the system is running they are executed manually by using the [REST Client Visual Studio Code plugin](#REST-client) and executing the Scenarios in the file:
 \docs\ManualTesting\ExecuteScenarios.http
-
-
 
 ## Executing the Tests
 
@@ -201,10 +250,10 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 * Wait a minute
 * Verify the test system has successfully launched (see above)
 
-* Open \docs\ManualTesting\ExecuteScenarios.http in Visual Studio Code
-* Click 'Send Request' against the first Scenario
+* Open \docs\ManualTesting\ExecuteScenarios.http in the REST Client Visual Studio Code plugin
+* Click 'Send Request' against the first Step of the first Scenario
 * Verify the changes in the database by running the SQL script: \docs\ManualTesting\CheckDatabase.sql
-* Repeat for the other Scenarios
+* Repeat for the other Steps and Scenarios
 
 ## The Scenarios
 
@@ -268,26 +317,28 @@ Outputs:
 	* Mobile State to Live
 	* Order State to Completed
 
-# Logging
+# Resiliency
+
+## Logging
 
 Logging in the system uses the Serilog library. This supports strutured logging in which log entries include data, rather than being just plain text. This allows the logs to be more easily searched, filtered and analysed to assist in diagnosing problems.
 
-Theses logs are also push ed to Seq which produces a dashboard where they can be viewed and queried.
+Theses logs are also pushed to Seq which produces a dashboard where they can be viewed and queried.
 
-The Seq Dashboard can be viewed at:
+The Seq Dashboard can be viewed at the address:
 ```
 http://localhost:5341
 ```
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/SeqDashboard.png)
 
-# Monitoring
+## Monitoring
 
 The system is monitored, so we can verify that it is functioning correctly and prevent problems before they escalate. System Metrics are gathered using Prometheus and displayed in Grafana Dashboards.
 
 To test the system and generate metrics, run the End-to-end tests, then observe in the Prometheus Control Panel and Grafana Dashboard.
 
-## Prometheus Control Panel
+### Prometheus Control Panel
 The Prometheus Control Panel can be viewed at:
 ```
 http://localhost:9090
@@ -307,7 +358,7 @@ View the metrics using the following PromQL queries:
 | mobile_activates_inprogress | Current number of Mobile Activates in progress |
 | mobile_ceases | Total number of Mobile Ceases requested |
 | mobile_ceases_completed | Total number of Mobile Ceases requested |
-| mobile_ceases_inprogress | Current number of Mobile Ceases in progress |
+| mobile_ceases_inprogress | Current number of Mobile Ceases in progress |  
 
 ### External SIM Cards Provider
 | PromQL | Description |
@@ -329,18 +380,35 @@ View the metrics using the following PromQL queries:
 | mobiletelecomsnetwork_cease_orders_inprogress | Current number of Cease orders in progress |
 | mobiletelecomsnetwork_cease_orders_failed | Total number of Cease orders which failed |
 
-## Grafana Dashboard
+### Grafana Dashboard
 The Grafana Dashboard can be viewed at:
 ```
 http://localhost:3000
 ```
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/GrafanaDashboard.png)
 
+# References
 
+<a name="microservices.io">[microservices.io]</a>  
+Microservice Architecture by Chris Richardson
+https://microservices.io
 
-# References:
-
-Kruchten, Philippe (1995, November). Architectural Blueprints — The “4+1” View Model of Software Architecture
+<a name="4+1-Model">[4+1 Model]</a>  
+The "4+1" View Model of Software Architecture  
+Kruchten, Philippe (1995, November). Architectural Blueprints — The "4+1" View Model of Software Architecture  
 https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf
 https://en.wikipedia.org/wiki/4%2B1_architectural_view_model
 
+<a name="C4-Model">[C4 Model]</a>    
+The C4 model for visualising software architecture  
+https://c4model.com/
+
+<a name="C4-PlantUML">[C4 PlantUML]</a>  
+The C4 model using PlantUML  
+C4-PlantUML  
+https://github.com/RicardoNiepel/C4-PlantUML
+
+<a name="REST-Client">[REST Client]</a>  
+REST Client Visual Studio plugin
+by Huachao Mao
+https://marketplace.visualstudio.com/items?itemName=humao.rest-client
