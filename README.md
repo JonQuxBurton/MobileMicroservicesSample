@@ -121,7 +121,7 @@ The system is a Mobile Mobile Phone/Telecoms which supports the ordering and can
 ```
 User Story - Order a Mobile
 
-As a SalesAgent I want to Order a Mobile.  
+As a SalesAgent I want to Order a Mobile  
 Given: The Order details are captured  
 When: The Order is placed  
 Then: A SimCard Order is sent to the External Sim Cards Provider  
@@ -131,7 +131,7 @@ Then: The Mobile is saved in state WaitingForActivation
 ```
 User Story - Activate a Mobile
 
-As a Sales Agent I want to Activate a Mobile.  
+As a Sales Agent I want to Activate a Mobile  
 Given: The Mobile is in state AwaitingActivation
 When: The Activation Code is supplied  
 Then: The Activation Code is sent to the External Mobile Telecoms Network  
@@ -139,11 +139,13 @@ Then: The Mobile is in state Live
 ```
 
 ### Mobile States
-During it's lifecycle a Mobile can transition between a number of states. These states such as New, ProcessingProvision, Live, etc. are shown in the Mobile States diagram.
+During it's lifecycle a Mobile can transition between a number of states. These states such as New, ProcessingProvision, Live, etc. are shown in the Mobile States statechart.
 
-In order to transition to a new state an Order must be sent to an External system. This In-flight order then progresses through it's own states of New, Processing, Sent and Completed. Adding these into the diagram results in the Mobile States with In-flight Order States diagram.
+In order to transition to a new state an Order must be sent to an External system. This In-flight order then progresses through it's own states of New, Processing, Sent and Completed. Adding these into the diagram results in the Mobile States with In-flight Order States statechart.
 
 The greyed out states have not been implemented at present.
+
+For information on statecharts, see [Welcome to Statecharts](#Welcome-to-Statecharts) and [Statecharts](#Statecharts).
 
 #### Mobile States
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileOverviewStatechart.png)
@@ -390,25 +392,36 @@ http://localhost:3000
 # References
 
 <a name="microservices.io">[microservices.io]</a>  
-Microservice Architecture by Chris Richardson
+**Microservice Architecture by Chris Richardson**
 https://microservices.io
 
 <a name="4+1-Model">[4+1 Model]</a>  
-The "4+1" View Model of Software Architecture  
-Kruchten, Philippe (1995, November). Architectural Blueprints — The "4+1" View Model of Software Architecture  
-https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf
+**The "4+1" View Model of Software Architecture**  
+Architectural Blueprints - The "4+1" View Model of Software Architecture by Kruchten, Philippe (1995)     
+https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf  
+(15 pages)  
 https://en.wikipedia.org/wiki/4%2B1_architectural_view_model
 
 <a name="C4-Model">[C4 Model]</a>    
-The C4 model for visualising software architecture  
+**The C4 model for visualising software architecture**  
 https://c4model.com/
 
 <a name="C4-PlantUML">[C4 PlantUML]</a>  
-The C4 model using PlantUML  
+**The C4 model using PlantUML**  
 C4-PlantUML  
 https://github.com/RicardoNiepel/C4-PlantUML
 
 <a name="REST-Client">[REST Client]</a>  
-REST Client Visual Studio plugin
-by Huachao Mao
+**REST Client Visual Studio plugin**
+by Huachao Mao  
 https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+<a name="Welcome-to-Statecharts">[Welcome to Statecharts]</a>  
+**Welcome to the world of Statecharts**  
+https://statecharts.github.io/
+
+<a name="Statecharts">[Statecharts]</a>  
+**Statecharts: A visual formalism for complex systems by David Harel (1986)**  
+http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf  
+(44 pages)
+
