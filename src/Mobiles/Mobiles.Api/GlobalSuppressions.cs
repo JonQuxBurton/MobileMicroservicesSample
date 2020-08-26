@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:Mobiles.Api.Handlers.OrderCompletedHandler.Handle(Mobiles.Api.Messages.ProvisionOrderCompletedMessage)~System.Threading.Tasks.Task{System.Boolean}")]
+[assembly: SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>", Scope = "member", Target = "~P:Mobiles.Api.Resources.CustomerResource.Mobiles")]

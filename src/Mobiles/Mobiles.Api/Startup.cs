@@ -37,9 +37,19 @@ namespace Mobiles.Api
 
         public IConfiguration Configuration { get; }
 
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:53020", "http://localhost:5000");
+                                  });
+            });
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             var eventBusConfig = new EventBusConfig();
@@ -71,6 +81,7 @@ namespace Mobiles.Api
             services.AddScoped<IGetNewActivatesQuery, GetNewActivatesQuery>();
             services.AddScoped<IGetNewCeasesQuery, GetNewCeasesQuery>();
             services.AddScoped<IGetMobileByOrderIdQuery, GetMobileByOrderIdQuery>();
+            services.AddScoped<IGetMobilesByCustomerIdQuery, GetMobilesByCustomerIdQuery>();
             
             // EventBus
             services.AddSingleton<ISnsService, SnsService>();
@@ -101,6 +112,8 @@ namespace Mobiles.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHealthChecks("/health");
             app.UseMetricServer();

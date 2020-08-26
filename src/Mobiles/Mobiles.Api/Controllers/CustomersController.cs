@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using System;
@@ -14,29 +15,32 @@ namespace Mobiles.Api.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ILogger<CustomersController> logger;
-        private readonly ICustomerRepository repository;
+        private readonly ICustomerRepository customerRepository;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMonitoring monitoring;
         private readonly IGuidCreator guidCreator;
+        private readonly IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery;
 
         public CustomersController(
             ILogger<CustomersController> logger,
-            ICustomerRepository repository,
+            ICustomerRepository customerRepository,
             IRepository<Mobile> mobileRepository,
             IMonitoring monitoring,
-            IGuidCreator guidCreator)
+            IGuidCreator guidCreator,
+            IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery)
         {
             this.logger = logger;
-            this.repository = repository;
+            this.customerRepository = customerRepository;
             this.mobileRepository = mobileRepository;
             this.monitoring = monitoring;
             this.guidCreator = guidCreator;
+            this.getMobilesByCustomerIdQuery = getMobilesByCustomerIdQuery;
         }
 
         [HttpGet]
         public ActionResult<Customer[]> GetAll()
         {
-            var entities = this.repository.GetAll();
+            var entities = this.customerRepository.GetAll();
 
             return new OkObjectResult(entities.ToArray());
         }
@@ -44,12 +48,31 @@ namespace Mobiles.Api.Controllers
         [HttpGet("{id}")]
         public ActionResult<Customer> Get(Guid id)
         {
-            var entity = repository.GetById(id);
+            var customer = customerRepository.GetById(id);
 
-            if (entity == null)
+            if (customer == null)
                 return NotFound();
 
-            return new OkObjectResult(entity);
+            var mobiles = getMobilesByCustomerIdQuery.Get(id);
+
+            return new OkObjectResult(
+                new CustomerResource
+                {
+                    Name = customer.Name,
+                    GlobalId = customer.GlobalId,
+                    CreatedAt = customer.CreatedAt,
+                    Mobiles = mobiles.Select(x =>
+                    {
+                        return new MobileResource
+                        {
+                            GlobalId = x.GlobalId,
+                            CreatedAt = x.CreatedAt,
+                            CustomerId = x.CustomerId,
+                            PhoneNumber = x.PhoneNumber.ToString(),
+                            State = x.CurrentState.ToString()
+                        };
+                    }).ToArray()
+                });
         }
 
         [HttpPost]
@@ -60,9 +83,9 @@ namespace Mobiles.Api.Controllers
                 GlobalId = guidCreator.Create(),
                 Name = customerToAdd.Name
             };
-            repository.Add(newCustomer);
+            customerRepository.Add(newCustomer);
 
-            var created = repository.GetById(newCustomer.GlobalId);
+            var created = customerRepository.GetById(newCustomer.GlobalId);
 
             logger.LogInformation("Created Customer with GlobalId {GlobalId}", created.GlobalId);
             monitoring.CreateCustomer();
@@ -79,7 +102,7 @@ namespace Mobiles.Api.Controllers
         [HttpPost("{id}/provision")]
         public IActionResult Provision(Guid id, [FromBody] OrderToAdd orderToAdd)
         {
-            var customer = repository.GetById(id);
+            var customer = customerRepository.GetById(id);
 
             if (customer == null)
             {

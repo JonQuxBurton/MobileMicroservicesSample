@@ -8,5 +8,6 @@ namespace Mobiles.Api.Resources
         public string Name { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public MobileResource[] Mobiles { get; set; } = Array.Empty<MobileResource>();
     }
 }

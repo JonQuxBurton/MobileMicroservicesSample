@@ -25,10 +25,23 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\models\Customer.ts" />
+    <None Remove="ClientApp\src\app\models\Mobile.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\models\Mobile.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\models\Customer.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ClientApp\src\app\models\Customer - Copy.js">
+      <DependentUpon>Customer.js</DependentUpon>
+    </None>
+    <None Update="ClientApp\src\app\models\Customer - Copy.js.map">
+      <DependentUpon>Customer.js.map</DependentUpon>
+    </None>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

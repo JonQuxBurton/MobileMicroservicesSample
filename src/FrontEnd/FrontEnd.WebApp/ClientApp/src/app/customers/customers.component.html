@@ -4,15 +4,61 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let c of customers">
         <td>{{c.name}}</td>
+        <td class="float-right">
+          <button type="button" class="btn btn-primary" (click)="loadCustomer(c.globalId)">LOAD</button>
+        </td>
       </tr>
     </tbody>
   </table>
 </div>
 <div *ngIf="!customers || customers.length == 0">
   <p>No Customers found</p>
+</div>
+
+<hr />
+
+<div *ngIf="selectedCustomer">
+  <h3>Customer</h3>
+  <div class="form-group">
+    <label for="name">Name:</label>
+    <input type="text" class="form-control" id="name" value="{{selectedCustomer.name}}" readonly>
+  </div>
+  <div class="form-group">
+    <label for="globalId">ID:</label>
+    <input type="text" class="form-control" id="globalId" value="{{selectedCustomer.globalId}}" readonly>
+  </div>
+  <div class="form-group">
+    <label for="createdAt">Created At:</label>
+    <input type="text" class="form-control" id="createdAt" value="{{selectedCustomer.createdAt}}" readonly>
+  </div>
+  <div>
+    <h4>Mobiles</h4>
+    <div *ngIf="selectedCustomer.mobiles.length > 0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Phone Number</th>
+            <th>Created At</th>
+            <th>State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of selectedCustomer.mobiles">
+            <td>{{m.phoneNumber}}</td>
+            <td>{{m.createdAt}}</td>
+            <td>{{m.state}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="selectedCustomer.mobiles.length == 0">
+      No Mobiles found
+    </div>
+  </div>
 </div>
