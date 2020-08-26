@@ -1,0 +1,18 @@
+<h2>Customers</h2>
+<div *ngIf="customers && customers.length > 0">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of customers">
+        <td>{{c.name}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="!customers || customers.length == 0">
+  <p>No Customers found</p>
+</div>
