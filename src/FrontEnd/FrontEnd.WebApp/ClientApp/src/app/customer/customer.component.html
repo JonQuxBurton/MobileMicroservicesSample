@@ -21,6 +21,7 @@
             <th>Phone Number</th>
             <th>Created At</th>
             <th>State</th>
+            <th>Activation Code</th>
           </tr>
         </thead>
         <tbody>
@@ -28,6 +29,9 @@
             <td>{{m.phoneNumber}}</td>
             <td>{{m.createdAt}}</td>
             <td>{{m.state}}</td>
+            <td>
+              <button *ngIf="m.activationCode" class="btn btn-primary" (click)="activate(m)">ACTIVATE</button>
+            </td>
           </tr>
         </tbody>
       </table>

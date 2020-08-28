@@ -4,6 +4,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MobileToOrder } from '../models/MobileToOrder';
 import { CustomersService } from '../services/customers.service';
 import { Customer } from '../models/Customer';
+import { MobilesService } from '../services/mobiles.service';
+import { Mobile } from '../models/Mobile';
 
 @Component({
   selector: 'app-customer',
@@ -14,6 +16,7 @@ export class CustomerComponent implements OnInit {
 
   selectedCustomer: Customer;
   isOrderingMobile: boolean = false;
+  isActivating: boolean = false;
 
   orderMobileFormGroup = new FormGroup({
     orderMobile: new FormGroup({
@@ -23,11 +26,19 @@ export class CustomerComponent implements OnInit {
     })
   });
 
-  constructor(private stageController: StageControllerService, private customersService: CustomersService) { }
+  constructor(private stageController: StageControllerService, private customersService: CustomersService, private mobilesService: MobilesService) { }
 
   ngOnInit(): void {
     this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
       this.selectedCustomer = x;
+
+      x.mobiles.forEach(x => {
+        if (x.state == "WaitingForActivate") {
+          this.mobilesService.getMobile(x.globalId).subscribe(y => {
+            x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
+          });
+        }
+      });
     });
 
     this.customersService.mobileOrdered$.subscribe(x => {
@@ -36,6 +47,10 @@ export class CustomerComponent implements OnInit {
       this.orderMobileFormGroup.reset();
     });
 
+    this.mobilesService.mobileActivated$.subscribe(x => {
+      this.refresh();
+
+    });
   }
 
   refresh() {
@@ -52,6 +67,9 @@ export class CustomerComponent implements OnInit {
     this.isOrderingMobile = true;
   }
 
+  openActivate() {
+    this.isActivating = true;
+  }
 
   onSubmit() {
     let data = this.orderMobileFormGroup.value.orderMobile;
@@ -62,6 +80,10 @@ export class CustomerComponent implements OnInit {
     mobileToOrder.contactPhoneNumber = data.contactPhoneNumber;
 
     this.customersService.orderMobile(this.selectedCustomer.globalId, data);
+  }
+
+  activate(mobile: Mobile) {
+    this.mobilesService.activate(mobile);
   }
 
   cancel() {

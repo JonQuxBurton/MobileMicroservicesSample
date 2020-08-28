@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using System;
+using System.Linq;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 
@@ -33,7 +34,23 @@ namespace Mobiles.Api.Controllers
             if (mobile == null)
                 return NotFound();
 
-            return new OkObjectResult(mobile);
+            return new OkObjectResult(new MobileResource
+            {
+                Id = mobile.Id,
+                GlobalId = mobile.GlobalId,
+                CustomerId = mobile.CustomerId,
+                CreatedAt = mobile.CreatedAt,
+                OrderHistory = mobile.OrderHistory.Select(x => new OrderResource
+                {
+                    GlobalId = x.GlobalId,
+                    Name = x.Name,
+                    ContactPhoneNumber = x.ContactPhoneNumber,
+                    State = x.CurrentState.ToString(),
+                    Type = x.Type.ToString(),
+                    CreatedAt = x.CreatedAt,
+                    ActivationCode = x.ActivationCode
+                })
+            });
         }
 
         [HttpPost("{id}/activate")]

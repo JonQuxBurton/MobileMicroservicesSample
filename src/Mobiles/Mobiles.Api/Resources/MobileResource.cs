@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Mobiles.Api.Resources
 {
@@ -11,5 +12,6 @@ namespace Mobiles.Api.Resources
         public DateTime? UpdatedAt { get; set; }
         public string PhoneNumber { get; set; }
         public string State { get; set; }
+        public IEnumerable<OrderResource> OrderHistory { get; internal set; }
     }
 }
