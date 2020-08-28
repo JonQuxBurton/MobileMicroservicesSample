@@ -1,4 +1,5 @@
 <h2>Customers</h2>
+
 <div *ngIf="customers && customers.length > 0">
   <table class="table table-striped">
     <thead>
@@ -23,42 +24,25 @@
 
 <hr />
 
-<div *ngIf="selectedCustomer">
-  <h3>Customer</h3>
-  <div class="form-group">
-    <label for="name">Name:</label>
-    <input type="text" class="form-control" id="name" value="{{selectedCustomer.name}}" readonly>
-  </div>
-  <div class="form-group">
-    <label for="globalId">ID:</label>
-    <input type="text" class="form-control" id="globalId" value="{{selectedCustomer.globalId}}" readonly>
-  </div>
-  <div class="form-group">
-    <label for="createdAt">Created At:</label>
-    <input type="text" class="form-control" id="createdAt" value="{{selectedCustomer.createdAt}}" readonly>
-  </div>
-  <div>
-    <h4>Mobiles</h4>
-    <div *ngIf="selectedCustomer.mobiles.length > 0">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Phone Number</th>
-            <th>Created At</th>
-            <th>State</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let m of selectedCustomer.mobiles">
-            <td>{{m.phoneNumber}}</td>
-            <td>{{m.createdAt}}</td>
-            <td>{{m.state}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div *ngIf="selectedCustomer.mobiles.length == 0">
-      No Mobiles found
-    </div>
-  </div>
+<div *ngIf="!isCreatingCustomer">
+  <button class="btn btn-primary" (click)="openCreateCustomer(content)">CREATE CUSTOMER</button>
 </div>
+
+<div *ngIf="isCreatingCustomer">
+
+  <h3>Create Customer</h3>
+  <div>
+    <form [formGroup]="newCustomerFormGroup" (ngSubmit)="onSubmit()">
+      <div formGroupName="newCustomer" class="form-group">
+        <label for="name">Name:</label>
+        <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter name">
+      </div>
+        <button type="submit" class="btn btn-success">SUBMIT</button>
+        <button (click)="cancel()" type="button" class="btn btn-danger">CANCEL</button>
+    </form>
+  </div>
+
+  <hr />
+
+</div>
+

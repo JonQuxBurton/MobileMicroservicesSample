@@ -1,1 +1,61 @@
-<p>customer works!</p>
+<div *ngIf="selectedCustomer">
+  <h3>Customer</h3>
+  <div class="form-group">
+    <label for="name">Name:</label>
+    <input type="text" class="form-control" value="{{selectedCustomer.name}}" readonly>
+  </div>
+  <div class="form-group">
+    <label for="globalId">ID:</label>
+    <input type="text" class="form-control" value="{{selectedCustomer.globalId}}" readonly>
+  </div>
+  <div class="form-group">
+    <label for="createdAt">Created At:</label>
+    <input type="text" class="form-control" value="{{selectedCustomer.createdAt}}" readonly>
+  </div>
+  <div>
+    <h4>Mobiles</h4>
+    <div *ngIf="selectedCustomer.mobiles.length > 0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Phone Number</th>
+            <th>Created At</th>
+            <th>State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of selectedCustomer.mobiles">
+            <td>{{m.phoneNumber}}</td>
+            <td>{{m.createdAt}}</td>
+            <td>{{m.state}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="selectedCustomer.mobiles.length == 0">
+      No Mobiles found
+    </div>
+
+    <div *ngIf="!isOrderingMobile">
+      <button class="btn btn-primary" (click)="back()">BACK</button>
+      <button class="btn btn-primary" (click)="openOrderMobile()">ORDER MOBILE</button>
+    </div>
+
+    <div *ngIf="isOrderingMobile">
+      <form [formGroup]="orderMobileFormGroup" (ngSubmit)="onSubmit()">
+        <div formGroupName="orderMobile" class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input formControlName="phoneNumber" type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
+          <label for="name">Name:</label>
+          <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter Name">
+          <label for="contactPhoneNumber">Contact Phone Number:</label>
+          <input formControlName="contactPhoneNumber" type="text" class="form-control" id="contactPhoneNumber" placeholder="Enter Contact Phone Number">
+        </div>
+        <button type="submit" class="btn btn-success">SUBMIT</button>
+        <button (click)="cancel()" type="button" class="btn btn-danger">CANCEL</button>
+      </form>
+    </div>
+
+  </div>
+
+</div>
