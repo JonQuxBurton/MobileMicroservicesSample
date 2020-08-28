@@ -22,6 +22,7 @@
             <th>Created At</th>
             <th>State</th>
             <th>Activation Code</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -29,8 +30,10 @@
             <td>{{m.phoneNumber}}</td>
             <td>{{m.createdAt}}</td>
             <td>{{m.state}}</td>
+            <td>{{m.activationCode}}</td>
             <td>
               <button *ngIf="m.activationCode" class="btn btn-primary" (click)="activate(m)">ACTIVATE</button>
+              <button *ngIf="m.state=='Live'" class="btn btn-danger" (click)="cease(m)">CEASE</button>
             </td>
           </tr>
         </tbody>

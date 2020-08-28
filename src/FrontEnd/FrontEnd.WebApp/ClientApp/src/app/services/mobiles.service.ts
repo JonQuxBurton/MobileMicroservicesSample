@@ -8,8 +8,10 @@ import { Subject } from 'rxjs';
 })
 export class MobilesService {
   private mobileActivatedSource = new Subject();
+  private mobileCeasedSource = new Subject();
 
-  mobileActivated$ = this.mobileActivatedSource .asObservable();
+  mobileActivated$ = this.mobileActivatedSource.asObservable();
+  mobileCeased$ = this.mobileCeasedSource.asObservable();
 
   private apiBaseUrl: string = "http://localhost:5000/api/";
 
@@ -30,6 +32,15 @@ export class MobilesService {
       },
       error: error => console.error('Error: ', error)
     });
+  }
 
+  cease(mobile: Mobile) {
+    let url = `${this.apiBaseUrl}mobiles/${mobile.globalId}`;
+    this.http.delete<any>(url).subscribe({
+      next: response => {
+        this.mobileCeasedSource.next();
+      },
+      error: error => console.error('Error: ', error)
+    });
   }
 }

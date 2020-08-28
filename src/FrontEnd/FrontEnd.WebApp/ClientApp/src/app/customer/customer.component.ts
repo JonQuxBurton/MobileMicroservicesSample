@@ -49,7 +49,10 @@ export class CustomerComponent implements OnInit {
 
     this.mobilesService.mobileActivated$.subscribe(x => {
       this.refresh();
+    });
 
+    this.mobilesService.mobileCeased$.subscribe(x => {
+      this.refresh();
     });
   }
 
@@ -84,6 +87,10 @@ export class CustomerComponent implements OnInit {
 
   activate(mobile: Mobile) {
     this.mobilesService.activate(mobile);
+  }
+
+  cease(mobile: Mobile) {
+    this.mobilesService.cease(mobile);
   }
 
   cancel() {
