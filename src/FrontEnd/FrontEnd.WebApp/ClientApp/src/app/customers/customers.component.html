@@ -1,48 +1,52 @@
-<h2>Customers</h2>
 
-<div *ngIf="customers && customers.length > 0">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of customers">
-        <td>{{c.name}}</td>
-        <td class="float-right">
-          <button type="button" class="btn btn-primary" (click)="loadCustomer(c.globalId)">LOAD</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-<div *ngIf="!customers || customers.length == 0">
-  <p>No Customers found</p>
-</div>
+<div class="container p-3 my-3 border">
 
-<hr />
+  <h2>Customers</h2>
 
-<div *ngIf="!isCreatingCustomer">
-  <button class="btn btn-primary" (click)="openCreateCustomer(content)">CREATE CUSTOMER</button>
-</div>
+  <p class="small">Refreshed at: {{ refreshedAt | date: 'HH:mm:ss' }} </p>
 
-<div *ngIf="isCreatingCustomer">
-
-  <h3>Create Customer</h3>
-  <div>
-    <form [formGroup]="newCustomerFormGroup" (ngSubmit)="onSubmit()">
-      <div formGroupName="newCustomer" class="form-group">
-        <label for="name">Name:</label>
-        <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter name">
-      </div>
-        <button type="submit" class="btn btn-success">SUBMIT</button>
-        <button (click)="cancel()" type="button" class="btn btn-danger">CANCEL</button>
-    </form>
+  <div *ngIf="customers && customers.length > 0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of customers">
+          <td>{{c.name}}</td>
+          <td class="float-right">
+            <button type="button" class="btn btn-primary" (click)="loadCustomer(c.globalId)">LOAD</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="!customers || customers.length == 0">
+    <p>No Customers found</p>
   </div>
 
   <hr />
 
-</div>
+  <div *ngIf="!isCreatingCustomer">
+    <button class="btn btn-primary" (click)="openCreateCustomer(content)">CREATE CUSTOMER</button>
+  </div>
 
+  <div *ngIf="isCreatingCustomer">
+    <div class="container p-3 my-3 border">
+      <h4>Create a Customer</h4>
+      <div>
+        <form [formGroup]="newCustomerFormGroup" (ngSubmit)="onSubmit()">
+          <div formGroupName="newCustomer" class="form-group">
+            <label for="name">Name:</label>
+            <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter name">
+          </div>
+          <button type="submit" class="btn btn-success">SUBMIT</button>
+          <button (click)="cancel()" type="button" class="btn btn-danger">CANCEL</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

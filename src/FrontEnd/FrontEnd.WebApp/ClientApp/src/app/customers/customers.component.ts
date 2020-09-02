@@ -14,6 +14,7 @@ export class CustomersComponent implements OnInit {
 
   customers: Customer[];
   isCreatingCustomer: boolean = false;
+  refreshedAt: Date;
 
   newCustomerFormGroup = new FormGroup({
     newCustomer: new FormGroup({
@@ -36,6 +37,7 @@ export class CustomersComponent implements OnInit {
   private refresh() {
     this.customersService.getCustomers().subscribe(x => {
       this.customers = x;
+      this.refreshedAt = new Date();
     });
   }
 

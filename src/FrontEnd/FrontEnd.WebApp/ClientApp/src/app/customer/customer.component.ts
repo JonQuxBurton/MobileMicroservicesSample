@@ -17,6 +17,7 @@ export class CustomerComponent implements OnInit {
   selectedCustomer: Customer;
   isOrderingMobile: boolean = false;
   isActivating: boolean = false;
+  refreshedAt: Date;
 
   orderMobileFormGroup = new FormGroup({
     orderMobile: new FormGroup({
@@ -29,17 +30,19 @@ export class CustomerComponent implements OnInit {
   constructor(private stageController: StageControllerService, private customersService: CustomersService, private mobilesService: MobilesService) { }
 
   ngOnInit(): void {
-    this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
-      this.selectedCustomer = x;
+    this.refresh();
 
-      x.mobiles.forEach(x => {
-        if (x.state == "WaitingForActivate") {
-          this.mobilesService.getMobile(x.globalId).subscribe(y => {
-            x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
-          });
-        }
-      });
-    });
+    //this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
+    //  this.selectedCustomer = x;
+
+    //  x.mobiles.forEach(x => {
+    //    if (x.state == "WaitingForActivate") {
+    //      this.mobilesService.getMobile(x.globalId).subscribe(y => {
+    //        x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
+    //      });
+    //    }
+    //  });
+    //});
 
     this.customersService.mobileOrdered$.subscribe(x => {
       this.refresh();
@@ -59,6 +62,15 @@ export class CustomerComponent implements OnInit {
   refresh() {
     this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
       this.selectedCustomer = x;
+      this.refreshedAt = new Date();
+
+      x.mobiles.forEach(x => {
+        if (x.state == "WaitingForActivate") {
+          this.mobilesService.getMobile(x.globalId).subscribe(y => {
+            x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
+          });
+        }
+      });
     });
   }
 
