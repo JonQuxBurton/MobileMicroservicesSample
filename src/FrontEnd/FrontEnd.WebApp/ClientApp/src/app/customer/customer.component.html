@@ -10,7 +10,7 @@
   </div>
   <div class="form-group">
     <label for="createdAt">Created At:</label>
-    <input type="text" class="form-control" value="{{selectedCustomer.createdAt}}" readonly>
+    <input type="text" class="form-control" value="{{selectedCustomer.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}" readonly>
   </div>
   <div>
     <h4>Mobiles</h4>
@@ -28,7 +28,7 @@
         <tbody>
           <tr *ngFor="let m of selectedCustomer.mobiles">
             <td>{{m.phoneNumber}}</td>
-            <td>{{m.createdAt}}</td>
+            <td>{{m.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
             <td>{{m.state}}</td>
             <td>{{m.activationCode}}</td>
             <td>
