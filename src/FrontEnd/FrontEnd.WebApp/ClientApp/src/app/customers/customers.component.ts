@@ -3,7 +3,7 @@ import { CustomersService } from '../services/customers.service';
 import { Customer } from '../models/Customer';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CustomerToCreate } from '../models/CustomerToCreate';
-import { StageControllerService } from '../services/stage-controller.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-customers',
@@ -25,7 +25,8 @@ export class CustomersComponent implements OnInit {
     })
   });
 
-  constructor(private customersService: CustomersService, private stageController: StageControllerService) { }
+  constructor(private router: Router, private customersService: CustomersService) {
+  }
 
   ngOnInit(): void {
     this.refresh();
@@ -50,7 +51,7 @@ export class CustomersComponent implements OnInit {
   }
 
   loadCustomer(id: string) {
-    this.stageController.toCustomerLoaded(id);
+    this.router.navigate(['customer', id]);
   }
 
   openCreateCustomer() {

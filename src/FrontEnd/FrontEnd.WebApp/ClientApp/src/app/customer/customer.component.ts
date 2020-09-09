@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { StageControllerService } from '../services/stage-controller.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MobileToOrder } from '../models/MobileToOrder';
 import { CustomersService } from '../services/customers.service';
 import { Customer } from '../models/Customer';
 import { MobilesService } from '../services/mobiles.service';
 import { Mobile } from '../models/Mobile';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-customer',
@@ -14,6 +14,7 @@ import { Mobile } from '../models/Mobile';
 })
 export class CustomerComponent implements OnInit {
 
+  selectIdustomerId: string;
   selectedCustomer: Customer;
   isOrderingMobile: boolean = false;
   isActivating: boolean = false;
@@ -27,23 +28,15 @@ export class CustomerComponent implements OnInit {
     })
   });
 
-  constructor(private stageController: StageControllerService, private customersService: CustomersService, private mobilesService: MobilesService) { }
+  constructor(private route: ActivatedRoute, private customersService: CustomersService, private mobilesService: MobilesService) {
+    this.route.params.subscribe(params => {
+      this.selectIdustomerId = params['id'];
+      this.refresh();
+    });
+
+  }
 
   ngOnInit(): void {
-    this.refresh();
-
-    //this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
-    //  this.selectedCustomer = x;
-
-    //  x.mobiles.forEach(x => {
-    //    if (x.state == "WaitingForActivate") {
-    //      this.mobilesService.getMobile(x.globalId).subscribe(y => {
-    //        x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
-    //      });
-    //    }
-    //  });
-    //});
-
     this.customersService.mobileOrdered$.subscribe(x => {
       this.refresh();
       this.isOrderingMobile = false;
@@ -65,7 +58,7 @@ export class CustomerComponent implements OnInit {
   }
 
   refresh() {
-    this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
+    this.customersService.getCustomer(this.selectIdustomerId).subscribe(x => {
       this.selectedCustomer = x;
       this.refreshedAt = new Date();
 
@@ -79,10 +72,6 @@ export class CustomerComponent implements OnInit {
         }
       });
     });
-  }
-
-  back() {
-    this.stageController.toCustomers();
   }
 
   openOrderMobile() {

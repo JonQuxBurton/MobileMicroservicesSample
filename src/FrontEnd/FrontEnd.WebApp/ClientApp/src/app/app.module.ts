@@ -10,7 +10,6 @@ import { HomeComponent } from './home/home.component';
 import { CustomersComponent } from './customers/customers.component';
 import { CustomerComponent } from './customer/customer.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { StageComponent } from './stage/stage.component';
 
 @NgModule({
   declarations: [
@@ -18,8 +17,7 @@ import { StageComponent } from './stage/stage.component';
     NavMenuComponent,
     HomeComponent,
     CustomersComponent,
-    CustomerComponent,
-    StageComponent
+    CustomerComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -27,9 +25,10 @@ import { StageComponent } from './stage/stage.component';
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      //{ path: 'counter', component: CounterComponent },
-      //{ path: 'fetch-data', component: FetchDataComponent },
+      { path: 'customers', component: CustomersComponent },
+      { path: 'customer/:id', component: CustomerComponent },
+      { path: '', redirectTo: '/customers', pathMatch: 'full' },
+      { path: '**', redirectTo: '/customers'}
     ])
   ],
   providers: [],
