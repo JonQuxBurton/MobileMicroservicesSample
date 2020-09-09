@@ -67,10 +67,27 @@
           <div formGroupName="orderMobile" class="form-group">
             <label for="phoneNumber">Phone Number:</label>
             <input formControlName="phoneNumber" type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
-            <label for="name">Name:</label>
-            <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter Name">
+            <label for="name">Contact Name:</label>
+            <input formControlName="contactName" type="text" class="form-control" id="contactName" placeholder="Enter Contect Name">
             <label for="contactPhoneNumber">Contact Phone Number:</label>
             <input formControlName="contactPhoneNumber" type="text" class="form-control" id="contactPhoneNumber" placeholder="Enter Contact Phone Number">
+
+            <div *ngIf="orderMobileForm.phoneNumber.invalid && (orderMobileForm.phoneNumber.dirty || orderMobileForm.phoneNumber.touched)" class="alert alert-danger">
+              <div *ngIf="orderMobileForm.phoneNumber.errors.required">
+                Phone Number is required.
+              </div>
+            </div>
+            <div *ngIf="orderMobileForm.contactName.invalid && (orderMobileForm.contactName.dirty || orderMobileForm.contactName.touched)" class="alert alert-danger">
+              <div *ngIf="orderMobileForm.contactName.errors.required">
+                Contact Name is required.
+              </div>
+            </div>
+            <div *ngIf="orderMobileForm.contactPhoneNumber.invalid && (orderMobileForm.contactPhoneNumber.dirty || orderMobileForm.contactPhoneNumber.touched)" class="alert alert-danger">
+              <div *ngIf="orderMobileForm.contactPhoneNumber.errors.required">
+                Contact Phone Number is required.
+              </div>
+            </div>
+
           </div>
           <button type="submit" class="btn btn-success">SUBMIT</button>
           <button (click)="cancel()" type="button" class="btn btn-danger">CANCEL</button>

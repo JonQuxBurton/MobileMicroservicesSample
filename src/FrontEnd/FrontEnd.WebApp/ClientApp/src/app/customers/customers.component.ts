@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomersService } from '../services/customers.service';
 import { Customer } from '../models/Customer';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CustomerToCreate } from '../models/CustomerToCreate';
 import { StageControllerService } from '../services/stage-controller.service';
 
@@ -18,7 +18,10 @@ export class CustomersComponent implements OnInit {
 
   newCustomerFormGroup = new FormGroup({
     newCustomer: new FormGroup({
-      name: new FormControl('')
+      name: new FormControl('',
+        [
+          Validators.required
+        ])
     })
   });
 
@@ -41,6 +44,11 @@ export class CustomersComponent implements OnInit {
     });
   }
 
+  get newCustomerForm() {
+    let formGroup = (this.newCustomerFormGroup.controls.newCustomer) as FormGroup;
+    return formGroup.controls;
+  }
+
   loadCustomer(id: string) {
     this.stageController.toCustomerLoaded(id);
   }
@@ -49,7 +57,12 @@ export class CustomersComponent implements OnInit {
     this.isCreatingCustomer = true;
   }
 
+
   onSubmit() {
+    if (this.newCustomerFormGroup.invalid) {
+      return;
+    }
+
     let name = this.newCustomerFormGroup.value.newCustomer.name
     let c = new CustomerToCreate();
     c.name = name;

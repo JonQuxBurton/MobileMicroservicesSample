@@ -40,8 +40,15 @@
         <form [formGroup]="newCustomerFormGroup" (ngSubmit)="onSubmit()">
           <div formGroupName="newCustomer" class="form-group">
             <label for="name">Name:</label>
-            <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter name">
+            <input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter name" required>
+
+            <div *ngIf="newCustomerForm.name.invalid && (newCustomerForm.name.dirty || newCustomerForm.name.touched)" class="alert alert-danger">
+              <div *ngIf="newCustomerForm.name.errors.required">
+                Name is required.
+              </div>
+            </div>
           </div>
+
           <button type="submit" class="btn btn-success">SUBMIT</button>
           <button (click)="cancel()" type="button" class="btn btn-danger">CANCEL</button>
         </form>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StageControllerService } from '../services/stage-controller.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MobileToOrder } from '../models/MobileToOrder';
 import { CustomersService } from '../services/customers.service';
 import { Customer } from '../models/Customer';
@@ -21,9 +21,9 @@ export class CustomerComponent implements OnInit {
 
   orderMobileFormGroup = new FormGroup({
     orderMobile: new FormGroup({
-      phoneNumber: new FormControl(''),
-      contactPhoneNumber: new FormControl(''),
-      name: new FormControl('')
+      phoneNumber: new FormControl('', [ Validators.required ]),
+      contactPhoneNumber: new FormControl('', [Validators.required]),
+      contactName: new FormControl('', [Validators.required])
     })
   });
 
@@ -59,10 +59,17 @@ export class CustomerComponent implements OnInit {
     });
   }
 
+  get orderMobileForm() {
+    let formGroup = (this.orderMobileFormGroup.controls.orderMobile) as FormGroup;
+    return formGroup.controls;
+  }
+
   refresh() {
     this.customersService.getCustomer(this.stageController.selectedCustomerId).subscribe(x => {
       this.selectedCustomer = x;
       this.refreshedAt = new Date();
+
+      x.mobiles = x.mobiles.sort((a: any, b: any) => { return Date.parse(b.createdAt) - Date.parse(a.createdAt) });
 
       x.mobiles.forEach(x => {
         if (x.state == "WaitingForActivate") {
@@ -87,11 +94,15 @@ export class CustomerComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.orderMobileFormGroup.invalid) {
+      return;
+    }
+
     let data = this.orderMobileFormGroup.value.orderMobile;
 
     let mobileToOrder = new MobileToOrder();
     mobileToOrder.phoneNumber = data.phoneNumber;
-    mobileToOrder.name = data.name;
+    mobileToOrder.name = data.contactName;
     mobileToOrder.contactPhoneNumber = data.contactPhoneNumber;
 
     this.customersService.orderMobile(this.selectedCustomer.globalId, data);
