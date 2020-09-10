@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Mobile } from '../models/Mobile';
 import { Subject } from 'rxjs';
+import { AvailablePhoneNumbers } from '../models/AvailablePhoneNumbers';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,12 @@ export class MobilesService {
   getMobile(id: string) {
     let url = `${this.apiBaseUrl}mobiles/${id}`;
     return this.http.get<Mobile>(url);
+  }
+
+  getAvailablePhoneNumber() {
+    let headers = { "Content-Type": 'application/json' }
+    let url = `${this.apiBaseUrl}mobiles/availablePhoneNumbers`;
+    return this.http.get<AvailablePhoneNumbers>(url, { headers });
   }
 
   activate(mobile: Mobile) {

@@ -66,17 +66,14 @@
         <form [formGroup]="orderMobileFormGroup" (ngSubmit)="onSubmit()">
           <div formGroupName="orderMobile" class="form-group">
             <label for="phoneNumber">Phone Number:</label>
-            <input formControlName="phoneNumber" type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
+            <div class="font-weight-bold">
+              <label for="phoneNumber">{{chosenPhoneNumber}}</label>
+            </div>
             <label for="name">Contact Name:</label>
             <input formControlName="contactName" type="text" class="form-control" id="contactName" placeholder="Enter Contect Name">
             <label for="contactPhoneNumber">Contact Phone Number:</label>
             <input formControlName="contactPhoneNumber" type="text" class="form-control" id="contactPhoneNumber" placeholder="Enter Contact Phone Number">
 
-            <div *ngIf="orderMobileForm.phoneNumber.invalid && (orderMobileForm.phoneNumber.dirty || orderMobileForm.phoneNumber.touched)" class="alert alert-danger">
-              <div *ngIf="orderMobileForm.phoneNumber.errors.required">
-                Phone Number is required.
-              </div>
-            </div>
             <div *ngIf="orderMobileForm.contactName.invalid && (orderMobileForm.contactName.dirty || orderMobileForm.contactName.touched)" class="alert alert-danger">
               <div *ngIf="orderMobileForm.contactName.errors.required">
                 Contact Name is required.

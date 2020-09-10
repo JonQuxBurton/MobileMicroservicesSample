@@ -61,6 +61,9 @@ content-type: application/json
 ### Cease a Mobile
 DELETE http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
 
+### Get an available Phone Number
+GET http://localhost:5000/api/mobiles/availablePhoneNumber
+
 ###==================================================
 ### ExternalSimCardsProvider
 ###==================================================

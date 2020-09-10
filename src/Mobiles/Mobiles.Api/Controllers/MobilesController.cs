@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using System;
@@ -17,19 +18,31 @@ namespace Mobiles.Api.Controllers
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IGuidCreator guidCreator;
         private readonly IMonitoring monitoring;
+        private readonly IGetNextMobileIdQuery getNextMobileIdQuery;
 
-        public MobilesController(ILogger<MobilesController> logger, IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring)
+        public MobilesController(ILogger<MobilesController> logger, IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring, IGetNextMobileIdQuery getNextMobileIdQuery)
         {
             this.logger = logger;
             this.mobileRepository = mobileRepository;
             this.guidCreator = guidCreator;
             this.monitoring = monitoring;
+            this.getNextMobileIdQuery = getNextMobileIdQuery;
+        }
+
+        [HttpGet("availablePhoneNumbers")]
+        public ActionResult<AvailablePhoneNumbersResource> GetAvailablePhoneNumbers()
+        {
+            var nextId = getNextMobileIdQuery.Get().ToString().PadLeft(3, '0');
+            return new AvailablePhoneNumbersResource
+            {
+                PhoneNumbers = new[] { $"07{nextId}000{nextId}" }
+            };
         }
 
         [HttpGet("{id}")]
         public ActionResult<Mobile> Get(Guid id)
         {
-            var mobile = this.mobileRepository.GetById(id);
+            var mobile = mobileRepository.GetById(id);
 
             if (mobile == null)
                 return NotFound();

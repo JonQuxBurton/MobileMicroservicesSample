@@ -72,6 +72,7 @@ namespace Mobiles.Api
             services.AddScoped<IGetNewCeasesQuery, GetNewCeasesQuery>();
             services.AddScoped<IGetMobileByOrderIdQuery, GetMobileByOrderIdQuery>();
             services.AddScoped<IGetMobilesByCustomerIdQuery, GetMobilesByCustomerIdQuery>();
+            services.AddScoped<IGetNextMobileIdQuery, GetNextMobileIdQuery>();
             
             // EventBus
             services.AddSingleton<ISnsService, SnsService>();

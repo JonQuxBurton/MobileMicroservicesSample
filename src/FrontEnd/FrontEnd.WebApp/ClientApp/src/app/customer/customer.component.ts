@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./customer.component.css']
 })
 export class CustomerComponent implements OnInit {
-
+  chosenPhoneNumber: string;
   selectIdustomerId: string;
   selectedCustomer: Customer;
   isOrderingMobile: boolean = false;
@@ -22,7 +22,6 @@ export class CustomerComponent implements OnInit {
 
   orderMobileFormGroup = new FormGroup({
     orderMobile: new FormGroup({
-      phoneNumber: new FormControl('', [ Validators.required ]),
       contactPhoneNumber: new FormControl('', [Validators.required]),
       contactName: new FormControl('', [Validators.required])
     })
@@ -37,10 +36,17 @@ export class CustomerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.mobilesService.getAvailablePhoneNumber().subscribe(x => {
+      this.chosenPhoneNumber = x.phoneNumbers[0];
+    })
+
     this.customersService.mobileOrdered$.subscribe(x => {
       this.refresh();
       this.isOrderingMobile = false;
       this.orderMobileFormGroup.reset();
+      this.mobilesService.getAvailablePhoneNumber().subscribe(x => {
+        this.chosenPhoneNumber = x.phoneNumbers[0];
+      })
     });
 
     this.mobilesService.mobileActivated$.subscribe(x => {
@@ -90,11 +96,11 @@ export class CustomerComponent implements OnInit {
     let data = this.orderMobileFormGroup.value.orderMobile;
 
     let mobileToOrder = new MobileToOrder();
-    mobileToOrder.phoneNumber = data.phoneNumber;
+    mobileToOrder.phoneNumber = this.chosenPhoneNumber;
     mobileToOrder.name = data.contactName;
     mobileToOrder.contactPhoneNumber = data.contactPhoneNumber;
 
-    this.customersService.orderMobile(this.selectedCustomer.globalId, data);
+    this.customersService.orderMobile(this.selectedCustomer.globalId, mobileToOrder);
   }
 
   activate(mobile: Mobile) {
