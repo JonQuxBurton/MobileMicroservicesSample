@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Mobiles.Api.Configuration;
 using Mobiles.Api.Controllers;
+using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using Moq;
@@ -27,8 +28,9 @@ namespace Mobiles.Api.Tests.Controllers
                 guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
                 var loggingMock = new Mock<ILogger<MobilesController>>();
+                var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
 
-                sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
+                sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
 
                 expectedMobile = new Mobile(
                     new MobileDataEntity {
@@ -105,8 +107,9 @@ namespace Mobiles.Api.Tests.Controllers
                     .Returns(expectedMobile);
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
                 var loggerMock = new Mock<ILogger<MobilesController>>();
+                var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
 
-                sut = new MobilesController(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
+                sut = new MobilesController(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
             }
 
             [Fact]
@@ -176,8 +179,9 @@ namespace Mobiles.Api.Tests.Controllers
                     .Returns(expectedMobile);
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedReference);
                 var loggerMock = new Mock<ILogger<MobilesController>>();
+                var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
 
-                sut = new MobilesController(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object);
+                sut = new MobilesController(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
             }
 
             [Fact]

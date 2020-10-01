@@ -47,21 +47,35 @@ namespace Mobiles.Api.Controllers
             if (mobile == null)
                 return NotFound();
 
+            OrderResource inFlightOrder = null;
+
+            if (mobile.InFlightOrder != null)
+            {
+                inFlightOrder = new OrderResource
+                {
+                    State = mobile.InFlightOrder.CurrentState.ToString(),
+                    //Type = mobile.InFlightOrder.Type.ToString(),
+                    //CreatedAt = mobile.InFlightOrder.CreatedAt,
+                    //ActivationCode = mobile.InFlightOrder.ActivationCode
+                };
+            }
+
             return new OkObjectResult(new MobileResource
             {
                 Id = mobile.Id,
                 GlobalId = mobile.GlobalId,
                 CustomerId = mobile.CustomerId,
                 CreatedAt = mobile.CreatedAt,
+                InFlightOrder = inFlightOrder,
                 OrderHistory = mobile.OrderHistory.Select(x => new OrderResource
                 {
-                    GlobalId = x.GlobalId,
-                    Name = x.Name,
-                    ContactPhoneNumber = x.ContactPhoneNumber,
+                    //GlobalId = x.GlobalId,
+                    //Name = x.Name,
+                    //ContactPhoneNumber = x.ContactPhoneNumber,
                     State = x.CurrentState.ToString(),
-                    Type = x.Type.ToString(),
-                    CreatedAt = x.CreatedAt,
-                    ActivationCode = x.ActivationCode
+                    //Type = x.Type.ToString(),
+                    //CreatedAt = x.CreatedAt,
+                    //ActivationCode = x.ActivationCode
                 })
             });
         }
@@ -95,13 +109,13 @@ namespace Mobiles.Api.Controllers
 
             return new OkObjectResult(new OrderResource
             {
-                GlobalId = dataEntity.GlobalId,
-                Name = dataEntity.Name,
-                ContactPhoneNumber = dataEntity.ContactPhoneNumber,
+                //GlobalId = dataEntity.GlobalId,
+                //Name = dataEntity.Name,
+                //ContactPhoneNumber = dataEntity.ContactPhoneNumber,
                 State = dataEntity.State,
-                Type = dataEntity.Type,
-                CreatedAt = dataEntity.CreatedAt,
-                UpdatedAt = dataEntity.UpdatedAt
+                //Type = dataEntity.Type,
+                //CreatedAt = dataEntity.CreatedAt,
+                //UpdatedAt = dataEntity.UpdatedAt
             });
         }
 
@@ -124,7 +138,7 @@ namespace Mobiles.Api.Controllers
                 State = newStateName,
                 Type = orderType
             };
-            var inFlightOrder = new Order(dataEntity); 
+            var inFlightOrder = new Order(dataEntity);
             mobile.Cease(inFlightOrder);
             mobileRepository.Update(mobile);
 

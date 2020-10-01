@@ -48,7 +48,7 @@ content-type: application/json
 }
 
 ### Get a Mobile
-GET http://localhost:5000/api/mobiles/5acbde4c-62ed-4a3f-b415-2388e6a2b563
+GET http://localhost:5000/api/mobiles/0812EF8A-900E-4A20-A0E4-2F4F9F417077
 
 ### Activate a Mobile
 POST http://localhost:5000/api/mobiles/6F04C7C5-2D23-4D9A-A2B6-575B452C8ACF/activate
@@ -61,8 +61,8 @@ content-type: application/json
 ### Cease a Mobile
 DELETE http://localhost:5000/api/mobiles/C0674BE0-AD47-44A4-A2D3-9EA9B387923D
 
-### Get an available Phone Number
-GET http://localhost:5000/api/mobiles/availablePhoneNumber
+### Get available Phone Numbers
+GET http://localhost:5000/api/mobiles/availablePhoneNumbers
 
 ###==================================================
 ### ExternalSimCardsProvider

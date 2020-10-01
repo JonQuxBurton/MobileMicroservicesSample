@@ -12,7 +12,7 @@ namespace Mobiles.Api.Domain
         public string ContactPhoneNumber { get; set; }
         public string State { get; set; }
         public string Type { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
         public int MobileId { get; set; }

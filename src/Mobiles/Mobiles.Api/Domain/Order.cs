@@ -55,7 +55,7 @@ namespace Mobiles.Api.Domain
         public string ContactPhoneNumber => this.orderDataEntity.ContactPhoneNumber;
         public State CurrentState => machine.State;
         public OrderType Type => enumConverter.ToEnum<OrderType>(this.orderDataEntity.Type);
-        public DateTime? CreatedAt => this.orderDataEntity.CreatedAt;
+        public DateTime CreatedAt => this.orderDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.orderDataEntity.UpdatedAt;
         public string ActivationCode => this.orderDataEntity.ActivationCode;
 

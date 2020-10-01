@@ -53,8 +53,7 @@ namespace Mobiles.Api.Data
             if (mobileDbEntity == null)
                 return null;
 
-            var newStateName = enumConverter.ToName<Mobile.State>(Mobile.State.New);
-            var inFlightOrderDataEntity = mobileDbEntity.Orders.FirstOrDefault(x => x.State == newStateName);
+            var inFlightOrderDataEntity = mobileDbEntity.Orders.FirstOrDefault(x => x.State == Order.State.New.ToString() || x.State == Order.State.Processing.ToString() || x.State == Order.State.Sent.ToString() );
             Order inFlightOrder = null;
             if (inFlightOrderDataEntity != null)
                 inFlightOrder = new Order(inFlightOrderDataEntity);

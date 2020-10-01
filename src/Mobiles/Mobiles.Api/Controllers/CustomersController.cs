@@ -63,13 +63,29 @@ namespace Mobiles.Api.Controllers
                     CreatedAt = customer.CreatedAt,
                     Mobiles = mobiles.Select(x =>
                     {
+                        var mobile = mobileRepository.GetById(x.GlobalId);
+
+                        OrderResource inFlightOrder = null;
+
+                        if (mobile.InFlightOrder != null)
+                        {
+                            inFlightOrder = new OrderResource
+                            {
+                                State = mobile.InFlightOrder.CurrentState.ToString(),
+                                //Type = mobile.InFlightOrder.Type.ToString(),
+                                //CreatedAt = mobile.InFlightOrder.CreatedAt,
+                                //ActivationCode = mobile.InFlightOrder.ActivationCode
+                            };
+                        }
+
                         return new MobileResource
                         {
                             GlobalId = x.GlobalId,
                             CreatedAt = x.CreatedAt,
                             CustomerId = x.CustomerId,
                             PhoneNumber = x.PhoneNumber.ToString(),
-                            State = x.CurrentState.ToString()
+                            State = x.CurrentState.ToString(),
+                            InFlightOrder = inFlightOrder
                         };
                     }).ToArray()
                 });

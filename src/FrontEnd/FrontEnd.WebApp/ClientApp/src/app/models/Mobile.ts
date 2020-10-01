@@ -1,3 +1,5 @@
+import { Order } from "./Order";
+
 export class Mobile {
   public globalId: string;
   public createdAt: Date;
@@ -6,14 +8,6 @@ export class Mobile {
   public state: string;
   public orderHistory: Order[]
   public activationCode: string;
+  public inFlightOrder: Order
 }
 
-export class Order {
-  public globalId: string;
-  public name: string;
-  public contactPhoneNumber: string;
-  public state: string;
-  public type: string;
-  public createdAt: Date;
-  public activationCode: string;
-}

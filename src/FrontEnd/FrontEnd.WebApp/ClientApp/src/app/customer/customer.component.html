@@ -31,6 +31,7 @@
               <th>State</th>
               <th>Activation Code</th>
               <th></th>
+              <th>In-Flight Order</th>
             </tr>
           </thead>
           <tbody>
@@ -39,6 +40,7 @@
               <td>{{m.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
               <td>{{m.state}}</td>
               <td>{{m.activationCode}}</td>
+              <td>{{m.inFlightOrder?.type}}</td>
               <td>
                 <button *ngIf="m.activationCode" class="btn btn-primary" (click)="activate(m)">ACTIVATE</button>
                 <button *ngIf="m.state=='Live'" class="btn btn-danger" (click)="cease(m)">CEASE</button>

@@ -73,7 +73,7 @@ export class CustomerComponent implements OnInit {
       x.mobiles.forEach(x => {
         if (x.state == "WaitingForActivate") {
           this.mobilesService.getMobile(x.globalId).subscribe(y => {
-            x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
+            //x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
           });
         }
       });
