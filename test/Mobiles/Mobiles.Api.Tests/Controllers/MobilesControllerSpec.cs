@@ -32,13 +32,18 @@ namespace Mobiles.Api.Tests.Controllers
 
                 sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
 
+                expectedInFlightOrder = new Order(new OrderDataEntity
+                {
+                    GlobalId = Guid.NewGuid(),
+                    State = Order.State.New.ToString()
+                });
                 expectedMobile = new Mobile(
                     new MobileDataEntity {
                         Id = 101,
                         GlobalId = Guid.NewGuid(),
                         CustomerId = Guid.NewGuid(),
-                        State = "New"
-                    }, null, null);
+                        State = Mobile.State.New.ToString(),
+                    }, expectedInFlightOrder, null);
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobile.GlobalId))
                     .Returns(expectedMobile);
@@ -50,14 +55,20 @@ namespace Mobiles.Api.Tests.Controllers
             private readonly Mock<IGuidCreator> guidCreatorMock;
             private readonly Mock<IMonitoring> monitoringMock;
             private readonly Mobile expectedMobile;
+            private readonly Order expectedInFlightOrder;
 
             [Fact]
-            public void ReturnMobile()
+            public void ReturnExpectedMobile()
             {
                 var actual = sut.Get(expectedMobile.GlobalId);
 
                 var actualResult = actual.Result as OkObjectResult;
-                actualResult.Value.Should().Be(expectedMobile);
+                var actualMobileResource = actualResult.Value as MobileResource;
+                actualMobileResource.GlobalId.Should().Be(expectedMobile.GlobalId);
+                actualMobileResource.CustomerId.Should().Be(expectedMobile.CustomerId);
+                actualMobileResource.CreatedAt.Should().Be(expectedMobile.CreatedAt);
+                actualMobileResource.InFlightOrder.State.Should().Be(expectedInFlightOrder.CurrentState.ToString());
+
             }
 
             [Fact]
