@@ -29,6 +29,12 @@ export class MobilesService {
     return this.http.get<AvailablePhoneNumbers>(url, { headers });
   }
 
+  getActivationCode() {
+    let headers = { "Content-Type": 'application/json' }
+    let url = `${this.apiBaseUrl}mobiles/availablePhoneNumbers`;
+    return this.http.get<AvailablePhoneNumbers>(url, { headers });
+  }
+
   activate(mobile: Mobile) {
     let headers = { "Content-Type": 'application/json' }
     let url = `${this.apiBaseUrl}mobiles/${mobile.globalId}/activate`;

@@ -36,7 +36,7 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 
 ###
 #@phoneNumber = {{getOrder.response.body.$.phoneNumber}}
-@provisionOrderId = {{getOrder.response.body.$.orderHistory.$[0].globalId}}
+@provisionOrderId = {{getOrder.response.body.inFlightOrder.globalId}}
 
 ### Step 3 - The External Service has completed the Mobile Provision Order
 # @name completeProvision
@@ -44,15 +44,18 @@ POST http://localhost:5001/api/orders/{{provisionOrderId}}/complete
 
 @activationCode = {{completeProvision.response.body.$.activationCode}}
 
+### Get the Mobile ActivationCode
+GET http://localhost:5001/api/orders/{{provisionOrderId}}/activationCode
+
 ### Step 4 - Activate a Mobile
 # @name activateMobile
 POST http://localhost:5000/api/mobiles/{{mobileId}}/activate
 content-type: application/json
 
 {
-	//"ActivationCode" : "{{activationCode}}"
+	"ActivationCode" : "{{activationCode}}"
 	// Invalid Code - Reject
-	"ActivationCode" : "ZZZ{{activationCode}}"
+	//"ActivationCode" : "ZZZ{{activationCode}}"
 }
 
 ###

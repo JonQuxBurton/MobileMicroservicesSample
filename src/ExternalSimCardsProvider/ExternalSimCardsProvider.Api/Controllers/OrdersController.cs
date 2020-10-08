@@ -90,7 +90,7 @@ namespace ExternalSimCardsProvider.Api.Controllers
             if (order.ActivationCode == null)
                 return NoContent();
 
-            return new OkObjectResult(order.ActivationCode);
+            return new OkObjectResult(new ActivationCodeResource { ActivationCode = order.ActivationCode });
         }
     }
 }

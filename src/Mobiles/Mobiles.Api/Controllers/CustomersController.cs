@@ -71,10 +71,11 @@ namespace Mobiles.Api.Controllers
                         {
                             inFlightOrder = new OrderResource
                             {
+                                GlobalId = mobile.InFlightOrder.GlobalId,
                                 State = mobile.InFlightOrder.CurrentState.ToString(),
-                                //Type = mobile.InFlightOrder.Type.ToString(),
-                                //CreatedAt = mobile.InFlightOrder.CreatedAt,
-                                //ActivationCode = mobile.InFlightOrder.ActivationCode
+                                Type = mobile.InFlightOrder.Type.ToString(),
+                                CreatedAt = mobile.InFlightOrder.CreatedAt,
+                                ActivationCode = mobile.InFlightOrder.ActivationCode
                             };
                         }
 
@@ -85,7 +86,17 @@ namespace Mobiles.Api.Controllers
                             CustomerId = x.CustomerId,
                             PhoneNumber = x.PhoneNumber.ToString(),
                             State = x.CurrentState.ToString(),
-                            InFlightOrder = inFlightOrder
+                            InFlightOrder = inFlightOrder,
+                            OrderHistory = mobile.OrderHistory.Select(x => new OrderResource
+                            {
+                                GlobalId = x.GlobalId,
+                                //Name = x.Name,
+                                //ContactPhoneNumber = x.ContactPhoneNumber,
+                                State = x.CurrentState.ToString(),
+                                Type = x.Type.ToString(),
+                                CreatedAt = x.CreatedAt,
+                                ActivationCode = x.ActivationCode
+                            })
                         };
                     }).ToArray()
                 });

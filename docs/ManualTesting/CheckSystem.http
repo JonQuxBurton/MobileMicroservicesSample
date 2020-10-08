@@ -3,7 +3,7 @@
 ###==================================================
 
 ### Check goaws
-POST http://localhost:4100/
+POST http://192.168.0.5:4100/
 Authorization:AL03THI20QLMNG01QOPU5EDS/ftg7tCesw0Yr%Xr%3jV2KOyKaoLzZXre3sIAWOI8
 Content-Type:multipart/form-data; boundary=--------------------------669459213080013617420231
 
@@ -17,6 +17,9 @@ Content-Disposition: form-data; name="Version"
 2012-11-05
 ----------------------------669459213080013617420231--
 
+### Check seq
+GET http://192.168.0.5:5341
+
 ###==================================================
 ### Check Services
 ###==================================================
@@ -29,3 +32,9 @@ GET http://localhost:5001/health
 
 ### Check ExternalMobileTelecomsNetwork.Api
 GET http://localhost:5002/health
+
+### Check SimCards.EventHandlers via Prometheus metrics endpoint
+http://localhost:6080/metrics
+
+### Check MobileTelecomsNetwork.EventHandlers via Prometheus metrics endpoint
+http://localhost:6081/metrics

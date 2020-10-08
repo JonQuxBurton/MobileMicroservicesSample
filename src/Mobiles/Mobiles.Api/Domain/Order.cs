@@ -7,10 +7,8 @@ namespace Mobiles.Api.Domain
 {
     public class Order : Entity
     {
-        public enum State { New, Processing, Sent, Completed, Failed, Cancelled, Rejected
-        }
-        public enum Trigger { Process, Send, Complete, Fail, Cancel, Reject
-        }
+        public enum State { New, Processing, Sent, Completed, Failed, Cancelled, Rejected }
+        public enum Trigger { Process, Send, Complete, Fail, Cancel, Reject }
         public enum OrderType { Provision, Activate, Cease }
 
         private readonly StateMachine<State, Trigger> machine;

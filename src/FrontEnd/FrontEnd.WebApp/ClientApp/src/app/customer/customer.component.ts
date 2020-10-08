@@ -6,6 +6,7 @@ import { Customer } from '../models/Customer';
 import { MobilesService } from '../services/mobiles.service';
 import { Mobile } from '../models/Mobile';
 import { ActivatedRoute } from '@angular/router';
+import { SimCardsService } from '../services/sim-cards.service';
 
 @Component({
   selector: 'app-customer',
@@ -27,7 +28,7 @@ export class CustomerComponent implements OnInit {
     })
   });
 
-  constructor(private route: ActivatedRoute, private customersService: CustomersService, private mobilesService: MobilesService) {
+  constructor(private route: ActivatedRoute, private customersService: CustomersService, private mobilesService: MobilesService, private simCardsService: SimCardsService) {
     this.route.params.subscribe(params => {
       this.selectIdustomerId = params['id'];
       this.refresh();
@@ -70,14 +71,27 @@ export class CustomerComponent implements OnInit {
 
       x.mobiles = x.mobiles.sort((a: any, b: any) => { return Date.parse(b.createdAt) - Date.parse(a.createdAt) });
 
-      x.mobiles.forEach(x => {
-        if (x.state == "WaitingForActivate") {
-          this.mobilesService.getMobile(x.globalId).subscribe(y => {
-            //x.activationCode = y.orderHistory.filter(z => z.type == "Activate")[0].activationCode;
-          });
-        }
-      });
+      this.refreshActivationCodes();
     });
+
+  }
+
+  private activationCodes: { [key: string]: string; } = {};
+
+  refreshActivationCodes() {
+    this.selectedCustomer.mobiles.filter(x => x.state == "WaitingForActivate").forEach(y => {
+      let lastOrder = y.orderHistory[y.orderHistory.length - 1];
+
+      if (lastOrder) {
+        this.simCardsService.getActivationCode(lastOrder.globalId).subscribe(z => {
+          this.activationCodes[y.phoneNumber] = z.activationCode;
+      });
+      }
+    });
+  }
+
+  getActivationCode(mobile: Mobile): string {
+    return this.activationCodes[mobile.phoneNumber];
   }
 
   openOrderMobile() {
@@ -113,5 +127,23 @@ export class CustomerComponent implements OnInit {
 
   cancel() {
     this.isOrderingMobile = false;
+  }
+
+  getActionState(mobile: Mobile): string {
+    if (mobile.state == "WaitingForActivate" ||
+        mobile.state == "Live" ||
+        mobile.state == "Suspended") {
+      return mobile.state;
+    }
+
+    return "OrderInProgress"
+  }
+
+  getOrderInProgress(mobile: Mobile) {
+    if (mobile.orderHistory.length == 0)
+      return "";
+
+    let lastOrder = mobile.orderHistory[mobile.orderHistory.length - 1];
+    return `${lastOrder.type} - ${lastOrder.state}`;
   }
 }

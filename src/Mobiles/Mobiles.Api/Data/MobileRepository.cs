@@ -58,7 +58,8 @@ namespace Mobiles.Api.Data
             if (inFlightOrderDataEntity != null)
                 inFlightOrder = new Order(inFlightOrderDataEntity);
 
-            var orderHistoryDataEntities = mobileDbEntity.Orders.Except(new[] { inFlightOrderDataEntity });
+            //var orderHistoryDataEntities = mobileDbEntity.Orders.Except(new[] { inFlightOrderDataEntity });
+            var orderHistoryDataEntities = mobileDbEntity.Orders.OrderBy(x => x.CreatedAt);
             var orderHistory = new List<Order>();
             orderHistoryDataEntities.ToList().ForEach(x => orderHistory.Add(new Order(x)));
 

@@ -50,6 +50,8 @@ namespace ExternalSimCardsProvider.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseSerilogRequestLogging();
             app.UseMvc();
             app.UseHealthChecks("/health");

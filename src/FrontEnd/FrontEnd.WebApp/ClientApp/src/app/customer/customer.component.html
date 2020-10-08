@@ -29,9 +29,7 @@
               <th>Phone Number</th>
               <th>Created At</th>
               <th>State</th>
-              <th>Activation Code</th>
               <th></th>
-              <th>In-Flight Order</th>
             </tr>
           </thead>
           <tbody>
@@ -39,11 +37,21 @@
               <td>{{m.phoneNumber}}</td>
               <td>{{m.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
               <td>{{m.state}}</td>
-              <td>{{m.activationCode}}</td>
-              <td>{{m.inFlightOrder?.type}}</td>
               <td>
-                <button *ngIf="m.activationCode" class="btn btn-primary" (click)="activate(m)">ACTIVATE</button>
-                <button *ngIf="m.state=='Live'" class="btn btn-danger" (click)="cease(m)">CEASE</button>
+                <ng-container *ngIf="getActionState(m) == 'OrderInProgress'">
+                  Order in progress: {{getOrderInProgress(m)}}
+                </ng-container>
+                <ng-container *ngIf="getActionState(m) == 'WaitingForActivate'">
+                  <button class="btn btn-primary" (click)="activate(m)">ACTIVATE</button>
+                  Activation code: {{activationCodes[m.phoneNumber]}}
+                </ng-container>
+                <ng-container *ngIf="getActionState(m) == 'Live'">
+                  <button class="btn btn-danger" (click)="cease(m)">CEASE</button>
+                </ng-container>
+                <ng-container *ngIf="getActionState(m) == 'Suspended'">
+                  <button class="btn btn-danger" disabled>RESUME</button>
+                </ng-container>
+                
               </td>
             </tr>
           </tbody>

@@ -12,6 +12,12 @@ GET localhost:3000
 ### Docker Workers
 GET 192.168.65.1:9323/metrics
 
+### Seq running in docker
+GET http://192.168.56.101:5341
+
+### doaws running in docker
+GET http://192.168.56.101:4100
+
 ###==================================================
 ### Mobiles
 ###==================================================
@@ -34,11 +40,11 @@ content-type: application/json
 }
 
 ### Get a Customer
-GET http://localhost:5000/api/customers/c856f7ae-cfc8-4786-8cbd-4d77f7987bd4
+GET http://localhost:5000/api/customers/C5C04D13-25B2-4EC2-97E0-99737673287F
 
 
 ### Order a Mobile
-POST http://localhost:5000/api/customers/a4ba8933-5754-44d8-9068-b2b698af3d6f/provision
+POST http://localhost:5000/api/customers/11A2CD6B-5911-4407-84E8-6812B5AD12E0/provision
 content-type: application/json
 
 {
@@ -48,7 +54,10 @@ content-type: application/json
 }
 
 ### Get a Mobile
-GET http://localhost:5000/api/mobiles/0812EF8A-900E-4A20-A0E4-2F4F9F417077
+GET http://localhost:5000/api/mobiles/D06A902C-4689-46E6-8A74-26D42DD853FA
+
+### Get a Mobile ActivationCode
+GET http://localhost:5001/api/orders/247AB73E-8FA2-4177-A9EC-2AE072A82029/activationCode
 
 ### Activate a Mobile
 POST http://localhost:5000/api/mobiles/6F04C7C5-2D23-4D9A-A2B6-575B452C8ACF/activate
@@ -84,7 +93,7 @@ content-type: application/json
 GET http://localhost:5001/api/orders/7783E7B1-98F1-4064-853C-D1FE5808CE1B
 
 ### Complete an Order
-POST http://localhost:5001/api/orders/6C1622FB-70FB-4A02-89F2-780AF670149E/complete
+POST http://localhost:5001/api/orders/247AB73E-8FA2-4177-A9EC-2AE072A82029/complete
 
 ###==================================================
 ### ExternalMobileTelecomsNetwork.Api
