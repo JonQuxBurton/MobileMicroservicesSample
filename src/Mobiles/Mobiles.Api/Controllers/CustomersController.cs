@@ -90,8 +90,6 @@ namespace Mobiles.Api.Controllers
                             OrderHistory = mobile.OrderHistory.Select(x => new OrderResource
                             {
                                 GlobalId = x.GlobalId,
-                                //Name = x.Name,
-                                //ContactPhoneNumber = x.ContactPhoneNumber,
                                 State = x.CurrentState.ToString(),
                                 Type = x.Type.ToString(),
                                 CreatedAt = x.CreatedAt,

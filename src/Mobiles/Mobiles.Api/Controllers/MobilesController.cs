@@ -56,8 +56,6 @@ namespace Mobiles.Api.Controllers
                     GlobalId = mobile.InFlightOrder.GlobalId,
                     State = mobile.InFlightOrder.CurrentState.ToString(),
                     Type = mobile.InFlightOrder.Type.ToString(),
-                    //CreatedAt = mobile.InFlightOrder.CreatedAt,
-                    //ActivationCode = mobile.InFlightOrder.ActivationCode
                 };
             }
 
@@ -71,12 +69,9 @@ namespace Mobiles.Api.Controllers
                 OrderHistory = mobile.OrderHistory.Select(x => new OrderResource
                 {
                     GlobalId = x.GlobalId,
-                    //Name = x.Name,
-                    //ContactPhoneNumber = x.ContactPhoneNumber,
                     State = x.CurrentState.ToString(),
                     Type = x.Type.ToString(),
-                    //CreatedAt = x.CreatedAt,
-                    //ActivationCode = x.ActivationCode
+                    CreatedAt = x.CreatedAt
                 })
             });
         }
@@ -111,12 +106,12 @@ namespace Mobiles.Api.Controllers
             return new OkObjectResult(new OrderResource
             {
                 GlobalId = dataEntity.GlobalId,
-                //Name = dataEntity.Name,
-                //ContactPhoneNumber = dataEntity.ContactPhoneNumber,
+                Name = dataEntity.Name,
+                ContactPhoneNumber = dataEntity.ContactPhoneNumber,
                 State = dataEntity.State,
                 Type = dataEntity.Type,
-                //CreatedAt = dataEntity.CreatedAt,
-                //UpdatedAt = dataEntity.UpdatedAt
+                CreatedAt = dataEntity.CreatedAt,
+                UpdatedAt = dataEntity.UpdatedAt
             });
         }
 
