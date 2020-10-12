@@ -1,11 +1,12 @@
-﻿using Dapper;
-using DapperDataAccess;
-using Microsoft.Extensions.Options;
-using ExternalSimCardsProvider.Api.Configuration;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using Dapper;
+using DapperDataAccess;
+using ExternalSimCardsProvider.Api.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace ExternalSimCardsProvider.Api.Data
 {
@@ -19,42 +20,45 @@ namespace ExternalSimCardsProvider.Api.Data
 
         public OrdersDataStore(IOptions<Config> config)
         {
-            this.connectionString = config.Value.ConnectionString;
+            connectionString = config.Value.ConnectionString;
         }
 
         public ITransaction BeginTransaction()
         {
-            this.connection = new SqlConnection(connectionString);
-            this.currentTransaction = new Transaction(this.connection);
-            return this.currentTransaction;
+            connection = new SqlConnection(connectionString);
+            currentTransaction = new Transaction(connection);
+            return currentTransaction;
+        }
+
+        public IEnumerable<Order> GetAll()
+        {
+            var sql = $"select * from {SchemaName}.{OrdersTableName} order by CreatedAt desc";
+
+            var orders = new List<Order>();
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var dbOrders = conn.Query(sql);
+
+                foreach (var dbOrder in dbOrders)
+                {
+                    var order = ConvertToOrder(dbOrder);
+                    orders.Add(order);
+                }
+            }
+
+            return orders;
         }
 
         public Order GetByReference(Guid reference)
         {
             var sql = $"select * from {SchemaName}.{OrdersTableName} where Reference=@reference";
 
-            using (var conn = new SqlConnection(connectionString))
-            {
-                var dbOrders = conn.Query(sql, new { reference });
-                var dbOrder = dbOrders.FirstOrDefault();
+            using var conn = new SqlConnection(connectionString);
+            var dbOrders = conn.Query(sql, new {reference});
+            var dbOrder = dbOrders.FirstOrDefault();
 
-                Order order = null;
-
-                if (dbOrder != null)
-                {
-                    order = new Order
-                    {
-                        PhoneNumber = dbOrder.PhoneNumber,
-                        Reference= dbOrder.Reference,
-                        Status = dbOrder.Status,
-                        ActivationCode = dbOrder.ActivationCode,
-                        CreatedAt = dbOrder.CreatedAt,
-                        UpdatedAt = dbOrder.UpdatedAt
-                    };
-                }
-
-                return order;
-            }
+            return ConvertToOrder(dbOrder);
         }
 
         public int GetMaxId()
@@ -67,14 +71,30 @@ namespace ExternalSimCardsProvider.Api.Data
 
         public void Add(Order order)
         {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(PhoneNumber, Reference, Status) values (@PhoneNumber, @Reference, @Status)";
-            connection.Execute(sql, new { order.PhoneNumber, order.Reference, order.Status }, this.currentTransaction.Get());
+            var sql =
+                $"insert into {SchemaName}.{OrdersTableName}(PhoneNumber, Reference, Status) values (@PhoneNumber, @Reference, @Status)";
+            connection.Execute(sql, new {order.PhoneNumber, order.Reference, order.Status},
+                currentTransaction.Get());
         }
 
         public void Complete(Order order)
         {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed', ActivationCode=@ActivationCode where Reference=@Reference";
-            connection.Execute(sql, new { order.Reference, order.ActivationCode }, this.currentTransaction.Get());
+            var sql =
+                $"update {SchemaName}.{OrdersTableName} set Status='Completed', ActivationCode=@ActivationCode where Reference=@Reference";
+            connection.Execute(sql, new {order.Reference, order.ActivationCode}, currentTransaction.Get());
+        }
+
+        private static Order ConvertToOrder(dynamic dbOrder)
+        {
+            return new Order
+            {
+                PhoneNumber = dbOrder.PhoneNumber,
+                Reference = dbOrder.Reference,
+                Status = dbOrder.Status,
+                ActivationCode = dbOrder.ActivationCode,
+                CreatedAt = dbOrder.CreatedAt,
+                UpdatedAt = dbOrder.UpdatedAt
+            };
         }
     }
 }

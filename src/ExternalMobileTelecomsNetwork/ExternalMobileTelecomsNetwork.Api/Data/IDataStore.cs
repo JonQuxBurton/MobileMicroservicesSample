@@ -1,5 +1,7 @@
 ﻿using DapperDataAccess;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ExternalMobileTelecomsNetwork.Api.Data
 {
@@ -16,5 +18,6 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
         void Cease(string phoneNumber, Guid reference);
         Order GetByReference(Guid reference);
         Order GetByPhoneNumber(string phoneNumber, string status);
+        IEnumerable<Order> GetAll();
     }
 }

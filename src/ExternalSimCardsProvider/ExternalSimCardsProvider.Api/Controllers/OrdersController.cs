@@ -54,6 +54,14 @@ namespace ExternalSimCardsProvider.Api.Controllers
 
             return new OkObjectResult(order);
         }
+        
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var orders = ordersDataStore.GetAll();
+
+            return new OkObjectResult(orders);
+        }
 
         [HttpPost("{reference}/complete")]
         public async Task<IActionResult> Complete(Guid reference)

@@ -1,5 +1,6 @@
 <div class="container p-3 my-3 border">
   <h4>Mobile Telecoms System Orders</h4>
+  <p class="small">Refreshed at: {{ refreshedAt | date: 'HH:mm:ss' }} </p>
   <div *ngIf="orders.length > 0">
     <table class="table table-striped">
       <thead>

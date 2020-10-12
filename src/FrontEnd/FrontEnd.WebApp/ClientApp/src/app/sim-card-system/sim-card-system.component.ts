@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SimCardsOrder } from "../models/SimCardsOrder";
+import { SimCardsService } from "../services/sim-cards.service";
 
 @Component({
   selector: 'app-sim-card-system',
@@ -9,18 +10,20 @@ import { SimCardsOrder } from "../models/SimCardsOrder";
 export class SimCardSystemComponent implements OnInit {
 
   private orders: Array<SimCardsOrder>;
+  private refreshedAt: Date;
 
-  constructor() {
-    this.orders = [];
-    const order = new SimCardsOrder();
-    order.reference = "ORD001";
-    order.contactPhoneNumber = "07930123123";
-    order.createdAt = new Date();
-    order.status = "New";
-    this.orders.push(order);
+  constructor(private simCardsService: SimCardsService) {
   }
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  private refresh() {
+    this.simCardsService.getOrders().subscribe(x => {
+      this.orders = x;
+      this.refreshedAt = new Date();
+    });
   }
 
   complete(order: SimCardsOrder) {

@@ -40,6 +40,8 @@ namespace ExternalMobileTelecomsNetwork.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseRouting();
             app.UseAuthorization();
 

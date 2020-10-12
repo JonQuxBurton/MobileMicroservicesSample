@@ -36,6 +36,14 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             return new OkResult();
         }
 
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var orders = dataStore.GetAll();
+
+            return new OkObjectResult(orders);
+        }
+
         [HttpGet("{reference}")]
         public ActionResult<Order> Get(Guid reference)
         {

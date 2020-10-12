@@ -1,5 +1,6 @@
 ﻿using DapperDataAccess;
 using System;
+using System.Collections.Generic;
 
 namespace ExternalSimCardsProvider.Api.Data
 {
@@ -11,5 +12,6 @@ namespace ExternalSimCardsProvider.Api.Data
         Order GetByReference(Guid globalId);
         ITransaction BeginTransaction();
         int GetMaxId();
+        IEnumerable<Order> GetAll();
     }
 }

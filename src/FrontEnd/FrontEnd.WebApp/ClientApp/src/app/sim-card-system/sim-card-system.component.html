@@ -1,5 +1,6 @@
 <div class="container p-3 my-3 border">
   <h4>SIM Card Orders</h4>
+  <p class="small">Refreshed at: {{ refreshedAt | date: 'HH:mm:ss' }} </p>
   <div *ngIf="orders.length > 0">
     <table class="table table-striped">
       <thead>
@@ -12,15 +13,15 @@
       </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let o of orders">
-          <td>{{o.reference}}</td>
-          <td>{{o.contactPhoneNumber}}</td>
-          <td>{{o.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
-          <td>{{o.status}}</td>
-          <td>
-            <button *ngIf="o.status == 'New'" class="btn btn-primary btn-block" (click)="complete(o)">COMPLETE</button>
-          </td>
-        </tr>
+      <tr *ngFor="let o of orders">
+        <td>{{o.reference}}</td>
+        <td>{{o.contactPhoneNumber}}</td>
+        <td>{{o.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+        <td>{{o.status}}</td>
+        <td>
+          <button *ngIf="o.status == 'New'" class="btn btn-primary btn-block" (click)="complete(o)">COMPLETE</button>
+        </td>
+      </tr>
       </tbody>
     </table>
   </div>
