@@ -121,7 +121,7 @@ export class CustomerComponent implements OnInit {
   }
 
   activate(mobile: Mobile) {
-    this.mobilesService.activate(mobile);
+    this.mobilesService.activate(mobile, this.activationCodes[mobile.phoneNumber]);
   }
 
   cease(mobile: Mobile) {

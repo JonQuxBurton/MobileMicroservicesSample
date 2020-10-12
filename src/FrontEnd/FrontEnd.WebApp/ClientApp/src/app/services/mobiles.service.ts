@@ -35,10 +35,10 @@ export class MobilesService {
     return this.http.get<AvailablePhoneNumbers>(url, { headers });
   }
 
-  activate(mobile: Mobile) {
+  activate(mobile: Mobile, activationCode: string ) {
     let headers = { "Content-Type": 'application/json' }
     let url = `${this.apiBaseUrl}mobiles/${mobile.globalId}/activate`;
-    let data = { "ActivationCode": mobile.activationCode }
+    let data = { "ActivationCode": activationCode }
     this.http.post<any>(url, JSON.stringify(data), { headers }).subscribe({
       next: response => {
         this.mobileActivatedSource .next();
