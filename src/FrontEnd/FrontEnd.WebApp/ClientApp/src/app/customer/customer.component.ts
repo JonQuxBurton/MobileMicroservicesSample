@@ -144,6 +144,6 @@ export class CustomerComponent implements OnInit {
       return "";
 
     let lastOrder = mobile.orderHistory[mobile.orderHistory.length - 1];
-    return `${lastOrder.type} - ${lastOrder.state}`;
+    return `'${lastOrder.type}' order '${lastOrder.state}'`;
   }
 }
