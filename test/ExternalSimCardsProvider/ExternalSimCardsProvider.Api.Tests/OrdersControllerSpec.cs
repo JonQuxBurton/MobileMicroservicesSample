@@ -152,8 +152,9 @@ namespace ExternalSimCardsProvider.Api.Tests
             {
                 var actualActionResult = sut.GetActivationCode(expectedOrder.Reference);
 
-                var actual = actualActionResult.As<OkObjectResult>().Value;
-                actual.Should().Be(expectedOrder.ActivationCode);
+                var actual = actualActionResult.As<OkObjectResult>().Value as ActivationCodeResource;
+
+                actual.ActivationCode.Should().Be(expectedOrder.ActivationCode);
             }
 
             [Fact]

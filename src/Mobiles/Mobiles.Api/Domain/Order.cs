@@ -52,7 +52,17 @@ namespace Mobiles.Api.Domain
         public string Name => this.orderDataEntity.Name;
         public string ContactPhoneNumber => this.orderDataEntity.ContactPhoneNumber;
         public State CurrentState => machine.State;
-        public OrderType Type => enumConverter.ToEnum<OrderType>(this.orderDataEntity.Type);
+
+        public OrderType Type
+        {
+            get
+            {
+                if (orderDataEntity.Type == null)
+                    return OrderType.Provision;
+
+                return enumConverter.ToEnum<OrderType>(this.orderDataEntity.Type);
+            }
+        }
         public DateTime CreatedAt => this.orderDataEntity.CreatedAt;
         public DateTime? UpdatedAt => this.orderDataEntity.UpdatedAt;
         public string ActivationCode => this.orderDataEntity.ActivationCode;
