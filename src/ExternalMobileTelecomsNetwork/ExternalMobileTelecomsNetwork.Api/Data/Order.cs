@@ -12,5 +12,6 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
         public DateTime? UpdatedAt { get; set; }
         public string PhoneNumber { get; set; }
         public string ActivationCode { get; set; }
+        public string Reason { get; set; }
     }
 }

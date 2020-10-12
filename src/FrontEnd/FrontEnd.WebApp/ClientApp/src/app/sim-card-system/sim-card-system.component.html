@@ -1,7 +1,7 @@
 <div class="container p-3 my-3 border">
   <h4>SIM Card Orders</h4>
   <p class="small">Refreshed at: {{ refreshedAt | date: 'HH:mm:ss' }} </p>
-  <div *ngIf="orders.length > 0">
+  <div *ngIf="orders && orders.length > 0">
     <table class="table table-striped">
       <thead>
       <tr>
@@ -15,7 +15,7 @@
       <tbody>
       <tr *ngFor="let o of orders">
         <td>{{o.reference}}</td>
-        <td>{{o.contactPhoneNumber}}</td>
+        <td>{{o.phoneNumber}}</td>
         <td>{{o.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
         <td>{{o.status}}</td>
         <td>
@@ -25,7 +25,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="orders.length == 0">
+  <div *ngIf="!orders || orders.length == 0">
     No Orders found
   </div>
 </div>

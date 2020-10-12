@@ -1,36 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MobileToOrder } from '../models/MobileToOrder';
-import { CustomersService } from '../services/customers.service';
-import { Customer } from '../models/Customer';
-import { MobilesService } from '../services/mobiles.service';
-import { Mobile } from '../models/Mobile';
-import { ActivatedRoute } from '@angular/router';
-import { SimCardsService } from '../services/sim-cards.service';
+import { Component, OnInit } from "@angular/core";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { MobileToOrder } from "../models/MobileToOrder";
+import { CustomersService } from "../services/customers.service";
+import { Customer } from "../models/Customer";
+import { MobilesService } from "../services/mobiles.service";
+import { Mobile } from "../models/Mobile";
+import { ActivatedRoute } from "@angular/router";
+import { SimCardsService } from "../services/sim-cards.service";
 
 @Component({
-  selector: 'app-customer',
-  templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.css']
+  selector: "app-customer",
+  templateUrl: "./customer.component.html",
+  styleUrls: ["./customer.component.css"]
 })
 export class CustomerComponent implements OnInit {
   chosenPhoneNumber: string;
   selectIdustomerId: string;
   selectedCustomer: Customer;
-  isOrderingMobile: boolean = false;
-  isActivating: boolean = false;
+  isOrderingMobile = false;
+  isActivating = false;
   refreshedAt: Date;
 
   orderMobileFormGroup = new FormGroup({
     orderMobile: new FormGroup({
-      contactPhoneNumber: new FormControl('', [Validators.required]),
-      contactName: new FormControl('', [Validators.required])
+      contactPhoneNumber: new FormControl("", [Validators.required]),
+      contactName: new FormControl("", [Validators.required])
     })
   });
 
-  constructor(private route: ActivatedRoute, private customersService: CustomersService, private mobilesService: MobilesService, private simCardsService: SimCardsService) {
+  constructor(private route: ActivatedRoute,
+    private customersService: CustomersService,
+    private mobilesService: MobilesService,
+    private simCardsService: SimCardsService) {
     this.route.params.subscribe(params => {
-      this.selectIdustomerId = params['id'];
+      this.selectIdustomerId = params["id"];
       this.refresh();
     });
 
@@ -39,7 +42,7 @@ export class CustomerComponent implements OnInit {
   ngOnInit(): void {
     this.mobilesService.getAvailablePhoneNumber().subscribe(x => {
       this.chosenPhoneNumber = x.phoneNumbers[0];
-    })
+    });
 
     this.customersService.mobileOrdered$.subscribe(x => {
       this.refresh();
@@ -47,7 +50,7 @@ export class CustomerComponent implements OnInit {
       this.orderMobileFormGroup.reset();
       this.mobilesService.getAvailablePhoneNumber().subscribe(x => {
         this.chosenPhoneNumber = x.phoneNumbers[0];
-      })
+      });
     });
 
     this.mobilesService.mobileActivated$.subscribe(x => {
@@ -60,7 +63,7 @@ export class CustomerComponent implements OnInit {
   }
 
   get orderMobileForm() {
-    let formGroup = (this.orderMobileFormGroup.controls.orderMobile) as FormGroup;
+    const formGroup = (this.orderMobileFormGroup.controls.orderMobile) as FormGroup;
     return formGroup.controls;
   }
 
@@ -80,12 +83,12 @@ export class CustomerComponent implements OnInit {
 
   refreshActivationCodes() {
     this.selectedCustomer.mobiles.filter(x => x.state == "WaitingForActivate").forEach(y => {
-      let lastOrder = y.orderHistory[y.orderHistory.length - 1];
+      const lastOrder = y.orderHistory[y.orderHistory.length - 1];
 
       if (lastOrder) {
         this.simCardsService.getActivationCode(lastOrder.globalId).subscribe(z => {
           this.activationCodes[y.phoneNumber] = z.activationCode;
-      });
+        });
       }
     });
   }
@@ -107,9 +110,9 @@ export class CustomerComponent implements OnInit {
       return;
     }
 
-    let data = this.orderMobileFormGroup.value.orderMobile;
+    const data = this.orderMobileFormGroup.value.orderMobile;
 
-    let mobileToOrder = new MobileToOrder();
+    const mobileToOrder = new MobileToOrder();
     mobileToOrder.phoneNumber = this.chosenPhoneNumber;
     mobileToOrder.name = data.contactName;
     mobileToOrder.contactPhoneNumber = data.contactPhoneNumber;
@@ -131,19 +134,20 @@ export class CustomerComponent implements OnInit {
 
   getActionState(mobile: Mobile): string {
     if (mobile.state === "WaitingForActivate" ||
-        mobile.state === "Live" ||
-        mobile.state === "Suspended") {
+      mobile.state === "Live" ||
+      mobile.state === "Suspended" ||
+      mobile.state === "Ceased") {
       return mobile.state;
     }
 
-    return "OrderInProgress"
+    return "OrderInProgress";
   }
 
   getOrderInProgress(mobile: Mobile) {
     if (mobile.orderHistory.length === 0)
       return "";
 
-    let mostRecentOrder = mobile.orderHistory[0];
+    const mostRecentOrder = mobile.orderHistory[0];
     return `'${mostRecentOrder.type}' order '${mostRecentOrder.state}'`;
   }
 }

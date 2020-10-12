@@ -155,7 +155,8 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
                 Status = dbOrder.Status,
                 ActivationCode = dbOrder.ActivationCode,
                 CreatedAt = dbOrder.CreatedAt,
-                UpdatedAt = dbOrder.UpdatedAt
+                UpdatedAt = dbOrder.UpdatedAt,
+                Reason = dbOrder.Reason
             };
             return order;
         }
