@@ -10,6 +10,8 @@ import { HomeComponent } from './home/home.component';
 import { CustomersComponent } from './customers/customers.component';
 import { CustomerComponent } from './customer/customer.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SimCardSystemComponent } from './sim-card-system/sim-card-system.component';
+import { MobileTelecomsSystemComponent } from './mobile-telecoms-system/mobile-telecoms-system.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     NavMenuComponent,
     HomeComponent,
     CustomersComponent,
-    CustomerComponent
+    CustomerComponent,
+    SimCardSystemComponent,
+    MobileTelecomsSystemComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -25,10 +29,12 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
+      { path: 'simCardSystem', component: SimCardSystemComponent },
+      { path: 'mobileTelecomsSystem', component: MobileTelecomsSystemComponent },
       { path: 'customers', component: CustomersComponent },
       { path: 'customer/:id', component: CustomerComponent },
       { path: '', redirectTo: '/customers', pathMatch: 'full' },
-      { path: '**', redirectTo: '/customers'}
+      { path: '**', redirectTo: '/customers' }
     ])
   ],
   providers: [],

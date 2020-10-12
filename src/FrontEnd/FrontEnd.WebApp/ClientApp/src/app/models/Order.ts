@@ -1,4 +1,3 @@
-
 export class Order {
   public globalId: string;
   //public name: string;
