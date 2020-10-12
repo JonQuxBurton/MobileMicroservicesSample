@@ -31,10 +31,10 @@ import { MobileTelecomsSystemComponent } from './mobile-telecoms-system/mobile-t
     RouterModule.forRoot([
       { path: 'simCardSystem', component: SimCardSystemComponent },
       { path: 'mobileTelecomsSystem', component: MobileTelecomsSystemComponent },
-      { path: 'customers', component: CustomersComponent },
-      { path: 'customer/:id', component: CustomerComponent },
-      { path: '', redirectTo: '/customers', pathMatch: 'full' },
-      { path: '**', redirectTo: '/customers' }
+      { path: 'mobilesSystem/customers', component: CustomersComponent },
+      { path: 'mobilesSystem/customer/:id', component: CustomerComponent },
+      { path: '', redirectTo: 'mobilesSystem/customers', pathMatch: 'full' },
+      { path: '**', redirectTo: 'mobilesSystem/customers' }
     ])
   ],
   providers: [],

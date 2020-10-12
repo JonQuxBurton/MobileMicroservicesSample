@@ -51,7 +51,7 @@ export class CustomersComponent implements OnInit {
   }
 
   loadCustomer(id: string) {
-    this.router.navigate(['customer', id]);
+    this.router.navigate(['mobilesSystem/customer', id]);
   }
 
   openCreateCustomer() {

@@ -1,1 +1,32 @@
-<p>mobile-telecoms-system works!</p>
+<div class="container p-3 my-3 border">
+  <h4>Mobile Telecoms System Orders</h4>
+  <div *ngIf="orders.length > 0">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Phone Number</th>
+        <th>Created At</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let o of orders">
+        <td>{{o.reference}}</td>
+        <td>{{o.contactPhoneNumber}}</td>
+        <td>{{o.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+        <td>{{o.type}}</td>
+        <td>{{o.status}}</td>
+        <td>
+          <button *ngIf="o.status == 'New'" class="btn btn-primary btn-block" (click)="complete(o)">COMPLETE</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="orders.length == 0">
+    No Orders found
+  </div>
+</div>

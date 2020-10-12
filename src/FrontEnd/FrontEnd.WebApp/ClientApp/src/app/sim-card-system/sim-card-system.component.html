@@ -16,9 +16,9 @@
           <td>{{o.reference}}</td>
           <td>{{o.contactPhoneNumber}}</td>
           <td>{{o.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
-          <td>{{o.state}}</td>
+          <td>{{o.status}}</td>
           <td>
-            <button *ngIf="o.state == 'New'" class="btn btn-primary btn-block" (click)="complete(o)">COMPLETE</button>
+            <button *ngIf="o.status == 'New'" class="btn btn-primary btn-block" (click)="complete(o)">COMPLETE</button>
           </td>
         </tr>
       </tbody>

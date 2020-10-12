@@ -16,7 +16,7 @@ export class SimCardSystemComponent implements OnInit {
     order.reference = "ORD001";
     order.contactPhoneNumber = "07930123123";
     order.createdAt = new Date();
-    order.state = "New";
+    order.status = "New";
     this.orders.push(order);
   }
 
@@ -24,6 +24,6 @@ export class SimCardSystemComponent implements OnInit {
   }
 
   complete(order: SimCardsOrder) {
-    order.state = "Completed";
+    order.status = "Completed";
   }
 }
