@@ -130,9 +130,9 @@ export class CustomerComponent implements OnInit {
   }
 
   getActionState(mobile: Mobile): string {
-    if (mobile.state == "WaitingForActivate" ||
-        mobile.state == "Live" ||
-        mobile.state == "Suspended") {
+    if (mobile.state === "WaitingForActivate" ||
+        mobile.state === "Live" ||
+        mobile.state === "Suspended") {
       return mobile.state;
     }
 
@@ -140,10 +140,10 @@ export class CustomerComponent implements OnInit {
   }
 
   getOrderInProgress(mobile: Mobile) {
-    if (mobile.orderHistory.length == 0)
+    if (mobile.orderHistory.length === 0)
       return "";
 
-    let lastOrder = mobile.orderHistory[mobile.orderHistory.length - 1];
-    return `'${lastOrder.type}' order '${lastOrder.state}'`;
+    let mostRecentOrder = mobile.orderHistory[0];
+    return `'${mostRecentOrder.type}' order '${mostRecentOrder.state}'`;
   }
 }
