@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { SimCardsOrder } from "../models/SimCardsOrder";
 import { SimCardsService } from "../services/sim-cards.service";
 
 @Component({
-  selector: 'app-sim-card-system',
-  templateUrl: './sim-card-system.component.html',
-  styleUrls: ['./sim-card-system.component.css']
+  selector: "app-sim-card-system",
+  templateUrl: "./sim-card-system.component.html",
+  styleUrls: ["./sim-card-system.component.css"]
 })
 export class SimCardSystemComponent implements OnInit {
 
@@ -17,6 +17,14 @@ export class SimCardSystemComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh();
+
+    this.simCardsService.orderCompletedSource$.subscribe(x => {
+      this.refresh();
+    });
+  }
+
+  complete(order: SimCardsOrder) {
+    this.simCardsService.complete(order);
   }
 
   private refresh() {
@@ -24,9 +32,5 @@ export class SimCardSystemComponent implements OnInit {
       this.orders = x;
       this.refreshedAt = new Date();
     });
-  }
-
-  complete(order: SimCardsOrder) {
-    order.status = "Completed";
   }
 }

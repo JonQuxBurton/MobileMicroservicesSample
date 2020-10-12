@@ -16,10 +16,14 @@ export class MobileTelecomsSystemComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh();
+
+    this.mobileTelecomsNetworkService.orderCompletedSource$.subscribe(x => {
+      this.refresh();
+    });
   }
 
   complete(order: MobileTelecomsNetworkOrder) {
-    order.status = "Completed";
+    this.mobileTelecomsNetworkService.complete(order);
   }
 
   private refresh() {

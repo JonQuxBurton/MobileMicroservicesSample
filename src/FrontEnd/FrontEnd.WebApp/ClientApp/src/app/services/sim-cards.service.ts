@@ -3,11 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ActivationCode } from '../models/ActivationCode';
 import { SimCardsOrder } from "../models/SimCardsOrder";
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SimCardsService {
+  private orderCompletedSource = new Subject();
+
+  orderCompletedSource$ = this.orderCompletedSource.asObservable();
+
   private apiBaseUrl: string = "http://localhost:5001/api/";
 
   constructor(private http: HttpClient) { }
@@ -22,5 +27,16 @@ export class SimCardsService {
     let headers = { "Content-Type": 'application/json' }
     let url = `${this.apiBaseUrl}orders`;
     return this.http.get<SimCardsOrder[]>(url, { headers });
+  }
+
+  complete(order: SimCardsOrder) {
+    let headers = { "Content-Type": 'application/json' }
+    let url = `${this.apiBaseUrl}orders/${order.reference}/complete`;
+    return this.http.post<any>(url, { headers }).subscribe({
+      next: response => {
+        this.orderCompletedSource.next();
+      },
+      error: error => console.error('Error: ', error)
+    });
   }
 }
