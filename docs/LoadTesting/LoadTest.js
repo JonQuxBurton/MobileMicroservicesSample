@@ -1,29 +1,32 @@
 import http from "k6/http";
 import { check, group, sleep } from 'k6';
 
-let customerIds = [];
-let mobileIds = [];
-let provisionOrderIds = [];
-let phoneNumbers = [];
-let contactNames = [];
-let contactPhoneNumbers = [];
-let activateMobileMobileIds = [];
-let activateMobileActivationCodes = [];
-let completeActivateMobileIds = [];
-let completeActivateActivateOrderIds = [];
+let orderMobileData;
+let completeProvisionData;
+let activateMobileData;
+let completeActivateData;
 
 loadData();
 
+let vus = 5;
+let iterations = 2;
+
 export let options = {
-  vus: 5,
-  iterations: 5
-  //vus: 2,
-  //duration: '3s'
+  vus: vus,
+  iterations: vus * iterations
 };
 
 const SLEEP_DURATION = 0.1;
 const SLEEP_DURATION_FOR_ORDER_COMPLETION_CHECK = 10.0;
 const RETRIES_FOR_ORDER_COMPLETION_CHECK = 12;
+
+let counters = {
+  orderMobile: 0,
+  completeProvision: 0,
+  activateMobile: 0,
+  completeActivate: 0,
+  createCustomer: 0
+};
 
 export default function () {
   let params = {
@@ -33,16 +36,14 @@ export default function () {
     tags: {}
   };
 
-  //completeProvision(params);
-
   if (__VU == 2)
-    orderMobile(params);
+    orderMobile(params, orderMobileData[counters.orderMobile++]);
   else if (__VU == 3)
-    completeProvision(params);
+    completeProvision(params, completeProvisionData[counters.completeProvision++]);
   else if (__VU == 4)
-    activateMobile(params);
+     activateMobile(params, activateMobileData[counters.activateMobile++]);
   else if (__VU == 5)
-    completeActivate(params);
+     completeActivate(params, completeActivateData[counters.completeActivate++]);
   else
     createCustomer(params);
 };
@@ -72,14 +73,13 @@ function createCustomer(params) {
   });
 }
 
-function orderMobile(params) {
+function orderMobile(params, orderMobileData) {
   group('Order a Mobile', (_) => {
     params.tags.name = 'order-mobile';
-    let customerId = customerIds[0];
-    let phoneNumber = phoneNumbers[0];
-    let contactName = contactNames[0];
-    let contactPhoneNumber = contactPhoneNumbers[0];
-
+    let customerId = orderMobileData.customerId;
+    let phoneNumber = orderMobileData.phoneNumber;
+    let contactName = orderMobileData.contactName;
+    let contactPhoneNumber = orderMobileData.contactPhoneNumbers;
 
     let orderMobileUrl = `http://localhost:5000/api/customers/${customerId}/provision`;
     let orderMobileBody = JSON.stringify({
@@ -116,12 +116,12 @@ function orderMobile(params) {
   });
 }
 
-function completeProvision(params) {
+function completeProvision(params, completeProvisionData) {
   group('The External Service has completed a Mobile Provision Order', (_) => {
     // Step 3 - The External Service has completed the Mobile Provision Order
     params.tags.name = 'complete-provision';
-    let mobileId = mobileIds[0];
-    let provisionOrderId = provisionOrderIds[0];
+    let mobileId = completeProvisionData.mobileId;
+    let provisionOrderId = completeProvisionData.provisionOrderId;
     let completeProvisionUrl = `http://localhost:5001/api/orders/${provisionOrderId}/complete`;
 
     let completeProvisionResponse = http.post(completeProvisionUrl, "", params);
@@ -131,7 +131,6 @@ function completeProvision(params) {
       'is status 200': (r) => r.status === 200,
       'is activationCode present': (r) => r.json().hasOwnProperty('activationCode'),
     });
-    //activationCode = completeProvisionResponse.json()['activationCode'];
 
     // Wait unitl the Order has been processed
     let waitingForActivateCheckResponse = waitUntilMobileInState(`http://localhost:5000/api/mobiles/${mobileId}`, params, 'WaitingForActivate');
@@ -143,12 +142,12 @@ function completeProvision(params) {
 
 }
 
-function activateMobile(params) {
+function activateMobile(params, activateMobileData) {
   group('Activate a Mobile', (_) => {
     // Step 4 - Activate a Mobile
     params.tags.name = 'activate-mobile';
-    let mobileId = activateMobileMobileIds[0];
-    let activationCode = activateMobileActivationCodes[0];
+    let mobileId = activateMobileData.mobileId;
+    let activationCode = activateMobileData.activationCode;
 
     let activateMobileUrl = `http://localhost:5000/api/mobiles/${mobileId}/activate`;
     let activateMobileBody = JSON.stringify({
@@ -172,14 +171,13 @@ function activateMobile(params) {
 
 }
 
-
-function completeActivate(params) {
+function completeActivate(params, completeActivateData) {
   group('The External Service has completed a Mobile Activate Order', (_) => {
 
     // Step  5 - The External Service has completed the Mobile Activate Order
     params.tags.name = 'complete-activate';
-    let mobileId = completeActivateMobileIds[0];
-    let activateOrderId = completeActivateActivateOrderIds[0];
+    let mobileId = completeActivateData.mobileId;
+    let activateOrderId = completeActivateData.activateOrderId;
 
     let completeActivateUrl = `http://localhost:5002/api/orders/${activateOrderId}/complete`;
 
@@ -202,16 +200,11 @@ function completeActivate(params) {
 
 function loadData() {
   const data = JSON.parse(open("./data.json"));
-  customerIds = data.customerIds;
-  mobileIds = data.mobileIds;
-  provisionOrderIds = data.provisionOrderIds;
-  phoneNumbers = data.phoneNumbers;
-  contactNames = data.contactNames;
-  contactPhoneNumbers = data.contactPhoneNumbers;
-  activateMobileMobileIds = data.activateMobileMobileIds;
-  activateMobileActivationCodes = data.activateMobileActivationCodes;
-  completeActivateMobileIds = data.completeActivateMobileIds;
-  completeActivateActivateOrderIds = data.completeActivateActivateOrderIds;
+  
+  orderMobileData = data.orderMobile;
+  completeProvisionData = data.completeProvision;
+  activateMobileData = data.activateMobile;
+  completeActivateData = data.completeActivate;
 }
 
 function httpGetWithRetry(url, params) {

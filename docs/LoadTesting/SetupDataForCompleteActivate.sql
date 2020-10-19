@@ -56,6 +56,13 @@ declare
 set @customerId = 'C5C04D13-25B2-4EC2-97E0-99737673287F';
 set @mobileId =  '422DD8B1-BD6E-4594-8958-D8DC60D495B1';
 set @mobileOrderId = '499FA140-310A-433A-ACF5-B3BAAD206553';
-set @phoneNumber = '07001000001';
+set @phoneNumber = '07001000007';
+
+exec SetupDataForCompleteActivate @customerId, @mobileId, @mobileOrderId, @phoneNumber;
+
+
+set @mobileId =  '9A479AB1-FD6C-4004-B0AA-A7D6BCF98344';
+set @mobileOrderId = '2A894D82-F14A-489C-8E30-983A1FA7A358';
+set @phoneNumber = '07001000008';
 
 exec SetupDataForCompleteActivate @customerId, @mobileId, @mobileOrderId, @phoneNumber;
