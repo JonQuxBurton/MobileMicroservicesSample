@@ -10,12 +10,12 @@ http://localhost:9090
 GET localhost:3000
 
 ### Docker Workers
-GET 192.168.65.1:9323/metrics
+GET 192.168.0.5:9323/metrics
 
 ### Seq running in docker
-GET http://192.168.56.101:5341
+GET http://192.168.0.5:5341
 
-### doaws running in docker
+### goaws running in docker
 GET http://192.168.56.101:4100
 
 ###==================================================
@@ -54,7 +54,7 @@ content-type: application/json
 }
 
 ### Get a Mobile
-GET http://localhost:5000/api/mobiles/D06A902C-4689-46E6-8A74-26D42DD853FA
+GET http://localhost:5000/api/mobiles/422DD8B1-BD6E-4594-8958-D8DC60D495B1
 
 ### Get a Mobile ActivationCode
 GET http://localhost:5001/api/orders/247AB73E-8FA2-4177-A9EC-2AE072A82029/activationCode

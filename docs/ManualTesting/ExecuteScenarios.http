@@ -36,7 +36,7 @@ GET http://localhost:5000/api/mobiles/{{mobileId}}
 
 ###
 #@phoneNumber = {{getOrder.response.body.$.phoneNumber}}
-@provisionOrderId = {{getOrder.response.body.inFlightOrder.globalId}}
+@provisionOrderId = {{getOrder.response.body.orderHistory[0].globalId}}
 
 ### Step 3 - The External Service has completed the Mobile Provision Order
 # @name completeProvision
@@ -60,7 +60,6 @@ content-type: application/json
 
 ###
 @activateOrderId = {{activateMobile.response.body.$.globalId}}
-
 
 ### Step  5 - The External Service has completed the Mobile Activate Order
 POST http://localhost:5002/api/orders/{{activateOrderId}}/complete

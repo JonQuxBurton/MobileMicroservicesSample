@@ -66,6 +66,7 @@ namespace Mobiles.Api.Controllers
                 CustomerId = mobile.CustomerId,
                 CreatedAt = mobile.CreatedAt,
                 InFlightOrder = inFlightOrder,
+                State = mobile.CurrentState.ToString(),
                 OrderHistory = mobile.OrderHistory.Select(x => new OrderResource
                 {
                     GlobalId = x.GlobalId,
