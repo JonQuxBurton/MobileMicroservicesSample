@@ -1,5 +1,6 @@
 import http from "k6/http";
 import { check, group, sleep } from 'k6';
+import { Counter } from 'k6/metrics';
 
 let orderMobileData;
 let completeProvisionData;
@@ -28,6 +29,8 @@ let counters = {
   createCustomer: 0
 };
 
+let orderMobileErrorMetrics = new Counter("orderMobileErrors");
+
 export default function () {
   let params = {
     headers: {
@@ -35,6 +38,8 @@ export default function () {
     },
     tags: {}
   };
+
+  //completeProvision(params, completeProvisionData[counters.completeProvision++]);  
 
   if (__VU == 2)
     orderMobile(params, orderMobileData[counters.orderMobile++]);
@@ -90,10 +95,14 @@ function orderMobile(params, orderMobileData) {
 
     let orderMobileResponse = http.post(orderMobileUrl, orderMobileBody, params);
 
-    check(orderMobileResponse, {
+    let orderMobileSuccess = check(orderMobileResponse, {
       'is status 200': (r) => r.status === 200,
       'is mobileId present': (r) => r.json().hasOwnProperty('globalId'),
     });
+    if (!orderMobileSuccess) {
+      console.log(`FAILED - Request to ${orderMobileResponse.request.url} with returned ${orderMobileResponse.status}`);
+      orderMobileErrorMetrics.add(1, { url: orderMobileResponse.request.url });
+    }
     sleep(SLEEP_DURATION);
 
     params.tags.name = 'get-mobile';
@@ -101,18 +110,26 @@ function orderMobile(params, orderMobileData) {
     let getMobileUrl = `http://localhost:5000/api/mobiles/${mobileId}`;
     let getMobileResponse = http.get(getMobileUrl, params);
 
-    check(getMobileResponse, {
+    let getMobileSuccess = check(getMobileResponse, {
       'is status 200': (r) => r.status === 200,
       'is provisionOrderId present': (r) => r.json('orderHistory.0').hasOwnProperty('globalId'),
     });
+    if (!getMobileSuccess) {
+      console.log(`FAILED - Request to ${getMobileResponse.request.method} ${getMobileResponse.request.url} returned status ${getMobileResponse.status}`);
+      orderMobileErrorMetrics.add(1, { url: getMobileResponse.request.url });
+    }
 
     let provisionOrderId = getMobileResponse.json('orderHistory.0')['globalId'];
 
     // Check whether the Order has been received by the External Service
     let provisionOrderReceivedResponse = httpGetWithRetry(`http://localhost:5001/api/orders/${provisionOrderId}`, params);
-    check(provisionOrderReceivedResponse, {
+    let provisionOrderReceivedSuccess = check(provisionOrderReceivedResponse, {
       'is status 200': (r) => r.status === 200,
     });
+    if (!provisionOrderReceivedSuccess) {
+      console.log(`FAILED - Request to ${provisionOrderReceivedResponse.request.method} ${provisionOrderReceivedResponse.request.url} returned status ${provisionOrderReceivedResponse.status}`);
+      orderMobileErrorMetrics.add(1, { url: provisionOrderReceivedResponse.request.url });
+    }
   });
 }
 
