@@ -10,7 +10,7 @@ let completeActivateData;
 loadData();
 
 let vus = 5;
-let iterations = 2;
+let iterations = 3;
 
 export let options = {
   vus: vus,
@@ -18,7 +18,7 @@ export let options = {
 };
 
 const SLEEP_DURATION = 0.1;
-const SLEEP_DURATION_FOR_ORDER_COMPLETION_CHECK = 10.0;
+const SLEEP_DURATION_FOR_ORDER_COMPLETION_CHECK = 15.0;
 const RETRIES_FOR_ORDER_COMPLETION_CHECK = 12;
 
 let counters = {
@@ -30,6 +30,9 @@ let counters = {
 };
 
 let orderMobileErrorMetrics = new Counter("orderMobileErrors");
+let completeProvisionErrorMetrics = new Counter("completeProvisionErrors");
+let activateMobileErrorMetrics = new Counter("activateMobileErrors");
+let completeActivateErrorMetrics = new Counter("completeActivateErrors");
 
 export default function () {
   let params = {
@@ -144,17 +147,25 @@ function completeProvision(params, completeProvisionData) {
     let completeProvisionResponse = http.post(completeProvisionUrl, "", params);
     sleep(SLEEP_DURATION);
 
-    check(completeProvisionResponse, {
+    let completeProvisionResponseSuccess = check(completeProvisionResponse, {
       'is status 200': (r) => r.status === 200,
       'is activationCode present': (r) => r.json().hasOwnProperty('activationCode'),
     });
+    if (!completeProvisionResponseSuccess) {
+      console.log(`FAILED - Request to ${completeProvisionResponseSuccess.request.method} ${completeProvisionResponseSuccess.request.url} returned status ${completeProvisionResponseSuccess.status}`);
+      completeProvisionErrorMetrics.add(1, { url: completeProvisionResponseSuccess.request.url });
+    }
 
     // Wait unitl the Order has been processed
     let waitingForActivateCheckResponse = waitUntilMobileInState(`http://localhost:5000/api/mobiles/${mobileId}`, params, 'WaitingForActivate');
 
-    check(waitingForActivateCheckResponse, {
+    let waitingForActivateSuccess = check(waitingForActivateCheckResponse, {
       'is status 200': (r) => r.status === 200
     });
+    if (!waitingForActivateSuccess) {
+      console.log(`FAILED - Request to ${waitingForActivateCheckResponse.request.method} ${waitingForActivateCheckResponse.request.url} returned status ${waitingForActivateCheckResponse.status}`);
+      completeProvisionErrorMetrics.add(1, { url: waitingForActivateCheckResponse.request.url });
+    }
   });
 
 }
@@ -173,17 +184,26 @@ function activateMobile(params, activateMobileData) {
 
     let activateMobileResponse = http.post(activateMobileUrl, activateMobileBody, params);
 
-    check(activateMobileResponse, {
+    let activateMobileSuccess = check(activateMobileResponse, {
       'is status 200': (r) => r.status === 200,
       'is activateOrderId present': (r) => r.json().hasOwnProperty('globalId'),
     });
+    if (!activateMobileSuccess) {
+      console.log(`FAILED - Request to ${activateMobileResponse.request.method} ${activateMobileResponse.request.url} returned status ${activateMobileResponse.status}`);
+      activateMobileErrorMetrics.add(1, { url: activateMobileResponse.request.url });
+    }
+
     let activateOrderId = activateMobileResponse.json()['globalId'];
 
     // Check whether the Order has been received by the External Service
     let activateOrderReceivedResponse = httpGetWithRetry(`http://localhost:5002/api/orders/${activateOrderId}`, params);
-    check(activateOrderReceivedResponse, {
+    let activateOrderReceivedSuccess = check(activateOrderReceivedResponse, {
       'is status 200 2': (r) => r.status === 200
     });
+    if (!activateOrderReceivedSuccess) {
+      console.log(`FAILED - Request to ${activateOrderReceivedResponse.request.method} ${activateOrderReceivedResponse.request.url} returned status ${activateOrderReceivedResponse.status}`);
+      activateMobileErrorMetrics.add(1, { url: activateOrderReceivedResponse.request.url });
+    }
   });
 
 }
@@ -200,17 +220,24 @@ function completeActivate(params, completeActivateData) {
 
     let completeActivateResponse = http.post(completeActivateUrl, null, params);
 
-    check(completeActivateResponse, {
+    let completeActivateSuccess = check(completeActivateResponse, {
       'is status 200': (r) => r.status === 200
     });
-
+    if (!completeActivateSuccess) {
+      console.log(`FAILED - Request to ${completeActivateResponse.request.method} ${completeActivateResponse.request.url} returned status ${completeActivateResponse.status}`);
+      completeActivateErrorMetrics.add(1, { url: completeActivateResponse.request.url });
+    }
     // Wait unitl the Order has been processed
     let waitingForLiveCheckResponse = waitUntilMobileInState(`http://localhost:5000/api/mobiles/${mobileId}`, params, 'Live');
 
-    check(waitingForLiveCheckResponse, {
+    let waitingForLiveCheckSuccess = check(waitingForLiveCheckResponse, {
       "is Mobile in state 'Live'": (r) => r !== null,
       'is status 200': (r) => r.status === 200
     });
+    if (!waitingForLiveCheckSuccess) {
+      console.log(`FAILED - Request to ${waitingForLiveCheckResponse.request.method} ${waitingForLiveCheckResponse.request.url} returned status ${waitingForLiveCheckResponse.status}`);
+      completeActivateErrorMetrics.add(1, { url: waitingForLiveCheckResponse.request.url });
+    }
   });
 }
 

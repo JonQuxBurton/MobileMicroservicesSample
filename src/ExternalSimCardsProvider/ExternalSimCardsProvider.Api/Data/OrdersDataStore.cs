@@ -58,6 +58,9 @@ namespace ExternalSimCardsProvider.Api.Data
             var dbOrders = conn.Query(sql, new {reference});
             var dbOrder = dbOrders.FirstOrDefault();
 
+            if (dbOrder == null)
+                return null;
+
             return ConvertToOrder(dbOrder);
         }
 

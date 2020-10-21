@@ -1,6 +1,6 @@
 ﻿namespace LoadTestingSetupApp
 {
-    internal class CompleteProvisionData
+    public class CompleteProvisionTestData
     {
         public string MobileId { get; set; }
         public string ProvisionOrderId { get; set; }

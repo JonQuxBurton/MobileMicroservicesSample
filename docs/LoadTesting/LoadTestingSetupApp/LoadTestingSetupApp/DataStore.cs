@@ -1,23 +1,31 @@
 ﻿using System.Data;
-using Dapper;
 using System.Data.SqlClient;
+using Dapper;
 
 namespace LoadTestingSetupApp
 {
-    class DataStore
+    internal class DataStore
     {
         private readonly string connectionString;
 
         public DataStore(Config config)
         {
-            this.connectionString = config.ConnectionString;
+            connectionString = config.ConnectionString;
         }
 
-        public void SetupDataForCompleteProvision(string customerId, string mobileId, string mobileOrderId, string phoneNumber, string contactName)
+        public void SetupDataForCompleteProvision(string customerId, string mobileId, string mobileOrderId,
+            string phoneNumber, string contactName)
         {
             using var connection = new SqlConnection(connectionString);
             var procedure = "[SetupDataForCompleteProvision]";
-            var values = new { customerId = customerId, mobileId = mobileId, mobileOrderId= mobileOrderId, phoneNumber= phoneNumber, contactName= contactName };
+            var values = new
+            {
+                customerId,
+                mobileId,
+                mobileOrderId,
+                phoneNumber,
+                contactName
+            };
             var result = connection.Query(procedure, values, commandType: CommandType.StoredProcedure);
         }
 
@@ -25,15 +33,16 @@ namespace LoadTestingSetupApp
         {
             using var connection = new SqlConnection(connectionString);
             var procedure = "[SetupDataForActivate]";
-            var values = new { customerId = customerId, mobileId = mobileId, phoneNumber = phoneNumber , activationCode = activationCode };
+            var values = new {customerId, mobileId, phoneNumber, activationCode};
             var result = connection.Query(procedure, values, commandType: CommandType.StoredProcedure);
         }
 
-        public void SetupDataForCompleteActivate(string customerId, string mobileId, string mobileOrderId, string phoneNumber)
+        public void SetupDataForCompleteActivate(string customerId, string mobileId, string mobileOrderId,
+            string phoneNumber)
         {
             using var connection = new SqlConnection(connectionString);
             var procedure = "[SetupDataForCompleteActivate]";
-            var values = new { customerId = customerId, mobileId = mobileId, mobileOrderId = mobileOrderId, phoneNumber = phoneNumber };
+            var values = new {customerId, mobileId, mobileOrderId, phoneNumber};
             var result = connection.Query(procedure, values, commandType: CommandType.StoredProcedure);
         }
     }

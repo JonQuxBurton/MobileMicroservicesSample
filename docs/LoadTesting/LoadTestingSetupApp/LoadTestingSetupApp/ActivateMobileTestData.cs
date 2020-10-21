@@ -1,8 +1,8 @@
 ﻿namespace LoadTestingSetupApp
 {
-    internal class CompleteActivateData
+    public class ActivateMobileTestData
     {
         public string MobileId { get; set; }
-        public string ActivateOrderId { get; set; }
+        public string ActivationCode { get; set; }
     }
 }

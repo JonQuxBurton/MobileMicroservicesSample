@@ -37,14 +37,20 @@ namespace Mobiles.Api.Handlers
                 var getMobileByOrderIdQuery = scope.ServiceProvider.GetRequiredService<IGetMobileByOrderIdQuery>();
                 var mobileRepository = scope.ServiceProvider.GetRequiredService<IRepository<Mobile>>();
                 var mobile = getMobileByOrderIdQuery.Get(receivedEvent.MobileOrderId);
-                
+
+                if (mobile == null)
+                {
+                    logger.LogError("Error while processing event {eventName} - MobileOrderId={mobileOrderId}: Mobile not found", eventName, receivedEvent.MobileOrderId);
+                    return Task.FromResult(false);
+                }
+
                 mobile.ProcessingProvisionCompleted();
                 mobileRepository.Update(mobile);
                 monitoring.ProvisionCompleted();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing event [{eventName}]", eventName);
+                logger.LogError(ex, "Error while processing event {eventName} - MobileOrderId={mobileOrderId}", eventName, receivedEvent.MobileOrderId);
                 return Task.FromResult(false);
             }
 

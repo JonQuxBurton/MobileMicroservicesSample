@@ -73,7 +73,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Handlers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while processing {eventName}", eventName);
+                logger.LogError(ex, "Error while processing event {eventName} - MobileOrderId={mobileOrderId}", eventName, receivedEvent.MobileOrderId);
                 return false;
             }
 

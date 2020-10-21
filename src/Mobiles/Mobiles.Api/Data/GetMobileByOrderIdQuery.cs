@@ -23,7 +23,12 @@ namespace Mobiles.Api.Data
             var newStateName = enumConverter.ToName<Order.State>(Order.State.New);
             var processingStateName = enumConverter.ToName<Order.State>(Order.State.Processing);
             var sentStateName = enumConverter.ToName<Order.State>(Order.State.Sent);
-            var mobileDataEntity = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.Orders.Any(y => y.GlobalId == orderId)).FirstOrDefault();
+            var mobileDataEntity = this.mobilesContext.Mobiles.Include(x => x.Orders)
+                .Where(x => x.Orders.Any(y => y.GlobalId == orderId))
+                .FirstOrDefault();
+
+            if (mobileDataEntity == null)
+                return null;
 
             var inFlightOrderDataEntity = mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName || x.State.Trim() == processingStateName || x.State.Trim() == sentStateName);
             var inFlightOrder = new Order(inFlightOrderDataEntity);
@@ -33,7 +38,6 @@ namespace Mobiles.Api.Data
             {
                 var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
                 orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
-
             }
 
             return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
