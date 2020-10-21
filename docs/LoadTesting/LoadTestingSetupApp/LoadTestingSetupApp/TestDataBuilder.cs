@@ -5,7 +5,7 @@ namespace LoadTestingSetupApp
 {
     public class TestDataBuilder
     {
-        public Data Build(Config config)
+        public Data Build(TestDataSettings config)
         {
             var dataStore = new DataStore(config);
 

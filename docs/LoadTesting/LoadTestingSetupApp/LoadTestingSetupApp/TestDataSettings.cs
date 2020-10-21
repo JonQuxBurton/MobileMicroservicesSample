@@ -1,6 +1,6 @@
 ﻿namespace LoadTestingSetupApp
 {
-    public class Config
+    public class TestDataSettings
     {
         public string ConnectionString { get; set; }
         public string CustomerId { get; set; }

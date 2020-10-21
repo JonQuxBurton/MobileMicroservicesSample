@@ -8,7 +8,7 @@ namespace LoadTestingSetupApp
     {
         private readonly string connectionString;
 
-        public DataStore(Config config)
+        public DataStore(TestDataSettings config)
         {
             connectionString = config.ConnectionString;
         }
