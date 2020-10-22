@@ -17,6 +17,21 @@ Content-Disposition: form-data; name="Version"
 2012-11-05
 ----------------------------669459213080013617420231--
 
+### Check a queue(ActivateRequested)
+POST http://192.168.0.5:4100/ActivateRequested?Action=GetQueueAttributes
+Authorization:AL03THI20QLMNG01QOPU5EDS/ftg7tCesw0Yr%Xr%3jV2KOyKaoLzZXre3sIAWOI8
+Content-Type:multipart/form-data; boundary=--------------------------669459213080013617420231
+
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Action"
+
+ListQueues
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Version"
+
+2012-11-05
+----------------------------669459213080013617420231--
+
 ### Check seq
 GET http://192.168.0.5:5341
 

@@ -35,9 +35,9 @@ namespace ExternalSimCardsProvider.Api
 
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
-            services.AddSingleton<IOrdersDataStore, OrdersDataStore>();
-            services.AddSingleton<IRandomCharCodesGenerator, RandomCharCodesGenerator>();
-            services.AddSingleton<IActivationCodeGenerator, ActivationCodeGenerator>();
+            services.AddScoped<IOrdersDataStore, OrdersDataStore>();
+            services.AddScoped<IRandomCharCodesGenerator, RandomCharCodesGenerator>();
+            services.AddScoped<IActivationCodeGenerator, ActivationCodeGenerator>();
             services.AddHttpClient<IExternalMobileTelecomsNetworkService, ExternalMobileTelecomsNetworkService>();
         }
 

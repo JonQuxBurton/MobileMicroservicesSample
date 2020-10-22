@@ -5,6 +5,8 @@ namespace LoadTestingSetupApp
 {
     public class TestDataBuilder
     {
+        private int globalCounter;
+
         public Data Build(TestDataSettings config)
         {
             var dataStore = new DataStore(config);
@@ -14,20 +16,63 @@ namespace LoadTestingSetupApp
             var activateMobiles = new List<ActivateMobileTestData>();
             var completeActivates = new List<CompleteActivateTestData>();
 
-            var globalCounter = 1;
+            globalCounter = 1;
 
-            for (var i = 0; i < config.OrderMobilesCount; i++)
+            BuildOrderMobiles(config, orderMobiles);
+            BuildCompleteProvisions(config, dataStore, completeProvisions);
+            BuildActivateMobiles(config, dataStore, activateMobiles);
+            BuildCompleteActivates(config, dataStore, completeActivates);
+
+            var data = new Data
             {
-                orderMobiles.Add(new OrderMobileTestData
+                OrderMobile = orderMobiles.ToArray(),
+                CompleteProvision = completeProvisions.ToArray(),
+                ActivateMobile = activateMobiles.ToArray(),
+                CompleteActivate = completeActivates.ToArray()
+            };
+            return data;
+        }
+
+        private void BuildCompleteActivates(TestDataSettings config, DataStore dataStore, List<CompleteActivateTestData> completeActivates)
+        {
+            for (var i = 0; i < config.CompleteActivatesCount; i++)
+            {
+                var customerId = config.CustomerId;
+                var mobileId = Guid.NewGuid().ToString();
+                var activateOrderId = Guid.NewGuid().ToString();
+
+                var phoneNumber = GetPhoneNumber(globalCounter);
+                dataStore.SetupDataForCompleteActivate(customerId, mobileId, activateOrderId, phoneNumber);
+                completeActivates.Add(new CompleteActivateTestData
                 {
-                    CustomerId = config.CustomerId,
-                    PhoneNumber = GetPhoneNumber(globalCounter),
-                    ContactName = GetContactName(globalCounter),
-                    ContactPhoneNumber = GetContactPhoneNumber(globalCounter)
+                    MobileId = mobileId,
+                    ActivateOrderId = activateOrderId
                 });
                 globalCounter++;
             }
+        }
 
+        private void BuildActivateMobiles(TestDataSettings config, DataStore dataStore, List<ActivateMobileTestData> activateMobiles)
+        {
+            for (var i = 0; i < config.ActivateMobilesCount; i++)
+            {
+                var customerId = config.CustomerId;
+                var mobileId = Guid.NewGuid().ToString();
+
+                var phoneNumber = GetPhoneNumber(globalCounter);
+                var activationCode = GetActivationCode(globalCounter);
+                dataStore.SetupDataForActivate(customerId, mobileId, phoneNumber, activationCode);
+                activateMobiles.Add(new ActivateMobileTestData
+                {
+                    MobileId = mobileId,
+                    ActivationCode = activationCode
+                });
+                globalCounter++;
+            }
+        }
+
+        private void BuildCompleteProvisions(TestDataSettings config, DataStore dataStore, List<CompleteProvisionTestData> completeProvisions)
+        {
             for (var i = 0; i < config.CompleteProvisionsCount; i++)
             {
                 var customerId = config.CustomerId;
@@ -47,47 +92,21 @@ namespace LoadTestingSetupApp
                 });
                 globalCounter++;
             }
+        }
 
-            for (var i = 0; i < config.ActivateMobilesCount; i++)
+        private void BuildOrderMobiles(TestDataSettings config, List<OrderMobileTestData> orderMobiles)
+        {
+            for (var i = 0; i < config.OrderMobilesCount; i++)
             {
-                var customerId = config.CustomerId;
-                var mobileId = Guid.NewGuid().ToString();
-
-                var phoneNumber = GetPhoneNumber(globalCounter);
-                var activationCode = GetActivationCode(globalCounter);
-                dataStore.SetupDataForActivate(customerId, mobileId, phoneNumber, activationCode);
-                activateMobiles.Add(new ActivateMobileTestData
+                orderMobiles.Add(new OrderMobileTestData
                 {
-                    MobileId = mobileId,
-                    ActivationCode = activationCode
+                    CustomerId = config.CustomerId,
+                    PhoneNumber = GetPhoneNumber(globalCounter),
+                    ContactName = GetContactName(globalCounter),
+                    ContactPhoneNumber = GetContactPhoneNumber(globalCounter)
                 });
                 globalCounter++;
             }
-
-            for (var i = 0; i < config.CompleteActivatesCount; i++)
-            {
-                var customerId = config.CustomerId;
-                var mobileId = Guid.NewGuid().ToString();
-                var activateOrderId = Guid.NewGuid().ToString();
-
-                var phoneNumber = GetPhoneNumber(globalCounter);
-                dataStore.SetupDataForCompleteActivate(customerId, mobileId, activateOrderId, phoneNumber);
-                completeActivates.Add(new CompleteActivateTestData
-                {
-                    MobileId = mobileId,
-                    ActivateOrderId = activateOrderId
-                });
-                globalCounter++;
-            }
-
-            var data = new Data
-            {
-                OrderMobile = orderMobiles.ToArray(),
-                CompleteProvision = completeProvisions.ToArray(),
-                ActivateMobile = activateMobiles.ToArray(),
-                CompleteActivate = completeActivates.ToArray()
-            };
-            return data;
         }
 
         private string GetPhoneNumber(int counter)

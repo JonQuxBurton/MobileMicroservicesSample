@@ -9,12 +9,42 @@ let completeActivateData;
 
 loadData();
 
-let vus = 5;
-let iterations = 3;
+let vus = 2;//5;
+let iterations = 3;//3;
 
 export let options = {
-  vus: vus,
-  iterations: vus * iterations
+  scenarios: {
+    createCustomerTests: {
+      executor: 'per-vu-iterations',
+      vus: vus,
+      iterations: iterations,
+      exec: 'createCustomer',
+    },
+    orderMobileTests: {
+      executor: 'per-vu-iterations',
+      vus: vus,
+      iterations: iterations,
+      exec: 'orderMobile',
+    },
+    completeProvisionTests: {
+      executor: 'per-vu-iterations',
+      vus: vus,
+      iterations: iterations,
+      exec: 'completeProvision',
+    },
+    activateMobileTests: {
+      executor: 'per-vu-iterations',
+      vus: vus,
+      iterations: iterations,
+      exec: 'activateMobile',
+    },
+    completeActivateTests: {
+      executor: 'per-vu-iterations',
+      vus: vus,
+      iterations: iterations,
+      exec: 'completeActivate',
+    }
+  }
 };
 
 const SLEEP_DURATION = 0.1;
@@ -34,29 +64,13 @@ let completeProvisionErrorMetrics = new Counter("completeProvisionErrors");
 let activateMobileErrorMetrics = new Counter("activateMobileErrors");
 let completeActivateErrorMetrics = new Counter("completeActivateErrors");
 
-export default function () {
+export function createCustomer() {
   let params = {
     headers: {
       'Content-Type': 'application/json',
     },
     tags: {}
   };
-
-  //completeProvision(params, completeProvisionData[counters.completeProvision++]);  
-
-  if (__VU == 2)
-    orderMobile(params, orderMobileData[counters.orderMobile++]);
-  else if (__VU == 3)
-    completeProvision(params, completeProvisionData[counters.completeProvision++]);
-  else if (__VU == 4)
-     activateMobile(params, activateMobileData[counters.activateMobile++]);
-  else if (__VU == 5)
-     completeActivate(params, completeActivateData[counters.completeActivate++]);
-  else
-    createCustomer(params);
-};
-
-function createCustomer(params) {
   group('Create a Customer', (_) => {
     params.tags.name = 'create-customer';
     let customersUrl = "http://localhost:5000/api/customers";
@@ -81,13 +95,21 @@ function createCustomer(params) {
   });
 }
 
-function orderMobile(params, orderMobileData) {
+export function orderMobile() {
+  let params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    tags: {}
+  };
+  let data = orderMobileData[counters.orderMobile++];
+
   group('Order a Mobile', (_) => {
     params.tags.name = 'order-mobile';
-    let customerId = orderMobileData.customerId;
-    let phoneNumber = orderMobileData.phoneNumber;
-    let contactName = orderMobileData.contactName;
-    let contactPhoneNumber = orderMobileData.contactPhoneNumbers;
+    let customerId = data.customerId;
+    let phoneNumber = data.phoneNumber;
+    let contactName = data.contactName;
+    let contactPhoneNumber = data.contactPhoneNumbers;
 
     let orderMobileUrl = `http://localhost:5000/api/customers/${customerId}/provision`;
     let orderMobileBody = JSON.stringify({
@@ -136,12 +158,20 @@ function orderMobile(params, orderMobileData) {
   });
 }
 
-function completeProvision(params, completeProvisionData) {
+export function completeProvision() {
+  let params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    tags: {}
+  };
+  let data = completeProvisionData[counters.completeProvision++];
+
   group('The External Service has completed a Mobile Provision Order', (_) => {
     // Step 3 - The External Service has completed the Mobile Provision Order
     params.tags.name = 'complete-provision';
-    let mobileId = completeProvisionData.mobileId;
-    let provisionOrderId = completeProvisionData.provisionOrderId;
+    let mobileId = data.mobileId;
+    let provisionOrderId = data.provisionOrderId;
     let completeProvisionUrl = `http://localhost:5001/api/orders/${provisionOrderId}/complete`;
 
     let completeProvisionResponse = http.post(completeProvisionUrl, "", params);
@@ -170,12 +200,20 @@ function completeProvision(params, completeProvisionData) {
 
 }
 
-function activateMobile(params, activateMobileData) {
+export function activateMobile() {
+  let params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    tags: {}
+  };
+  let data = activateMobileData[counters.activateMobile++]
+
   group('Activate a Mobile', (_) => {
     // Step 4 - Activate a Mobile
     params.tags.name = 'activate-mobile';
-    let mobileId = activateMobileData.mobileId;
-    let activationCode = activateMobileData.activationCode;
+    let mobileId = data.mobileId;
+    let activationCode = data.activationCode;
 
     let activateMobileUrl = `http://localhost:5000/api/mobiles/${mobileId}/activate`;
     let activateMobileBody = JSON.stringify({
@@ -208,13 +246,21 @@ function activateMobile(params, activateMobileData) {
 
 }
 
-function completeActivate(params, completeActivateData) {
+export function completeActivate() {
+  let params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    tags: {}
+  };
+  let data = completeActivateData[counters.completeActivate++]
+
   group('The External Service has completed a Mobile Activate Order', (_) => {
 
     // Step  5 - The External Service has completed the Mobile Activate Order
     params.tags.name = 'complete-activate';
-    let mobileId = completeActivateData.mobileId;
-    let activateOrderId = completeActivateData.activateOrderId;
+    let mobileId = data.mobileId;
+    let activateOrderId = data.activateOrderId;
 
     let completeActivateUrl = `http://localhost:5002/api/orders/${activateOrderId}/complete`;
 
@@ -224,7 +270,8 @@ function completeActivate(params, completeActivateData) {
       'is status 200': (r) => r.status === 200
     });
     if (!completeActivateSuccess) {
-      console.log(`FAILED - Request to ${completeActivateResponse.request.method} ${completeActivateResponse.request.url} returned status ${completeActivateResponse.status}`);
+      let status = completeActivateResponse ? completeActivateResponse.status : "undefined";
+      console.log(`FAILED - Request to ${completeActivateResponse.request.method} ${completeActivateResponse.request.url} returned status ${status}`);
       completeActivateErrorMetrics.add(1, { url: completeActivateResponse.request.url });
     }
     // Wait unitl the Order has been processed
@@ -240,7 +287,6 @@ function completeActivate(params, completeActivateData) {
     }
   });
 }
-
 
 function loadData() {
   const data = JSON.parse(open("./data.json"));
