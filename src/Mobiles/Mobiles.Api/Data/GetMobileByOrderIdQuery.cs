@@ -30,14 +30,19 @@ namespace Mobiles.Api.Data
             if (mobileDataEntity == null)
                 return null;
 
-            var inFlightOrderDataEntity = mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName || x.State.Trim() == processingStateName || x.State.Trim() == sentStateName);
-            var inFlightOrder = new Order(inFlightOrderDataEntity);
-
+            Order inFlightOrder = null;
             IEnumerable<Order> orderHistory = null;
-            if (inFlightOrder != null)
+
+            var inFlightOrderDataEntity = mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName || x.State.Trim() == processingStateName || x.State.Trim() == sentStateName);
+            if (inFlightOrderDataEntity != null)
             {
-                var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
-                orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
+                inFlightOrder = new Order(inFlightOrderDataEntity);
+
+                if (inFlightOrder != null)
+                {
+                    var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
+                    orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
+                }
             }
 
             return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);

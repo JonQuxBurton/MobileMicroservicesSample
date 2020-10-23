@@ -1,3 +1,6 @@
+USE [Mobile]
+GO
+
 /*
 Setup data for test
 */
@@ -7,7 +10,8 @@ CREATE PROCEDURE SetupDataForCompleteActivate
 @customerId uniqueidentifier, 
 @mobileId uniqueidentifier, 
 @mobileOrderId uniqueidentifier,
-@phoneNumber  varchar(50)
+@phoneNumber  varchar(50),
+@newMobileId int output
 AS
 begin
 begin transaction
@@ -28,11 +32,11 @@ delete from Mobiles.Mobiles where GlobalId=@mobileId;
 insert into Mobiles.Mobiles ([GlobalId],[CustomerId],[State],[PhoneNumber]) 
 values (@mobileId, @customerId, 'ProcessingActivate', @phoneNumber);
 
-set @mobileDbId = SCOPE_IDENTITY();
+set @newMobileId = SCOPE_IDENTITY();
 
 -- Create MobileOrder
 insert into Mobiles.Orders ([MobileId],[GlobalId],[Name],[ContactPhoneNumber],[State],[Type]) 
-values (@mobileDbId, @mobileOrderId, @contactName, '00123456789', 'Sent', 'Activate');
+values (@newMobileId, @mobileOrderId, @contactName, '00123456789', 'Sent', 'Activate');
 
 -- Create MobileTelecomsNetwork Order
 insert into MobileTelecomsNetwork.Orders ([Type],[MobileId],[MobileOrderId],[PhoneNumber],[Name],[Status]) 

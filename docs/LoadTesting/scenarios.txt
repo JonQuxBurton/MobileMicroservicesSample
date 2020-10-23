@@ -1,0 +1,278 @@
+
+==================================================
+
+--------------------------------------------------
+Scenario: OrderMobile
+--------------------------------------------------
+DATA
+CustomerId:         C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:        07001000001
+ContactName:        Neil Armstrong-1
+ContactPhoneNumber: 0114000001
+--------------------------------------------------
+AT END
+Mobile created with
+    State:      'ProcessingProvision'
+SimCards Order created with
+    Status:     'Sent'
+ExternalSimCardsProvider Order created with
+    Status:     'New'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: OrderMobile
+--------------------------------------------------
+DATA
+CustomerId:         C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:        07001000002
+ContactName:        Neil Armstrong-2
+ContactPhoneNumber: 0114000002
+--------------------------------------------------
+AT END
+Mobile created with
+    State:      'ProcessingProvision'
+SimCards Order created with
+    Status:     'Sent'
+ExternalSimCardsProvider Order created with
+    Status:     'New'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: OrderMobile
+--------------------------------------------------
+DATA
+CustomerId:         C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:        07001000003
+ContactName:        Neil Armstrong-3
+ContactPhoneNumber: 0114000003
+--------------------------------------------------
+AT END
+Mobile created with
+    State:      'ProcessingProvision'
+SimCards Order created with
+    Status:     'Sent'
+ExternalSimCardsProvider Order created with
+    Status:     'New'
+--------------------------------------------------
+
+==================================================
+
+--------------------------------------------------
+Scenario: CompleteProvision
+--------------------------------------------------
+DATA
+CustomerId:         C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:        07001000004
+MobileId:           30a27c63-47c2-4b63-bf27-4ff8f3fccba1
+--------------------------------------------------
+AT START
+SimCards Order has
+    Status:     'Sent'
+ExternalSimCardsProvider has
+    Status:     'New'
+--------------------------------------------------
+AT END
+Mobile created with
+    State:      'WaitingForActivation'
+SimCards Order update to
+    Status:     'Completed'
+ExternalSimCardsProvider Order update to
+    Status:     'Completed'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: CompleteProvision
+--------------------------------------------------
+DATA
+CustomerId:         C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:        07001000005
+MobileId:           cc4c7472-6ddd-4316-a72c-343dfc13503b
+--------------------------------------------------
+AT START
+SimCards Order has
+    Status:     'Sent'
+ExternalSimCardsProvider has
+    Status:     'New'
+--------------------------------------------------
+AT END
+Mobile created with
+    State:      'WaitingForActivation'
+SimCards Order update to
+    Status:     'Completed'
+ExternalSimCardsProvider Order update to
+    Status:     'Completed'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: CompleteProvision
+--------------------------------------------------
+DATA
+CustomerId:         C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:        07001000006
+MobileId:           2a8ae9e8-ca0b-441a-b44b-6baadfff5de7
+--------------------------------------------------
+AT START
+SimCards Order has
+    Status:     'Sent'
+ExternalSimCardsProvider has
+    Status:     'New'
+--------------------------------------------------
+AT END
+Mobile created with
+    State:      'WaitingForActivation'
+SimCards Order update to
+    Status:     'Completed'
+ExternalSimCardsProvider Order update to
+    Status:     'Completed'
+--------------------------------------------------
+
+==================================================
+
+--------------------------------------------------
+Scenario: ActivateMobile
+--------------------------------------------------
+DATA
+CustomerId:     C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:    07001000007
+MobileId:       f393bcdb-8f0c-4498-acbe-864f2bd2f06c
+ActivationCode: AAA007
+--------------------------------------------------
+AT START
+Mobile has
+    State:      'WaitingForActivate'
+--------------------------------------------------
+AT END
+Mobile updated to
+    State:      'ProcessingActivate'
+MobileTelecomsNetwork Order created with
+    MobileId    1168
+    Status:     'Sent'
+ExternalTelecomsNetwork Order created with
+    Status:     'New'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: ActivateMobile
+--------------------------------------------------
+DATA
+CustomerId:     C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:    07001000008
+MobileId:       e368cdfd-87ce-4e76-835c-27f556e35905
+ActivationCode: AAA008
+--------------------------------------------------
+AT START
+Mobile has
+    State:      'WaitingForActivate'
+--------------------------------------------------
+AT END
+Mobile updated to
+    State:      'ProcessingActivate'
+MobileTelecomsNetwork Order created with
+    MobileId    1169
+    Status:     'Sent'
+ExternalTelecomsNetwork Order created with
+    Status:     'New'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: ActivateMobile
+--------------------------------------------------
+DATA
+CustomerId:     C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:    07001000009
+MobileId:       4158f6ae-85ff-4765-be01-41543bb5a099
+ActivationCode: AAA009
+--------------------------------------------------
+AT START
+Mobile has
+    State:      'WaitingForActivate'
+--------------------------------------------------
+AT END
+Mobile updated to
+    State:      'ProcessingActivate'
+MobileTelecomsNetwork Order created with
+    MobileId    1170
+    Status:     'Sent'
+ExternalTelecomsNetwork Order created with
+    Status:     'New'
+--------------------------------------------------
+
+==================================================
+
+--------------------------------------------------
+Scenario: CompleteActivate
+--------------------------------------------------
+DATA
+CustomerId:     C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:    07001000010
+MobileId:       a315290c-78a4-4754-a9c9-2a6aec17e7db
+--------------------------------------------------
+AT START
+Mobile has
+    State:      'ProcessingActivate'
+MobileTelecomsNetwork Order has
+    Status:     'Sent'
+ExternalTelecomsNetwork has
+    Status:     'New'
+--------------------------------------------------
+AT END
+Mobile updated to
+    State:      'Live'
+MobileTelecomsNetwork Order updated to
+    MobileId    1171
+    Status:     'Completed'
+ExternalTelecomsNetwork Order created with
+    Status:     'Completed'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: CompleteActivate
+--------------------------------------------------
+DATA
+CustomerId:     C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:    07001000011
+MobileId:       f53840ce-c2db-491d-acd3-610e694387e1
+--------------------------------------------------
+AT START
+Mobile has
+    State:      'ProcessingActivate'
+MobileTelecomsNetwork Order has
+    Status:     'Sent'
+ExternalTelecomsNetwork has
+    Status:     'New'
+--------------------------------------------------
+AT END
+Mobile updated to
+    State:      'Live'
+MobileTelecomsNetwork Order updated to
+    MobileId    1172
+    Status:     'Completed'
+ExternalTelecomsNetwork Order created with
+    Status:     'Completed'
+--------------------------------------------------
+
+--------------------------------------------------
+Scenario: CompleteActivate
+--------------------------------------------------
+DATA
+CustomerId:     C5C04D13-25B2-4EC2-97E0-99737673287F
+PhoneNumber:    07001000012
+MobileId:       579baa65-8232-41ce-8ddd-5b59fd453f3f
+--------------------------------------------------
+AT START
+Mobile has
+    State:      'ProcessingActivate'
+MobileTelecomsNetwork Order has
+    Status:     'Sent'
+ExternalTelecomsNetwork has
+    Status:     'New'
+--------------------------------------------------
+AT END
+Mobile updated to
+    State:      'Live'
+MobileTelecomsNetwork Order updated to
+    MobileId    1173
+    Status:     'Completed'
+ExternalTelecomsNetwork Order created with
+    Status:     'Completed'
+--------------------------------------------------

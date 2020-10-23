@@ -44,11 +44,11 @@ namespace Mobiles.Api.Services
             mobileRepository.Update(mobile);
         }
 
-        private void Publish(Mobile mobile, Order order)
+        private async void Publish(Mobile mobile, Order order)
         {
             logger.LogInformation("Publishing event [{event}] - PhoneNumber={phoneNumber} MobileOrderId={orderId}", typeof(ProvisionRequestedMessage).Name, mobile.PhoneNumber, order.GlobalId);
 
-            messagePublisher.PublishAsync(new ProvisionRequestedMessage
+            var publishResult = await messagePublisher.PublishAsync(new ProvisionRequestedMessage
             {
                 PhoneNumber = mobile.PhoneNumber.ToString(),
                 MobileId = mobile.GlobalId,
@@ -56,6 +56,9 @@ namespace Mobiles.Api.Services
                 Name = order.Name,
                 ContactPhoneNumber = order.ContactPhoneNumber
             });
+
+            if (!publishResult)
+                logger.LogError("Error while publishing event [{event}] - PhoneNumber={phoneNumber} MobileOrderId={orderId}", nameof(ProvisionRequestedMessage), mobile.PhoneNumber, order.GlobalId);
         }
     }
 }

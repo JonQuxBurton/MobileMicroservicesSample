@@ -73,39 +73,51 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
             }
         }
 
-        private void PublishActivateOrderCompleted(Guid mobileGlobalId)
+        private async void PublishActivateOrderCompleted(Guid mobileGlobalId)
         {
-            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", typeof(ActivateOrderCompletedMessage).Name, mobileGlobalId);
+            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", nameof(ActivateOrderCompletedMessage), mobileGlobalId);
 
-            messagePublisher.PublishAsync(new ActivateOrderCompletedMessage
+            var result = await messagePublisher.PublishAsync(new ActivateOrderCompletedMessage
             {
                 MobileOrderId = mobileGlobalId
             });
-            monitoring.ActivateOrderCompleted();
-        }        
-        
-        private void PublishActivateOrderRejected(string phoneNumber, Guid mobileGlobalId, string reason)
-        {
-            logger.LogInformation("Publishing event [{event}]", typeof(ActivateOrderRejectedMessage).Name);
 
-            messagePublisher.PublishAsync(new ActivateOrderRejectedMessage
+            if (!result)
+                logger.LogError("Error while publishing event [{event}] - MobileId {mobileGlobalId}", nameof(ActivateOrderCompletedMessage), mobileGlobalId);
+            else
+                monitoring.ActivateOrderCompleted();
+        }
+        
+        private async void PublishActivateOrderRejected(string phoneNumber, Guid mobileGlobalId, string reason)
+        {
+            logger.LogInformation("Publishing event [{event}]", nameof(ActivateOrderRejectedMessage));
+
+            var result = await messagePublisher.PublishAsync(new ActivateOrderRejectedMessage
             {
                 PhoneNumber = phoneNumber,
                 MobileOrderId = mobileGlobalId,
                 Reason = reason
             });
-            monitoring.ActivateOrderCompleted();
+
+            if (!result)
+                logger.LogError("Error while publishing event [{event}] - MobileId {mobileGlobalId}", nameof(ActivateOrderRejectedMessage), mobileGlobalId);
+            else
+                monitoring.ActivateOrderCompleted();
         }
 
-        private void PublishCeaseOrderCompleted(Guid mobileGlobalId)
+        private async void PublishCeaseOrderCompleted(Guid mobileGlobalId)
         {
-            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", typeof(CeaseOrderCompletedMessage).Name, mobileGlobalId);
+            logger.LogInformation("Publishing event [{event}] - MobileId {mobileGlobalId}", nameof(CeaseOrderCompletedMessage), mobileGlobalId);
 
-            messagePublisher.PublishAsync(new CeaseOrderCompletedMessage
+            var result = await messagePublisher.PublishAsync(new CeaseOrderCompletedMessage
             {
                 MobileOrderId = mobileGlobalId
             });
-            monitoring.CeaseOrderCompleted();
+
+            if (!result)
+                logger.LogError("Error while publishing event [{event}] - MobileId {mobileGlobalId}", nameof(CeaseOrderCompletedMessage), mobileGlobalId);
+            else
+                monitoring.CeaseOrderCompleted();
         }
     }
 }

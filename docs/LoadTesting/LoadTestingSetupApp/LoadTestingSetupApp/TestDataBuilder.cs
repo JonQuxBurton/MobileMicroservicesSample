@@ -42,11 +42,14 @@ namespace LoadTestingSetupApp
                 var activateOrderId = Guid.NewGuid().ToString();
 
                 var phoneNumber = GetPhoneNumber(globalCounter);
-                dataStore.SetupDataForCompleteActivate(customerId, mobileId, activateOrderId, phoneNumber);
+                var newMobileDbId = dataStore.SetupDataForCompleteActivate(customerId, mobileId, activateOrderId, phoneNumber);
                 completeActivates.Add(new CompleteActivateTestData
                 {
+                    CustomerId = customerId,
+                    PhoneNumber = phoneNumber,
                     MobileId = mobileId,
-                    ActivateOrderId = activateOrderId
+                    ActivateOrderId = activateOrderId,
+                    MobileDbId = newMobileDbId
                 });
                 globalCounter++;
             }
@@ -61,11 +64,14 @@ namespace LoadTestingSetupApp
 
                 var phoneNumber = GetPhoneNumber(globalCounter);
                 var activationCode = GetActivationCode(globalCounter);
-                dataStore.SetupDataForActivate(customerId, mobileId, phoneNumber, activationCode);
+                var newMobileDbId = dataStore.SetupDataForActivate(customerId, mobileId, phoneNumber, activationCode);
                 activateMobiles.Add(new ActivateMobileTestData
                 {
+                    CustomerId = customerId,
+                    PhoneNumber = phoneNumber,
                     MobileId = mobileId,
-                    ActivationCode = activationCode
+                    ActivationCode = activationCode,
+                    MobileDbId = newMobileDbId
                 });
                 globalCounter++;
             }
@@ -81,14 +87,16 @@ namespace LoadTestingSetupApp
                 var phoneNumber = GetPhoneNumber(globalCounter);
                 var contactName = GetContactName(globalCounter);
 
-                dataStore.SetupDataForCompleteProvision(customerId, mobileId, provisionOrderId, phoneNumber,
+                var newMobileDbId = dataStore.SetupDataForCompleteProvision(customerId, mobileId, provisionOrderId, phoneNumber,
                     contactName);
                 completeProvisions.Add(new CompleteProvisionTestData
                 {
+                    CustomerId = customerId,
                     MobileId = mobileId,
                     ProvisionOrderId = provisionOrderId,
                     PhoneNumber = phoneNumber,
-                    ContactName = contactName
+                    ContactName = contactName,
+                    MobileDbId = newMobileDbId
                 });
                 globalCounter++;
             }

@@ -1,3 +1,6 @@
+USE [Mobile]
+GO
+
 /*
 Setup data for test: The External Service has completed a Mobile Provision Order
 */
@@ -7,7 +10,8 @@ CREATE PROCEDURE SetupDataForActivate
 @customerId uniqueidentifier, 
 @mobileId uniqueidentifier,
 @phoneNumber  varchar(50),
-@activationCode varchar(50)
+@activationCode varchar(50),
+@newMobileId int output
 AS
 begin
 begin transaction
@@ -19,6 +23,8 @@ delete from Mobiles.Mobiles where GlobalId=@mobileId;
 -- Create Mobile
 insert into Mobiles.Mobiles ([GlobalId],[CustomerId],[State],[PhoneNumber]) 
 values (@mobileId, @customerId, 'WaitingForActivate', @phoneNumber);
+
+SELECT @newMobileId = SCOPE_IDENTITY()
 
 -- Create External MobileTelecomsNetwork ActivationCode
 insert into ExternalMobileTelecomsNetwork.ActivationCodes ([PhoneNumber],[Code]) 

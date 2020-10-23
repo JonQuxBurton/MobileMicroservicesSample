@@ -41,7 +41,11 @@ namespace MinimalEventBus.Aws
         {
             var createTopicRequest = new CreateTopicRequest(topicName);
             var response = await snsClient.CreateTopicAsync(createTopicRequest);
-            topics.Add(topicName, response.TopicArn);
+
+            if (topics.ContainsKey(topicName))
+                topics[topicName] = response.TopicArn;
+            else
+                topics.Add(topicName, response.TopicArn);
 
             return response;
         }

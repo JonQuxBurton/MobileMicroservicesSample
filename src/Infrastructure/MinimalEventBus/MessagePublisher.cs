@@ -15,10 +15,10 @@ namespace MinimalEventBus
             this.snsService = snsService;
         }
 
-        public async Task PublishAsync(Message message)
+        public async Task<bool> PublishAsync(Message message)
         {
             var queueName = await this.messageBus.SetupQueue(message);
-            await this.snsService.PublishAsync(queueName, message);
+            return await this.snsService.PublishAsync(queueName, message);
         }
     }
 }

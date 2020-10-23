@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
@@ -37,24 +38,31 @@ namespace Mobiles.Api.Services
             }
         }
 
-        private void Execute(Mobile mobile)
+        private async void Execute(Mobile mobile)
         {
-            Publish(mobile, mobile.InFlightOrder);
-            mobile.OrderProcessing();
-            mobileRepository.Update(mobile);
+            if (await Publish(mobile, mobile.InFlightOrder))
+            {
+                mobile.OrderProcessing();
+                mobileRepository.Update(mobile);
+            }
         }
 
-        private void Publish(Mobile mobile, Order order)
+        private async Task<bool> Publish(Mobile mobile, Order order)
         {
-            logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}" , typeof(ActivateRequestedMessage).Name, order.GlobalId);
+            logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}" , nameof(ActivateRequestedMessage), order.GlobalId);
 
-            messagePublisher.PublishAsync(new ActivateRequestedMessage
+            var publishResult = await messagePublisher.PublishAsync(new ActivateRequestedMessage
             {
                 MobileId = mobile.GlobalId,
                 PhoneNumber = mobile.PhoneNumber.ToString(),
                 MobileOrderId = order.GlobalId,
                 ActivationCode = order.ActivationCode
             });
+
+            if (!publishResult)
+                logger.LogError("Error while publishing event [{event}] - MobileOrderId={orderId}", nameof(ActivateRequestedMessage), order.GlobalId);
+
+            return publishResult;
         }
     }
 }

@@ -5,6 +5,8 @@
         public string ConnectionString { get; set; }
         public string CustomerId { get; set; }
         public string Path { get; set; }
+        public string FileNameData { get; set; }
+        public string FileNameScenarios { get; set; }
         public int OrderMobilesCount { get; set; }
         public int CompleteProvisionsCount { get; set; }
         public int ActivateMobilesCount { get; set; }

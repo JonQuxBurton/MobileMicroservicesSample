@@ -48,6 +48,7 @@ namespace Mobiles.Api.Domain
             machine.Configure(State.ProcessingProvision)
                 .Permit(Trigger.ProcessingProvisionCompleted, State.WaitingForActivate)
                 .OnEntry(() => {
+                    this.mobileDataEntity.UpdatedAt = DateTime.Now;
                     this.mobileDataEntity.State = enumConverter.ToName<State>(this.CurrentState);
                 })
                 .OnExit(() =>
@@ -58,12 +59,14 @@ namespace Mobiles.Api.Domain
                 .Permit(Trigger.Activate, State.ProcessingActivate)
                 .OnEntry(() =>
                 {
+                    this.mobileDataEntity.UpdatedAt = DateTime.Now;
                     this.mobileDataEntity.State = enumConverter.ToName<State>(this.CurrentState);
                 });
             machine.Configure(State.ProcessingActivate)
                 .Permit(Trigger.ActivateCompleted, State.Live)
                 .Permit(Trigger.ActivateRejected, State.WaitingForActivate)
                 .OnEntry(() => {
+                    this.mobileDataEntity.UpdatedAt = DateTime.Now;
                     this.mobileDataEntity.State = State.ProcessingActivate.ToString();
                     this.CreateNewOrder();
                 })
@@ -77,12 +80,14 @@ namespace Mobiles.Api.Domain
                 .Permit(Trigger.Cease, State.ProcessingCease)
                 .OnEntry(() =>
                 {
+                    this.mobileDataEntity.UpdatedAt = DateTime.Now;
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.Live);
                 });
             machine.Configure(State.ProcessingCease)
                 .Permit(Trigger.CeaseCompleted, State.Ceased)
                 .OnEntry(() =>
                 {
+                    this.mobileDataEntity.UpdatedAt = DateTime.Now;
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.ProcessingCease);
                     this.CreateNewOrder();
                 })
@@ -93,6 +98,7 @@ namespace Mobiles.Api.Domain
             machine.Configure(State.Ceased)
                 .OnEntry(() =>
                 {
+                    this.mobileDataEntity.UpdatedAt = DateTime.Now;
                     this.mobileDataEntity.State = enumConverter.ToName<State>(State.Ceased);
                 });
             machine.Configure(State.New).Permit(Trigger.PortIn, State.ProcessingPortIn);

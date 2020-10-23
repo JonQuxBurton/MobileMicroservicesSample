@@ -1,9 +1,18 @@
+USE [Mobile]
+GO
+
 /*
 Setup data for test: The External Service has completed a Mobile Provision Order
 */
 drop PROCEDURE SetupDataForCompleteProvision;
 go
-CREATE PROCEDURE SetupDataForCompleteProvision @customerId uniqueidentifier, @mobileId uniqueidentifier, @mobileOrderId uniqueidentifier, @phoneNumber varchar(50), @contactName varchar(50)
+CREATE PROCEDURE SetupDataForCompleteProvision 
+@customerId uniqueidentifier, 
+@mobileId uniqueidentifier, 
+@mobileOrderId uniqueidentifier, 
+@phoneNumber varchar(50), 
+@contactName varchar(50),
+@newMobileId int output
 AS
 begin
 begin transaction
@@ -21,11 +30,11 @@ delete from Mobiles.Mobiles where GlobalId=@mobileId;
 insert into Mobiles.Mobiles ([GlobalId],[CustomerId],[State],[PhoneNumber]) 
 values (@mobileId, @customerId, 'ProcessingProvision', @phoneNumber);
 
-set @mobileDbId = SCOPE_IDENTITY();
+set @newMobileId = SCOPE_IDENTITY();
 
 -- Create MobileOrder
 insert into Mobiles.Orders ([MobileId],[GlobalId],[Name],[ContactPhoneNumber],[State],[Type]) 
-values (@mobileDbId, @mobileOrderId, @contactName, '00123456789', 'Sent', 'Provision');
+values (@newMobileId, @mobileOrderId, @contactName, '00123456789', 'Sent', 'Provision');
 
 -- Create SimCard Order
 insert into SimCards.Orders ([PhoneNumber],[MobileId],[MobileOrderId],[Name],[Status]) 
