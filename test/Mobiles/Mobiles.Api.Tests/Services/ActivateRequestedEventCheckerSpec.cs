@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using Mobiles.Api.Data;
@@ -37,6 +39,8 @@ namespace Mobiles.Api.Tests.Services
                     .Returns(new[] { expectedMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
                 messagePublisherMock = new Mock<IMessagePublisher>();
+                messagePublisherMock.Setup(x => x.PublishAsync(It.IsAny<ActivateRequestedMessage>()))
+                    .Returns(Task.FromResult(true));
                 var loggerMock = new Mock<ILogger<ActivateRequestedEventChecker>>();
 
                 sut = new ActivateRequestedEventChecker(loggerMock.Object, getNewActivationsQueryMock.Object, repositoryMock.Object, messagePublisherMock.Object);
