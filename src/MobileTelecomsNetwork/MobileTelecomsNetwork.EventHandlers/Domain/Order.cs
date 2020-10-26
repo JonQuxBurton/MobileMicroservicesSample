@@ -13,5 +13,6 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
         public string ActivationCode { get; set; }
         public string PhoneNumber { get; set; }
         public Guid MobileId { get; set; }
+        public int Attempts { get; set; }
     }
 }

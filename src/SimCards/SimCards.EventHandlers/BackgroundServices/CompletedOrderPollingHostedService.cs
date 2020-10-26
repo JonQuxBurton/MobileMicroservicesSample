@@ -17,18 +17,18 @@ namespace SimCards.EventHandlers.BackgroundServices
         private readonly int batchSize;
 
         private readonly ISimCardOrdersDataStore simCardOrdersDataStore;
-        private readonly ICompletedOrderChecker completedOrderCheker;
+        private readonly ICompletedOrderChecker completedOrderChecker;
 
         public CompletedOrderPollingHostedService(IOptions<Config> options,
             ILogger<CompletedOrderPollingHostedService> logger,
             ISimCardOrdersDataStore simCardOrdersDataStore,
-            ICompletedOrderChecker completedOrderCheker)
+            ICompletedOrderChecker completedOrderChecker)
         {
             pollingInterval = TimeSpan.FromSeconds(options.Value.CompletedOrderPollingIntervalSeconds);
             batchSize = options.Value.CompletedOrderPollingBatchSize;
             this.logger = logger;
             this.simCardOrdersDataStore = simCardOrdersDataStore;
-            this.completedOrderCheker = completedOrderCheker;
+            this.completedOrderChecker = completedOrderChecker;
         }
 
         public async Task DoWork()
@@ -37,7 +37,7 @@ namespace SimCards.EventHandlers.BackgroundServices
 
             foreach (var sentOrder in sentOrders)
             {
-                await completedOrderCheker.Check(sentOrder);
+                await completedOrderChecker.Check(sentOrder);
             }
         }
 

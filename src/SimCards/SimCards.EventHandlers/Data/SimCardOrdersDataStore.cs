@@ -28,15 +28,9 @@ namespace SimCards.EventHandlers.Data
             return currentTransaction;
         }
 
-        public void Add(SimCardOrder order)
-        {
-            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileId, MobileOrderId, Status, PhoneNumber) values (@Name, @MobileId, @MobileOrderId, @Status, @PhoneNumber)";
-            this.connection.Execute( sql, new { order.Name, order.MobileId, order.MobileOrderId, order.Status, order.PhoneNumber }, currentTransaction.Get());
-        }
-
         public SimCardOrder GetExisting(Guid mobileId, Guid mobileOrderId)
         {
-            var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileId=@mobileId and MobileOrderId=@mobileOrderId";
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where MobileId=@mobileId and MobileOrderId=@mobileOrderId order by Attempts, CreatedAt";
 
             using var conn = new SqlConnection(connectionString);
             var dbOrder = conn.QueryFirstOrDefault(sql, new { mobileId = mobileId.ToString() , mobileOrderId = mobileOrderId.ToString() });
@@ -52,25 +46,14 @@ namespace SimCards.EventHandlers.Data
                 Name = dbOrder.Name,
                 Status = dbOrder.Status,
                 CreatedAt = dbOrder.CreatedAt,
-                UpdatedAt = dbOrder.UpdatedAt
+                UpdatedAt = dbOrder.UpdatedAt,
+                Attempts = dbOrder.Attempts
             };
-        }
-
-        public void Sent(Guid mobileOrderId)
-        {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent' where MobileOrderId=@MobileOrderId";
-            this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
-        }
-        
-        public void Complete(Guid mobileOrderId)
-        {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where MobileOrderId=@MobileOrderId";
-            this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
         }
 
         public IEnumerable<SimCardOrder> GetSent()
         {
-            var sql = $"select * from {SchemaName}.{OrdersTableName} where Status='Sent'";
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where Status='Sent' order by Attempts, CreatedAt";
             var orders = new List<SimCardOrder>();
 
             using (var conn = new SqlConnection(connectionString))
@@ -87,12 +70,37 @@ namespace SimCards.EventHandlers.Data
                         Name = dbOrder.Name,
                         Status = dbOrder.Status,
                         CreatedAt = dbOrder.CreatedAt,
-                        UpdatedAt = dbOrder.UpdatedAt
+                        UpdatedAt = dbOrder.UpdatedAt,
+                        Attempts = dbOrder.Attempts
                     });
                 }
             }
 
             return orders;
+        }
+
+        public void Add(SimCardOrder order)
+        {
+            var sql = $"insert into {SchemaName}.{OrdersTableName}(Name, MobileId, MobileOrderId, Status, PhoneNumber) values (@Name, @MobileId, @MobileOrderId, @Status, @PhoneNumber)";
+            this.connection.Execute( sql, new { order.Name, order.MobileId, order.MobileOrderId, order.Status, order.PhoneNumber }, currentTransaction.Get());
+        }
+
+        public void Sent(Guid mobileOrderId)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent', UpdatedAt=GETDATE() where MobileOrderId=@MobileOrderId";
+            this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
+        }
+
+        public void Complete(Guid mobileOrderId)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed', UpdatedAt=GETDATE() where MobileOrderId=@MobileOrderId";
+            this.connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
+        }
+
+        public void IncrementAttempts(SimCardOrder order)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Attempts=@Attempts, UpdatedAt=GETDATE() where MobileOrderId=@MobileOrderId";
+            this.connection.Execute(sql, new { order.MobileOrderId, Attempts = order.Attempts+1 }, currentTransaction.Get());
         }
     }
 }

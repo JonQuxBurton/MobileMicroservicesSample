@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
 using Dapper;
@@ -41,19 +40,25 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
 
         public void Sent(Guid mobileOrderId)
         {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent' where MobileOrderId=@MobileOrderId";
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Sent', UpdatedAt=GETDATE() where MobileOrderId=@MobileOrderId";
             connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
         }
 
         public void Complete(Guid mobileOrderId)
         {
-            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed' where MobileOrderId=@MobileOrderId";
+            var sql = $"update {SchemaName}.{OrdersTableName} set Status='Completed', UpdatedAt=GETDATE() where MobileOrderId=@MobileOrderId";
             connection.Execute(sql, new { mobileOrderId }, currentTransaction.Get());
+        }
+
+        public void IncrementAttempts(Order order)
+        {
+            var sql = $"update {SchemaName}.{OrdersTableName} set Attempts=@Attempts, UpdatedAt=GETDATE() where MobileOrderId=@MobileOrderId";
+            connection.Execute(sql, new { order.MobileOrderId, Attempts = order.Attempts+1 }, currentTransaction.Get());
         }
 
         public IEnumerable<Order> GetSent()
         {
-            var sql = $"select * from {SchemaName}.{OrdersTableName} where Status='Sent'";
+            var sql = $"select * from {SchemaName}.{OrdersTableName} where Status='Sent' order by Attempts, CreatedAt";
             var orders = new List<Order>();
 
             using (var conn = new SqlConnection(connectionString))
@@ -73,7 +78,8 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
                         Status = orderStatus,
                         Type = orderType,
                         CreatedAt = dbOrder.CreatedAt,
-                        UpdatedAt = dbOrder.UpdatedAt
+                        UpdatedAt = dbOrder.UpdatedAt,
+                        Attempts = dbOrder.Attempts
                     });
                 }
             }

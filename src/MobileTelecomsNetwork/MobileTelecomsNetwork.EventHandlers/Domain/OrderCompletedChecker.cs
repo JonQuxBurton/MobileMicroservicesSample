@@ -66,9 +66,15 @@ namespace MobileTelecomsNetwork.EventHandlers.Domain
                     if (sentOrder.Type == OrderType.Activate)
                         PublishActivateOrderRejected(sentOrder.PhoneNumber, sentOrder.MobileOrderId, externalOrder.Reason);
                 }
+                else
+                {
+                    using var tx = dataStore.BeginTransaction();
+                    dataStore.IncrementAttempts(sentOrder);
+                }
             }
             else
             {
+                dataStore.IncrementAttempts(sentOrder);
                 logger.LogWarning("Could not get MobileOrder from External SIM Card service - MobileOrderId {MobileOrderId}, response.StatusCode {StatusCode}", sentOrder.MobileOrderId, response.StatusCode);
             }
         }

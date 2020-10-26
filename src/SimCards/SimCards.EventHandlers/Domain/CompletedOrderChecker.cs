@@ -53,7 +53,19 @@ namespace SimCards.EventHandlers.Domain
                     simCardOrdersDataStore.Complete(sentOrder.MobileOrderId);
                     PublishProvisioningOrderCompleted(sentOrder.MobileOrderId);
                     monitoring.SimCardOrderCompleted();
+                    simCardOrdersDataStore.IncrementAttempts(sentOrder);
                 }
+                else
+                {
+                    using var tx = simCardOrdersDataStore.BeginTransaction();
+                    simCardOrdersDataStore.IncrementAttempts(sentOrder);
+                }
+                
+            }
+            else
+            {
+                using var tx = simCardOrdersDataStore.BeginTransaction();
+                simCardOrdersDataStore.IncrementAttempts(sentOrder);
             }
         }
 

@@ -102,7 +102,8 @@ CREATE TABLE [SimCards].[Orders](
 	[CreatedAt] datetime DEFAULT GETDATE() NOT NULL,
 	[UpdatedAt] datetime,
 	[Name] [nvarchar](100) NOT NULL,
-	[Status] [nvarchar](100) NOT NULL
+	[Status] [nvarchar](100) NOT NULL,
+	[Attempts] [int] DEFAULT 0 NOT NULL
 )
 GO
 
@@ -126,7 +127,8 @@ CREATE TABLE [MobileTelecomsNetwork].[Orders](
 	[UpdatedAt] datetime,
 	[PhoneNumber] [nvarchar](50) NOT NULL,
 	[Name] [nvarchar](100) NULL,
-	[Status] [nvarchar](100) NOT NULL
+	[Status] [nvarchar](100) NOT NULL,
+	[Attempts] [int] DEFAULT 0 NOT NULL
 )
 GO
 

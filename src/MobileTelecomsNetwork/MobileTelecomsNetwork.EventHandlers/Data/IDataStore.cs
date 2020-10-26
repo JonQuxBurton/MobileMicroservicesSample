@@ -12,5 +12,6 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
         void Sent(Guid mobileOrderId);
         IEnumerable<Order> GetSent();
         void Complete(Guid mobileOrderId);
+        void IncrementAttempts(Order order);
     }
 }

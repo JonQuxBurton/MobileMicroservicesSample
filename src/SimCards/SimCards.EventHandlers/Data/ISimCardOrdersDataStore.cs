@@ -13,5 +13,6 @@ namespace SimCards.EventHandlers.Data
         ITransaction BeginTransaction();
         void Sent(Guid mobileOrderId);
         void Complete(Guid mobileOrderId);
+        void IncrementAttempts(SimCardOrder order);
     }
 }
