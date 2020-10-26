@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Services;
@@ -27,8 +28,9 @@ namespace Mobiles.Api.Tests.Services
                 getNewMobilesQueryMock.Setup(x => x.Get())
                     .Returns(new[] { expectedNewMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();
+                var loggerMock = new Mock<ILogger<MobileProvisionRequestedEventChecker>>();
 
-                sut = new MobileProvisionRequestedEventChecker(getNewMobilesQueryMock.Object,
+                sut = new MobileProvisionRequestedEventChecker(loggerMock.Object, getNewMobilesQueryMock.Object,
                     repositoryMock.Object);
             }
 

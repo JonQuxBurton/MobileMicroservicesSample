@@ -18,6 +18,36 @@ GET http://192.168.0.5:5341
 ### goaws running in docker
 GET http://192.168.56.101:4100
 
+### Check goaws queues
+POST http://192.168.0.5:4100/
+Authorization:AL03THI20QLMNG01QOPU5EDS/ftg7tCesw0Yr%Xr%3jV2KOyKaoLzZXre3sIAWOI8
+Content-Type:multipart/form-data; boundary=--------------------------669459213080013617420231
+
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Action"
+
+ListQueues
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Version"
+
+2012-11-05
+----------------------------669459213080013617420231--
+
+### Check a queue(ActivateRequested)
+POST http://192.168.0.5:4100/ActivateRequested?Action=GetQueueAttributes
+Authorization:AL03THI20QLMNG01QOPU5EDS/ftg7tCesw0Yr%Xr%3jV2KOyKaoLzZXre3sIAWOI8
+Content-Type:multipart/form-data; boundary=--------------------------669459213080013617420231
+
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Action"
+
+ListQueues
+----------------------------669459213080013617420231
+Content-Disposition: form-data; name="Version"
+
+2012-11-05
+----------------------------669459213080013617420231--
+
 ###==================================================
 ### Mobiles
 ###==================================================
@@ -119,3 +149,4 @@ POST http://localhost:5002/api/orders/FDAA0F93-ADAA-4A20-B6D1-48255CE28B3E/compl
 
 ###==================================================
 
+http://localhost:5000/api/mobiles/9db84c57-218a-4f22-88a3-fdb116a585a6

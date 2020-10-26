@@ -284,7 +284,6 @@ export function completeActivate() {
     let completeActivateUrl = `http://localhost:5002/api/orders/${activateOrderId}/complete`;
 
     let completeActivateResponse = http.post(completeActivateUrl, null, params);
-    console.log(`completeActivateUrl: {completeActivateUrl}`);
 
     let completeActivateSuccess = check(completeActivateResponse, {
       'when checking completeActivate, is status 200': (r) => r.status === 200

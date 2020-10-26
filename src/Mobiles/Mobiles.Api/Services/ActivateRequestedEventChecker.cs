@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using Mobiles.Api.Data;
@@ -10,10 +11,10 @@ namespace Mobiles.Api.Services
 {
     public class ActivateRequestedEventChecker : IMobileEventsChecker
     {
-        private readonly ILogger<ActivateRequestedEventChecker> logger;
         private readonly IGetNewActivatesQuery getNewActivatesQuery;
-        private readonly IRepository<Mobile> mobileRepository;
+        private readonly ILogger<ActivateRequestedEventChecker> logger;
         private readonly IMessagePublisher messagePublisher;
+        private readonly IRepository<Mobile> mobileRepository;
 
         public ActivateRequestedEventChecker(
             ILogger<ActivateRequestedEventChecker> logger,
@@ -30,11 +31,15 @@ namespace Mobiles.Api.Services
 
         public void Check()
         {
-            var mobiles = this.getNewActivatesQuery.Get();
-
-            foreach (var mobile in mobiles)
+            try
             {
-                Execute(mobile);
+                var mobiles = getNewActivatesQuery.Get();
+
+                foreach (var mobile in mobiles) Execute(mobile);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Error when checking for ActivateRequestedEvents: {e}");
             }
         }
 
@@ -43,13 +48,15 @@ namespace Mobiles.Api.Services
             if (await Publish(mobile, mobile.InFlightOrder))
             {
                 mobile.OrderProcessing();
+
                 mobileRepository.Update(mobile);
             }
         }
 
         private async Task<bool> Publish(Mobile mobile, Order order)
         {
-            logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}" , nameof(ActivateRequestedMessage), order.GlobalId);
+            logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}",
+                nameof(ActivateRequestedMessage), order.GlobalId);
 
             var publishResult = await messagePublisher.PublishAsync(new ActivateRequestedMessage
             {
@@ -60,7 +67,8 @@ namespace Mobiles.Api.Services
             });
 
             if (!publishResult)
-                logger.LogError("Error while publishing event [{event}] - MobileOrderId={orderId}", nameof(ActivateRequestedMessage), order.GlobalId);
+                logger.LogError("Error while publishing event [{event}] - MobileOrderId={orderId}",
+                    nameof(ActivateRequestedMessage), order.GlobalId);
 
             return publishResult;
         }

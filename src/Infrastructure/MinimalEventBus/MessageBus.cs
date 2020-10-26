@@ -47,8 +47,15 @@ namespace MinimalEventBus
 
             await this.snsService.SubscribeQueueAsync(createTopicResponse.TopicArn, createQueueResponse.QueueUrl);
 
-            Queues.Add(queueName, new QueueInfo(type, createQueueResponse.QueueUrl));
-            Queues.Add(errorQueueName, new QueueInfo(type, createErrorQueueResponse.QueueUrl));
+            if (Queues.ContainsKey(queueName))
+                Queues[queueName] = new QueueInfo(type, createQueueResponse.QueueUrl);
+            else
+                Queues.Add(queueName, new QueueInfo(type, createQueueResponse.QueueUrl));
+
+            if (Queues.ContainsKey(errorQueueName))
+                Queues[errorQueueName] = new QueueInfo(type, createErrorQueueResponse.QueueUrl);
+            else
+                Queues.Add(errorQueueName, new QueueInfo(type, createErrorQueueResponse.QueueUrl));
         }
 
         public void Subscribe<TMessage, THandler>(IHandlerAsync<TMessage> handler)
