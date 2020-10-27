@@ -2,8 +2,8 @@ import http from "k6/http";
 import { check, group, sleep } from 'k6';
 import { Counter } from 'k6/metrics';
 
-const vus = 2;//5;
-const iterations = 1;//3;
+const vus = 5;
+const iterations = 3;
 
 const scenarios = {
   createCustomer: "createCustomer",
