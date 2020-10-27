@@ -2,14 +2,22 @@ import http from "k6/http";
 import { check, group, sleep } from 'k6';
 import { Counter } from 'k6/metrics';
 
+let data;
 let orderMobileData;
 let completeProvisionData;
 let activateMobileData;
 let completeActivateData;
 
+let params = {
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  tags: {}
+};
+
 loadData();
 
-let vus = 1;//5;
+let vus = 5;//5;
 let iterations = 3;//3;
 
 export let options = {
@@ -66,13 +74,13 @@ let activateMobileErrorMetrics = new Counter("activateMobileErrors");
 let completeActivateErrorMetrics = new Counter("completeActivateErrors");
 
 export function createCustomer() {
-  let params = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    tags: {}
-  };
   group('Create a Customer', (_) => {
+    //let indexes = getDataIndexes("create-customer", __VU, __ITER);
+    //let scenarioData = loadData2("create-customer", indexes);
+    //console.log(`create-customer vuId: ${scenarioData.vuId}`);
+    //console.log(`create-customer iteration: ${__ITER}`);
+
+    let params = getHttpParams();
     params.tags.name = 'create-customer';
     let customersUrl = "http://localhost:5000/api/customers";
     let createCustomerBody = JSON.stringify({
@@ -96,16 +104,16 @@ export function createCustomer() {
   });
 }
 
-export function orderMobile() {
-  let params = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    tags: {}
-  };
-  let data = orderMobileData[counters.orderMobile++];
-
+export function orderMobile() {  
   group('Order a Mobile', (_) => {
+    let indexes = getDataIndexes("order-mobile", __VU, __ITER);
+    let scenarioData = loadData2("order-mobile", indexes);
+    //console.log(`order-mobile vuId: ${scenarioData.vuId}`);
+    //console.log(`order-mobile iteration: ${__ITER}`);
+    //console.log(`order-mobile data: ${JSON.stringify(scenarioData.data)}`);
+
+    let data = scenarioData.data;
+    let params = getHttpParams();  
     params.tags.name = 'order-mobile';
     let customerId = data.customerId;
     let phoneNumber = data.phoneNumber;
@@ -165,16 +173,17 @@ export function orderMobile() {
 }
 
 export function completeProvision() {
-  let params = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    tags: {}
-  };
-  let data = completeProvisionData[counters.completeProvision++];
+  // Step 3 - The External Service has completed the Mobile Provision Order
+  group('The External Service has completed a Mobile Provision Order', (_) => { 
+    let indexes = getDataIndexes("complete-provision", __VU, __ITER);
+    let scenarioData = loadData2("complete-provision", indexes);
+    //console.log(`complete-provision vuId: ${scenarioData.vuId}`);
+    //console.log(`complete-provision iteration: ${__ITER}`);
+    //console.log(`complete-provision data: ${JSON.stringify(scenarioData.data)}`);
 
-  group('The External Service has completed a Mobile Provision Order', (_) => {
-    // Step 3 - The External Service has completed the Mobile Provision Order
+    let data  = scenarioData.data;
+    
+    let params = getHttpParams();
     params.tags.name = 'complete-provision';
     let mobileId = data.mobileId;
     let provisionOrderId = data.provisionOrderId;
@@ -214,18 +223,20 @@ export function completeProvision() {
 
 }
 
-export function activateMobile() {
-  let params = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    tags: {}
-  };
-
-  let data = activateMobileData[counters.activateMobile++]
-
+export function activateMobile() {  
+  // Step 4 - Activate a Mobile
   group('Activate a Mobile', (_) => {
-    // Step 4 - Activate a Mobile
+    let indexes = getDataIndexes("activate-mobile", __VU, __ITER);
+    //console.log(`activate-mobile __VU: ${__VU}, __ITER: ${__ITER}, indexes: [${indexes.index0}, ${indexes.index1}]`);  
+
+    let scenarioData = loadData2("activate-mobile", indexes);
+    //console.log(`activate-mobile vuId: ${scenarioData.vuId}`);
+    //console.log(`activate-mobile iteration: ${__ITER}`);
+    //console.log(`activate-mobile data: ${JSON.stringify(scenarioData.data)}`);
+
+    let data = scenarioData.data;
+
+    let params = getHttpParams();
     params.tags.name = 'activate-mobile';
     let mobileId = data.mobileId;
     let activationCode = data.activationCode;
@@ -265,18 +276,20 @@ export function activateMobile() {
 
 }
 
-export function completeActivate() {
-  let params = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    tags: {}
-  };
-  let data = completeActivateData[counters.completeActivate++]
-
+export function completeActivate() {  
+  // Step  5 - The External Service has completed the Mobile Activate Order
   group('The External Service has completed a Mobile Activate Order', (_) => {
+    let indexes = getDataIndexes("complete-activate", __VU, __ITER);
+    //console.log(`complete-activate __VU: ${__VU}, __ITER: ${__ITER}, indexes: [${indexes.index0}, ${indexes.index1}]`);
 
-    // Step  5 - The External Service has completed the Mobile Activate Order
+    let scenarioData = loadData2("complete-activate", indexes);
+    // console.log(`complete-activate vuId: ${scenarioData.vuId}`);
+    // console.log(`complete-activate iteration: ${__ITER}`);
+    // console.log(`complete-activate data: ${JSON.stringify(scenarioData.data)}`);
+
+    let data = scenarioData.data;
+    
+    let params = getHttpParams();
     params.tags.name = 'complete-activate';
     let mobileId = data.mobileId;
     let activateOrderId = data.activateOrderId;
@@ -315,8 +328,103 @@ export function completeActivate() {
   });
 }
 
+function getHttpParams(){
+  return {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    tags: {}
+  };
+}
+
+function getDataIndexes(scenarioKey, vuId, iteration){
+  let body = JSON.stringify({
+    ScenarioKey: scenarioKey,
+    VuId: vuId,
+    Iteration: iteration
+  });
+  let response = http.post("http://localhost:5099/data", body, getHttpParams());
+  let index0 = response.body;
+
+  return {
+    index0: index0,
+    index1: iteration
+  }
+}
+
+function loadData2(scenarioKey, indexes) {
+  if (scenarioKey == "order-mobile")
+  return {
+    data: data.orderMobile[indexes.index0][indexes.index1]
+  };
+  
+  if (scenarioKey == "complete-provision")
+  return {
+    data: data.completeProvision[indexes.index0][indexes.index1]
+  };
+
+  if (scenarioKey == "activate-mobile")
+  return {
+    data: data.activateMobile[indexes.index0][indexes.index1]
+  };
+
+  if (scenarioKey == "complete-activate")
+  return {
+    data: data.completeActivate[indexes.index0][indexes.index1]
+  };
+
+  return;
+
+  // let body = JSON.stringify({
+  //   ScenarioKey: scenarioKey
+  // });
+  // let response = http.post("http://localhost:5099/data", body, params);
+  // let vuId = response.body;
+
+  // if (scenarioKey == "create-customer")
+  // return {
+  //   vuId: vuId,
+  //   data: null
+  // };
+
+  //console.log(`vuId-1: ${vuId-1}, iteration: ${iteration}`);
+  //console.log(`data.completeActivate.length: ${data.completeActivate.length}`);
+  //console.log(`data.completeActivate[vuId-1].length: ${data.completeActivate[vuId-1].length}`);  
+
+  if (scenarioKey == "order-mobile")
+    return {
+      vuId: vuId,
+      data: data.orderMobile[vuId-1][iteration]
+    };
+
+  if (scenarioKey == "complete-provision")
+    return {
+      vuId: vuId,
+      data: data.completeProvision[vuId-1][iteration]
+    };
+
+  if (scenarioKey == "activate-mobile")
+    return {
+      vuId: vuId,
+      data: data.activateMobile[vuId-1][iteration]
+    };
+  
+  if (scenarioKey == "complete-activate")
+    return {
+      vuId: vuId,
+      data: data.completeActivate[vuId-1][iteration]
+    };
+
+  //orderMobileData = data.orderMobile[vuId-1];
+  // completeProvisionData = data.completeProvision;
+  // activateMobileData = data.activateMobile;
+  // completeActivateData = data.completeActivate;
+
+  return vuId;
+}
+
 function loadData() {
-  const data = JSON.parse(open("./data.json"));
+  data = JSON.parse(open("./data.json"));
   
   orderMobileData = data.orderMobile;
   completeProvisionData = data.completeProvision;

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Utils.DomainDrivenDesign;
@@ -24,11 +25,18 @@ namespace Mobiles.Api.Services
 
         public void Check()
         {
-            var newMobiles = this.getNewMobilesQuery.Get();
-
-            foreach (var newMobile in newMobiles)
+            try
             {
-                Provision(newMobile);
+                var newMobiles = this.getNewMobilesQuery.Get();
+
+                foreach (var newMobile in newMobiles)
+                {
+                    Provision(newMobile);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error checking with [{checker}]: {exception} ", nameof(MobileProvisionRequestedEventChecker), e);
             }
         }
 

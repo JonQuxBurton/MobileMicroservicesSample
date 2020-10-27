@@ -34,7 +34,7 @@ Content-Disposition: form-data; name="Version"
 ----------------------------669459213080013617420231--
 
 ### Check a queue(ActivateRequested)
-POST http://192.168.0.5:4100/ActivateRequested?Action=GetQueueAttributes
+POST http://192.168.0.5:4100/ActivateOrderCompleted?Action=GetQueueAttributes
 Authorization:AL03THI20QLMNG01QOPU5EDS/ftg7tCesw0Yr%Xr%3jV2KOyKaoLzZXre3sIAWOI8
 Content-Type:multipart/form-data; boundary=--------------------------669459213080013617420231
 
@@ -149,4 +149,20 @@ POST http://localhost:5002/api/orders/FDAA0F93-ADAA-4A20-B6D1-48255CE28B3E/compl
 
 ###==================================================
 
-http://localhost:5000/api/mobiles/9db84c57-218a-4f22-88a3-fdb116a585a6
+### Scrap Area
+
+###
+http://localhost:5000/api/mobiles/77cda6b1-90c4-42b3-a541-e276cd36cd9b
+
+
+###
+GET http://localhost:5002/api/orders/8FA1DAE3-0CD7-4A4F-A3F5-C92A1190A0A9
+
+
+###
+POST http://localhost:5099/data
+content-type: application/json
+
+{
+	"ScenarioKey" : "moon-landing"
+}

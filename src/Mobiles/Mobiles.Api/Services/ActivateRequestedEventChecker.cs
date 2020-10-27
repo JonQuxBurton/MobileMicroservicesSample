@@ -35,15 +35,15 @@ namespace Mobiles.Api.Services
             {
                 var mobiles = getNewActivatesQuery.Get();
 
-                foreach (var mobile in mobiles) Execute(mobile);
+                foreach (var mobile in mobiles) Execute(mobile).Wait();
             }
             catch (Exception e)
             {
-                logger.LogError($"Error when checking for ActivateRequestedEvents: {e}");
+                logger.LogError("Error checking with [{checker}]: {exception} ", nameof(ActivateRequestedEventChecker), e);
             }
         }
 
-        private async void Execute(Mobile mobile)
+        private async Task Execute(Mobile mobile)
         {
             if (await Publish(mobile, mobile.InFlightOrder))
             {

@@ -5,6 +5,7 @@ using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Messages;
 using System;
+using System.Threading.Tasks;
 using Utils.DomainDrivenDesign;
 
 namespace Mobiles.Api.Services
@@ -31,26 +32,33 @@ namespace Mobiles.Api.Services
 
         public void Check()
         {
-            var mobiles = this.getMobilesQuery.Get();
-
-            foreach (var mobile in mobiles)
+            try
             {
-                Execute(mobile);
+                var mobiles = this.getMobilesQuery.Get();
+
+                foreach (var mobile in mobiles)
+                {
+                    Execute(mobile).Wait();
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error checking with [{checker}]: {exception} ", nameof(CeaseRequestedEventChecker), e);
             }
         }
 
-        private void Execute(Mobile mobile)
+        private async Task Execute(Mobile mobile)
         {
-            Publish(mobile, mobile.InFlightOrder);
+            await Publish(mobile, mobile.InFlightOrder);
             mobile.OrderProcessing();
             mobileRepository.Update(mobile);
         }
 
-        private void Publish(Mobile mobile, Order order)
+        private async Task<bool> Publish(Mobile mobile, Order order)
         {
             logger.LogInformation("Publishing event [{event}] - MobileOrderId={orderId}", typeof(CeaseRequestedMessage).Name, order.GlobalId);
 
-            messagePublisher.PublishAsync(new CeaseRequestedMessage
+            return await messagePublisher.PublishAsync(new CeaseRequestedMessage
             {
                 PhoneNumber = mobile.PhoneNumber.ToString(),
                 MobileId = mobile.GlobalId,

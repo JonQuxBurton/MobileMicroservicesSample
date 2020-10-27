@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
@@ -29,22 +31,29 @@ namespace Mobiles.Api.Services
 
         public void Check()
         {
-            var newMobiles = this.getNewMobilesQuery.Get();
-
-            foreach (var newMobile in newMobiles)
+            try
             {
-                Execute(newMobile);
+                var newMobiles = this.getNewMobilesQuery.Get();
+
+                foreach (var newMobile in newMobiles)
+                {
+                    Execute(newMobile).Wait();
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error checking with [{checker}]: {exception} ", nameof(ProcessingProvisionEventChecker), e);
             }
         }
 
-        private void Execute(Mobile mobile)
+        private async Task Execute(Mobile mobile)
         {
-            Publish(mobile, mobile.InFlightOrder);
+            await Publish(mobile, mobile.InFlightOrder);
             mobile.OrderProcessing();
             mobileRepository.Update(mobile);
         }
 
-        private async void Publish(Mobile mobile, Order order)
+        private async Task Publish(Mobile mobile, Order order)
         {
             logger.LogInformation("Publishing event [{event}] - PhoneNumber={phoneNumber} MobileOrderId={orderId}", typeof(ProvisionRequestedMessage).Name, mobile.PhoneNumber, order.GlobalId);
 
