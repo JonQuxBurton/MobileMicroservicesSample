@@ -2,23 +2,24 @@ import http from "k6/http";
 import { check, group, sleep } from 'k6';
 import { Counter } from 'k6/metrics';
 
-let data;
-let orderMobileData;
-let completeProvisionData;
-let activateMobileData;
-let completeActivateData;
+const vus = 2;//5;
+const iterations = 1;//3;
 
-let params = {
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  tags: {}
-};
+const SLEEP_DURATION = 0.1;
+const SLEEP_DURATION_BEFORE_ORDER_COMPLETION = 40.0;
+const SLEEP_DURATION_FOR_ORDER_COMPLETION_CHECK = 20.0;
+const RETRIES_FOR_ORDER_COMPLETION_CHECK = 10;
+const baseUrlMobiles = "http://localhost:5000/api";
+const baseUrlExternalSimCards = "http://localhost:5001/api";
+const baseUrlExternalTelecomsNetwork= "http://localhost:5002/api";
+const dataWebServiceBaseUrl = "http://localhost:5099";
 
-loadData();
+let orderMobileErrorMetrics = new Counter("orderMobileErrors");
+let completeProvisionErrorMetrics = new Counter("completeProvisionErrors");
+let activateMobileErrorMetrics = new Counter("activateMobileErrors");
+let completeActivateErrorMetrics = new Counter("completeActivateErrors");
 
-let vus = 5;//5;
-let iterations = 3;//3;
+let dataFile = loadDataFile();
 
 export let options = {
   scenarios: {
@@ -55,48 +56,23 @@ export let options = {
   }
 };
 
-const SLEEP_DURATION = 0.1;
-const SLEEP_DURATION_BEFORE_ORDER_COMPLETION = 40.0;
-const SLEEP_DURATION_FOR_ORDER_COMPLETION_CHECK = 20.0;
-const RETRIES_FOR_ORDER_COMPLETION_CHECK = 10;
-
-let counters = {
-  orderMobile: 0,
-  completeProvision: 0,
-  activateMobile: 0,
-  completeActivate: 0,
-  createCustomer: 0
-};
-
-let orderMobileErrorMetrics = new Counter("orderMobileErrors");
-let completeProvisionErrorMetrics = new Counter("completeProvisionErrors");
-let activateMobileErrorMetrics = new Counter("activateMobileErrors");
-let completeActivateErrorMetrics = new Counter("completeActivateErrors");
-
 export function createCustomer() {
-  group('Create a Customer', (_) => {
-    //let indexes = getDataIndexes("create-customer", __VU, __ITER);
-    //let scenarioData = loadData2("create-customer", indexes);
-    //console.log(`create-customer vuId: ${scenarioData.vuId}`);
-    //console.log(`create-customer iteration: ${__ITER}`);
 
-    let params = getHttpParams();
-    params.tags.name = 'create-customer';
-    let customersUrl = "http://localhost:5000/api/customers";
+  group('Create a Customer', (_) => {
     let createCustomerBody = JSON.stringify({
       Name: `Armstrong-${__VU}-${__ITER} Corporation`
     });
 
-    let createCustomerResponse = http.post(customersUrl, createCustomerBody, params);
+    let createCustomerResponse = http.post(`${baseUrlMobiles}/customers`, createCustomerBody, getHttpParams('create-customer'));
 
     check(createCustomerResponse, {
       'is status 200': (r) => r.status === 200,
       'is customerId present': (r) => r.json().hasOwnProperty('globalId'),
     });
-    sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
-
     let customerId = createCustomerResponse.json()['globalId'];
-    let getCustomerResponse = httpGetWithRetry(`http://localhost:5000/api/customers/${customerId}`, params);
+    sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
+    
+    let getCustomerResponse = httpGetWithRetry(`${baseUrlMobiles}/customers/${customerId}`, getHttpParams('create-customer-getCustomer'));
 
     check(getCustomerResponse, {
       'is status 200': (r) => r.status === 200
@@ -104,30 +80,22 @@ export function createCustomer() {
   });
 }
 
-export function orderMobile() {  
+export function orderMobile() {
+
   group('Order a Mobile', (_) => {
     let indexes = getDataIndexes("order-mobile", __VU, __ITER);
-    let scenarioData = loadData2("order-mobile", indexes);
-    //console.log(`order-mobile vuId: ${scenarioData.vuId}`);
-    //console.log(`order-mobile iteration: ${__ITER}`);
-    //console.log(`order-mobile data: ${JSON.stringify(scenarioData.data)}`);
-
-    let data = scenarioData.data;
-    let params = getHttpParams();  
-    params.tags.name = 'order-mobile';
-    let customerId = data.customerId;
-    let phoneNumber = data.phoneNumber;
-    let contactName = data.contactName;
-    let contactPhoneNumber = data.contactPhoneNumbers;
-
-    let orderMobileUrl = `http://localhost:5000/api/customers/${customerId}/provision`;
+    let scenarioData = getScenarioDataForVirtualUser(dataFile, "order-mobile", indexes);
+    let customerId = scenarioData.customerId;
+    let phoneNumber = scenarioData.phoneNumber;
+    let contactName = scenarioData.contactName;
+    let contactPhoneNumber = scenarioData.contactPhoneNumbers;
     let orderMobileBody = JSON.stringify({
       PhoneNumber: phoneNumber,
       Name: contactName,
       ContactPhoneNumber: contactPhoneNumber
     });
 
-    let orderMobileResponse = http.post(orderMobileUrl, orderMobileBody, params);
+    let orderMobileResponse = http.post(`${baseUrlMobiles}/customers/${customerId}/provision`, orderMobileBody, getHttpParams('order-mobile'));
 
     let orderMobileSuccess = check(orderMobileResponse, {
       'when orderMobile, is status 200': (r) => r.status === 200,
@@ -138,12 +106,10 @@ export function orderMobile() {
       console.log(`FAILED - Request to ${orderMobileResponse.request.url} with returned ${status}`);
       orderMobileErrorMetrics.add(1, { url: orderMobileResponse.request.url });
     }
-    sleep(SLEEP_DURATION);
-
-    params.tags.name = 'get-mobile';
     let mobileId = orderMobileResponse.json()['globalId'];
-    let getMobileUrl = `http://localhost:5000/api/mobiles/${mobileId}`;
-    let getMobileResponse = http.get(getMobileUrl, params);
+    sleep(SLEEP_DURATION);
+    
+    let getMobileResponse = http.get(`${baseUrlMobiles}/mobiles/${mobileId}`, getHttpParams('order-mobile-getMobile'));
 
     let getMobileSuccess = check(getMobileResponse, {
       'when getMobile, is status 200': (r) => r.status === 200,
@@ -154,13 +120,11 @@ export function orderMobile() {
       console.log(`FAILED - Request to ${getMobileResponse.request.method} ${getMobileResponse.request.url} returned status ${status}`);
       orderMobileErrorMetrics.add(1, { url: getMobileResponse.request.url });
     }
-
-    let provisionOrderId = getMobileResponse.json('orderHistory.0')['globalId'];
-    
+    let provisionOrderId = getMobileResponse.json('orderHistory.0')['globalId'];    
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
     // Check whether the Order has been received by the External Service
-    let provisionOrderReceivedResponse = httpGetWithRetry(`http://localhost:5001/api/orders/${provisionOrderId}`, params);
+    let provisionOrderReceivedResponse = httpGetWithRetry(`${baseUrlExternalSimCards}/orders/${provisionOrderId}`, getHttpParams('order-mobile-provisionOrderReceived'));
     let provisionOrderReceivedSuccess = check(provisionOrderReceivedResponse, {
       'when checking provisionOrderReceived, is status 200': (r) => r.status === 200,
     });
@@ -173,23 +137,18 @@ export function orderMobile() {
 }
 
 export function completeProvision() {
-  // Step 3 - The External Service has completed the Mobile Provision Order
+
   group('The External Service has completed a Mobile Provision Order', (_) => { 
     let indexes = getDataIndexes("complete-provision", __VU, __ITER);
-    let scenarioData = loadData2("complete-provision", indexes);
+    let scenarioData = getScenarioDataForVirtualUser(dataFile, "complete-provision", indexes);
     //console.log(`complete-provision vuId: ${scenarioData.vuId}`);
     //console.log(`complete-provision iteration: ${__ITER}`);
     //console.log(`complete-provision data: ${JSON.stringify(scenarioData.data)}`);
-
-    let data  = scenarioData.data;
     
-    let params = getHttpParams();
-    params.tags.name = 'complete-provision';
-    let mobileId = data.mobileId;
-    let provisionOrderId = data.provisionOrderId;
-    let completeProvisionUrl = `http://localhost:5001/api/orders/${provisionOrderId}/complete`;
+    let mobileId = scenarioData.mobileId;
+    let provisionOrderId = scenarioData.provisionOrderId;
 
-    let completeProvisionResponse = http.post(completeProvisionUrl, "", params);
+    let completeProvisionResponse = http.post(`${baseUrlExternalSimCards}/orders/${provisionOrderId}/complete`, "", getHttpParams('complete-provision'));
     sleep(SLEEP_DURATION);
 
     let completeProvisionResponseSuccess = check(completeProvisionResponse, {
@@ -205,10 +164,10 @@ export function completeProvision() {
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
     // Wait unitl the Order has been processed
-    let waitingForActivateCheckResponse = waitUntilMobileInState(`http://localhost:5000/api/mobiles/${mobileId}`, params, 'WaitingForActivate');
+    let waitingForActivateCheckResponse = waitUntilMobileInState(`${baseUrlMobiles}/mobiles/${mobileId}`, getHttpParams('complete-provision-WaitingForActivate'), 'WaitingForActivate');
 
     if (!waitingForActivateCheckResponse){
-      console.log(`FAILED - waitUntilMobileInState http://localhost:5000/api/mobiles/${mobileId} with state 'WaitingForActivate'`);
+      console.log(`FAILED - waitUntilMobileInState ${baseUrlMobiles}/mobiles/${mobileId} with state 'WaitingForActivate'`);
     }
 
     let waitingForActivateSuccess = check(waitingForActivateCheckResponse, {
@@ -224,29 +183,19 @@ export function completeProvision() {
 }
 
 export function activateMobile() {  
-  // Step 4 - Activate a Mobile
+
   group('Activate a Mobile', (_) => {
     let indexes = getDataIndexes("activate-mobile", __VU, __ITER);
     //console.log(`activate-mobile __VU: ${__VU}, __ITER: ${__ITER}, indexes: [${indexes.index0}, ${indexes.index1}]`);  
+    let scenarioData = getScenarioDataForVirtualUser(dataFile, "activate-mobile", indexes);
+    let mobileId = scenarioData.mobileId;
+    let activationCode = scenarioData.activationCode;
 
-    let scenarioData = loadData2("activate-mobile", indexes);
-    //console.log(`activate-mobile vuId: ${scenarioData.vuId}`);
-    //console.log(`activate-mobile iteration: ${__ITER}`);
-    //console.log(`activate-mobile data: ${JSON.stringify(scenarioData.data)}`);
-
-    let data = scenarioData.data;
-
-    let params = getHttpParams();
-    params.tags.name = 'activate-mobile';
-    let mobileId = data.mobileId;
-    let activationCode = data.activationCode;
-
-    let activateMobileUrl = `http://localhost:5000/api/mobiles/${mobileId}/activate`;
     let activateMobileBody = JSON.stringify({
       ActivationCode: activationCode
     });
 
-    let activateMobileResponse = http.post(activateMobileUrl, activateMobileBody, params);
+    let activateMobileResponse = http.post(`${baseUrlMobiles}/mobiles/${mobileId}/activate`, activateMobileBody, getHttpParams('activate-mobile'));
 
     let activateMobileSuccess = check(activateMobileResponse, {
       'when activateMobile, is status 200': (r) => r.status === 200,
@@ -263,7 +212,7 @@ export function activateMobile() {
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
     // Check whether the Order has been received by the External Service
-    let activateOrderReceivedResponse = httpGetWithRetry(`http://localhost:5002/api/orders/${activateOrderId}`, params);
+    let activateOrderReceivedResponse = httpGetWithRetry(`${baseUrlExternalTelecomsNetwork}/orders/${activateOrderId}`, getHttpParams('activate-mobile-activateOrderReceived'));
     let activateOrderReceivedSuccess = check(activateOrderReceivedResponse, {
       'when activateOrderReceived, is status 200 2': (r) => r.status === 200
     });
@@ -276,27 +225,20 @@ export function activateMobile() {
 
 }
 
-export function completeActivate() {  
-  // Step  5 - The External Service has completed the Mobile Activate Order
+export function completeActivate() {
+
   group('The External Service has completed a Mobile Activate Order', (_) => {
     let indexes = getDataIndexes("complete-activate", __VU, __ITER);
     //console.log(`complete-activate __VU: ${__VU}, __ITER: ${__ITER}, indexes: [${indexes.index0}, ${indexes.index1}]`);
-
-    let scenarioData = loadData2("complete-activate", indexes);
+    let scenarioData = getScenarioDataForVirtualUser(dataFile, "complete-activate", indexes);
     // console.log(`complete-activate vuId: ${scenarioData.vuId}`);
     // console.log(`complete-activate iteration: ${__ITER}`);
     // console.log(`complete-activate data: ${JSON.stringify(scenarioData.data)}`);
 
-    let data = scenarioData.data;
-    
-    let params = getHttpParams();
-    params.tags.name = 'complete-activate';
-    let mobileId = data.mobileId;
-    let activateOrderId = data.activateOrderId;
+    let mobileId = scenarioData.mobileId;
+    let activateOrderId = scenarioData.activateOrderId;
 
-    let completeActivateUrl = `http://localhost:5002/api/orders/${activateOrderId}/complete`;
-
-    let completeActivateResponse = http.post(completeActivateUrl, null, params);
+    let completeActivateResponse = http.post(`${baseUrlExternalTelecomsNetwork}/orders/${activateOrderId}/complete`, "", getHttpParams('complete-activate'));
 
     let completeActivateSuccess = check(completeActivateResponse, {
       'when checking completeActivate, is status 200': (r) => r.status === 200
@@ -310,10 +252,10 @@ export function completeActivate() {
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
     
     // Wait unitl the Order has been processed
-    let waitingForLiveCheckResponse = waitUntilMobileInState(`http://localhost:5000/api/mobiles/${mobileId}`, params, 'Live');
+    let waitingForLiveCheckResponse = waitUntilMobileInState(`${baseUrlMobiles}/mobiles/${mobileId}`, getHttpParams('complete-activate-waitingForLive'), 'Live');
 
     if (!waitingForLiveCheckResponse){
-      console.log(`FAILED - waitUntilMobileInState http://localhost:5000/api/mobiles/${mobileId} with state 'Live'`);
+      console.log(`FAILED - waitUntilMobileInState ${baseUrlMobiles}/mobiles/${mobileId} with state 'Live'`);
     }
 
     let waitingForLiveCheckSuccess = check(waitingForLiveCheckResponse, {
@@ -328,13 +270,18 @@ export function completeActivate() {
   });
 }
 
-function getHttpParams(){
-  return {
+function getHttpParams(tagName){
+  let params = {
     headers: {
       'Content-Type': 'application/json',
     },
     tags: {}
   };
+
+  if (tagName)
+    params.tags.name = tagName;
+
+  return params;
 }
 
 function getDataIndexes(scenarioKey, vuId, iteration){
@@ -343,7 +290,7 @@ function getDataIndexes(scenarioKey, vuId, iteration){
     VuId: vuId,
     Iteration: iteration
   });
-  let response = http.post("http://localhost:5099/data", body, getHttpParams());
+  let response = http.post(`${dataWebServiceBaseUrl}/data`, body, getHttpParams());
   let index0 = response.body;
 
   return {
@@ -352,84 +299,24 @@ function getDataIndexes(scenarioKey, vuId, iteration){
   }
 }
 
-function loadData2(scenarioKey, indexes) {
-  if (scenarioKey == "order-mobile")
-  return {
-    data: data.orderMobile[indexes.index0][indexes.index1]
-  };
-  
-  if (scenarioKey == "complete-provision")
-  return {
-    data: data.completeProvision[indexes.index0][indexes.index1]
-  };
-
-  if (scenarioKey == "activate-mobile")
-  return {
-    data: data.activateMobile[indexes.index0][indexes.index1]
-  };
-
-  if (scenarioKey == "complete-activate")
-  return {
-    data: data.completeActivate[indexes.index0][indexes.index1]
-  };
-
-  return;
-
-  // let body = JSON.stringify({
-  //   ScenarioKey: scenarioKey
-  // });
-  // let response = http.post("http://localhost:5099/data", body, params);
-  // let vuId = response.body;
-
-  // if (scenarioKey == "create-customer")
-  // return {
-  //   vuId: vuId,
-  //   data: null
-  // };
-
-  //console.log(`vuId-1: ${vuId-1}, iteration: ${iteration}`);
-  //console.log(`data.completeActivate.length: ${data.completeActivate.length}`);
-  //console.log(`data.completeActivate[vuId-1].length: ${data.completeActivate[vuId-1].length}`);  
-
-  if (scenarioKey == "order-mobile")
-    return {
-      vuId: vuId,
-      data: data.orderMobile[vuId-1][iteration]
-    };
-
-  if (scenarioKey == "complete-provision")
-    return {
-      vuId: vuId,
-      data: data.completeProvision[vuId-1][iteration]
-    };
-
-  if (scenarioKey == "activate-mobile")
-    return {
-      vuId: vuId,
-      data: data.activateMobile[vuId-1][iteration]
-    };
-  
-  if (scenarioKey == "complete-activate")
-    return {
-      vuId: vuId,
-      data: data.completeActivate[vuId-1][iteration]
-    };
-
-  //orderMobileData = data.orderMobile[vuId-1];
-  // completeProvisionData = data.completeProvision;
-  // activateMobileData = data.activateMobile;
-  // completeActivateData = data.completeActivate;
-
-  return vuId;
+function loadDataFile() {
+  return JSON.parse(open("./data.json"));
 }
 
-function loadData() {
-  data = JSON.parse(open("./data.json"));
+function getScenarioDataForVirtualUser(dataFile, scenarioKey, indexes) {
+  if (scenarioKey == "order-mobile")
+    return dataFile.orderMobile[indexes.index0][indexes.index1];
   
-  orderMobileData = data.orderMobile;
-  completeProvisionData = data.completeProvision;
-  activateMobileData = data.activateMobile;
-  completeActivateData = data.completeActivate;
+  if (scenarioKey == "complete-provision")
+    return dataFile.completeProvision[indexes.index0][indexes.index1];
+
+  if (scenarioKey == "activate-mobile")
+    return dataFile.activateMobile[indexes.index0][indexes.index1];
+
+  if (scenarioKey == "complete-activate")
+    return dataFile.completeActivate[indexes.index0][indexes.index1];
+
+  return;
 }
 
 function httpGetWithRetry(url, params) {
