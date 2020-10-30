@@ -1,0 +1,6 @@
+10/30/2020 16:09:39
+Scenario: completeActivate, VirtualUserId: 7, Index0: 2, Iteration: 0
+Sending CompleteActivateOrder to External Service, ActivateOrderId: 5728b69b-24ce-4768-81d6-dafbff546e67 [http://localhost:5002/api/orders/5728b69b-24ce-4768-81d6-dafbff546e67/complete]
+Succeeded
+Check whether the Mobile has been updated to Live, MobileId: 59e7a1fa-3913-4885-acae-8a14063b6cb8 [http://localhost:5000/api/mobiles/59e7a1fa-3913-4885-acae-8a14063b6cb8]
+Succeeded

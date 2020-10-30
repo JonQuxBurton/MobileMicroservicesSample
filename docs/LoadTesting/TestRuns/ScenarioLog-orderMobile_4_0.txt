@@ -1,0 +1,8 @@
+10/30/2020 16:09:39
+Scenario: orderMobile, VirtualUserId: 2, Index0: 4, Iteration: 0
+Sending Order to Mobiles API, CustomerId: C5C04D13-25B2-4EC2-97E0-99737673287F, PhoneNumber: 07001000013 [http://localhost:5000/api/customers/C5C04D13-25B2-4EC2-97E0-99737673287F/provision]
+Succeeded
+Getting Mobile from Mobiles API, MobileId: d730a7d8-8f27-4ba8-b53f-4f940b1c6264 [http://localhost:5000/api/mobiles/d730a7d8-8f27-4ba8-b53f-4f940b1c6264]
+Succeeded
+Check whether the Order has been received by the External Service, ProvisionOrderId: 8e031334-4934-4c97-ad82-9e47871c1b4d [http://localhost:5001/api/orders/8e031334-4934-4c97-ad82-9e47871c1b4d]
+Succeeded

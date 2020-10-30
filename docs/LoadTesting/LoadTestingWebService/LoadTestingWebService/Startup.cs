@@ -32,6 +32,8 @@ namespace LoadTestingWebService
             services.Configure<TestDataSettings>(options => Configuration.GetSection("TestDataSettings").Bind(options));
 
             services.AddControllers();
+
+            services.AddSingleton<IScenarioLogger, ScenarioLogger>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
