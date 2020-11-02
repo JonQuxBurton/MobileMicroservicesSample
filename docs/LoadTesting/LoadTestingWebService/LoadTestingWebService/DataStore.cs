@@ -4,7 +4,7 @@ using Dapper;
 
 namespace LoadTestingWebService
 {
-    internal class DataStore
+    public class DataStore
     {
         private readonly string connectionString;
 

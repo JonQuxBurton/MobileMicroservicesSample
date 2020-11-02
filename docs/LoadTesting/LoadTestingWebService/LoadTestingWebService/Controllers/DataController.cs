@@ -15,6 +15,8 @@ namespace LoadTestingWebService.Controllers
         {
             var scenarioKey = scenarioKeyRequest.ScenarioKey;
 
+            //return -1;
+
             if (!Scenarios.ContainsKey(scenarioKey))
                 Scenarios.TryAdd(scenarioKey, new Scenario(scenarioKey));
 

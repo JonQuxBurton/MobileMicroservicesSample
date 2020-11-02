@@ -55,8 +55,10 @@ namespace LoadTestingWebService
 
             var testDataSettings = new TestDataSettings();
             Configuration.Bind("TestDataSettings", testDataSettings);
-            var setupData = new SetupData(testDataSettings);
-            setupData.Execute();
+            //var setupData = new SetupData(testDataSettings);
+            //setupData.Execute();
+
+            var scenariosService = new ScenariosService(testDataSettings);
         }
     }
 }
