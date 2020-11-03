@@ -7,6 +7,7 @@
         public string Path { get; set; }
         public string FileNameData { get; set; }
         public string FileNameScenarios { get; set; }
+        public ScenarioSettings CreateCustomersSettings { get; set; }
         public ScenarioSettings OrderMobilesSettings { get; set; }
         public ScenarioSettings CompleteProvisionsSettings { get; set; }
         public ScenarioSettings ActivateMobilesSettings { get; set; }

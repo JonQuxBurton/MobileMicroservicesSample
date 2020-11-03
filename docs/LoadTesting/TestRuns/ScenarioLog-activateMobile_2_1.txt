@@ -1,6 +1,0 @@
-10/30/2020 16:10:19
-Scenario: activateMobile, VirtualUserId: 21, Index0: 2, Iteration: 1
-Sending ActivateOrder to Mobiles API, MobileId: 748829a8-0538-4d09-a759-235160ab5dc9, ActivationCode: AAA038 [http://localhost:5000/api/mobiles/748829a8-0538-4d09-a759-235160ab5dc9/activate]
-Succeeded
-Check whether the Order has been received by the External Service, ActivateOrderId: 5abc3152-8668-4ffc-802f-2ed07b2e3dbc [http://localhost:5000/api/mobiles/748829a8-0538-4d09-a759-235160ab5dc9/activate]
-Succeeded

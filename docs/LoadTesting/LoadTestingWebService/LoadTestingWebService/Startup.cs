@@ -34,10 +34,12 @@ namespace LoadTestingWebService
             services.AddControllers();
 
             services.AddSingleton<IScenarioLogger, ScenarioLogger>();
+            services.AddSingleton<IScenariosService, ScenariosService>();
+            services.AddSingleton<IScenarioTextGenerator, ScenarioTextGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IScenariosService scenariosService)
         {
             if (env.IsDevelopment())
             {
@@ -53,12 +55,15 @@ namespace LoadTestingWebService
                 endpoints.MapControllers();
             });
 
-            var testDataSettings = new TestDataSettings();
-            Configuration.Bind("TestDataSettings", testDataSettings);
+            //var testDataSettings = new TestDataSettings();
+            //Configuration.Bind("TestDataSettings", testDataSettings);
             //var setupData = new SetupData(testDataSettings);
             //setupData.Execute();
 
-            var scenariosService = new ScenariosService(testDataSettings);
+            //var scenariosService = new ScenariosService(testDataSettings);
+
+            // TODO
+            // Make a methods to call on the ScenarioService, which build. Then call it from here.
         }
     }
 }

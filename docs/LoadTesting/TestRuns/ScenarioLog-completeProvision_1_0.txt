@@ -1,6 +1,0 @@
-10/30/2020 16:09:39
-Scenario: completeProvision, VirtualUserId: 15, Index0: 1, Iteration: 0
-Sending CompleteProvisionOrder to External Service, ProvisionOrderId: 5fdd5e54-6b2c-4e2d-bec8-f20b70a1f246 [http://localhost:5001/api/orders/5fdd5e54-6b2c-4e2d-bec8-f20b70a1f246/complete]
-Succeeded
-Check whether the Mobile has been updated to WaitingForActivate, mobileId: 28ef1264-d323-45dc-a148-b8345daee9cf [http://localhost:5000/api/mobiles/28ef1264-d323-45dc-a148-b8345daee9cf]
-Succeeded

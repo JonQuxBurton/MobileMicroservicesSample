@@ -37,25 +37,25 @@ export let options = {
       executor: 'per-vu-iterations',
       vus: vus,
       iterations: iterations,
-      exec: 'createCustomer',
+      exec: 'createCustomer'
     },
     orderMobileTests: {
       executor: 'per-vu-iterations',
       vus: vus,
       iterations: iterations,
-      exec: 'orderMobile',
+      exec: 'orderMobile'
     },
     completeProvisionTests: {
       executor: 'per-vu-iterations',
       vus: vus,
       iterations: iterations,
-      exec: 'completeProvision',
+      exec: 'completeProvision'
     },
     activateMobileTests: {
       executor: 'per-vu-iterations',
       vus: vus,
       iterations: iterations,
-      exec: 'activateMobile',
+      exec: 'activateMobile'
     },
     completeActivateTests: {
       executor: 'per-vu-iterations',
@@ -70,9 +70,9 @@ export function createCustomer() {
 
   group('Create a Customer', (_) => {
     let scenarioName = scenarios.createCustomer;
-    let indexes = getDataIndexes(scenarioName, __VU, __ITER);
-    beginScenarioLog(scenarioName, indexes.index0, __VU, __ITER);
-
+    let user = getUser(scenarioName, __VU, __ITER);
+    
+    beginScenarioLog(scenarioName, user, __ITER);
     let customerName = `Armstrong-${__VU}-${__ITER} Corporation`;
     let createCustomerBody = JSON.stringify({
       Name: customerName
@@ -80,45 +80,37 @@ export function createCustomer() {
     let url;
 
     url = `${baseUrlMobiles}/customers`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Sending CreateCustomer to Mobiles API, customerName: ${customerName} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Sending CreateCustomer to Mobiles API, customerName: ${customerName} [${url}]`);
     let createCustomerResponse = http.post(url, createCustomerBody, getHttpParams(scenarioName));
 
     let createCustomerSuccess = check(createCustomerResponse, {
       [`when ${scenarioName}, is status 200`]: (r) => r.status === 200,
       [`when ${scenarioName}, is customerId present`]: (r) => r.json().hasOwnProperty('globalId'),
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, createCustomerSuccess, createCustomerResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, createCustomerSuccess, createCustomerResponse);
     let customerId = createCustomerResponse.json()['globalId'];
     
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
     
     url = `${baseUrlMobiles}/customers/${customerId}`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Check whether the Customer has been created, customerId: ${customerId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Check whether the Customer has been created, customerId: ${customerId} [${url}]`);
     let getCustomerResponse = httpGetWithRetry(url, getHttpParams(`${scenarioName}-getCustomer`));
 
     let getCustomerSuccess = check(getCustomerResponse, {
       'is status 200': (r) => r.status === 200
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, getCustomerSuccess, getCustomerResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, getCustomerSuccess, getCustomerResponse);
   });
-}
-
-function logCheckFailure(scenarioName, success, response) {
-  if (!success) {
-    let status = response ? response.status : "undefined";
-    console.log(`FAILED - Request to ${response.request.url} with returned ${status}`);
-    errorMetrics[scenarioName].add(1, { url: response.request.url });
-  }
 }
 
 export function orderMobile() {
 
   group('Order a Mobile', (_) => {    
     let scenarioName = scenarios.orderMobile;
-    let indexes = getDataIndexes(scenarioName, __VU, __ITER);
-    beginScenarioLog(scenarioName, indexes.index0, __VU, __ITER);
+    let user = getUser(scenarioName, __VU, __ITER);
 
-    let scenarioData = getScenarioDataForVirtualUser(dataFile, scenarioName, indexes);
+    beginScenarioLog(scenarioName, user, __ITER, user);
+    let scenarioData = getScenarioDataForUser(dataFile, scenarioName, user, __ITER);      
     let customerId = scenarioData.customerId;
     let phoneNumber = scenarioData.phoneNumber;
     let contactName = scenarioData.contactName;
@@ -131,39 +123,39 @@ export function orderMobile() {
     let url;
 
     url = `${baseUrlMobiles}/customers/${customerId}/provision`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Sending Order to Mobiles API, CustomerId: ${customerId}, PhoneNumber: ${phoneNumber} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Sending Order to Mobiles API, CustomerId: ${customerId}, PhoneNumber: ${phoneNumber} [${url}]`);
     let orderMobileResponse = http.post(url, orderMobileBody, getHttpParams(scenarioName));    
     
     let orderMobileSuccess = check(orderMobileResponse, {
       [`when ${scenarioName}, is status 200`]: (r) => r.status === 200,
       [`when ${scenarioName}, is mobileId present`]: (r) => r.json().hasOwnProperty('globalId'),
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, orderMobileSuccess, orderMobileResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, orderMobileSuccess, orderMobileResponse);
     logCheckFailure(scenarioName, orderMobileSuccess, orderMobileResponse);
     let mobileId = orderMobileResponse.json()['globalId'];
     sleep(SLEEP_DURATION);
 
     url = `${baseUrlMobiles}/mobiles/${mobileId}`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Getting Mobile from Mobiles API, MobileId: ${mobileId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Getting Mobile from Mobiles API, MobileId: ${mobileId} [${url}]`);
     let getMobileResponse = http.get(url, getHttpParams(`${scenarioName}-getMobile`));
 
     let getMobileSuccess = check(getMobileResponse, {
       [`when ${scenarioName} getMobile, is status 200`]: (r) => r.status === 200,
       [`when ${scenarioName} getMobile, is provisionOrderId present`]: (r) => r.json('orderHistory.0').hasOwnProperty('globalId'),
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, getMobileSuccess, getMobileResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, getMobileSuccess, getMobileResponse);
     logCheckFailure(scenarioName, getMobileSuccess, getMobileResponse);
     let provisionOrderId = getMobileResponse.json('orderHistory.0')['globalId'];    
     
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
     url = `${baseUrlExternalSimCards}/orders/${provisionOrderId}`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Check whether the Order has been received by the External Service, ProvisionOrderId: ${provisionOrderId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Check whether the Order has been received by the External Service, ProvisionOrderId: ${provisionOrderId} [${url}]`);
     let provisionOrderReceivedResponse = httpGetWithRetry(url, getHttpParams(`${scenarioName}-provisionOrderReceived`));
     let provisionOrderReceivedSuccess = check(provisionOrderReceivedResponse, {
       [`when ${scenarioName} provisionOrderReceived, is status 200`]: (r) => r.status === 200,
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, provisionOrderReceivedSuccess, provisionOrderReceivedResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, provisionOrderReceivedSuccess, provisionOrderReceivedResponse);
     logCheckFailure(scenarioName, provisionOrderReceivedSuccess, provisionOrderReceivedResponse);
   });
 }
@@ -172,29 +164,29 @@ export function completeProvision() {
 
   group('The External Service has completed a Mobile Provision Order', (_) => {
     let scenarioName = scenarios.completeProvision;
-    let indexes = getDataIndexes(scenarioName, __VU, __ITER);
-    beginScenarioLog(scenarioName, indexes.index0, __VU, __ITER);
-
-    let scenarioData = getScenarioDataForVirtualUser(dataFile, scenarioName, indexes);
+    let user = getUser(scenarioName, __VU, __ITER);
+    
+    beginScenarioLog(scenarioName, user, __ITER);    
+    let scenarioData = getScenarioDataForUser(dataFile, scenarioName, user, __ITER);  
     let mobileId = scenarioData.mobileId;
     let provisionOrderId = scenarioData.provisionOrderId;
     let url;
 
     url = `${baseUrlExternalSimCards}/orders/${provisionOrderId}/complete`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Sending CompleteProvisionOrder to External Service, ProvisionOrderId: ${provisionOrderId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Sending CompleteProvisionOrder to External Service, ProvisionOrderId: ${provisionOrderId} [${url}]`);
     let completeProvisionResponse = http.post(url, "", getHttpParams(scenarioName));
     
     let completeProvisionResponseSuccess = check(completeProvisionResponse, {
       [`when ${scenarioName}, is status 200`]: (r) => r.status === 200,
       [`when ${scenarioName}, is activationCode present`]: (r) => r.json().hasOwnProperty('activationCode'),
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, completeProvisionResponseSuccess, completeProvisionResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, completeProvisionResponseSuccess, completeProvisionResponse);
     logCheckFailure(scenarioName, completeProvisionResponseSuccess, completeProvisionResponse);
     
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
     url = `${baseUrlMobiles}/mobiles/${mobileId}`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Check whether the Mobile has been updated to WaitingForActivate, mobileId: ${mobileId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Check whether the Mobile has been updated to WaitingForActivate, mobileId: ${mobileId} [${url}]`);
     let waitingForActivateCheckResponse = waitUntilMobileInState(url, getHttpParams(`${scenarioName}-WaitingForActivate`), 'WaitingForActivate');
 
     if (!waitingForActivateCheckResponse)
@@ -203,7 +195,7 @@ export function completeProvision() {
     let waitingForActivateSuccess = check(waitingForActivateCheckResponse, {
       [`when ${scenarioName} waitingForActivate, is status 200`]: (r) => r.status === 200
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, waitingForActivateSuccess, waitingForActivateCheckResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, waitingForActivateSuccess, waitingForActivateCheckResponse);
     logCheckFailure(scenarioName, waitingForActivateSuccess, waitingForActivateCheckResponse);
   });
 
@@ -213,10 +205,10 @@ export function activateMobile() {
 
   group('Activate a Mobile', (_) => {
     const scenarioName = scenarios.activateMobile;
-    let indexes = getDataIndexes(scenarioName, __VU, __ITER);
-    let scenarioData = getScenarioDataForVirtualUser(dataFile, scenarioName, indexes);
-    beginScenarioLog(scenarioName, indexes.index0, __VU, __ITER);
-
+    let user = getUser(scenarioName, __VU, __ITER);
+    
+    beginScenarioLog(scenarioName, user, __ITER);
+    let scenarioData = getScenarioDataForUser(dataFile, scenarioName, user, __ITER);
     let mobileId = scenarioData.mobileId;
     let activationCode = scenarioData.activationCode;
     let url;
@@ -226,26 +218,26 @@ export function activateMobile() {
     });
 
     url = `${baseUrlMobiles}/mobiles/${mobileId}/activate`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Sending ActivateOrder to Mobiles API, MobileId: ${mobileId}, ActivationCode: ${activationCode} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Sending ActivateOrder to Mobiles API, MobileId: ${mobileId}, ActivationCode: ${activationCode} [${url}]`);
     let activateMobileResponse = http.post(url, activateMobileBody, getHttpParams(scenarioName));
 
     let activateMobileSuccess = check(activateMobileResponse, {
       [`when ${scenarioName}, is status 200`]: (r) => r.status === 200,
       [`when ${scenarioName}, is activateOrderId present`]: (r) => r.json().hasOwnProperty('globalId'),
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, activateMobileSuccess, activateMobileResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, activateMobileSuccess, activateMobileResponse);
     logCheckFailure(scenarioName, activateMobileSuccess, activateMobileResponse);
 
     let activateOrderId = activateMobileResponse.json()['globalId'];
 
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Check whether the Order has been received by the External Service, ActivateOrderId: ${activateOrderId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Check whether the Order has been received by the External Service, ActivateOrderId: ${activateOrderId} [${url}]`);
     let activateOrderReceivedResponse = httpGetWithRetry(`${baseUrlExternalTelecomsNetwork}/orders/${activateOrderId}`, getHttpParams(`${scenarioName}-activateOrderReceived`));
     let activateOrderReceivedSuccess = check(activateOrderReceivedResponse, {
       ['when ${scenarioName}-activateOrderReceived, is status 200']: (r) => r.status === 200
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, activateOrderReceivedSuccess, activateOrderReceivedResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, activateOrderReceivedSuccess, activateOrderReceivedResponse);
     logCheckFailure(scenarioName, activateOrderReceivedSuccess, activateOrderReceivedResponse);
   });
 
@@ -255,28 +247,28 @@ export function completeActivate() {
 
   group('The External Service has completed a Mobile Activate Order', (_) => {
     const scenarioName = scenarios.completeActivate;
-    let indexes = getDataIndexes(scenarioName, __VU, __ITER);    
-    beginScenarioLog(scenarioName, indexes.index0, __VU, __ITER);
-    let scenarioData = getScenarioDataForVirtualUser(dataFile, scenarioName, indexes);
+    let user = getUser(scenarioName, __VU, __ITER);
 
+    beginScenarioLog(scenarioName, user, __ITER);
+    let scenarioData = getScenarioDataForUser(dataFile, scenarioName, user, __ITER);
     let mobileId = scenarioData.mobileId;
     let activateOrderId = scenarioData.activateOrderId;
     let url;
 
     url = `${baseUrlExternalTelecomsNetwork}/orders/${activateOrderId}/complete`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Sending CompleteActivateOrder to External Service, ActivateOrderId: ${activateOrderId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Sending CompleteActivateOrder to External Service, ActivateOrderId: ${activateOrderId} [${url}]`);
     let completeActivateResponse = http.post(url, "", getHttpParams(scenarioName));
 
     let completeActivateSuccess = check(completeActivateResponse, {
       [`when ${scenarioName}, is status 200`]: (r) => r.status === 200
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, completeActivateSuccess, completeActivateResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, completeActivateSuccess, completeActivateResponse);
     logCheckFailure(scenarioName, completeActivateSuccess, completeActivateResponse);
     
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
     
     url = `${baseUrlMobiles}/mobiles/${mobileId}`;
-    scenarioLog(scenarioName, indexes.index0, __VU, __ITER, `Check whether the Mobile has been updated to Live, MobileId: ${mobileId} [${url}]`);
+    scenarioLog(scenarioName, user, __ITER, `Check whether the Mobile has been updated to Live, MobileId: ${mobileId} [${url}]`);
     let waitingForLiveCheckResponse = waitUntilMobileInState(url, getHttpParams(`${scenarioName}-waitingForLive`), 'Live');
 
     if (!waitingForLiveCheckResponse)
@@ -286,7 +278,7 @@ export function completeActivate() {
       [`when ${scenarioName} waitingForLive, is Mobile in state 'Live'`]: (r) => r !== null,
       [`when ${scenarioName} waitingForLive, is status 200`]: (r) => r.status === 200
     });
-    scenarioLogCheck(scenarioName, indexes.index0, __VU, __ITER, waitingForLiveCheckSuccess, waitingForLiveCheckResponse);
+    scenarioLogCheck(scenarioName, user, __ITER, waitingForLiveCheckSuccess, waitingForLiveCheckResponse);
     logCheckFailure(scenarioName, waitingForLiveCheckSuccess, waitingForLiveCheckResponse);
   });
 }
@@ -295,23 +287,18 @@ function loadDataFile() {
   return JSON.parse(open("./TestRuns/data.json"));
 }
 
-function getDataIndexes(scenarioKey, vuId, iteration){
+function getUser(scenarioKey, vuId, iteration){
   let body = JSON.stringify({
     ScenarioKey: scenarioKey,
-    VuId: vuId,
+    VirtualUserId: vuId,
     Iteration: iteration
   });
   let response = http.post(`${dataWebServiceBaseUrl}/data`, body, getHttpParams());
-  let index0 = response.body;
-
-  return {
-    index0: index0,
-    index1: iteration
-  }
+  return response.json();
 }
 
-function getScenarioDataForVirtualUser(dataFile, scenarioKey, indexes) {
-  return dataFile[scenarioKey][indexes.index0][indexes.index1];
+function getScenarioDataForUser(dataFile, scenarioKey, user, iteration) {
+  return dataFile[scenarioKey][user.globalId][iteration];
 }
 
 function httpGetWithRetry(url, params) {
@@ -352,31 +339,31 @@ function getHttpParams(tagName){
   return params;
 }
 
-function beginScenarioLog(scenarioName, index0, virtualUserId, iteration) {
+function beginScenarioLog(scenarioName, user, iteration) {
   let body = JSON.stringify({
-    ScenarioKey: scenarioName,
-    Index0: index0,
-    VirtualUserId: virtualUserId,
-    Iteration: iteration,
+    ScenarioKey: scenarioName,    
+    UserGlobalId: user.globalId,
+    VirtualUserId: `${user.virtualUserId}`,
+    Iteration: `${iteration}`,
     Message: ""
   });
 
   http.post(`${dataWebServiceBaseUrl}/scenarios/beginlog`, body, getHttpParams());
 }
 
-function scenarioLog(scenarioName, index0, virtualUserId, iteration, message){
+function scenarioLog(scenarioName, user, iteration, message){
   let body = JSON.stringify({
     ScenarioKey: scenarioName,
-    Index0: index0,
-    VirtualUserId: virtualUserId,
-    Iteration: iteration,
+    UserGlobalId: user.globalId,
+    VirtualUserId: `${user.virtualUserId}`,
+    Iteration: `${iteration}`,
     Message: message
   });
 
   http.post(`${dataWebServiceBaseUrl}/scenarios/log`, body, getHttpParams());
 }
 
-function scenarioLogCheck(scenarioName, index0, virtualUserId, iteration, success, response) {
+function scenarioLogCheck(scenarioName, user, iteration, success, response) {
   let message;
   if (!success) {
     let status = response ? response.status : "undefined";
@@ -387,11 +374,19 @@ function scenarioLogCheck(scenarioName, index0, virtualUserId, iteration, succes
 
   let body = JSON.stringify({
     ScenarioKey: scenarioName,
-    Index0: index0,
-    VirtualUserId: virtualUserId,
-    Iteration: iteration,
+    UserGlobalId: user.globalId,
+    VirtualUserId: `${user.virtualUserId}`,
+    Iteration: `${iteration}`,
     Message: message
   });
 
   http.post(`${dataWebServiceBaseUrl}/scenarios/log`, body, getHttpParams());
+}
+
+function logCheckFailure(scenarioName, success, response) {
+  if (!success) {
+    let status = response ? response.status : "undefined";
+    console.log(`FAILED - Request to ${response.request.url} with returned ${status}`);
+    errorMetrics[scenarioName].add(1, { url: response.request.url });
+  }
 }

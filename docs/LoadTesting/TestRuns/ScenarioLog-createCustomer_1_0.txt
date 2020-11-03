@@ -1,6 +1,0 @@
-10/30/2020 16:09:39
-Scenario: createCustomer, VirtualUserId: 22, Index0: 1, Iteration: 0
-Sending CreateCustomer to Mobiles API, customerName: Armstrong-22-0 Corporation [http://localhost:5000/api/customers]
-Succeeded
-Check whether the Customer has been created, customerId: 40360992-68fd-4cb4-b380-9941e03465df [http://localhost:5000/api/customers/40360992-68fd-4cb4-b380-9941e03465df]
-Succeeded

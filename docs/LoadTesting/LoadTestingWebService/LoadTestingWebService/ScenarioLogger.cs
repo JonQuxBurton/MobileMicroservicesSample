@@ -22,7 +22,7 @@ namespace LoadTestingWebService
             var lines = new List<string>
             {
                 DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                $"Scenario: {scenarioLog.ScenarioKey}, VirtualUserId: {scenarioLog.VirtualUserId}, Index0: {scenarioLog.Index0}, Iteration: {scenarioLog.Iteration}"
+                $"Scenario: {scenarioLog.ScenarioKey}, VirtualUserId: {scenarioLog.VirtualUserId}, UserGlobalId: {scenarioLog.UserGlobalId}, Iteration: {scenarioLog.Iteration}"
             };
 
             File.WriteAllLines(filePath, lines);
@@ -42,7 +42,7 @@ namespace LoadTestingWebService
 
         private string GetFilePath(ScenarioLog scenarioLog)
         {
-            return $"{testDataSettings.Path}\\ScenarioLog-{scenarioLog.ScenarioKey}_{scenarioLog.Index0}_{scenarioLog.Iteration}.txt";
+            return $"{testDataSettings.Path}\\ScenarioLog-{scenarioLog.ScenarioKey}_{scenarioLog.UserGlobalId}_{scenarioLog.Iteration}.txt";
         }
     }
 }
