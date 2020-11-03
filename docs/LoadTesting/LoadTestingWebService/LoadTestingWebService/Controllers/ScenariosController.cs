@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LoadTestingWebService.Resources;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LoadTestingWebService.Controllers
 {
@@ -14,13 +15,13 @@ namespace LoadTestingWebService.Controllers
         }
 
         [HttpPost("beginlog")]
-        public bool BeginLog(ScenarioLog scenarioLog)
+        public bool BeginLog(ScenarioLogRequest scenarioLog)
         {
             return scenarioLogger.BeginLog(scenarioLog);
         }
 
         [HttpPost("log")]
-        public bool Log(ScenarioLog scenarioLog)
+        public bool Log(ScenarioLogRequest scenarioLog)
         {
             return scenarioLogger.Log(scenarioLog);
         }

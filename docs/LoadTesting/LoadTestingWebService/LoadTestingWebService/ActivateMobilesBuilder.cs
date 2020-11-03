@@ -5,13 +5,13 @@ namespace LoadTestingWebService
 {
     public class ActivateMobilesBuilder
     {
-        public Dictionary<Guid, ActivateMobileTestData[]> Build(TestDataSettings config)
+        public Dictionary<Guid, Dictionary<string, string>[]> Build(TestDataSettings config)
         {
-            var data = new Dictionary<Guid, ActivateMobileTestData[]>();
+            var data = new Dictionary<Guid, Dictionary<string, string>[]>();
 
             for (var i = 0; i < config.ActivateMobilesSettings.VirtualUsers; i++)
             {
-                var dataForIterations = new ActivateMobileTestData[config.ActivateMobilesSettings.Iterations];
+                var dataForIterations = new Dictionary<string, string>[config.ActivateMobilesSettings.Iterations];
                 data.Add(Guid.NewGuid(), dataForIterations);
 
                 for (var j = 0; j < config.ActivateMobilesSettings.Iterations; j++)
@@ -21,12 +21,12 @@ namespace LoadTestingWebService
 
                     var phoneNumber = GetPhoneNumber(ScenariosService.GlobalCounter);
                     var activationCode = GetActivationCode(ScenariosService.GlobalCounter);
-                    dataForIterations[j] = new ActivateMobileTestData
+                    dataForIterations[j] = new Dictionary<string, string>
                     {
-                        CustomerId = customerId,
-                        PhoneNumber = phoneNumber,
-                        MobileId = mobileId,
-                        ActivationCode = activationCode
+                        {"customerId", customerId},
+                        {"phoneNumber", phoneNumber},
+                        {"mobileId", mobileId},
+                        {"activationCode", activationCode}
                     };
                     ScenariosService.GlobalCounter++;
                 }

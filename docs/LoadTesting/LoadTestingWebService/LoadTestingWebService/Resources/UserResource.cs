@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace LoadTestingWebService
+namespace LoadTestingWebService.Resources
 {
-    public class User
+    public class UserResource
     {
         public int Index { get; set; }
         public int VirtualUserId { get; set; }

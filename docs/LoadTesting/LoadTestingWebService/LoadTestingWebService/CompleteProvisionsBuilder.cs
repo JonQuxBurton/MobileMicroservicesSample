@@ -5,13 +5,13 @@ namespace LoadTestingWebService
 {
     public class CompleteProvisionsBuilder
     {
-        public Dictionary<Guid, CompleteProvisionTestData[]> Build(TestDataSettings config)
+        public Dictionary<Guid, Dictionary<string, string>[]> Build(TestDataSettings config)
         {
-            var data = new Dictionary<Guid, CompleteProvisionTestData[]>();
+            var data = new Dictionary<Guid, Dictionary<string, string>[]>();
 
             for (var i = 0; i < config.CompleteProvisionsSettings.VirtualUsers; i++)
             {
-                var dataForIterations = new CompleteProvisionTestData[config.CompleteProvisionsSettings.Iterations];
+                var dataForIterations = new Dictionary<string, string>[config.CompleteProvisionsSettings.Iterations];
                 data.Add(Guid.NewGuid(), dataForIterations);
 
                 for (var j = 0; j < config.CompleteProvisionsSettings.Iterations; j++)
@@ -22,14 +22,15 @@ namespace LoadTestingWebService
                     var phoneNumber = GetPhoneNumber(ScenariosService.GlobalCounter);
                     var contactName = GetContactName(ScenariosService.GlobalCounter);
 
-                    dataForIterations[j] = new CompleteProvisionTestData
+                    dataForIterations[j] = new Dictionary<string, string>
                     {
-                        CustomerId = customerId,
-                        MobileId = mobileId,
-                        ProvisionOrderId = provisionOrderId,
-                        PhoneNumber = phoneNumber,
-                        ContactName = contactName
+                        {"customerId", customerId},
+                        {"mobileId", mobileId},
+                        {"provisionOrderId", provisionOrderId},
+                        {"phoneNumber", phoneNumber},
+                        {"contactName", contactName}
                     };
+                    
                     ScenariosService.GlobalCounter++;
                 }
             }

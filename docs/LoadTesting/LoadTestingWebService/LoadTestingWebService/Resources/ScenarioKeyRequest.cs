@@ -1,4 +1,4 @@
-﻿namespace LoadTestingWebService.Controllers
+﻿namespace LoadTestingWebService.Resources
 {
     public class ScenarioKeyRequest
     {

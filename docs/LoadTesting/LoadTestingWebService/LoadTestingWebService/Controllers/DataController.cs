@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using LoadTestingWebService.Resources;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoadTestingWebService.Controllers
@@ -10,16 +10,13 @@ namespace LoadTestingWebService.Controllers
     {
         private readonly IScenariosService scenariosService;
 
-        private static readonly ConcurrentDictionary<string, Scenario>
-            Scenarios = new ConcurrentDictionary<string, Scenario>();
-
         public DataController(IScenariosService scenariosService)
         {
             this.scenariosService = scenariosService;
         }
 
         [HttpPost]
-        public User Post(ScenarioKeyRequest scenarioKeyRequest)
+        public UserResource Post(ScenarioKeyRequest scenarioKeyRequest)
         {
             var scenarioKey = scenarioKeyRequest.ScenarioKey;
             var user = scenariosService.GetUserId(scenarioKey, scenarioKeyRequest.VirtualUserId);

@@ -1,22 +1,23 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Dapper;
+using Microsoft.Extensions.Options;
 
-namespace LoadTestingWebService
+namespace LoadTestingWebService.Data
 {
-    public class DataStore
+    public class DataStore : IDataStore
     {
-        private readonly string connectionString;
+        private readonly TestDataSettings testDataSettings;
 
-        public DataStore(TestDataSettings config)
+        public DataStore(IOptions<TestDataSettings> testDataSettingsOptions)
         {
-            connectionString = config.ConnectionString;
+            this.testDataSettings = testDataSettingsOptions.Value;
         }
 
         public int SetupDataForCompleteProvision(string customerId, string mobileId, string mobileOrderId,
             string phoneNumber, string contactName)
         {
-            using var connection = new SqlConnection(connectionString);
+            using var connection = new SqlConnection(testDataSettings.ConnectionString);
             var procedure = "[SetupDataForCompleteProvision]";
 
             var parameters = new DynamicParameters();
@@ -33,7 +34,7 @@ namespace LoadTestingWebService
 
         public int SetupDataForActivate(string customerId, string mobileId, string phoneNumber, string activationCode)
         {
-            using var connection = new SqlConnection(connectionString);
+            using var connection = new SqlConnection(testDataSettings.ConnectionString);
             var procedure = "[SetupDataForActivate]";
 
             var parameters = new DynamicParameters();
@@ -49,7 +50,7 @@ namespace LoadTestingWebService
         public int SetupDataForCompleteActivate(string customerId, string mobileId, string mobileOrderId,
             string phoneNumber)
         {
-            using var connection = new SqlConnection(connectionString);
+            using var connection = new SqlConnection(testDataSettings.ConnectionString);
             var procedure = "[SetupDataForCompleteActivate]";
 
             var parameters = new DynamicParameters();

@@ -2,6 +2,6 @@
 {
     public interface IScenarioTextGenerator
     {
-        string GenerateScenarioText(Data data);
+        string GenerateScenarioText(DataHolder data);
     }
 }

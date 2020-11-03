@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using LoadTestingWebService.Controllers;
+using LoadTestingWebService.Resources;
 using Microsoft.Extensions.Options;
 
 namespace LoadTestingWebService
@@ -16,7 +17,7 @@ namespace LoadTestingWebService
             this.testDataSettings = sestDataSettingsOptions.Value;
         }
 
-        public bool BeginLog(ScenarioLog scenarioLog)
+        public bool BeginLog(ScenarioLogRequest scenarioLog)
         {
             var filePath = GetFilePath(scenarioLog);
             var lines = new List<string>
@@ -30,7 +31,7 @@ namespace LoadTestingWebService
             return true;
         }
 
-        public bool Log(ScenarioLog scenarioLog)
+        public bool Log(ScenarioLogRequest scenarioLog)
         {
             var filePath = GetFilePath(scenarioLog);
 
@@ -40,7 +41,7 @@ namespace LoadTestingWebService
             return true;
         }
 
-        private string GetFilePath(ScenarioLog scenarioLog)
+        private string GetFilePath(ScenarioLogRequest scenarioLog)
         {
             return $"{testDataSettings.Path}\\ScenarioLog-{scenarioLog.ScenarioKey}_{scenarioLog.UserGlobalId}_{scenarioLog.Iteration}.txt";
         }

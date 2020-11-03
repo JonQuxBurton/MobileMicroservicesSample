@@ -5,23 +5,23 @@ namespace LoadTestingWebService
 {
     public class OrderMobilesBuilder
     {
-        public Dictionary<Guid, OrderMobileTestData[]> Build(TestDataSettings config)
+        public Dictionary<Guid, Dictionary<string, string>[]> Build(TestDataSettings config)
         {
-            var data = new Dictionary<Guid, OrderMobileTestData[]>();
+            var data = new Dictionary<Guid, Dictionary<string, string>[]>();
 
             for (var i = 0; i < config.OrderMobilesSettings.VirtualUsers; i++)
             {
-                var dataForIterations = new OrderMobileTestData[config.OrderMobilesSettings.Iterations];
+                var dataForIterations = new Dictionary<string, string>[config.OrderMobilesSettings.Iterations];
                 data.Add(Guid.NewGuid(), dataForIterations);
 
                 for (var j = 0; j < config.OrderMobilesSettings.Iterations; j++)
                 {
-                    dataForIterations[j] = new OrderMobileTestData
+                    dataForIterations[j] = new Dictionary<string, string>
                     {
-                        CustomerId = config.CustomerId,
-                        PhoneNumber = GetPhoneNumber(ScenariosService.GlobalCounter),
-                        ContactName = GetContactName(ScenariosService.GlobalCounter),
-                        ContactPhoneNumber = GetContactPhoneNumber(ScenariosService.GlobalCounter)
+                        {"customerId", config.CustomerId},
+                        {"phoneNumber", GetPhoneNumber(ScenariosService.GlobalCounter)},
+                        {"contactName", GetContactName(ScenariosService.GlobalCounter)},
+                        {"contactPhoneNumber", GetContactPhoneNumber(ScenariosService.GlobalCounter)}
                     };
                     ScenariosService.GlobalCounter++;
                 }

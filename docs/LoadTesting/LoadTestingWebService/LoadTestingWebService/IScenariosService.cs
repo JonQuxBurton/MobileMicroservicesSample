@@ -1,9 +1,11 @@
 ﻿using System;
+using LoadTestingWebService.Resources;
 
 namespace LoadTestingWebService
 {
     public interface IScenariosService
     {
-        User GetUserId(string scenarioKey, int virtualUserId);
+        UserResource GetUserId(string scenarioKey, int virtualUserId);
+        void GenerateData();
     }
 }

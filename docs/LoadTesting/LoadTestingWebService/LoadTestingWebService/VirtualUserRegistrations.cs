@@ -2,12 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using LoadTestingWebService.Resources;
 
 namespace LoadTestingWebService
 {
     public class VirtualUserRegistrations
     {
-        private readonly ConcurrentDictionary<int, User> map = new ConcurrentDictionary<int, User>();
+        private readonly ConcurrentDictionary<int, UserResource> map = new ConcurrentDictionary<int, UserResource>();
         private readonly IEnumerable<Guid> userGlobalIds;
 
         public VirtualUserRegistrations(IEnumerable<Guid> userGlobalIds)
@@ -15,7 +16,7 @@ namespace LoadTestingWebService
             this.userGlobalIds = userGlobalIds;
         }
 
-        public User Get(int virtualUserId)
+        public UserResource Get(int virtualUserId)
         {
             if (!map.ContainsKey(virtualUserId))
             {
@@ -23,7 +24,7 @@ namespace LoadTestingWebService
                 if (map.Values.Any())
                     nextIndex = map.Values.Max(x => x.Index) + 1;
                 var globalId = userGlobalIds.ElementAt(nextIndex);
-                map.TryAdd(virtualUserId, new User
+                map.TryAdd(virtualUserId, new UserResource
                 {
                     GlobalId = globalId,
                     Index = nextIndex,

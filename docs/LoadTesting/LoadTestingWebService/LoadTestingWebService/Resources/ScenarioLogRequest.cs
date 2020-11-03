@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace LoadTestingWebService.Controllers
+namespace LoadTestingWebService.Resources
 {
-    public class ScenarioLog
+    public class ScenarioLogRequest
     {
         public string ScenarioKey { get; set; }
         public string VirtualUserId { get; set; }

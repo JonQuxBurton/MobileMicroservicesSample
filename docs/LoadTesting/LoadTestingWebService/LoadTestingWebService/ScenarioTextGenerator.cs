@@ -1,19 +1,11 @@
 ﻿using System.Linq;
 using System.Text;
-using Microsoft.Extensions.Options;
 
 namespace LoadTestingWebService
 {
     public class ScenarioTextGenerator : IScenarioTextGenerator
     {
-        private readonly TestDataSettings testDataSettings;
-
-        public ScenarioTextGenerator(IOptions<TestDataSettings> testDataSettingsOptions)
-        {
-            testDataSettings = testDataSettingsOptions.Value;
-        }
-
-        public string GenerateScenarioText(Data data)
+        public string GenerateScenarioText(DataHolder data)
         {
             var builder = new StringBuilder();
 
@@ -30,10 +22,10 @@ namespace LoadTestingWebService
 Scenario: OrderMobile
 --------------------------------------------------
 DATA
-CustomerId:         {orderMobileTestData.CustomerId}
-PhoneNumber:        {orderMobileTestData.PhoneNumber}
-ContactName:        {orderMobileTestData.ContactName}
-ContactPhoneNumber: {orderMobileTestData.ContactPhoneNumber}
+CustomerId:         {orderMobileTestData["customerId"]}
+PhoneNumber:        {orderMobileTestData["phoneNumber"]}
+ContactName:        {orderMobileTestData["contactName"]}
+ContactPhoneNumber: {orderMobileTestData["contactPhoneNumber"]}
 --------------------------------------------------
 AT END
 Mobile created with
@@ -61,9 +53,9 @@ ExternalSimCardsProvider Order created with
 Scenario: CompleteProvision
 --------------------------------------------------
 DATA
-CustomerId:         {orderMobileTestData.CustomerId}
-PhoneNumber:        {orderMobileTestData.PhoneNumber}
-MobileId:           {orderMobileTestData.MobileId}
+CustomerId:         {orderMobileTestData["customerId"]}
+PhoneNumber:        {orderMobileTestData["phoneNumber"]}
+MobileId:           {orderMobileTestData["mobileId"]}
 --------------------------------------------------
 AT START
 SimCards Order has
@@ -97,10 +89,10 @@ ExternalSimCardsProvider Order update to
 Scenario: ActivateMobile
 --------------------------------------------------
 DATA
-CustomerId:     {activateMobileTestData.CustomerId}
-PhoneNumber:    {activateMobileTestData.PhoneNumber}
-MobileId:       {activateMobileTestData.MobileId}
-ActivationCode: {activateMobileTestData.ActivationCode}
+CustomerId:     {activateMobileTestData["customerId"]}
+PhoneNumber:    {activateMobileTestData["phoneNumber"]}
+MobileId:       {activateMobileTestData["mobileId"]}
+ActivationCode: {activateMobileTestData["activationCode"]}
 --------------------------------------------------
 AT START
 Mobile has
@@ -110,7 +102,7 @@ AT END
 Mobile updated to
     State:      'ProcessingActivate'
 MobileTelecomsNetwork Order created with
-    MobileId    {activateMobileTestData.MobileDbId}
+    MobileId    {activateMobileTestData["mobileDbId"]}
     Status:     'Sent'
 ExternalTelecomsNetwork Order created with
     Status:     'New'
@@ -132,9 +124,9 @@ ExternalTelecomsNetwork Order created with
 Scenario: CompleteActivate
 --------------------------------------------------
 DATA
-CustomerId:     {completeActivateTestData.CustomerId}
-PhoneNumber:    {completeActivateTestData.PhoneNumber}
-MobileId:       {completeActivateTestData.MobileId}
+CustomerId:     {completeActivateTestData["customerId"]}
+PhoneNumber:    {completeActivateTestData["phoneNumber"]}
+MobileId:       {completeActivateTestData["mobileId"]}
 --------------------------------------------------
 AT START
 Mobile has
@@ -148,7 +140,7 @@ AT END
 Mobile updated to
     State:      'Live'
 MobileTelecomsNetwork Order updated to
-    MobileId    {completeActivateTestData.MobileDbId}
+    MobileId    {completeActivateTestData["mobileDbId"]}
     Status:     'Completed'
 ExternalTelecomsNetwork Order created with
     Status:     'Completed'

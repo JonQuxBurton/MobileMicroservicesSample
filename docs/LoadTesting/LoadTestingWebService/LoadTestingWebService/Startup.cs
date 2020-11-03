@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LoadTestingWebService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,7 @@ namespace LoadTestingWebService
             services.AddSingleton<IScenarioLogger, ScenarioLogger>();
             services.AddSingleton<IScenariosService, ScenariosService>();
             services.AddSingleton<IScenarioTextGenerator, ScenarioTextGenerator>();
+            services.AddSingleton<IDataStore, DataStore>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,15 +57,7 @@ namespace LoadTestingWebService
                 endpoints.MapControllers();
             });
 
-            //var testDataSettings = new TestDataSettings();
-            //Configuration.Bind("TestDataSettings", testDataSettings);
-            //var setupData = new SetupData(testDataSettings);
-            //setupData.Execute();
-
-            //var scenariosService = new ScenariosService(testDataSettings);
-
-            // TODO
-            // Make a methods to call on the ScenarioService, which build. Then call it from here.
+            scenariosService.GenerateData();
         }
     }
 }

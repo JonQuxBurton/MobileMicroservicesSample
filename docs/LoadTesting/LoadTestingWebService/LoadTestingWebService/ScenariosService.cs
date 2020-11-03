@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LoadTestingWebService.Data;
+using LoadTestingWebService.Resources;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -11,7 +13,9 @@ namespace LoadTestingWebService
 {
     public class ScenariosService : IScenariosService
     {
+        private readonly TestDataSettings testDataSettings;
         private readonly IScenarioTextGenerator scenarioTextGenerator;
+        private readonly IDataStore dataStore;
         public static int GlobalCounter = 1;
 
         private readonly object locker = new object();
@@ -22,12 +26,17 @@ namespace LoadTestingWebService
         public ConcurrentDictionary<string, List<Guid>> VirtualUserGlobalIds =
             new ConcurrentDictionary<string, List<Guid>>();
 
-        public ScenariosService(IOptions<TestDataSettings> testDataSettingsOptions, IScenarioTextGenerator scenarioTextGenerator)
+        public ScenariosService(IOptions<TestDataSettings> testDataSettingsOptions,
+            IScenarioTextGenerator scenarioTextGenerator,
+            IDataStore dataStore)
         {
+            this.testDataSettings = testDataSettingsOptions.Value;
             this.scenarioTextGenerator = scenarioTextGenerator;
-            var testDataSettings = testDataSettingsOptions.Value;
-            var dataStore = new DataStore(testDataSettings);
+            this.dataStore = dataStore;
+        }
 
+        public void GenerateData()
+        {
             Console.WriteLine("Generating data...");
             var createCustomersUsers = new List<Guid>();
             for (var i = 0; i < testDataSettings.CreateCustomersSettings.VirtualUsers; i++)
@@ -73,7 +82,7 @@ namespace LoadTestingWebService
             completeActivatesDataWriter.Write(dataStore, dataForCompleteActivates);
 
             Console.WriteLine($"Writing data to load testing data file ({testDataSettings.FileNameData})...");
-            var allData = new Data
+            var allData = new DataHolder
             {
                 OrderMobile = dataForOrderMobiles,
                 CompleteProvision = dataForCompleteProvisions,
@@ -92,9 +101,9 @@ namespace LoadTestingWebService
             Console.WriteLine("Done!");
         }
 
-        public User GetUserId(string scenarioKey, int virtualUserId)
+        public UserResource GetUserId(string scenarioKey, int virtualUserId)
         {
-            User user;
+            UserResource user;
 
             lock (locker)
             {
@@ -109,7 +118,7 @@ namespace LoadTestingWebService
             return user;
         }
 
-        private static string ConvertToJson(Data data)
+        private static string ConvertToJson(DataHolder data)
         {
             var contractResolver = new DefaultContractResolver
             {
