@@ -36,8 +36,12 @@ namespace LoadTestingWebService
 
             services.AddSingleton<IScenarioLogger, ScenarioLogger>();
             services.AddSingleton<IScenariosService, ScenariosService>();
-            services.AddSingleton<IScenarioTextGenerator, ScenarioTextGenerator>();
+            services.AddSingleton<IScenarioScriptFileWriter, ScenarioScriptFileWriter>();
             services.AddSingleton<IDataStore, DataStore>();
+            services.AddSingleton<IDataGenerator, DataGenerator>();
+            services.AddSingleton<IDataFileWriter, DataFileWriter>();
+            services.AddSingleton<IDataStoreWriter, DataStoreWriter>();
+            services.AddSingleton<IScenariosDataBuilder, ScenariosDataBuilder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

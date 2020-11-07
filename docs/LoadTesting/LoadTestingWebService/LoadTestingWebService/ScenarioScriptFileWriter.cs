@@ -1,11 +1,30 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Options;
 
 namespace LoadTestingWebService
 {
-    public class ScenarioTextGenerator : IScenarioTextGenerator
+    public class ScenarioScriptFileWriter : IScenarioScriptFileWriter
     {
-        public string GenerateScenarioText(DataHolder data)
+        private readonly TestDataSettings testDataSettings;
+
+        public ScenarioScriptFileWriter(IOptions<TestDataSettings> testDataSettingsOptions)
+        {
+            testDataSettings = testDataSettingsOptions.Value;
+        }
+
+        public void Write(Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>>  dataInFormatForFile)
+        {
+            File.WriteAllText(
+                Path.Combine(testDataSettings.Path, 
+                    testDataSettings.FileNameScenarios),
+                GenerateScenarioText(dataInFormatForFile));
+        }
+
+        private string GenerateScenarioText(Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>> data)
         {
             var builder = new StringBuilder();
 
@@ -13,9 +32,9 @@ namespace LoadTestingWebService
             builder.Append("==================================================");
             builder.AppendLine();
 
-            if (data.OrderMobile.Any())
+            if (data["OrderMobile"].Any())
             {
-                foreach (var orderMobileTestData in data.OrderMobile.Values.ElementAt(0))
+                foreach (var orderMobileTestData in data["OrderMobile"].Values.ElementAt(0))
                 {
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
@@ -44,9 +63,9 @@ ExternalSimCardsProvider Order created with
                 builder.AppendLine();
             }
 
-            if (data.CompleteProvision.Any())
+            if (data["CompleteProvision"].Any())
             {
-                foreach (var orderMobileTestData in data.CompleteProvision.Values.ElementAt(0))
+                foreach (var orderMobileTestData in data["CompleteProvision"].Values.ElementAt(0))
                 {
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
@@ -80,9 +99,9 @@ ExternalSimCardsProvider Order update to
                 builder.AppendLine();
             }
 
-            if (data.ActivateMobile.Any())
+            if (data["ActivateMobile"].Any())
             {
-                foreach (var activateMobileTestData in data.ActivateMobile.Values.ElementAt(0))
+                foreach (var activateMobileTestData in data["ActivateMobile"].Values.ElementAt(0))
                 {
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
@@ -116,8 +135,8 @@ ExternalTelecomsNetwork Order created with
                 builder.AppendLine();
             }
 
-            if (data.CompleteActivate.Any())
-                foreach (var completeActivateTestData in data.CompleteActivate.Values.ElementAt(0))
+            if (data["CompleteActivate"].Any())
+                foreach (var completeActivateTestData in data["CompleteActivate"].Values.ElementAt(0))
                 {
                     var scenariosTextTemplate = $@"
 --------------------------------------------------

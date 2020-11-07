@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using LoadTestingWebService.Data;
 using LoadTestingWebService.Resources;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace LoadTestingWebService
 {
     public class ScenariosService : IScenariosService
     {
-        private readonly TestDataSettings testDataSettings;
-        private readonly IScenarioTextGenerator scenarioTextGenerator;
-        private readonly IDataStore dataStore;
-        public static int GlobalCounter = 1;
+        private readonly IDataFileWriter dataFileWriter;
+        private readonly IDataGenerator dataGenerator;
+        private readonly IDataStoreWriter dataStoreWriter;
 
         private readonly object locker = new object();
+        private readonly IScenariosDataBuilder scenariosDataBuilder;
+        private readonly IScenarioScriptFileWriter scenarioTextGenerator;
+        private readonly TestDataSettings testDataSettings;
 
         public ConcurrentDictionary<string, VirtualUserRegistrations> Registrations =
             new ConcurrentDictionary<string, VirtualUserRegistrations>();
@@ -27,76 +25,65 @@ namespace LoadTestingWebService
             new ConcurrentDictionary<string, List<Guid>>();
 
         public ScenariosService(IOptions<TestDataSettings> testDataSettingsOptions,
-            IScenarioTextGenerator scenarioTextGenerator,
-            IDataStore dataStore)
+            IScenariosDataBuilder scenariosDataBuilder,
+            IScenarioScriptFileWriter scenarioTextGenerator,
+            IDataGenerator dataGenerator,
+            IDataFileWriter dataFileWriter,
+            IDataStoreWriter dataStoreWriter)
         {
-            this.testDataSettings = testDataSettingsOptions.Value;
+            testDataSettings = testDataSettingsOptions.Value;
+            this.scenariosDataBuilder = scenariosDataBuilder;
             this.scenarioTextGenerator = scenarioTextGenerator;
-            this.dataStore = dataStore;
+            this.dataGenerator = dataGenerator;
+            this.dataFileWriter = dataFileWriter;
+            this.dataStoreWriter = dataStoreWriter;
         }
 
         public void GenerateData()
         {
+            var scenarios = new List<Scenario>
+            {
+                new CreateCustomerScenario(testDataSettings.CreateCustomersSettings.VirtualUsers,
+                    testDataSettings.CreateCustomersSettings.Iterations, false, false),
+                new OrderMobileScenario(testDataSettings.OrderMobilesSettings.VirtualUsers,
+                    testDataSettings.OrderMobilesSettings.Iterations,
+                    true,
+                    false,
+                    dataGenerator),
+                new CompleteProvisionScenario(testDataSettings.CompleteProvisionsSettings.VirtualUsers,
+                    testDataSettings.CompleteProvisionsSettings.Iterations,
+                    true,
+                    true,
+                    dataGenerator),
+                new CompleteActivateScenario(testDataSettings.CompleteActivatesSettings.VirtualUsers,
+                    testDataSettings.CompleteActivatesSettings.Iterations,
+                    true,
+                    true,
+                    dataGenerator),
+                new ActivateMobileScenario(testDataSettings.ActivateMobilesSettings.VirtualUsers,
+                    testDataSettings.ActivateMobilesSettings.Iterations,
+                    true,
+                    true,
+                    dataGenerator)
+            };
+
             Console.WriteLine("Generating data...");
-            var createCustomersUsers = new List<Guid>();
-            for (var i = 0; i < testDataSettings.CreateCustomersSettings.VirtualUsers; i++)
-                createCustomersUsers.Add(Guid.NewGuid());
-            VirtualUserGlobalIds.TryAdd("createCustomer", createCustomersUsers);
 
-            var orderMobilesBuilder = new OrderMobilesBuilder();
-            var dataForOrderMobiles = orderMobilesBuilder.Build(testDataSettings);
-            var users = new List<Guid>();
-            for (var i = 0; i < dataForOrderMobiles.Keys.Count; i++)
-                users.Add(dataForOrderMobiles.Keys.ElementAt(i));
-            VirtualUserGlobalIds.TryAdd("orderMobile", users);
-
-            var completeProvisionsBuilder = new CompleteProvisionsBuilder();
-            var dataForCompleteProvisions = completeProvisionsBuilder.Build(testDataSettings);
-            var users2 = new List<Guid>();
-            for (var i = 0; i < dataForCompleteProvisions.Keys.Count; i++)
-                users2.Add(dataForCompleteProvisions.Keys.ElementAt(i));
-            VirtualUserGlobalIds.TryAdd("completeProvision", users2);
-
-            var activateMobilesBuilder = new ActivateMobilesBuilder();
-            var dataForActivateMobiles = activateMobilesBuilder.Build(testDataSettings);
-            var users3 = new List<Guid>();
-            for (var i = 0; i < dataForActivateMobiles.Keys.Count; i++)
-                users3.Add(dataForActivateMobiles.Keys.ElementAt(i));
-            VirtualUserGlobalIds.TryAdd("activateMobile", users3);
-
-            var completeActivatesBuilder = new CompleteActivatesBuilder();
-            var dataForCompleteActivates = completeActivatesBuilder.Build(testDataSettings);
-            var users4 = new List<Guid>();
-            for (var i = 0; i < dataForCompleteActivates.Keys.Count; i++)
-                users4.Add(dataForCompleteActivates.Keys.ElementAt(i));
-            VirtualUserGlobalIds.TryAdd("completeActivate", users4);
+            var dataForScenarios = scenariosDataBuilder.Build(scenarios);
+            StoreVirtualUserGlobalIds(dataForScenarios);
 
             Console.WriteLine("Writing data to Database...");
-            var completeProvisionsDataWriter = new CompleteProvisionsDataWriter();
-            completeProvisionsDataWriter.Write(dataStore, dataForCompleteProvisions);
 
-            var activateMobilesDataWriter = new ActivateMobilesDataWriter();
-            activateMobilesDataWriter.Write(dataStore, dataForActivateMobiles);
-
-            var completeActivatesDataWriter = new CompleteActivatesDataWriter();
-            completeActivatesDataWriter.Write(dataStore, dataForCompleteActivates);
+            var dataForScenariosWithDatabaseIds = dataStoreWriter.Write(scenarios, dataForScenarios);
 
             Console.WriteLine($"Writing data to load testing data file ({testDataSettings.FileNameData})...");
-            var allData = new DataHolder
-            {
-                OrderMobile = dataForOrderMobiles,
-                CompleteProvision = dataForCompleteProvisions,
-                ActivateMobile = dataForActivateMobiles,
-                CompleteActivate = dataForCompleteActivates
-            };
-            var json = ConvertToJson(allData);
-            File.WriteAllText(Path.Combine(testDataSettings.Path, testDataSettings.FileNameData), json);
+
+            var dataInFormatForFile = GetDataInFormatForFile(scenarios, dataForScenariosWithDatabaseIds);
+            dataFileWriter.WriteDataFile(dataInFormatForFile);
 
             Console.WriteLine($"Writing data to Scenario Script file ({testDataSettings.FileNameScenarios})...");
-            
-            File.WriteAllText(
-                Path.Combine(testDataSettings.Path, testDataSettings.FileNameScenarios),
-                this.scenarioTextGenerator.GenerateScenarioText(allData));
+
+            scenarioTextGenerator.Write(dataInFormatForFile);
 
             Console.WriteLine("Done!");
         }
@@ -118,19 +105,25 @@ namespace LoadTestingWebService
             return user;
         }
 
-        private static string ConvertToJson(DataHolder data)
+        private static Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>> GetDataInFormatForFile(
+            List<Scenario> scenarios, Dictionary<string, ScenarioData> dataForScenariosWithDatabaseIds)
         {
-            var contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
+            var scenariosWhichRequireData =
+                scenarios.Where(x => x.RequiresData).Select(y => y.GetType().Name.Replace("Scenario", ""))
+                    .ToList();
 
-            var json = JsonConvert.SerializeObject(data, new JsonSerializerSettings
-            {
-                ContractResolver = contractResolver,
-                Formatting = Formatting.Indented
-            });
-            return json;
+            var allData = new Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>>();
+
+            foreach (var scenarioToWrite in scenariosWhichRequireData)
+                allData.Add(scenarioToWrite, dataForScenariosWithDatabaseIds[scenarioToWrite].Data);
+
+            return allData;
+        }
+
+        private void StoreVirtualUserGlobalIds(Dictionary<string, ScenarioData> data)
+        {
+            foreach (var scenarioData in data)
+                VirtualUserGlobalIds.TryAdd(scenarioData.Key, data[scenarioData.Key].UserGlobalIds);
         }
     }
 }

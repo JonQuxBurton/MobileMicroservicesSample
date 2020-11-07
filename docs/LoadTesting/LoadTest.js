@@ -6,11 +6,11 @@ const vus = 5;
 const iterations = 3;
 
 const scenarios = {
-  createCustomer: "createCustomer",
-  orderMobile: "orderMobile",
-  completeProvision: "completeProvision",
-  activateMobile: "activateMobile",
-  completeActivate: "completeActivate"
+  createCustomer: "CreateCustomer",
+  orderMobile: "OrderMobile",
+  completeProvision: "CompleteProvision",
+  activateMobile: "ActivateMobile",
+  completeActivate: "CompleteActivate"
 }
 
 const SLEEP_DURATION = 0.1;
@@ -169,11 +169,11 @@ export function completeProvision() {
     beginScenarioLog(scenarioName, user, __ITER);    
     let scenarioData = getScenarioDataForUser(dataFile, scenarioName, user, __ITER);  
     let mobileId = scenarioData.mobileId;
-    let provisionOrderId = scenarioData.provisionOrderId;
+    let mobileOrderId = scenarioData.mobileOrderId;
     let url;
 
-    url = `${baseUrlExternalSimCards}/orders/${provisionOrderId}/complete`;
-    scenarioLog(scenarioName, user, __ITER, `Sending CompleteProvisionOrder to External Service, ProvisionOrderId: ${provisionOrderId} [${url}]`);
+    url = `${baseUrlExternalSimCards}/orders/${mobileOrderId}/complete`;
+    scenarioLog(scenarioName, user, __ITER, `Sending CompleteProvisionOrder to External Service, ProvisionOrderId: ${mobileOrderId} [${url}]`);
     let completeProvisionResponse = http.post(url, "", getHttpParams(scenarioName));
     
     let completeProvisionResponseSuccess = check(completeProvisionResponse, {
@@ -252,11 +252,11 @@ export function completeActivate() {
     beginScenarioLog(scenarioName, user, __ITER);
     let scenarioData = getScenarioDataForUser(dataFile, scenarioName, user, __ITER);
     let mobileId = scenarioData.mobileId;
-    let activateOrderId = scenarioData.activateOrderId;
+    let mobileOrderId = scenarioData.mobileOrderId;
     let url;
 
-    url = `${baseUrlExternalTelecomsNetwork}/orders/${activateOrderId}/complete`;
-    scenarioLog(scenarioName, user, __ITER, `Sending CompleteActivateOrder to External Service, ActivateOrderId: ${activateOrderId} [${url}]`);
+    url = `${baseUrlExternalTelecomsNetwork}/orders/${mobileOrderId}/complete`;
+    scenarioLog(scenarioName, user, __ITER, `Sending CompleteActivateOrder to External Service, ActivateOrderId: ${mobileOrderId} [${url}]`);
     let completeActivateResponse = http.post(url, "", getHttpParams(scenarioName));
 
     let completeActivateSuccess = check(completeActivateResponse, {

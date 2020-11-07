@@ -4,9 +4,9 @@ GO
 /*
 Setup data for test: The External Service has completed a Mobile Provision Order
 */
-drop PROCEDURE SetupDataForActivate;
+drop PROCEDURE SetupDataForActivateMobile;
 go
-CREATE PROCEDURE SetupDataForActivate 
+CREATE PROCEDURE SetupDataForActivateMobile 
 @customerId uniqueidentifier, 
 @mobileId uniqueidentifier,
 @phoneNumber  varchar(50),
