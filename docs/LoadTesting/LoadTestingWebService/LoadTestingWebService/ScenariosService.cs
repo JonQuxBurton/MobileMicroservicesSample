@@ -105,17 +105,29 @@ namespace LoadTestingWebService
             return user;
         }
 
-        private static Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>> GetDataInFormatForFile(
+        private static Dictionary<string, List<UsersData>> GetDataInFormatForFile(
             List<Scenario> scenarios, Dictionary<string, ScenarioData> dataForScenariosWithDatabaseIds)
         {
             var scenariosWhichRequireData =
                 scenarios.Where(x => x.RequiresData).Select(y => y.GetType().Name.Replace("Scenario", ""))
                     .ToList();
 
-            var allData = new Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>>();
+            var allData = new Dictionary<string, List<UsersData>>();
 
             foreach (var scenarioToWrite in scenariosWhichRequireData)
-                allData.Add(scenarioToWrite, dataForScenariosWithDatabaseIds[scenarioToWrite].Data);
+            {
+                var usersDataList = new List<UsersData>();
+                foreach (var key in dataForScenariosWithDatabaseIds[scenarioToWrite].Data.Keys)
+                {
+                   usersDataList.Add(new UsersData
+                   {
+                       UserId = key,
+                       Data = dataForScenariosWithDatabaseIds[scenarioToWrite].Data[key]
+                   }); 
+                }
+
+                allData.Add(scenarioToWrite, usersDataList);
+            }
 
             return allData;
         }

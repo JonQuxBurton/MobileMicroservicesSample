@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +15,7 @@ namespace LoadTestingWebService
             testDataSettings = testDataSettingsOptions.Value;
         }
 
-        public void Write(Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>>  dataInFormatForFile)
+        public void Write(Dictionary<string, List<UsersData>>  dataInFormatForFile)
         {
             File.WriteAllText(
                 Path.Combine(testDataSettings.Path, 
@@ -24,7 +23,7 @@ namespace LoadTestingWebService
                 GenerateScenarioText(dataInFormatForFile));
         }
 
-        private string GenerateScenarioText(Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>> data)
+        private string GenerateScenarioText(Dictionary<string, List<UsersData>> data)
         {
             var builder = new StringBuilder();
 
@@ -34,17 +33,18 @@ namespace LoadTestingWebService
 
             if (data["OrderMobile"].Any())
             {
-                foreach (var orderMobileTestData in data["OrderMobile"].Values.ElementAt(0))
+                foreach (var usersData in data["OrderMobile"])
                 {
+                    var iterationsData = usersData.Data[0];
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: OrderMobile
 --------------------------------------------------
 DATA
-CustomerId:         {orderMobileTestData["customerId"]}
-PhoneNumber:        {orderMobileTestData["phoneNumber"]}
-ContactName:        {orderMobileTestData["contactName"]}
-ContactPhoneNumber: {orderMobileTestData["contactPhoneNumber"]}
+CustomerId:         {iterationsData["customerId"]}
+PhoneNumber:        {iterationsData["phoneNumber"]}
+ContactName:        {iterationsData["contactName"]}
+ContactPhoneNumber: {iterationsData["contactPhoneNumber"]}
 --------------------------------------------------
 AT END
 Mobile created with
@@ -65,16 +65,17 @@ ExternalSimCardsProvider Order created with
 
             if (data["CompleteProvision"].Any())
             {
-                foreach (var orderMobileTestData in data["CompleteProvision"].Values.ElementAt(0))
+                foreach (var usersData in data["CompleteProvision"])
                 {
+                    var iterationData = usersData.Data[0];
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: CompleteProvision
 --------------------------------------------------
 DATA
-CustomerId:         {orderMobileTestData["customerId"]}
-PhoneNumber:        {orderMobileTestData["phoneNumber"]}
-MobileId:           {orderMobileTestData["mobileId"]}
+CustomerId:         {iterationData["customerId"]}
+PhoneNumber:        {iterationData["phoneNumber"]}
+MobileId:           {iterationData["mobileId"]}
 --------------------------------------------------
 AT START
 SimCards Order has
@@ -101,17 +102,18 @@ ExternalSimCardsProvider Order update to
 
             if (data["ActivateMobile"].Any())
             {
-                foreach (var activateMobileTestData in data["ActivateMobile"].Values.ElementAt(0))
+                foreach (var usersData in data["ActivateMobile"])
                 {
+                    var iterationData = usersData.Data[0];
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: ActivateMobile
 --------------------------------------------------
 DATA
-CustomerId:     {activateMobileTestData["customerId"]}
-PhoneNumber:    {activateMobileTestData["phoneNumber"]}
-MobileId:       {activateMobileTestData["mobileId"]}
-ActivationCode: {activateMobileTestData["activationCode"]}
+CustomerId:     {iterationData["customerId"]}
+PhoneNumber:    {iterationData["phoneNumber"]}
+MobileId:       {iterationData["mobileId"]}
+ActivationCode: {iterationData["activationCode"]}
 --------------------------------------------------
 AT START
 Mobile has
@@ -121,7 +123,7 @@ AT END
 Mobile updated to
     State:      'ProcessingActivate'
 MobileTelecomsNetwork Order created with
-    MobileId    {activateMobileTestData["mobileDbId"]}
+    MobileId    {iterationData["mobileDbId"]}
     Status:     'Sent'
 ExternalTelecomsNetwork Order created with
     Status:     'New'
@@ -136,16 +138,17 @@ ExternalTelecomsNetwork Order created with
             }
 
             if (data["CompleteActivate"].Any())
-                foreach (var completeActivateTestData in data["CompleteActivate"].Values.ElementAt(0))
+                foreach (var usersData in data["CompleteActivate"])
                 {
+                    var iterationData = usersData.Data[0];
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: CompleteActivate
 --------------------------------------------------
 DATA
-CustomerId:     {completeActivateTestData["customerId"]}
-PhoneNumber:    {completeActivateTestData["phoneNumber"]}
-MobileId:       {completeActivateTestData["mobileId"]}
+CustomerId:     {iterationData["customerId"]}
+PhoneNumber:    {iterationData["phoneNumber"]}
+MobileId:       {iterationData["mobileId"]}
 --------------------------------------------------
 AT START
 Mobile has
@@ -159,7 +162,7 @@ AT END
 Mobile updated to
     State:      'Live'
 MobileTelecomsNetwork Order updated to
-    MobileId    {completeActivateTestData["mobileDbId"]}
+    MobileId    {iterationData["mobileDbId"]}
     Status:     'Completed'
 ExternalTelecomsNetwork Order created with
     Status:     'Completed'

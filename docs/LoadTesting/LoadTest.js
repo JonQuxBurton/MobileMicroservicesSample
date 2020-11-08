@@ -298,7 +298,7 @@ function getUser(scenarioKey, vuId, iteration){
 }
 
 function getScenarioDataForUser(dataFile, scenarioKey, user, iteration) {
-  return dataFile[scenarioKey][user.globalId][iteration];
+  return dataFile[scenarioKey].filter(x => x.userId===user.globalId)[0].data[iteration];
 }
 
 function httpGetWithRetry(url, params) {

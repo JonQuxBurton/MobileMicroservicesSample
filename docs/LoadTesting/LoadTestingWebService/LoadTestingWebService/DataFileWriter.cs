@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -16,13 +15,13 @@ namespace LoadTestingWebService
             testDataSettings = testDataSettingsOptions.Value;
         }
 
-        public void WriteDataFile(Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>> allData)
+        public void WriteDataFile(Dictionary<string, List<UsersData>> allData)
         {
             var json = ConvertToJson(allData);
             File.WriteAllText(Path.Combine(testDataSettings.Path, testDataSettings.FileNameData), json);
         }
 
-        private static string ConvertToJson(Dictionary<string, Dictionary<Guid, Dictionary<string, string>[]>> data)
+        private static string ConvertToJson(Dictionary<string, List<UsersData>> data)
         {
             var contractResolver = new DefaultContractResolver
             {
