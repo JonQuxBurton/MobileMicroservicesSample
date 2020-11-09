@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using LoadTestingWebService.Controllers;
 using LoadTestingWebService.Resources;
 using Microsoft.Extensions.Options;
 

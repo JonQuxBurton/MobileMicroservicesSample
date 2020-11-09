@@ -6,8 +6,8 @@ namespace LoadTestingWebService
     {
         private readonly IDataGenerator dataGenerator;
 
-        public CompleteProvisionScenario(int virtualUsers, int iterations, bool requiresData, bool requiresDataInDatabase, IDataGenerator dataGenerator) 
-            : base(virtualUsers, iterations, requiresData, requiresDataInDatabase)
+        public CompleteProvisionScenario(ScenarioSettings scenarioSettings, IDataGenerator dataGenerator) 
+            : base(scenarioSettings)
         {
             this.dataGenerator = dataGenerator;
         }

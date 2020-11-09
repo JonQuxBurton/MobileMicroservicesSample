@@ -1,5 +1,4 @@
-﻿using LoadTestingWebService.Controllers;
-using LoadTestingWebService.Resources;
+﻿using LoadTestingWebService.Resources;
 
 namespace LoadTestingWebService
 {

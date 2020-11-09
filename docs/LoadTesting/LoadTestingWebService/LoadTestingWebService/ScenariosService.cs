@@ -10,10 +10,11 @@ namespace LoadTestingWebService
     public class ScenariosService : IScenariosService
     {
         private readonly IDataFileWriter dataFileWriter;
-        private readonly IDataGenerator dataGenerator;
         private readonly IDataStoreWriter dataStoreWriter;
 
         private readonly object locker = new object();
+        private readonly ScenariosSettings scenariosSettings;
+        private readonly IScenariosFactory scenariosFactory;
         private readonly IScenariosDataBuilder scenariosDataBuilder;
         private readonly IScenarioScriptFileWriter scenarioTextGenerator;
         private readonly TestDataSettings testDataSettings;
@@ -25,47 +26,25 @@ namespace LoadTestingWebService
             new ConcurrentDictionary<string, List<Guid>>();
 
         public ScenariosService(IOptions<TestDataSettings> testDataSettingsOptions,
+            IOptions<ScenariosSettings> scenariosSettingsOptions,
+            IScenariosFactory scenariosFactory,
             IScenariosDataBuilder scenariosDataBuilder,
             IScenarioScriptFileWriter scenarioTextGenerator,
-            IDataGenerator dataGenerator,
             IDataFileWriter dataFileWriter,
             IDataStoreWriter dataStoreWriter)
         {
-            testDataSettings = testDataSettingsOptions.Value;
+            this.testDataSettings = testDataSettingsOptions.Value;
+            this.scenariosSettings = scenariosSettingsOptions.Value;
+            this.scenariosFactory = scenariosFactory;
             this.scenariosDataBuilder = scenariosDataBuilder;
             this.scenarioTextGenerator = scenarioTextGenerator;
-            this.dataGenerator = dataGenerator;
             this.dataFileWriter = dataFileWriter;
             this.dataStoreWriter = dataStoreWriter;
         }
 
         public void GenerateData()
         {
-            var scenarios = new List<Scenario>
-            {
-                new CreateCustomerScenario(testDataSettings.CreateCustomersSettings.VirtualUsers,
-                    testDataSettings.CreateCustomersSettings.Iterations, false, false),
-                new OrderMobileScenario(testDataSettings.OrderMobilesSettings.VirtualUsers,
-                    testDataSettings.OrderMobilesSettings.Iterations,
-                    true,
-                    false,
-                    dataGenerator),
-                new CompleteProvisionScenario(testDataSettings.CompleteProvisionsSettings.VirtualUsers,
-                    testDataSettings.CompleteProvisionsSettings.Iterations,
-                    true,
-                    true,
-                    dataGenerator),
-                new CompleteActivateScenario(testDataSettings.CompleteActivatesSettings.VirtualUsers,
-                    testDataSettings.CompleteActivatesSettings.Iterations,
-                    true,
-                    true,
-                    dataGenerator),
-                new ActivateMobileScenario(testDataSettings.ActivateMobilesSettings.VirtualUsers,
-                    testDataSettings.ActivateMobilesSettings.Iterations,
-                    true,
-                    true,
-                    dataGenerator)
-            };
+            var scenarios = scenariosFactory.GetScenarios(scenariosSettings);
 
             Console.WriteLine("Generating data...");
 
@@ -122,12 +101,7 @@ namespace LoadTestingWebService
                 if (dataForScenario != null)
                 {
                     var dataForAllUsers = dataForScenario.Data;
-
-                    dataForScenarioList.Add(new DataForScenario
-                    {
-                        ScenarioName = scenarioToWrite,
-                        Data = dataForAllUsers
-                    });
+                    dataForScenarioList.Add(new DataForScenario(scenarioToWrite, dataForAllUsers));
                 }
             }
 

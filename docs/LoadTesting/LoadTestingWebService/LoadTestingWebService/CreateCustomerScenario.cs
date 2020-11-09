@@ -4,8 +4,8 @@ namespace LoadTestingWebService
 {
     public class CreateCustomerScenario : Scenario
     {
-        public CreateCustomerScenario(int virtualUsers, int iterations, bool requiresData, bool requiresDataInDatabase) 
-            : base(virtualUsers, iterations, requiresData, requiresDataInDatabase)
+        public CreateCustomerScenario(ScenarioSettings scenarioSettings) 
+            : base(scenarioSettings)
         {
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using LoadTestingWebService.Resources;
+﻿using LoadTestingWebService.Resources;
 
 namespace LoadTestingWebService
 {

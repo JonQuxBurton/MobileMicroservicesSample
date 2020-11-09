@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using LoadTestingWebService.Data;
 
@@ -31,14 +30,12 @@ namespace LoadTestingWebService
             return data;
         }
 
-        private void WriteScenario(string scenarioToWrite,
-            List<DataForIteration> data)
+        private void WriteScenario(string scenarioToWrite, List<DataForIteration> data)
         {
             foreach (var dataForVirtualUsers in data)
             foreach (var dataForIteration in dataForVirtualUsers.Data)
             {
-                var newMobileDbId =
-                    dataStore.SetupData(scenarioToWrite, dataForIteration);
+                var newMobileDbId = dataStore.SetupData(scenarioToWrite, dataForIteration);
                 dataForIteration.Add("mobileDbId", newMobileDbId.ToString());
             }
         }

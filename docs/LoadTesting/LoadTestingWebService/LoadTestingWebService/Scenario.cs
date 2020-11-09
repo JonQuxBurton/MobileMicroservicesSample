@@ -4,12 +4,12 @@ namespace LoadTestingWebService
 {
     public abstract class Scenario
     {
-        protected Scenario(int virtualUsers, int iterations, bool requiresData, bool requiresDataInDatabase)
+        protected Scenario(ScenarioSettings scenarioSettings)
         {
-            RequiresDataInDatabase = requiresDataInDatabase;
-            VirtualUsers = virtualUsers;
-            Iterations = iterations;
-            RequiresData = requiresData;
+            VirtualUsers = scenarioSettings.VirtualUsers;
+            Iterations = scenarioSettings.Iterations;
+            RequiresData = scenarioSettings.RequiresData;
+            RequiresDataInDatabase = scenarioSettings.RequiresDataInDatabase;
         }
 
         public int VirtualUsers { get; }

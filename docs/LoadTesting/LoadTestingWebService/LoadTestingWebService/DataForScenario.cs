@@ -6,8 +6,14 @@ namespace LoadTestingWebService
 {
     public class DataForScenario
     {
-        public string ScenarioName { get; set; }
-        public List<DataForIteration> Data { get; set; }
+        public DataForScenario(string scenarioName, List<DataForIteration> data)
+        {
+            ScenarioName = scenarioName;
+            Data = data;
+        }
+
+        public string ScenarioName { get; }
+        public List<DataForIteration> Data { get; }
 
         public List<Guid> GetUserGlobalIds()
         {

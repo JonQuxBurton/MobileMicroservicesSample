@@ -13,11 +13,7 @@ namespace LoadTestingWebService
                 var dataForScenario = BuildForScenario(scenario);
                 var scenarioName = scenario.GetType().Name.Replace("Scenario", "");
                 
-                list.Add(new DataForScenario
-                {
-                    ScenarioName = scenarioName,
-                    Data = dataForScenario
-                });
+                list.Add(new DataForScenario(scenarioName, dataForScenario));
             }
             
             return list;
@@ -33,11 +29,7 @@ namespace LoadTestingWebService
                 for (var j = 0; j < scenario.Iterations; j++)
                     dataForIterations[j] = scenario.GetData();
 
-                dataForIterationList.Add(new DataForIteration
-                {
-                    UserId = Guid.NewGuid(),
-                    Data = dataForIterations
-                });
+                dataForIterationList.Add(new DataForIteration(Guid.NewGuid(), dataForIterations));
             }
 
             return dataForIterationList;
