@@ -2,8 +2,8 @@ import http from "k6/http";
 import { check, group, sleep } from 'k6';
 import { Counter } from 'k6/metrics';
 
-const vus = 5;
-const iterations = 3;
+const vus = 1;//5;
+const iterations = 1;//3;
 
 const scenarios = {
   createCustomer: "CreateCustomer",
@@ -298,7 +298,8 @@ function getUser(scenarioKey, vuId, iteration){
 }
 
 function getScenarioDataForUser(dataFile, scenarioKey, user, iteration) {
-  return dataFile[scenarioKey].filter(x => x.userId===user.globalId)[0].data[iteration];
+  return dataFile.filter(x => x.scenarioName===scenarioKey)[0].data
+    .filter(y => y.userId === user.globalId)[0].data[iteration];
 }
 
 function httpGetWithRetry(url, params) {

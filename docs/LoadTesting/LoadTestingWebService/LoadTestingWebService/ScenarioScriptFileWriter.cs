@@ -15,7 +15,7 @@ namespace LoadTestingWebService
             testDataSettings = testDataSettingsOptions.Value;
         }
 
-        public void Write(Dictionary<string, List<UsersData>>  dataInFormatForFile)
+        public void Write(List<DataForScenario> dataInFormatForFile)
         {
             File.WriteAllText(
                 Path.Combine(testDataSettings.Path, 
@@ -23,7 +23,7 @@ namespace LoadTestingWebService
                 GenerateScenarioText(dataInFormatForFile));
         }
 
-        private string GenerateScenarioText(Dictionary<string, List<UsersData>> data)
+        private string GenerateScenarioText(List<DataForScenario> data)
         {
             var builder = new StringBuilder();
 
@@ -31,20 +31,22 @@ namespace LoadTestingWebService
             builder.Append("==================================================");
             builder.AppendLine();
 
-            if (data["OrderMobile"].Any())
+            var orderMobileData = data.FirstOrDefault(x => x.ScenarioName == "OrderMobile");
+
+            if (orderMobileData != null)
             {
-                foreach (var usersData in data["OrderMobile"])
+                foreach (var usersData in orderMobileData.Data)
                 {
-                    var iterationsData = usersData.Data[0];
+                    var iterationData = usersData.Data.First();
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: OrderMobile
 --------------------------------------------------
 DATA
-CustomerId:         {iterationsData["customerId"]}
-PhoneNumber:        {iterationsData["phoneNumber"]}
-ContactName:        {iterationsData["contactName"]}
-ContactPhoneNumber: {iterationsData["contactPhoneNumber"]}
+CustomerId:         {iterationData["customerId"]}
+PhoneNumber:        {iterationData["phoneNumber"]}
+ContactName:        {iterationData["contactName"]}
+ContactPhoneNumber: {iterationData["contactPhoneNumber"]}
 --------------------------------------------------
 AT END
 Mobile created with
@@ -63,11 +65,13 @@ ExternalSimCardsProvider Order created with
                 builder.AppendLine();
             }
 
-            if (data["CompleteProvision"].Any())
+            var completeProvisionData = data.FirstOrDefault(x => x.ScenarioName == "CompleteProvision");
+
+            if (completeProvisionData != null)
             {
-                foreach (var usersData in data["CompleteProvision"])
+                foreach (var usersData in completeProvisionData.Data)
                 {
-                    var iterationData = usersData.Data[0];
+                    var iterationData = usersData.Data.First();
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: CompleteProvision
@@ -100,11 +104,13 @@ ExternalSimCardsProvider Order update to
                 builder.AppendLine();
             }
 
-            if (data["ActivateMobile"].Any())
+            var activateMobileData = data.FirstOrDefault(x => x.ScenarioName == "ActivateMobile");
+
+            if (activateMobileData != null)
             {
-                foreach (var usersData in data["ActivateMobile"])
+                foreach (var usersData in activateMobileData.Data)
                 {
-                    var iterationData = usersData.Data[0];
+                    var iterationData = usersData.Data.First();
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: ActivateMobile
@@ -137,10 +143,12 @@ ExternalTelecomsNetwork Order created with
                 builder.AppendLine();
             }
 
-            if (data["CompleteActivate"].Any())
-                foreach (var usersData in data["CompleteActivate"])
+            var completeActivateData = data.FirstOrDefault(x => x.ScenarioName == "CompleteActivate");
+
+            if (completeActivateData != null)
+                foreach (var usersData in completeActivateData.Data)
                 {
-                    var iterationData = usersData.Data[0];
+                    var iterationData = usersData.Data.First();
                     var scenariosTextTemplate = $@"
 --------------------------------------------------
 Scenario: CompleteActivate

@@ -14,7 +14,7 @@ namespace LoadTestingWebService
             this.dataStore = dataStore;
         }
 
-        public Dictionary<string, ScenarioData> Write(List<Scenario> scenarios, Dictionary<string, ScenarioData> data)
+        public List<DataForScenario> Write(List<Scenario> scenarios, List<DataForScenario> data)
         {
             var scenariosWhichRequireDataInDatabase =
                 scenarios.Where(x => x.RequiresDataInDatabase).Select(y => y.GetType().Name.Replace("Scenario", ""))
@@ -22,17 +22,20 @@ namespace LoadTestingWebService
 
             foreach (var scenarioToWrite in scenariosWhichRequireDataInDatabase)
             {
-                WriteScenario(scenarioToWrite, data[scenarioToWrite].Data);
+                var dataForScenario = data.FirstOrDefault(x => x.ScenarioName == scenarioToWrite);
+
+                if (dataForScenario != null)
+                    WriteScenario(scenarioToWrite, dataForScenario.Data);
             }
 
             return data;
         }
 
         private void WriteScenario(string scenarioToWrite,
-            Dictionary<Guid, Dictionary<string, string>[]> data)
+            List<DataForIteration> data)
         {
-            foreach (var dataForVirtualUsers in data.Values)
-            foreach (var dataForIteration in dataForVirtualUsers)
+            foreach (var dataForVirtualUsers in data)
+            foreach (var dataForIteration in dataForVirtualUsers.Data)
             {
                 var newMobileDbId =
                     dataStore.SetupData(scenarioToWrite, dataForIteration);

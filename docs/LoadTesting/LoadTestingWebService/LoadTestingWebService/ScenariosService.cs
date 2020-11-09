@@ -105,37 +105,39 @@ namespace LoadTestingWebService
             return user;
         }
 
-        private static Dictionary<string, List<UsersData>> GetDataInFormatForFile(
-            List<Scenario> scenarios, Dictionary<string, ScenarioData> dataForScenariosWithDatabaseIds)
+        private static List<DataForScenario> GetDataInFormatForFile(
+            List<Scenario> scenarios, List<DataForScenario> dataForScenariosWithDatabaseIds)
         {
             var scenariosWhichRequireData =
                 scenarios.Where(x => x.RequiresData).Select(y => y.GetType().Name.Replace("Scenario", ""))
                     .ToList();
 
-            var allData = new Dictionary<string, List<UsersData>>();
+            var dataForScenarioList = new List<DataForScenario>();
 
             foreach (var scenarioToWrite in scenariosWhichRequireData)
             {
-                var usersDataList = new List<UsersData>();
-                foreach (var key in dataForScenariosWithDatabaseIds[scenarioToWrite].Data.Keys)
-                {
-                   usersDataList.Add(new UsersData
-                   {
-                       UserId = key,
-                       Data = dataForScenariosWithDatabaseIds[scenarioToWrite].Data[key]
-                   }); 
-                }
+                var dataForScenario =
+                    dataForScenariosWithDatabaseIds.FirstOrDefault(x => x.ScenarioName == scenarioToWrite);
 
-                allData.Add(scenarioToWrite, usersDataList);
+                if (dataForScenario != null)
+                {
+                    var dataForAllUsers = dataForScenario.Data;
+
+                    dataForScenarioList.Add(new DataForScenario
+                    {
+                        ScenarioName = scenarioToWrite,
+                        Data = dataForAllUsers
+                    });
+                }
             }
 
-            return allData;
+            return dataForScenarioList;
         }
 
-        private void StoreVirtualUserGlobalIds(Dictionary<string, ScenarioData> data)
+        private void StoreVirtualUserGlobalIds(List<DataForScenario> data)
         {
             foreach (var scenarioData in data)
-                VirtualUserGlobalIds.TryAdd(scenarioData.Key, data[scenarioData.Key].UserGlobalIds);
+                VirtualUserGlobalIds.TryAdd(scenarioData.ScenarioName, scenarioData.GetUserGlobalIds());
         }
     }
 }

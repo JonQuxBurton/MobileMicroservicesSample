@@ -4,6 +4,6 @@ namespace LoadTestingWebService
 {
     public interface IScenariosDataBuilder
     {
-        Dictionary<string, ScenarioData> Build(List<Scenario> scenarios);
+        List<DataForScenario> Build(List<Scenario> scenarios);
     }
 }

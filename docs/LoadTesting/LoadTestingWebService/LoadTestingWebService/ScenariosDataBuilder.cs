@@ -1,38 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LoadTestingWebService
 {
     public class ScenariosDataBuilder : IScenariosDataBuilder
     {
-        public Dictionary<string, ScenarioData> Build(List<Scenario> scenarios)
+        public List<DataForScenario> Build(List<Scenario> scenarios)
         {
-            var dataForScenarios = new Dictionary<string, ScenarioData>();
+            var list = new List<DataForScenario>();
             foreach (var scenario in scenarios)
             {
                 var dataForScenario = BuildForScenario(scenario);
                 var scenarioName = scenario.GetType().Name.Replace("Scenario", "");
-                dataForScenarios.Add(scenarioName, dataForScenario);
+                
+                list.Add(new DataForScenario
+                {
+                    ScenarioName = scenarioName,
+                    Data = dataForScenario
+                });
             }
-
-            return dataForScenarios;
+            
+            return list;
         }
 
-        private ScenarioData BuildForScenario(Scenario scenario)
+        private List<DataForIteration> BuildForScenario(Scenario scenario)
         {
-            var data = new Dictionary<Guid, Dictionary<string, string>[]>();
+            var dataForIterationList = new List<DataForIteration>();
 
             for (var i = 0; i < scenario.VirtualUsers; i++)
             {
                 var dataForIterations = new Dictionary<string, string>[scenario.Iterations];
-                data.Add(Guid.NewGuid(), dataForIterations);
-
                 for (var j = 0; j < scenario.Iterations; j++)
                     dataForIterations[j] = scenario.GetData();
+
+                dataForIterationList.Add(new DataForIteration
+                {
+                    UserId = Guid.NewGuid(),
+                    Data = dataForIterations
+                });
             }
 
-            return new ScenarioData(data, data.Keys.ToList());
+            return dataForIterationList;
         }
     }
 }

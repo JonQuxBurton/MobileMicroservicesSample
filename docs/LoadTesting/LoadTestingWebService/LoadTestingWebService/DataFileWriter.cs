@@ -15,13 +15,13 @@ namespace LoadTestingWebService
             testDataSettings = testDataSettingsOptions.Value;
         }
 
-        public void WriteDataFile(Dictionary<string, List<UsersData>> allData)
+        public void WriteDataFile(List<DataForScenario> allData)
         {
             var json = ConvertToJson(allData);
             File.WriteAllText(Path.Combine(testDataSettings.Path, testDataSettings.FileNameData), json);
         }
 
-        private static string ConvertToJson(Dictionary<string, List<UsersData>> data)
+        private static string ConvertToJson(List<DataForScenario> data)
         {
             var contractResolver = new DefaultContractResolver
             {

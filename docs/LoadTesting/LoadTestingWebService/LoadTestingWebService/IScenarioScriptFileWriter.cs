@@ -4,6 +4,6 @@ namespace LoadTestingWebService
 {
     public interface IScenarioScriptFileWriter
     {
-        void Write(Dictionary<string, List<UsersData>>  dataInFormatForFile);
+        void Write(List<DataForScenario> dataInFormatForFile);
     }
 }
