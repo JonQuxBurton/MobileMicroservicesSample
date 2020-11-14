@@ -24,7 +24,7 @@ namespace Mobiles.Api.Tests.Domain
                     .AddInFlightOrder(expectedOrderToAdd, expectedInFlightOrderGuid);
                 var actual = sut.Build();
 
-                actual.CurrentState.Should().Be(Mobile.State.New);
+                actual.State.Should().Be(Mobile.MobileState.New);
                 actual.Id.Should().Be(expectedId);
                 actual.GlobalId.Should().Be(expectedGuid);
                 actual.CustomerId.Should().Be(expectedCustomerId);

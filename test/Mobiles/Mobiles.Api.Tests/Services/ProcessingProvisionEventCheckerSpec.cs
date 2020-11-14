@@ -25,7 +25,7 @@ namespace Mobiles.Api.Tests.Services
             {
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
-                    State = Mobile.State.ProcessingActivate.ToString()
+                    State = Mobile.MobileState.ProcessingActivate.ToString()
                 }, new Order(new OrderDataEntity
                 {
                     State = Order.State.New.ToString()
@@ -46,7 +46,7 @@ namespace Mobiles.Api.Tests.Services
             {
                 sut.Check();
 
-                expectedMobile.CurrentState.Should().Be(Mobile.State.ProcessingActivate);
+                expectedMobile.State.Should().Be(Mobile.MobileState.ProcessingActivate);
             }
 
             [Fact]

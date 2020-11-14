@@ -14,11 +14,11 @@ namespace Mobiles.Api.Tests
             var provisionOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
             var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, provisionOrder, null);
 
-            sut.CurrentState.Should().Be(Mobile.State.New);
+            sut.State.Should().Be(Mobile.MobileState.New);
 
             sut.Provision(provisionOrder);
 
-            sut.CurrentState.Should().Be(Mobile.State.ProcessingProvision);
+            sut.State.Should().Be(Mobile.MobileState.ProcessingProvision);
             sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
 
             sut.OrderProcessing();
@@ -31,20 +31,20 @@ namespace Mobiles.Api.Tests
 
             sut.ProcessingProvisionCompleted();
 
-            sut.CurrentState.Should().Be(Mobile.State.WaitingForActivate);
+            sut.State.Should().Be(Mobile.MobileState.WaitingForActivate);
             sut.InFlightOrder.Should().BeNull();
-            sut.OrderHistory.First().CurrentState.Should().Be(Api.Domain.Order.State.Completed);
+            sut.Orders.First().CurrentState.Should().Be(Api.Domain.Order.State.Completed);
         }
 
         [Fact]
         public void WaitingForActivateToLiveScenario()
         {
-            var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.WaitingForActivate.ToString() }, null, null);
+            var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() }, null, null);
 
             var activateOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
             sut.Activate(activateOrder);
 
-            sut.CurrentState.Should().Be(Mobile.State.ProcessingActivate);
+            sut.State.Should().Be(Mobile.MobileState.ProcessingActivate);
             sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
 
             sut.OrderProcessing();
@@ -57,9 +57,9 @@ namespace Mobiles.Api.Tests
 
             sut.ActivateCompleted();
 
-            sut.CurrentState.Should().Be(Mobile.State.Live);
+            sut.State.Should().Be(Mobile.MobileState.Live);
             sut.InFlightOrder.Should().BeNull();
-            sut.OrderHistory.First().CurrentState.Should().Be(Api.Domain.Order.State.Completed);
+            sut.Orders.First().CurrentState.Should().Be(Api.Domain.Order.State.Completed);
         }
     }
 }

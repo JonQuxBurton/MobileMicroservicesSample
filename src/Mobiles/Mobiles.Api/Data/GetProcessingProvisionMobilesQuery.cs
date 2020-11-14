@@ -19,12 +19,12 @@ namespace Mobiles.Api.Data
 
         public IEnumerable<Mobile> Get()
         {
-            var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == Mobile.State.ProcessingProvision.ToString()).ToList();
+            var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == Mobile.MobileState.ProcessingProvision.ToString()).ToList();
             var mobiles = new List<Mobile>();
 
             foreach (var mobileDataEntity in mobilesDataEntities)
             {
-                var newStateName = enumConverter.ToName<Mobile.State>(Order.State.New);
+                var newStateName = enumConverter.ToName<Mobile.MobileState>(Order.State.New);
 
                 var inFlightOrderDataEntity = mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName);
                 if (inFlightOrderDataEntity != null)

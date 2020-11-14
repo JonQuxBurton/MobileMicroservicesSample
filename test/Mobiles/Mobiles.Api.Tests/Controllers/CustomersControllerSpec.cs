@@ -243,7 +243,7 @@ namespace Mobiles.Api.Tests.Controllers
 
                 mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
                     y.GlobalId == expectedGlobalId &&
-                    y.CurrentState == Mobile.State.New &&
+                    y.State == Mobile.MobileState.New &&
                     y.CustomerId == expectedCustomer.GlobalId)));
             }
 
@@ -260,7 +260,7 @@ namespace Mobiles.Api.Tests.Controllers
 
                 mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
                     y.GlobalId == expectedGlobalId &&
-                    y.CurrentState == Mobile.State.New &&
+                    y.State == Mobile.MobileState.New &&
                     y.InFlightOrder != null &&
                     y.InFlightOrder.CurrentState == Order.State.New)));
             }

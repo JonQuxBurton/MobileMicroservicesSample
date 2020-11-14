@@ -42,7 +42,7 @@ namespace Mobiles.Api.Tests.Controllers
                         Id = 101,
                         GlobalId = Guid.NewGuid(),
                         CustomerId = Guid.NewGuid(),
-                        State = Mobile.State.New.ToString(),
+                        State = Mobile.MobileState.New.ToString(),
                     }, expectedInFlightOrder, null);
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobile.GlobalId))
@@ -102,7 +102,7 @@ namespace Mobiles.Api.Tests.Controllers
             {
                 expectedMobile = new Mobile(new MobileDataEntity()
                 {
-                    State = State.WaitingForActivate.ToString()
+                    State = MobileState.WaitingForActivate.ToString()
                 }, null);
                 expectedGlobalId = Guid.NewGuid();
                 expectedActivateRequest = new ActivateRequest()
@@ -128,7 +128,7 @@ namespace Mobiles.Api.Tests.Controllers
             {
                 sut.Activate(expectedGlobalId, expectedActivateRequest);
 
-                expectedMobile.CurrentState.Should().Be(State.ProcessingActivate);
+                expectedMobile.State.Should().Be(MobileState.ProcessingActivate);
                 expectedMobile.InFlightOrder.GlobalId.Should().Be(expectedGlobalId);
                 expectedMobile.InFlightOrder.ActivationCode.Should().Be(expectedActivateRequest.ActivationCode);
             }
@@ -202,7 +202,7 @@ namespace Mobiles.Api.Tests.Controllers
 
                 this.mobileRepositoryMock.Verify(
                     x => x.Update(It.Is<Mobile>(y =>
-                        y.CurrentState == State.ProcessingCease)));
+                        y.State == MobileState.ProcessingCease)));
             }
 
             [Fact]

@@ -21,7 +21,7 @@ namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile
         {
             var snapshot = testScript.Step_1_Snapshot;
             var enumConverter = new EnumConverter();
-            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.State>(Mobiles.Api.Domain.Mobile.State.ProcessingCease);
+            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.MobileState>(Mobiles.Api.Domain.Mobile.MobileState.ProcessingCease);
             var expectedOrderMobileState = enumConverter.ToName<Mobiles.Api.Domain.Order.State>(Mobiles.Api.Domain.Order.State.Sent);
 
             // Check Mobile has been updated

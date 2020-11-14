@@ -19,7 +19,7 @@ namespace Mobiles.Api.Data
 
         public IEnumerable<Mobile> Get()
         {
-            var ceaseMobileStateName = enumConverter.ToName<Mobile.State>(Mobile.State.ProcessingCease);
+            var ceaseMobileStateName = enumConverter.ToName<Mobile.MobileState>(Mobile.MobileState.ProcessingCease);
             var mobilesDataEntities = this.mobilesContext.Mobiles.Include(x => x.Orders).Where(x => x.State == ceaseMobileStateName).ToList();
             var mobiles = new List<Mobile>();
 

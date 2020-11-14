@@ -39,7 +39,7 @@ namespace Mobiles.Api.Tests.Services
             {
                 sut.Check();
 
-                expectedNewMobile.CurrentState.Should().Be(Api.Domain.Mobile.State.ProcessingProvision);
+                expectedNewMobile.State.Should().Be(Api.Domain.Mobile.MobileState.ProcessingProvision);
             }
 
             [Fact]

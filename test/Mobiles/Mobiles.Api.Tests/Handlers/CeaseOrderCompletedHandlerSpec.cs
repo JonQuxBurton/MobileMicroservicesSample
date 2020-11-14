@@ -58,7 +58,7 @@ namespace Mobiles.Api.Tests.Handlers
             {
                 await sut.Handle(inputMessage);
 
-                expectedMobile.CurrentState.Should().Be(Mobile.State.Ceased);
+                expectedMobile.State.Should().Be(Mobile.MobileState.Ceased);
             }
 
             [Fact]

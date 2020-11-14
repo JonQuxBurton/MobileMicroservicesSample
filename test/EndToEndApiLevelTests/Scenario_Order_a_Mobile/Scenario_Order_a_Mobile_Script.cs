@@ -47,10 +47,10 @@ namespace EndToEndApiLevelTests
 
             // Step 2 Order a Mobile
             var url = $"http://localhost:5000/api/customers/{actualCustomerReturned.GlobalId}/provision";
-
+            
             var orderToAdd = new Mobiles.Api.Resources.OrderToAdd
             {
-                PhoneNumber = "07001000001",
+                PhoneNumber = data.MobilesData.GetNextPhoneNumber(),
                 Name = "Neil Armstrong",
                 ContactPhoneNumber = "0123456789"
             };

@@ -15,7 +15,7 @@ namespace Mobiles.Api.Tests.Domain
             {
                 var sut = new Mobile(new MobileDataEntity{ Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
 
-                sut.CurrentState.Should().Be(Mobile.State.New);
+                sut.State.Should().Be(Mobile.MobileState.New);
             }
 
             [Fact]
@@ -40,7 +40,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.Provision(mobileOrder);
 
-                sut.CurrentState.Should().Be(Mobile.State.ProcessingProvision);
+                sut.State.Should().Be(Mobile.MobileState.ProcessingProvision);
             }
 
             [Fact]
@@ -60,18 +60,18 @@ namespace Mobiles.Api.Tests.Domain
             [Fact]
             public void ChangeCurrentStateToProcessingActivate()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.WaitingForActivate.ToString() }, null, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() }, null, null);
 
                 sut.Activate(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
-                sut.CurrentState.Should().Be(Mobile.State.ProcessingActivate);
+                sut.State.Should().Be(Mobile.MobileState.ProcessingActivate);
             }
 
             [Fact]
             public void SetInFlightOrderStateToNew()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.WaitingForActivate.ToString() }, mobileOrder, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() }, mobileOrder, null);
 
                 sut.Activate(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
@@ -84,29 +84,29 @@ namespace Mobiles.Api.Tests.Domain
             [Fact]
             public void ChangeCurrentStateToLive()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.ProcessingActivate.ToString() }, null, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() }, null, null);
 
                 sut.ActivateCompleted();
 
-                sut.CurrentState.Should().Be(Mobile.State.Live);
+                sut.State.Should().Be(Mobile.MobileState.Live);
             }
 
             [Fact]
             public void SetActivateOrderStateToCompleted()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.ProcessingActivate.ToString() }, mobileOrder, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() }, mobileOrder, null);
 
                 sut.ActivateCompleted();
 
-                sut.OrderHistory.First().CurrentState.Should().Be(Order.State.Completed);
+                sut.Orders.First().CurrentState.Should().Be(Order.State.Completed);
             }
 
             [Fact]
             public void SetInFlightOrderToNull()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.ProcessingActivate.ToString() }, mobileOrder, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() }, mobileOrder, null);
 
                 sut.ActivateCompleted();
 
@@ -155,7 +155,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
-                sut.CurrentState.Should().Be(Mobile.State.ProcessingCease);
+                sut.State.Should().Be(Mobile.MobileState.ProcessingCease);
             }
 
             [Fact]
@@ -175,29 +175,29 @@ namespace Mobiles.Api.Tests.Domain
             [Fact]
             public void ChangeCurrentStateToCeased()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.ProcessingCease.ToString() }, null, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() }, null, null);
 
                 sut.CeaseCompleted();
 
-                sut.CurrentState.Should().Be(Mobile.State.Ceased);
+                sut.State.Should().Be(Mobile.MobileState.Ceased);
             }
 
             [Fact]
             public void SetActivateOrderStateToCompleted()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.ProcessingCease.ToString() }, mobileOrder, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() }, mobileOrder, null);
 
                 sut.CeaseCompleted();
 
-                sut.OrderHistory.First().CurrentState.Should().Be(Order.State.Completed);
+                sut.Orders.First().CurrentState.Should().Be(Order.State.Completed);
             }
 
             [Fact]
             public void SetInFlightOrderToNull()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.State.ProcessingCease.ToString() }, mobileOrder, null);
+                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() }, mobileOrder, null);
 
                 sut.CeaseCompleted();
 

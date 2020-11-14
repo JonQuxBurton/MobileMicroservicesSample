@@ -21,7 +21,7 @@ namespace Mobiles.Api.Data
 
         public IEnumerable<Mobile> Get()
         {
-            var newStateName = enumConverter.ToName<Mobile.State>(Mobile.State.New);
+            var newStateName = enumConverter.ToName<Mobile.MobileState>(Mobile.MobileState.New);
             var activateOrderType = enumConverter.ToName<OrderType>(OrderType.Activate);
             var mobilesDataEntities = this.mobilesContext.Mobiles
                 .Include(x => x.Orders)

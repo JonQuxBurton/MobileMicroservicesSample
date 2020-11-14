@@ -21,7 +21,7 @@ namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
         {
             var snapshot = fixture.Step_5_Snapshot;
             var enumConverter = new EnumConverter();
-            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.State>(Mobiles.Api.Domain.Mobile.State.Live);
+            var expectedMobileState = enumConverter.ToName<Mobiles.Api.Domain.Mobile.MobileState>(Mobiles.Api.Domain.Mobile.MobileState.Live);
             var expectedMobileOrderState = enumConverter.ToName<Mobiles.Api.Domain.Order.State>(Mobiles.Api.Domain.Order.State.Completed);
 
             // Check the Mobile has been updated to Live
