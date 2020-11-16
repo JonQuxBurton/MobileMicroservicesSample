@@ -35,7 +35,7 @@ namespace Mobiles.Api.Domain
                 .Permit(Trigger.ProcessingProvisionCompleted, MobileState.WaitingForActivate)
                 .OnExit(() =>
                 {
-                    CompleteInFlightOrder();
+                    CompleteInProgressOrder();
                 });
             machine.Configure(MobileState.WaitingForActivate)
                 .Permit(Trigger.Activate, MobileState.ProcessingActivate);
@@ -47,9 +47,9 @@ namespace Mobiles.Api.Domain
                 })
                 .OnExit(() => {
                     if (isOrderRejected)
-                        RejectInFlightOrder();
+                        RejectInProgressOrder();
                     else
-                        CompleteInFlightOrder();
+                        CompleteInProgressOrder();
                 });
             machine.Configure(MobileState.Live)
                 .Permit(Trigger.Cease, MobileState.ProcessingCease);
@@ -61,7 +61,7 @@ namespace Mobiles.Api.Domain
                 })
                 .OnExit(() =>
                 {
-                    CompleteInFlightOrder();
+                    CompleteInProgressOrder();
                 });
             machine.Configure(MobileState.Ceased);
             machine.Configure(MobileState.New).Permit(Trigger.PortIn, MobileState.ProcessingPortIn);
@@ -133,14 +133,14 @@ namespace Mobiles.Api.Domain
         }
         public void PortOutCompleted() => machine.Fire(Trigger.PortOutCompleted);
 
-        private void CompleteInFlightOrder()
+        private void CompleteInProgressOrder()
         {
-            nextAction = "CompleteInFlightOrder";
+            nextAction = "CompleteInProgressOrder";
         }
 
-        private void RejectInFlightOrder()
+        private void RejectInProgressOrder()
         {
-            nextAction = "RejectInFlightOrder";
+            nextAction = "RejectInProgressOrder";
         }
 
         private void CreateNewOrder()

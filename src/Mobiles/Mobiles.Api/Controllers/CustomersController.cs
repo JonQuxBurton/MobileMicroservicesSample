@@ -71,15 +71,15 @@ namespace Mobiles.Api.Controllers
 
                         OrderResource inFlightOrder = null;
 
-                        if (mobile.InFlightOrder != null)
+                        if (mobile.InProgressOrder != null)
                         {
                             inFlightOrder = new OrderResource
                             {
-                                GlobalId = mobile.InFlightOrder.GlobalId,
-                                State = mobile.InFlightOrder.CurrentState.ToString(),
-                                Type = mobile.InFlightOrder.Type.ToString(),
-                                CreatedAt = mobile.InFlightOrder.CreatedAt,
-                                ActivationCode = mobile.InFlightOrder.ActivationCode
+                                GlobalId = mobile.InProgressOrder.GlobalId,
+                                State = mobile.InProgressOrder.CurrentState.ToString(),
+                                Type = mobile.InProgressOrder.Type.ToString(),
+                                CreatedAt = mobile.InProgressOrder.CreatedAt,
+                                ActivationCode = mobile.InProgressOrder.ActivationCode
                             };
                         }
 
@@ -140,7 +140,7 @@ namespace Mobiles.Api.Controllers
             }
 
             var mobile = new MobileWhenNewBuilder(dateTimeCreator, this.guidCreator.Create(), id, new PhoneNumber(orderToAdd.PhoneNumber))
-                            .AddInFlightOrder(orderToAdd, this.guidCreator.Create())
+                            .AddInProgressOrder(orderToAdd, this.guidCreator.Create())
                             .Build();
             mobileRepository.Add(mobile);
 

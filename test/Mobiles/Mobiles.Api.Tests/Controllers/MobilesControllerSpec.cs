@@ -138,8 +138,8 @@ namespace Mobiles.Api.Tests.Controllers
                 sut.Activate(expectedGlobalId, expectedActivateRequest);
 
                 expectedMobile.State.Should().Be(MobileState.ProcessingActivate);
-                expectedMobile.InFlightOrder.GlobalId.Should().Be(expectedGlobalId);
-                expectedMobile.InFlightOrder.ActivationCode.Should().Be(expectedActivateRequest.ActivationCode);
+                expectedMobile.InProgressOrder.GlobalId.Should().Be(expectedGlobalId);
+                expectedMobile.InProgressOrder.ActivationCode.Should().Be(expectedActivateRequest.ActivationCode);
             }
 
             [Fact]
@@ -223,9 +223,9 @@ namespace Mobiles.Api.Tests.Controllers
 
                 mobileRepositoryMock.Verify(x => x.Update(It.Is<Mobile>(y =>
                     y.GlobalId == expectedMobile.GlobalId &&
-                    y.InFlightOrder != null &&
-                    y.InFlightOrder.Type == Order.OrderType.Cease &&
-                    y.InFlightOrder.CurrentState == Order.State.New
+                    y.InProgressOrder != null &&
+                    y.InProgressOrder.Type == Order.OrderType.Cease &&
+                    y.InProgressOrder.CurrentState == Order.State.New
                     )));
             }
 

@@ -31,9 +31,9 @@ namespace Mobiles.Api.Data
             {
                 var newStateName = enumConverter.ToName<Mobile.MobileState>(Order.State.New);
 
-                var inFlightOrderDataEntity =
+                var inProgressOrderDataEntity =
                     mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName);
-                if (inFlightOrderDataEntity != null) mobiles.Add(new Mobile(dateTimeCreator, mobileDataEntity));
+                if (inProgressOrderDataEntity != null) mobiles.Add(new Mobile(dateTimeCreator, mobileDataEntity));
             }
 
             return mobiles;

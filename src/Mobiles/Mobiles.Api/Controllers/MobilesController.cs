@@ -49,13 +49,13 @@ namespace Mobiles.Api.Controllers
 
             OrderResource inFlightOrder = null;
 
-            if (mobile.InFlightOrder != null)
+            if (mobile.InProgressOrder != null)
             {
                 inFlightOrder = new OrderResource
                 {
-                    GlobalId = mobile.InFlightOrder.GlobalId,
-                    State = mobile.InFlightOrder.CurrentState.ToString(),
-                    Type = mobile.InFlightOrder.Type.ToString(),
+                    GlobalId = mobile.InProgressOrder.GlobalId,
+                    State = mobile.InProgressOrder.CurrentState.ToString(),
+                    Type = mobile.InProgressOrder.Type.ToString(),
                 };
             }
 

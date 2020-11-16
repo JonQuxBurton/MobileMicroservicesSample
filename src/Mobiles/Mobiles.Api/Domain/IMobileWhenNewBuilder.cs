@@ -5,7 +5,7 @@ namespace Mobiles.Api.Domain
 {
     public interface IMobileWhenNewBuilder
     {
-        MobileWhenNewBuilder AddInFlightOrder(OrderToAdd order, Guid globalId);
+        MobileWhenNewBuilder AddInProgressOrder(OrderToAdd order, Guid orderGlobalId);
         Mobile Build();
     }
 }

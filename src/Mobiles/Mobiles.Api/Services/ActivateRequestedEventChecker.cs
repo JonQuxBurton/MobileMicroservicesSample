@@ -45,7 +45,7 @@ namespace Mobiles.Api.Services
 
         private async Task Execute(Mobile mobile)
         {
-            if (await Publish(mobile, mobile.InFlightOrder))
+            if (await Publish(mobile, mobile.InProgressOrder))
             {
                 mobile.OrderProcessing();
 

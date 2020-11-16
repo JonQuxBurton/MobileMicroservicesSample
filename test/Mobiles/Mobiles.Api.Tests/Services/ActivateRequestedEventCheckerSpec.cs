@@ -67,7 +67,7 @@ namespace Mobiles.Api.Tests.Services
             {
                 sut.Check();
 
-                expectedMobile.InFlightOrder.CurrentState.Should().Be(Order.State.Processing);
+                expectedMobile.InProgressOrder.CurrentState.Should().Be(Order.State.Processing);
             }
 
             [Fact]
@@ -84,8 +84,8 @@ namespace Mobiles.Api.Tests.Services
                 sut.Check();
 
                 messagePublisherMock.Verify(x => x.PublishAsync(It.Is<ActivateRequestedMessage>(
-                    y => y.MobileOrderId == expectedMobile.InFlightOrder.GlobalId &&
-                            y.ActivationCode == expectedMobile.InFlightOrder.ActivationCode)));
+                    y => y.MobileOrderId == expectedMobile.InProgressOrder.GlobalId &&
+                            y.ActivationCode == expectedMobile.InProgressOrder.ActivationCode)));
             }
         }
     }

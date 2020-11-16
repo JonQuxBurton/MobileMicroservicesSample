@@ -11,11 +11,12 @@ namespace Mobiles.Api.Data
 {
     public class MobileRepository : IRepository<Mobile>
     {
-        private readonly MobilesContext mobilesContext;
-        private readonly IEnumConverter enumConverter;
         private readonly IDateTimeCreator dateTimeCreator;
+        private readonly IEnumConverter enumConverter;
+        private readonly MobilesContext mobilesContext;
 
-        public MobileRepository(MobilesContext mobilesContext, IEnumConverter enumConverter, IDateTimeCreator dateTimeCreator)
+        public MobileRepository(MobilesContext mobilesContext, IEnumConverter enumConverter,
+            IDateTimeCreator dateTimeCreator)
         {
             this.mobilesContext = mobilesContext;
             this.enumConverter = enumConverter;
@@ -26,9 +27,9 @@ namespace Mobiles.Api.Data
         {
             var mobileDbEntity = aggregateRoot.GetDataEntity();
 
-            if (aggregateRoot.InFlightOrder != null)
+            if (aggregateRoot.InProgressOrder != null)
             {
-                var order = aggregateRoot.InFlightOrder;
+                var order = aggregateRoot.InProgressOrder;
                 var state = enumConverter.ToName<Order.State>(order.CurrentState);
                 var type = enumConverter.ToName<Order.OrderType>(order.Type);
 
@@ -51,27 +52,18 @@ namespace Mobiles.Api.Data
 
         public Mobile GetById(Guid globalId)
         {
-            var mobileDbEntity = mobilesContext.Mobiles.Include(x => x.Orders).FirstOrDefault(x => x.GlobalId == globalId);
+            var mobileDbEntity = mobilesContext.Mobiles.Include(x => x.Orders)
+                .FirstOrDefault(x => x.GlobalId == globalId);
 
             if (mobileDbEntity == null)
                 return null;
-
-            //var inFlightOrderDataEntity = mobileDbEntity.Orders.FirstOrDefault(x => x.State == Order.State.New.ToString() || x.State == Order.State.Processing.ToString() || x.State == Order.State.Sent.ToString());
-            //Order inFlightOrder = null;
-            //if (inFlightOrderDataEntity != null)
-            //    inFlightOrder = new Order(inFlightOrderDataEntity);
-
-            //var orderHistoryDataEntities = mobileDbEntity.Orders.Except(new[] { inFlightOrderDataEntity });
-            var orderHistoryDataEntities = mobileDbEntity.Orders.OrderBy(x => x.CreatedAt);
-            var orderHistory = new List<Order>();
-            orderHistoryDataEntities.ToList().ForEach(x => orderHistory.Add(new Order(x)));
 
             return new Mobile(dateTimeCreator, mobileDbEntity);
         }
 
         public void Update(Mobile aggregateRoot)
         {
-            this.mobilesContext.SaveChanges();
+            mobilesContext.SaveChanges();
         }
     }
 }

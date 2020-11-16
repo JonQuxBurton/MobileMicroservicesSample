@@ -270,8 +270,8 @@ namespace Mobiles.Api.Tests.Controllers
                 mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
                     y.GlobalId == expectedGlobalId &&
                     y.State == Mobile.MobileState.New &&
-                    y.InFlightOrder != null &&
-                    y.InFlightOrder.CurrentState == Order.State.New)));
+                    y.InProgressOrder != null &&
+                    y.InProgressOrder.CurrentState == Order.State.New)));
             }
 
             [Fact]

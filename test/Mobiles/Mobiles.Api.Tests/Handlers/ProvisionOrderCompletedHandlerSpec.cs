@@ -64,7 +64,7 @@ namespace Mobiles.Api.Tests.Handlers
                 await sut.Handle(inputMessage);
 
                 expectedMobile.State.Should().Be(Mobile.MobileState.WaitingForActivate);
-                expectedMobile.InFlightOrder.Should().BeNull();
+                expectedMobile.InProgressOrder.Should().BeNull();
             }
 
             [Fact]

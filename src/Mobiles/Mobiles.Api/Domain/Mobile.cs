@@ -91,7 +91,7 @@ namespace Mobiles.Api.Domain
             }
         }
 
-        public Order InFlightOrder
+        public Order InProgressOrder
         {
             get
             {
@@ -114,14 +114,14 @@ namespace Mobiles.Api.Domain
 
             if (nextAction == "CreateNewOrder" && newOrder != null)
                 mobileDataEntity.AddOrder(newOrder.GetDataEntity());
-            else if (nextAction == "CompleteInFlightOrder" && InFlightOrder != null)
-                InFlightOrder.Complete();
-            else if (nextAction == "RejectInFlightOrder" && InFlightOrder != null) InFlightOrder.Reject();
+            else if (nextAction == "CompleteInProgressOrder" && InProgressOrder != null)
+                InProgressOrder.Complete();
+            else if (nextAction == "RejectInProgressOrder" && InProgressOrder != null) InProgressOrder.Reject();
         }
 
         public void Provision()
         {
-            newOrder = InFlightOrder;
+            newOrder = InProgressOrder;
             var result = behaviour.Provision();
             mobileDataEntity.State = result.MobileState.ToString();
             ProcessNextAction(result.Action);
@@ -216,12 +216,12 @@ namespace Mobiles.Api.Domain
 
         public void OrderProcessing()
         {
-            InFlightOrder?.Process();
+            InProgressOrder?.Process();
         }
 
         public void OrderSent()
         {
-            InFlightOrder?.Send();
+            InProgressOrder?.Send();
         }
     }
 }

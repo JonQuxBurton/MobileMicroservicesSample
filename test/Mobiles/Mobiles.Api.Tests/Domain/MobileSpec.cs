@@ -80,7 +80,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.Provision();
 
-                sut.InFlightOrder.CurrentState.Should().Be(Order.State.New);
+                sut.InProgressOrder.CurrentState.Should().Be(Order.State.New);
             }
         }
 
@@ -115,7 +115,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.Activate(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
-                sut.InFlightOrder.CurrentState.Should().Be(Order.State.New);
+                sut.InProgressOrder.CurrentState.Should().Be(Order.State.New);
             }
         }
         
@@ -168,7 +168,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.ActivateCompleted();
 
-                sut.InFlightOrder.Should().BeNull();
+                sut.InProgressOrder.Should().BeNull();
             }
         }
 
@@ -196,7 +196,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.OrderProcessing();
 
-                sut.InFlightOrder.CurrentState.Should().Be(Order.State.Processing);
+                sut.InProgressOrder.CurrentState.Should().Be(Order.State.Processing);
             }
         }
 
@@ -225,7 +225,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.OrderSent();
 
-                sut.InFlightOrder.CurrentState.Should().Be(Order.State.Sent);
+                sut.InProgressOrder.CurrentState.Should().Be(Order.State.Sent);
             }
         }
 
@@ -256,7 +256,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
-                sut.InFlightOrder.CurrentState.Should().Be(Order.State.New);
+                sut.InProgressOrder.CurrentState.Should().Be(Order.State.New);
             }
         }
 
@@ -308,7 +308,7 @@ namespace Mobiles.Api.Tests.Domain
 
                 sut.CeaseCompleted();
 
-                sut.InFlightOrder.Should().BeNull();
+                sut.InProgressOrder.Should().BeNull();
             }
         }
     }

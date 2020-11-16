@@ -11,7 +11,6 @@ namespace Mobiles.Api.Data
             this.mobilesContext = mobilesContext;
         }
 
-
         public int Get()
         {
             return mobilesContext.Mobiles.Max(x => x.Id) + 1;

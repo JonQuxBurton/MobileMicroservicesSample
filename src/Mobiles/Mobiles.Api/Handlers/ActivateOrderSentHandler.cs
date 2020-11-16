@@ -42,7 +42,7 @@ namespace Mobiles.Api.Handlers
                     return Task.FromResult(false);
                 }
 
-                if (mobile.InFlightOrder.CurrentState == Order.State.Sent)
+                if (mobile.InProgressOrder.CurrentState == Order.State.Sent)
                 {
                     logger.LogWarning("Received {eventName} when already Sent - MobileOrderId={mobileOrderId}", eventName, receivedEvent.MobileOrderId);
                     return Task.FromResult(true);

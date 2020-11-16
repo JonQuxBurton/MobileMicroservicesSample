@@ -29,20 +29,20 @@ namespace Mobiles.Api.Tests
             sut.Provision();
 
             sut.State.Should().Be(Mobile.MobileState.ProcessingProvision);
-            sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
+            sut.InProgressOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
 
             sut.OrderProcessing();
 
-            sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.Processing);
+            sut.InProgressOrder.CurrentState.Should().Be(Api.Domain.Order.State.Processing);
 
             sut.OrderSent();
 
-            sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.Sent);
+            sut.InProgressOrder.CurrentState.Should().Be(Api.Domain.Order.State.Sent);
 
             sut.ProcessingProvisionCompleted();
 
             sut.State.Should().Be(Mobile.MobileState.WaitingForActivate);
-            sut.InFlightOrder.Should().BeNull();
+            sut.InProgressOrder.Should().BeNull();
             sut.Orders.First().CurrentState.Should().Be(Api.Domain.Order.State.Completed);
         }
 
@@ -60,20 +60,20 @@ namespace Mobiles.Api.Tests
             sut.Activate(activateOrder);
 
             sut.State.Should().Be(Mobile.MobileState.ProcessingActivate);
-            sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
+            sut.InProgressOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
 
             sut.OrderProcessing();
 
-            sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.Processing);
+            sut.InProgressOrder.CurrentState.Should().Be(Api.Domain.Order.State.Processing);
 
             sut.OrderSent();
 
-            sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.Sent);
+            sut.InProgressOrder.CurrentState.Should().Be(Api.Domain.Order.State.Sent);
 
             sut.ActivateCompleted();
 
             sut.State.Should().Be(Mobile.MobileState.Live);
-            sut.InFlightOrder.Should().BeNull();
+            sut.InProgressOrder.Should().BeNull();
             sut.Orders.First().CurrentState.Should().Be(Api.Domain.Order.State.Completed);
         }
     }

@@ -48,7 +48,7 @@ namespace Mobiles.Api.Services
 
         private async Task Execute(Mobile mobile)
         {
-            await Publish(mobile, mobile.InFlightOrder);
+            await Publish(mobile, mobile.InProgressOrder);
             mobile.OrderProcessing();
             mobileRepository.Update(mobile);
         }

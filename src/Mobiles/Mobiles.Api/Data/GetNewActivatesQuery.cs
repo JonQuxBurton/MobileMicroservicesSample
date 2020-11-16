@@ -36,9 +36,9 @@ namespace Mobiles.Api.Data
 
             foreach (var mobileDataEntity in mobilesDataEntities)
             {
-                var inFlightOrderDataEntity =
+                var inProgressOrderDataEntity =
                     mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName);
-                if (inFlightOrderDataEntity != null) mobiles.Add(new Mobile(dateTimeCreator, mobileDataEntity));
+                if (inProgressOrderDataEntity != null) mobiles.Add(new Mobile(dateTimeCreator, mobileDataEntity));
             }
 
             return mobiles;

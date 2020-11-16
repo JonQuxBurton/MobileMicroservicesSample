@@ -27,12 +27,12 @@ namespace Mobiles.Api.Domain
             this.phoneNumber = phoneNumber;
         }
 
-        public MobileWhenNewBuilder AddInFlightOrder(OrderToAdd order, Guid globalId)
+        public MobileWhenNewBuilder AddInProgressOrder(OrderToAdd order, Guid orderGlobalId)
         {
             var newStateName = new EnumConverter().ToName<MobileState>(MobileState.New);
             var dataEntity = new OrderDataEntity()
             {
-                GlobalId = globalId,
+                GlobalId = orderGlobalId,
                 Name = order.Name,
                 ContactPhoneNumber = order.ContactPhoneNumber,
                 State = newStateName,
