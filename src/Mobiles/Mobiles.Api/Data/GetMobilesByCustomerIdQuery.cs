@@ -1,15 +1,15 @@
-﻿using Mobiles.Api.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mobiles.Api.Domain;
 using Utils.DateTimes;
 
 namespace Mobiles.Api.Data
 {
     public class GetMobilesByCustomerIdQuery : IGetMobilesByCustomerIdQuery
     {
-        private readonly MobilesContext mobilesContext;
         private readonly IDateTimeCreator dateTimeCreator;
+        private readonly MobilesContext mobilesContext;
 
         public GetMobilesByCustomerIdQuery(MobilesContext mobilesContext, IDateTimeCreator dateTimeCreator)
         {

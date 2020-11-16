@@ -34,7 +34,7 @@ namespace EndToEndApiLevelTests.DataAcess
             var dbRows = conn.Query(sql);
             var phoneNumbers = dbRows.Select(dbRow =>
             {
-                var phoneNumberString = ((string) dbRow.PhoneNumber).Substring(prefix.Length);
+                var phoneNumberString = ((string) dbRow.PhoneNumber)[prefix.Length..];
                 return int.Parse(phoneNumberString);
             }).ToList();
 
