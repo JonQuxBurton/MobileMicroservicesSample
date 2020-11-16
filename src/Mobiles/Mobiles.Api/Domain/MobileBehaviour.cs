@@ -1,40 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Stateless;
+﻿using Stateless;
 using Utils.Enums;
 using static Mobiles.Api.Domain.Mobile;
 
 namespace Mobiles.Api.Domain
 {
-    public class MobileTransitionResult
+    public class MobileTransition
     {
-        public MobileTransitionResult(MobileState newMobileState, Order inFlightOrder)
+        public MobileTransition(MobileState mobileState, string action)
         {
-            NewMobileState = newMobileState;
-            InFlightOrder = inFlightOrder;
+            MobileState = mobileState;
+            Action = action;
         }
 
-        public MobileState NewMobileState { get; }
-        public Order InFlightOrder { get; }
+        public MobileState MobileState { get; private set; }
+        public string Action { get; private set; }
     }
 
     public class MobileBehaviour
     {
         private readonly StateMachine<MobileState, Trigger> machine;
-        private Order newOrder;
         private bool isOrderRejected = false;
-        private MobileDataEntity mobileDataEntity;
-        private List<Order> orderHistory;
+        private string nextAction;
 
-        public MobileState CurrentMobileState => machine.State;
-        public Order InFlightOrder { get; private set; }
-
-        public MobileBehaviour(MobileDataEntity mobileDataEntity, Order inFlightOrder)
+        public MobileBehaviour(MobileDataEntity mobileDataEntity)
         {
-            InFlightOrder = inFlightOrder;
-
             var enumConverter = new EnumConverter();
             var initialState = enumConverter.ToEnum<MobileState>(mobileDataEntity.State);
 
@@ -44,28 +33,16 @@ namespace Mobiles.Api.Domain
                 .Permit(Trigger.Provision, MobileState.ProcessingProvision);
             machine.Configure(MobileState.ProcessingProvision)
                 .Permit(Trigger.ProcessingProvisionCompleted, MobileState.WaitingForActivate)
-                .OnEntry(() =>
-                {
-                    //this.mobileDataEntity.UpdatedAt = DateTime.Now;
-                    //this.mobileDataEntity.MobileState = enumConverter.ToName<MobileState>(this.NewMobileState);
-                })
                 .OnExit(() =>
                 {
                     CompleteInFlightOrder();
                 });
             machine.Configure(MobileState.WaitingForActivate)
-                .Permit(Trigger.Activate, MobileState.ProcessingActivate)
-                .OnEntry(() =>
-                {
-                    //this.mobileDataEntity.UpdatedAt = DateTime.Now;
-                    //this.mobileDataEntity.MobileState = enumConverter.ToName<MobileState>(this.NewMobileState);
-                });
+                .Permit(Trigger.Activate, MobileState.ProcessingActivate);
             machine.Configure(MobileState.ProcessingActivate)
                 .Permit(Trigger.ActivateCompleted, MobileState.Live)
                 .Permit(Trigger.ActivateRejected, MobileState.WaitingForActivate)
                 .OnEntry(() => {
-                    //this.mobileDataEntity.UpdatedAt = DateTime.Now;
-                    //this.mobileDataEntity.MobileState = MobileState.ProcessingActivate.ToString();
                     CreateNewOrder();
                 })
                 .OnExit(() => {
@@ -75,30 +52,18 @@ namespace Mobiles.Api.Domain
                         CompleteInFlightOrder();
                 });
             machine.Configure(MobileState.Live)
-                .Permit(Trigger.Cease, MobileState.ProcessingCease)
-                .OnEntry(() =>
-                {
-                    //this.mobileDataEntity.UpdatedAt = DateTime.Now;
-                    //this.mobileDataEntity.MobileState = enumConverter.ToName<MobileState>(MobileState.Live);
-                });
+                .Permit(Trigger.Cease, MobileState.ProcessingCease);
             machine.Configure(MobileState.ProcessingCease)
                 .Permit(Trigger.CeaseCompleted, MobileState.Ceased)
                 .OnEntry(() =>
                 {
-                    //this.mobileDataEntity.UpdatedAt = DateTime.Now;
-                    //this.mobileDataEntity.MobileState = enumConverter.ToName<MobileState>(MobileState.ProcessingCease);
                     CreateNewOrder();
                 })
                 .OnExit(() =>
                 {
                     CompleteInFlightOrder();
                 });
-            machine.Configure(MobileState.Ceased)
-                .OnEntry(() =>
-                {
-                    //this.mobileDataEntity.UpdatedAt = DateTime.Now;
-                    //this.mobileDataEntity.MobileState = enumConverter.ToName<MobileState>(MobileState.Ceased);
-                });
+            machine.Configure(MobileState.Ceased);
             machine.Configure(MobileState.New).Permit(Trigger.PortIn, MobileState.ProcessingPortIn);
             machine.Configure(MobileState.ProcessingPortIn).Permit(Trigger.PortInCompleted, MobileState.Live);
             machine.Configure(MobileState.Live).Permit(Trigger.Suspend, MobileState.Suspended);
@@ -109,51 +74,50 @@ namespace Mobiles.Api.Domain
 
         }
 
-        public MobileTransitionResult Provision(Order order)
+        public MobileTransition Provision()
         {
-            newOrder = order;
+            nextAction = null;
             machine.Fire(Trigger.Provision);
-            return new MobileTransitionResult(CurrentMobileState, order);
+            return new MobileTransition(machine.State, nextAction);
         }
-        public MobileTransitionResult Activate(Order order, MobileDataEntity currentMobileDataEntity)
+
+        public MobileTransition Activate()
         {
-            mobileDataEntity = currentMobileDataEntity;
-            newOrder = order;
+            nextAction = null;
             machine.Fire(Trigger.Activate);
-            return new MobileTransitionResult (CurrentMobileState, order);
+            return new MobileTransition(machine.State, nextAction);
 
         }
-        public MobileTransitionResult Cease(Order order, MobileDataEntity currentMobileDataEntity)
+        public MobileTransition Cease()
         {
-            mobileDataEntity = currentMobileDataEntity;
-            newOrder = order;
+            nextAction = null;
             machine.Fire(Trigger.Cease);
-            return new MobileTransitionResult(CurrentMobileState, order);
+            return new MobileTransition(machine.State, nextAction);
         }
 
-        public MobileTransitionResult ActivateCompleted(List<Order> currentOrderHistory)
+        public MobileTransition ActivateCompleted()
         {
-            this.orderHistory = currentOrderHistory;
+            nextAction = null;
             isOrderRejected = false;
             machine.Fire(Trigger.ActivateCompleted);
-            return new MobileTransitionResult(CurrentMobileState, null);
+            return new MobileTransition(machine.State, nextAction);
         }
 
-        public MobileTransitionResult ActivateRejected(List<Order> currentOrderHistory)
+        public MobileTransition ActivateRejected()
         {
-            this.orderHistory = currentOrderHistory;
+            nextAction = null;
             isOrderRejected = true;
             machine.Fire(Trigger.ActivateRejected);
-            return new MobileTransitionResult(CurrentMobileState, null);
+            return new MobileTransition(machine.State, nextAction);
         }
 
-        public MobileTransitionResult ProcessingProvisionCompleted(List<Order> currentOrderHistory)
+        public MobileTransition ProcessingProvisionCompleted()
         {
-            this.orderHistory = currentOrderHistory;
+            nextAction = null;
             machine.Fire(Trigger.ProcessingProvisionCompleted);
-            return new MobileTransitionResult(CurrentMobileState, InFlightOrder);
+            return new MobileTransition(machine.State, nextAction);
         }
-        
+
         public void PortIn() => machine.Fire(Trigger.PortIn);
         public void PortInCompleted() => machine.Fire(Trigger.PortInCompleted);
         public void Suspend() => machine.Fire(Trigger.Suspend);
@@ -161,38 +125,27 @@ namespace Mobiles.Api.Domain
         public void Resume() => machine.Fire(Trigger.ReplaceSim);
         public void RequestPac() => machine.Fire(Trigger.RequestPac);
 
-        public MobileTransitionResult CeaseCompleted(List<Order> currentOrderHistory)
+        public MobileTransition CeaseCompleted()
         {
-            this.orderHistory = currentOrderHistory;
+            nextAction = null;
             machine.Fire(Trigger.CeaseCompleted);
-            return new MobileTransitionResult(CurrentMobileState, InFlightOrder);
-        } 
+            return new MobileTransition(machine.State, nextAction);
+        }
         public void PortOutCompleted() => machine.Fire(Trigger.PortOutCompleted);
 
         private void CompleteInFlightOrder()
         {
-            if (InFlightOrder != null)
-            {
-                InFlightOrder.Complete();
-                this.orderHistory.Add(this.InFlightOrder);
-                InFlightOrder = null;
-            }
+            nextAction = "CompleteInFlightOrder";
         }
 
         private void RejectInFlightOrder()
         {
-            if (InFlightOrder != null)
-            {
-                InFlightOrder.Reject();
-                this.orderHistory.Add(this.InFlightOrder);
-                InFlightOrder = null;
-            }
+            nextAction = "RejectInFlightOrder";
         }
 
         private void CreateNewOrder()
         {
-            InFlightOrder = newOrder;
-            mobileDataEntity.AddOrder(newOrder.GetDataEntity());
+            nextAction = "CreateNewOrder";
         }
     }
 }

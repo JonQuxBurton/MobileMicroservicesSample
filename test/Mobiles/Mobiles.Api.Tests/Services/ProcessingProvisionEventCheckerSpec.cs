@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MinimalEventBus.JustSaying;
 using Mobiles.Api.Data;
@@ -6,6 +7,7 @@ using Mobiles.Api.Domain;
 using Mobiles.Api.Messages;
 using Mobiles.Api.Services;
 using Moq;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Xunit;
 
@@ -23,13 +25,19 @@ namespace Mobiles.Api.Tests.Services
 
             public CheckShould()
             {
-                expectedMobile = new Mobile(new MobileDataEntity()
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity()
                 {
-                    State = Mobile.MobileState.ProcessingActivate.ToString()
-                }, new Order(new OrderDataEntity
-                {
-                    State = Order.State.New.ToString()
-                }));
+                    State = Mobile.MobileState.ProcessingActivate.ToString(),
+                    Orders = new List<OrderDataEntity>()
+                    {
+                        new OrderDataEntity
+                        {
+                            State = Order.State.New.ToString()
+                        }
+                    }
+                });
 
                 queryMock = new Mock<IGetProcessingProvisionMobilesQuery>();
                 queryMock.Setup(x => x.Get())

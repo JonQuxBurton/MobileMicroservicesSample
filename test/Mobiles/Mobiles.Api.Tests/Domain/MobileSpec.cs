@@ -1,7 +1,10 @@
 ﻿using FluentAssertions;
 using Mobiles.Api.Domain;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Moq;
+using Utils.DateTimes;
 using Xunit;
 
 namespace Mobiles.Api.Tests.Domain
@@ -10,10 +13,17 @@ namespace Mobiles.Api.Tests.Domain
     {
         public class ConstructorShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public ConstructorShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Fact]
             public void CreateMobileInStateNew()
             {
-                var sut = new Mobile(new MobileDataEntity{ Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity{ Id = 101, GlobalId = Guid.NewGuid(), State = "New" });
 
                 sut.State.Should().Be(Mobile.MobileState.New);
             }
@@ -23,7 +33,7 @@ namespace Mobiles.Api.Tests.Domain
             {
                 var expectedGlobalId = Guid.NewGuid();
                 var expectedId = 101;
-                var sut = new Mobile(new MobileDataEntity {Id = expectedId, GlobalId = expectedGlobalId, State = "New" }, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity {Id = expectedId, GlobalId = expectedGlobalId, State = "New" });
 
                 sut.GlobalId.Should().Be(expectedGlobalId);
                 sut.Id.Should().Be(expectedId);
@@ -32,13 +42,27 @@ namespace Mobiles.Api.Tests.Domain
 
         public class ProvisionShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public ProvisionShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Fact]
             public void ChangeCurrentStateToPendingActivation()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid() , State = "New"}, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity
+                {
+                    Id = 101, GlobalId = Guid.NewGuid() , State = "New",
+                    Orders = new List<OrderDataEntity>()
+                    {
+                        mobileOrder.GetDataEntity()
+                    }
+                });
 
-                sut.Provision(mobileOrder);
+                sut.Provision();
 
                 sut.State.Should().Be(Mobile.MobileState.ProcessingProvision);
             }
@@ -47,9 +71,14 @@ namespace Mobiles.Api.Tests.Domain
             public void SetInFlightOrderStateToNew()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid() , State = "New"}, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid() , State = "New", Orders = new List<OrderDataEntity>(){ mobileOrder.GetDataEntity() }
 
-                sut.Provision(mobileOrder);
+                    });
+
+                sut.Provision();
 
                 sut.InFlightOrder.CurrentState.Should().Be(Order.State.New);
             }
@@ -57,10 +86,17 @@ namespace Mobiles.Api.Tests.Domain
 
         public class ActivateShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public ActivateShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Fact]
             public void ChangeCurrentStateToProcessingActivate()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() }, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() });
 
                 sut.Activate(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
@@ -70,8 +106,12 @@ namespace Mobiles.Api.Tests.Domain
             [Fact]
             public void SetInFlightOrderStateToNew()
             {
-                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() 
+
+                    });
 
                 sut.Activate(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
@@ -81,10 +121,17 @@ namespace Mobiles.Api.Tests.Domain
         
         public class ActivateCompletedShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public ActivateCompletedShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Fact]
             public void ChangeCurrentStateToLive()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() }, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() });
 
                 sut.ActivateCompleted();
 
@@ -95,7 +142,12 @@ namespace Mobiles.Api.Tests.Domain
             public void SetActivateOrderStateToCompleted()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString(),
+                        Orders = new List<OrderDataEntity>() { mobileOrder.GetDataEntity() }
+                    });
 
                 sut.ActivateCompleted();
 
@@ -106,7 +158,13 @@ namespace Mobiles.Api.Tests.Domain
             public void SetInFlightOrderToNull()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString() }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingActivate.ToString(),
+                        Orders = new List<OrderDataEntity>() { mobileOrder.GetDataEntity() }
+                    } 
+                    );
 
                 sut.ActivateCompleted();
 
@@ -116,13 +174,25 @@ namespace Mobiles.Api.Tests.Domain
 
         public class OrderProcessingShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public OrderProcessingShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Theory]
             [InlineData("PendingActivation")]
             [InlineData("PendingLive")]
             public void SetInFlightOrderStateToProcessing(string mobileState)
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = mobileState }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid(), State = mobileState ,
+                        Orders = new List<OrderDataEntity>() { mobileOrder.GetDataEntity() }
+                    });
 
                 sut.OrderProcessing();
 
@@ -132,13 +202,26 @@ namespace Mobiles.Api.Tests.Domain
 
         public class OrderSentShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public OrderSentShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Theory]
             [InlineData("PendingActivation")]
             [InlineData("PendingLive")]
             public void SetInFlightOrderStateToSent(string mobileState)
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Processing" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = mobileState }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid(), State = mobileState,
+                        Orders = new List<OrderDataEntity>() { mobileOrder.GetDataEntity() }
+                    }
+                    );
 
                 sut.OrderSent();
 
@@ -148,10 +231,17 @@ namespace Mobiles.Api.Tests.Domain
 
         public class CeaseShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public CeaseShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Fact]
             public void ChangeCurrentStateToProcessingCease()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" }, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" });
 
                 sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
@@ -161,8 +251,8 @@ namespace Mobiles.Api.Tests.Domain
             [Fact]
             public void SetInFlightOrderStateToNew()
             {
-                var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" }, mobileOrder, null);
+                //var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" });
 
                 sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
 
@@ -172,10 +262,17 @@ namespace Mobiles.Api.Tests.Domain
 
         public class CeaseCompletedShould
         {
+            private readonly Mock<IDateTimeCreator> dateTimeCreatorMock;
+
+            public CeaseCompletedShould()
+            {
+                dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+            }
+
             [Fact]
             public void ChangeCurrentStateToCeased()
             {
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() }, null, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() });
 
                 sut.CeaseCompleted();
 
@@ -186,7 +283,11 @@ namespace Mobiles.Api.Tests.Domain
             public void SetActivateOrderStateToCompleted()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity
+                {
+                    Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString(),
+                    Orders = new List<OrderDataEntity>() { mobileOrder.GetDataEntity() }
+                });
 
                 sut.CeaseCompleted();
 
@@ -197,7 +298,13 @@ namespace Mobiles.Api.Tests.Domain
             public void SetInFlightOrderToNull()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
-                var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString() }, mobileOrder, null);
+                var sut = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.ProcessingCease.ToString(),
+                        Orders = new List<OrderDataEntity>() { mobileOrder.GetDataEntity() }
+                    }
+                );
 
                 sut.CeaseCompleted();
 

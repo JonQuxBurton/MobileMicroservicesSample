@@ -8,6 +8,7 @@ using Mobiles.Api.Resources;
 using Moq;
 using System;
 using System.Collections.Immutable;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 using Xunit;
@@ -26,6 +27,7 @@ namespace Mobiles.Api.Tests.Controllers
                 monitoringMock = new Mock<IMonitoring>();
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
                 sut = new CustomersController(
                     loggingMock.Object,
@@ -33,7 +35,8 @@ namespace Mobiles.Api.Tests.Controllers
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
                     guidCreatorMock.Object,
-                    getMobilesByCustomerIdQueryMock.Object);
+                    getMobilesByCustomerIdQueryMock.Object, 
+                    dateTimeCreatorMock.Object);
 
                 expected = new Customer();
 
@@ -68,13 +71,15 @@ namespace Mobiles.Api.Tests.Controllers
                 monitoringMock = new Mock<IMonitoring>();
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
                 sut = new CustomersController(loggingMock.Object,
                     customerRepositoryMock.Object,
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
                     guidCreatorMock.Object,
-                    getMobilesByCustomerIdQueryMock.Object);
+                    getMobilesByCustomerIdQueryMock.Object,
+                    dateTimeCreatorMock.Object);
 
                 expected = ImmutableList.Create(
                     new Customer { GlobalId = Guid.NewGuid() },
@@ -123,6 +128,7 @@ namespace Mobiles.Api.Tests.Controllers
                 monitoringMock = new Mock<IMonitoring>();
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
                 customerToAdd = new CustomerToAdd()
                 {
@@ -147,7 +153,8 @@ namespace Mobiles.Api.Tests.Controllers
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
                     guidCreatorMock.Object,
-                    getMobilesByCustomerIdQueryMock.Object);
+                    getMobilesByCustomerIdQueryMock.Object,
+                    dateTimeCreatorMock.Object);
             }
 
             private readonly CustomersController sut;
@@ -203,6 +210,7 @@ namespace Mobiles.Api.Tests.Controllers
                 guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
                 expectedCustomer = new Customer
                 {
@@ -219,7 +227,8 @@ namespace Mobiles.Api.Tests.Controllers
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
                     guidCreatorMock.Object,
-                    getMobilesByCustomerIdQueryMock.Object);
+                    getMobilesByCustomerIdQueryMock.Object,
+                    dateTimeCreatorMock.Object);
             }
 
             private readonly CustomersController sut;

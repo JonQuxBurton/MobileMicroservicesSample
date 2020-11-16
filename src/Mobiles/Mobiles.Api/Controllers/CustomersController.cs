@@ -5,6 +5,7 @@ using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using System;
 using System.Linq;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 
@@ -20,6 +21,7 @@ namespace Mobiles.Api.Controllers
         private readonly IMonitoring monitoring;
         private readonly IGuidCreator guidCreator;
         private readonly IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery;
+        private readonly IDateTimeCreator dateTimeCreator;
 
         public CustomersController(
             ILogger<CustomersController> logger,
@@ -27,7 +29,8 @@ namespace Mobiles.Api.Controllers
             IRepository<Mobile> mobileRepository,
             IMonitoring monitoring,
             IGuidCreator guidCreator,
-            IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery)
+            IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery,
+            IDateTimeCreator dateTimeCreator)
         {
             this.logger = logger;
             this.customerRepository = customerRepository;
@@ -35,6 +38,7 @@ namespace Mobiles.Api.Controllers
             this.monitoring = monitoring;
             this.guidCreator = guidCreator;
             this.getMobilesByCustomerIdQuery = getMobilesByCustomerIdQuery;
+            this.dateTimeCreator = dateTimeCreator;
         }
 
         [HttpGet]
@@ -135,7 +139,7 @@ namespace Mobiles.Api.Controllers
                 return NotFound();
             }
 
-            var mobile = new MobileWhenNewBuilder(this.guidCreator.Create(), id, new PhoneNumber(orderToAdd.PhoneNumber))
+            var mobile = new MobileWhenNewBuilder(dateTimeCreator, this.guidCreator.Create(), id, new PhoneNumber(orderToAdd.PhoneNumber))
                             .AddInFlightOrder(orderToAdd, this.guidCreator.Create())
                             .Build();
             mobileRepository.Add(mobile);

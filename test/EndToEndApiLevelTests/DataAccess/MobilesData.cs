@@ -6,6 +6,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
+using Utils.DateTimes;
 using Utils.Enums;
 
 namespace EndToEndApiLevelTests.DataAcess
@@ -36,7 +37,10 @@ namespace EndToEndApiLevelTests.DataAcess
                 var phoneNumberString = ((string) dbRow.PhoneNumber).Substring(prefix.Length);
                 return int.Parse(phoneNumberString);
             }).ToList();
-            var next = phoneNumbers.Max() + 1;
+
+            var next = 1;
+            if (phoneNumbers.Any())
+                next = phoneNumbers.Max() + 1;
 
             return $"{prefix}{next.ToString().PadLeft(6, '0')}";
         }
@@ -78,7 +82,7 @@ namespace EndToEndApiLevelTests.DataAcess
         public MobileDataEntity GetMobileByGlobalId(Guid globalId)
         {
             using var mobilesContext = new MobilesContext(contextOptions);
-            var mobilesRepo = new MobileRepository(mobilesContext, new EnumConverter());
+            var mobilesRepo = new MobileRepository(mobilesContext, new EnumConverter(), new DateTimeCreator());
 
             return mobilesRepo.GetById(globalId).GetDataEntity();
         }

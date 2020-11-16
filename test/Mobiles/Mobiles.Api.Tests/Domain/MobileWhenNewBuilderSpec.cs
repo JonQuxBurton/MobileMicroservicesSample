@@ -2,6 +2,8 @@
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using System;
+using Moq;
+using Utils.DateTimes;
 using Xunit;
 
 namespace Mobiles.Api.Tests.Domain
@@ -13,6 +15,8 @@ namespace Mobiles.Api.Tests.Domain
             [Fact]
             public void ReturnNewMobile()
             {
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
                 var expectedGuid = Guid.NewGuid();
                 var expectedId = 0;
                 var expectedInFlightOrderGuid = Guid.NewGuid();
@@ -20,7 +24,7 @@ namespace Mobiles.Api.Tests.Domain
                 var expectedCustomerId = Guid.NewGuid();
                 var phoneNumber = new PhoneNumber("07930123456");
 
-                var sut = new MobileWhenNewBuilder(expectedGuid, expectedCustomerId, phoneNumber)
+                var sut = new MobileWhenNewBuilder(dateTimeCreatorMock.Object, expectedGuid, expectedCustomerId, phoneNumber)
                     .AddInFlightOrder(expectedOrderToAdd, expectedInFlightOrderGuid);
                 var actual = sut.Build();
 

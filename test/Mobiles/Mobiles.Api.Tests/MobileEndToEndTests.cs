@@ -1,7 +1,10 @@
 ﻿using FluentAssertions;
 using Mobiles.Api.Domain;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Moq;
+using Utils.DateTimes;
 using Xunit;
 
 namespace Mobiles.Api.Tests
@@ -11,12 +14,19 @@ namespace Mobiles.Api.Tests
         [Fact]
         public void ProvisionToWaitingForActivateScenario()
         {
+            var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
             var provisionOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
-            var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "New" }, provisionOrder, null);
+            var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity
+            {
+                Id = 101, GlobalId = Guid.NewGuid(), State = "New",
+                CreatedAt = DateTime.MinValue,
+                Orders = new List<OrderDataEntity>() { provisionOrder.GetDataEntity() }
+            });
 
             sut.State.Should().Be(Mobile.MobileState.New);
 
-            sut.Provision(provisionOrder);
+            sut.Provision();
 
             sut.State.Should().Be(Mobile.MobileState.ProcessingProvision);
             sut.InFlightOrder.CurrentState.Should().Be(Api.Domain.Order.State.New);
@@ -39,7 +49,12 @@ namespace Mobiles.Api.Tests
         [Fact]
         public void WaitingForActivateToLiveScenario()
         {
-            var sut = new Mobile(new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString() }, null, null);
+            var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
+            var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity
+            {
+                Id = 101, GlobalId = Guid.NewGuid(), State = Mobile.MobileState.WaitingForActivate.ToString()
+            });
 
             var activateOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
             sut.Activate(activateOrder);

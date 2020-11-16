@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Enums;
 
@@ -8,10 +9,59 @@ namespace Mobiles.Api.Domain
 {
     public class Mobile : AggregateRoot
     {
-        public enum MobileState { New, ProcessingProvision, WaitingForActivate, ProcessingActivate, Live, ProcessingPortIn, Suspended, ProcessingCease, ProcessingPortOut, Ceased, PortedOut }
-        public enum Trigger { Provision, ProcessingProvisionCompleted, PortIn, Activate, ActivateCompleted, ActivateRejected, PortInCompleted, Cease, Suspend, ReplaceSim, Resume, RequestPac, CeaseCompleted, PortOutCompleted }
+        public enum MobileState
+        {
+            New,
+            ProcessingProvision,
+            WaitingForActivate,
+            ProcessingActivate,
+            Live,
+            ProcessingPortIn,
+            Suspended,
+            ProcessingCease,
+            ProcessingPortOut,
+            Ceased,
+            PortedOut
+        }
 
-        public override int Id { get => mobileDataEntity.Id; protected set => base.Id = value; }
+        public enum Trigger
+        {
+            Provision,
+            ProcessingProvisionCompleted,
+            PortIn,
+            Activate,
+            ActivateCompleted,
+            ActivateRejected,
+            PortInCompleted,
+            Cease,
+            Suspend,
+            ReplaceSim,
+            Resume,
+            RequestPac,
+            CeaseCompleted,
+            PortOutCompleted
+        }
+
+        private readonly MobileBehaviour behaviour;
+
+        private readonly MobileDataEntity mobileDataEntity;
+        private readonly IDateTimeCreator dateTimeCreator;
+
+        private Order newOrder;
+
+        public Mobile(IDateTimeCreator dateTimeCreator, MobileDataEntity mobileDataEntity)
+        {
+            this.mobileDataEntity = mobileDataEntity;
+            this.dateTimeCreator = dateTimeCreator;
+            behaviour = new MobileBehaviour(mobileDataEntity);
+        }
+
+        public override int Id
+        {
+            get => mobileDataEntity.Id;
+            protected set => base.Id = value;
+        }
+
         public Guid GlobalId => mobileDataEntity.GlobalId;
         public DateTime? CreatedAt => mobileDataEntity.CreatedAt;
         public DateTime? UpdatedAt => mobileDataEntity.UpdatedAt;
@@ -27,27 +77,29 @@ namespace Mobiles.Api.Domain
         }
 
         public PhoneNumber PhoneNumber => new PhoneNumber(mobileDataEntity.PhoneNumber);
-        public IEnumerable<Order> Orders => orders;
-        public Order InFlightOrder { get; private set; }
 
-        //private readonly StateMachine<MobileState, Trigger> machine;
-        private readonly MobileDataEntity mobileDataEntity;
-        private readonly List<Order> orders;
-        //private Order newOrder;
-        // bool isOrderRejected = false;
-        private readonly MobileBehaviour behaviour;
-
-        public Mobile(MobileDataEntity mobileDataEntity, Order inFlightOrder, IEnumerable<Order> orderHistory = null)
+        public IEnumerable<Order> Orders
         {
-            this.mobileDataEntity = mobileDataEntity;
-            InFlightOrder = inFlightOrder;
+            get
+            {
+                if (mobileDataEntity.Orders is null)
+                    return new List<Order>();
 
-            if (orderHistory == null)
-                orders = new List<Order>();
-            else
-                orders = orderHistory.OrderByDescending(x => x.CreatedAt).ToList();
+                return mobileDataEntity.Orders
+                    .OrderByDescending(x => x.CreatedAt)
+                    .Select(x => new Order(x));
+            }
+        }
 
-            behaviour = new MobileBehaviour(mobileDataEntity, InFlightOrder);
+        public Order InFlightOrder
+        {
+            get
+            {
+                return Orders.OrderByDescending(x => x.CreatedAt)
+                    .FirstOrDefault(x => x.CurrentState == Order.State.New ||
+                                         x.CurrentState == Order.State.Processing ||
+                                         x.CurrentState == Order.State.Sent);
+            }
         }
 
         public MobileDataEntity GetDataEntity()
@@ -55,103 +107,121 @@ namespace Mobiles.Api.Domain
             return mobileDataEntity;
         }
 
-        public void Provision(Order order)
+        private void ProcessNextAction(string nextAction)
         {
-            var result = behaviour.Provision(order);
-            //newOrder = result.InFlightOrder;
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-            //this.mobileDataEntity.AddOrder(result.InFlightOrder.GetDataEntity());
-            mobileDataEntity.UpdatedAt = DateTime.Now;
+            if (nextAction is null)
+                return;
 
-            //this.newOrder = order;
-            //this.machine.Fire(Trigger.Provision); 
+            if (nextAction == "CreateNewOrder" && newOrder != null)
+                mobileDataEntity.AddOrder(newOrder.GetDataEntity());
+            else if (nextAction == "CompleteInFlightOrder" && InFlightOrder != null)
+                InFlightOrder.Complete();
+            else if (nextAction == "RejectInFlightOrder" && InFlightOrder != null) InFlightOrder.Reject();
         }
+
+        public void Provision()
+        {
+            newOrder = InFlightOrder;
+            var result = behaviour.Provision();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+        }
+
         public void Activate(Order order)
         {
-            var result = behaviour.Activate(order, mobileDataEntity);
-            //newOrder = result.InFlightOrder;
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-            //CreateNewOrder();
-            //this.mobileDataEntity.AddOrder(result.InFlightOrder.GetDataEntity());
-            mobileDataEntity.UpdatedAt = DateTime.Now;
-
-            //this.newOrder = order;
-            //this.machine.Fire(Trigger.Activate);
+            newOrder = order;
+            var result = behaviour.Activate();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
         }
+
         public void Cease(Order order)
         {
-            var result = behaviour.Cease(order, mobileDataEntity);
-            //newOrder = result.InFlightOrder;
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-            //this.mobileDataEntity.AddOrder(result.InFlightOrder.GetDataEntity());
-            mobileDataEntity.UpdatedAt = DateTime.Now;
-
-            //this.newOrder = order;
-            //this.machine.Fire(Trigger.Cease);
+            newOrder = order;
+            var result = behaviour.Cease();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
         }
 
         public void ActivateCompleted()
         {
-            var result = behaviour.ActivateCompleted(orders);
-            //newOrder = result.InFlightOrder;
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-            //CompleteInFlightOrder();
-            mobileDataEntity.UpdatedAt = DateTime.Now;
-
-            //isOrderRejected = false;
-            //machine.Fire(Trigger.ActivateCompleted);
+            var result = behaviour.ActivateCompleted();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
         }
 
-        public void ActivateRejected() 
+        public void ActivateRejected()
         {
-            var result = behaviour.ActivateRejected(orders);
-            //newOrder = result.InFlightOrder;
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-            //RejectInFlightOrder();
-            mobileDataEntity.UpdatedAt = DateTime.Now;
-
-            //isOrderRejected = true;
-            //this.machine.Fire(Trigger.ActivateRejected);
+            var result = behaviour.ActivateRejected();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
         }
 
         public void ProcessingProvisionCompleted()
         {
-            var result = behaviour.ProcessingProvisionCompleted(orders);
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-            //CompleteInFlightOrder();
-            mobileDataEntity.UpdatedAt = DateTime.Now;
+            var result = behaviour.ProcessingProvisionCompleted();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
         }
-        public void PortIn() => behaviour.PortIn();
-        public void PortInCompleted() => behaviour.PortInCompleted();
-        public void Suspend() => behaviour.Suspend();
-        public void ReplaceSim() => behaviour.ReplaceSim();
-        public void Resume() => behaviour.Resume();
-        public void RequestPac() => behaviour.RequestPac();
+
+        public void PortIn()
+        {
+            behaviour.PortIn();
+        }
+
+        public void PortInCompleted()
+        {
+            behaviour.PortInCompleted();
+        }
+
+        public void Suspend()
+        {
+            behaviour.Suspend();
+        }
+
+        public void ReplaceSim()
+        {
+            behaviour.ReplaceSim();
+        }
+
+        public void Resume()
+        {
+            behaviour.Resume();
+        }
+
+        public void RequestPac()
+        {
+            behaviour.RequestPac();
+        }
 
         public void CeaseCompleted()
         {
-            var result = behaviour.CeaseCompleted(orders);
-            InFlightOrder = result.InFlightOrder;
-            mobileDataEntity.State = result.NewMobileState.ToString();
-        } 
-        public void PortOutCompleted() => behaviour.PortOutCompleted();
+            var result = behaviour.CeaseCompleted();
+            mobileDataEntity.State = result.MobileState.ToString();
+            ProcessNextAction(result.Action);
+
+            mobileDataEntity.UpdatedAt = DateTime.Now;
+        }
+
+        public void PortOutCompleted()
+        {
+            behaviour.PortOutCompleted();
+        }
 
         public void OrderProcessing()
         {
-            if (InFlightOrder != null)
-                InFlightOrder.Process();
+            InFlightOrder?.Process();
         }
 
         public void OrderSent()
         {
-            if (InFlightOrder != null)
-                InFlightOrder.Send();
+            InFlightOrder?.Send();
         }
     }
 }

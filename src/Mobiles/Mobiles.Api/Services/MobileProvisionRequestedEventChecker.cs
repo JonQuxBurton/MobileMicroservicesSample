@@ -42,7 +42,7 @@ namespace Mobiles.Api.Services
 
         private void Provision(Mobile mobile)
         {
-            mobile.Provision(mobile.InFlightOrder);
+            mobile.Provision();
 
             mobileRepository.Update(mobile);
         }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using Mobiles.Api.Domain;
 using Mobiles.Api.Messages;
 using Mobiles.Api.Services;
 using Moq;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Xunit;
 
@@ -25,14 +27,20 @@ namespace Mobiles.Api.Tests.Services
 
             public CheckShould()
             {
-                expectedMobile = new Mobile(new MobileDataEntity()
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity()
                 {
-                    State = Mobile.MobileState.ProcessingActivate.ToString()
-                }, new Order(new OrderDataEntity
-                {
-                    State = Order.State.New.ToString(),
-                    ActivationCode = "BAC132"
-                }));
+                    State = Mobile.MobileState.ProcessingActivate.ToString(),
+                    Orders = new List<OrderDataEntity>()
+                    {
+                        new OrderDataEntity
+                        {
+                            State = Order.State.New.ToString(),
+                            ActivationCode = "BAC132"
+                        }
+                    }
+                });
 
                 getNewActivationsQueryMock = new Mock<IGetNewActivatesQuery>();
                 getNewActivationsQueryMock.Setup(x => x.Get())

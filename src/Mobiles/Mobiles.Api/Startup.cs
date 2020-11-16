@@ -16,6 +16,7 @@ using Mobiles.Api.Services;
 using Prometheus;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Enums;
 using Utils.Guids;
@@ -59,6 +60,7 @@ namespace Mobiles.Api
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             // Utilities
+            services.AddSingleton<IDateTimeCreator, DateTimeCreator>();
             services.AddSingleton<IEnumConverter, EnumConverter>();
             services.AddSingleton<IMessageDeserializer, MessageDeserializer>();
             services.AddSingleton<AWSCredentials>(credentials);

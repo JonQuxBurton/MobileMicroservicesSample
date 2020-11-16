@@ -9,6 +9,8 @@ using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using Moq;
 using System;
+using System.Collections.Generic;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 using Xunit;
@@ -29,6 +31,7 @@ namespace Mobiles.Api.Tests.Controllers
                 monitoringMock = new Mock<IMonitoring>();
                 var loggingMock = new Mock<ILogger<MobilesController>>();
                 var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
                 sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
 
@@ -37,13 +40,17 @@ namespace Mobiles.Api.Tests.Controllers
                     GlobalId = Guid.NewGuid(),
                     State = Order.State.New.ToString()
                 });
-                expectedMobile = new Mobile(
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object,
                     new MobileDataEntity {
                         Id = 101,
                         GlobalId = Guid.NewGuid(),
                         CustomerId = Guid.NewGuid(),
                         State = Mobile.MobileState.New.ToString(),
-                    }, expectedInFlightOrder, null);
+                        Orders = new List<OrderDataEntity>()
+                        {
+                            expectedInFlightOrder.GetDataEntity()
+                        }
+                    });
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobile.GlobalId))
                     .Returns(expectedMobile);
@@ -100,10 +107,12 @@ namespace Mobiles.Api.Tests.Controllers
 
             public ActivateShould()
             {
-                expectedMobile = new Mobile(new MobileDataEntity()
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity()
                 {
                     State = MobileState.WaitingForActivate.ToString()
-                }, null);
+                });
                 expectedGlobalId = Guid.NewGuid();
                 expectedActivateRequest = new ActivateRequest()
                 {
@@ -175,11 +184,13 @@ namespace Mobiles.Api.Tests.Controllers
 
             public CeaseShould()
             {
-                expectedMobile = new Mobile(new MobileDataEntity()
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity()
                 {
                     GlobalId = Guid.NewGuid(),
                     State = "Live"
-                }, null);
+                });
                 expectedReference = Guid.NewGuid();
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();

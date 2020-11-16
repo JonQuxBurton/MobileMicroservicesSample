@@ -1,6 +1,8 @@
 ﻿using Mobiles.Api.Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Utils.DateTimes;
 using Utils.Enums;
 using static Mobiles.Api.Domain.Mobile;
 
@@ -8,16 +10,17 @@ namespace Mobiles.Api.Domain
 {
     public class MobileWhenNewBuilder : IMobileWhenNewBuilder
     {
+        private readonly IDateTimeCreator dateTimeCreator;
         private readonly Guid globalId;
         private readonly Guid customerId;
-        private Order inFlightOrder;
         private readonly List<Order> orderHistory = new List<Order>();
         private readonly EnumConverter enumConverter;
         private readonly MobileState initialMobileState = MobileState.New;
         private readonly PhoneNumber phoneNumber;
 
-        public MobileWhenNewBuilder(Guid globalId, Guid customerId, PhoneNumber phoneNumber)
+        public MobileWhenNewBuilder(IDateTimeCreator dateTimeCreator, Guid globalId, Guid customerId, PhoneNumber phoneNumber)
         {
+            this.dateTimeCreator = dateTimeCreator;
             this.globalId = globalId;
             this.customerId = customerId;
             this.enumConverter = new EnumConverter();
@@ -35,7 +38,7 @@ namespace Mobiles.Api.Domain
                 State = newStateName,
                 Type = this.enumConverter.ToName<Order.OrderType>(Order.OrderType.Provision)
             };
-            inFlightOrder = new Order(dataEntity);
+            orderHistory.Add(new Order(dataEntity));
 
             return this;
         }
@@ -49,9 +52,10 @@ namespace Mobiles.Api.Domain
                 GlobalId = globalId,
                 State = state,
                 CustomerId = customerId,
-                PhoneNumber = phoneNumber.ToString()
+                PhoneNumber = phoneNumber.ToString(),
+                Orders = orderHistory.Select(x => x.GetDataEntity()).ToList()
             };
-            return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
+            return new Mobile(dateTimeCreator, mobileDataEntity);
         }
     }
 }

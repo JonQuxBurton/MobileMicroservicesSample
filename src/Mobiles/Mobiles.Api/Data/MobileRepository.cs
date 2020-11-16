@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Domain;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Enums;
 
@@ -12,11 +13,13 @@ namespace Mobiles.Api.Data
     {
         private readonly MobilesContext mobilesContext;
         private readonly IEnumConverter enumConverter;
+        private readonly IDateTimeCreator dateTimeCreator;
 
-        public MobileRepository(MobilesContext mobilesContext, IEnumConverter enumConverter)
+        public MobileRepository(MobilesContext mobilesContext, IEnumConverter enumConverter, IDateTimeCreator dateTimeCreator)
         {
             this.mobilesContext = mobilesContext;
             this.enumConverter = enumConverter;
+            this.dateTimeCreator = dateTimeCreator;
         }
 
         public void Add(Mobile aggregateRoot)
@@ -53,17 +56,17 @@ namespace Mobiles.Api.Data
             if (mobileDbEntity == null)
                 return null;
 
-            var inFlightOrderDataEntity = mobileDbEntity.Orders.FirstOrDefault(x => x.State == Order.State.New.ToString() || x.State == Order.State.Processing.ToString() || x.State == Order.State.Sent.ToString());
-            Order inFlightOrder = null;
-            if (inFlightOrderDataEntity != null)
-                inFlightOrder = new Order(inFlightOrderDataEntity);
+            //var inFlightOrderDataEntity = mobileDbEntity.Orders.FirstOrDefault(x => x.State == Order.State.New.ToString() || x.State == Order.State.Processing.ToString() || x.State == Order.State.Sent.ToString());
+            //Order inFlightOrder = null;
+            //if (inFlightOrderDataEntity != null)
+            //    inFlightOrder = new Order(inFlightOrderDataEntity);
 
             //var orderHistoryDataEntities = mobileDbEntity.Orders.Except(new[] { inFlightOrderDataEntity });
             var orderHistoryDataEntities = mobileDbEntity.Orders.OrderBy(x => x.CreatedAt);
             var orderHistory = new List<Order>();
             orderHistoryDataEntities.ToList().ForEach(x => orderHistory.Add(new Order(x)));
 
-            return new Mobile(mobileDbEntity, inFlightOrder, orderHistory);
+            return new Mobile(dateTimeCreator, mobileDbEntity);
         }
 
         public void Update(Mobile aggregateRoot)

@@ -6,6 +6,8 @@ using Mobiles.Api.Handlers;
 using Mobiles.Api.Messages;
 using Moq;
 using System;
+using System.Collections.Generic;
+using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Xunit;
 
@@ -24,15 +26,18 @@ namespace Mobiles.Api.Tests.Handlers
 
             public HandleShould()
             {
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
                 var inFlightOrder = new Order(new OrderDataEntity()
                 {
                     State = "Processing"
                 });
-                expectedMobile = new Mobile(new MobileDataEntity()
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity()
                 {
                     GlobalId = Guid.NewGuid(),
-                    State = "ProcessingCease"
-                }, inFlightOrder);
+                    State = "ProcessingCease",
+                    Orders = new List<OrderDataEntity>() { inFlightOrder.GetDataEntity() }
+                });
                 inputMessage = new CeaseOrderSentMessage()
                 {
                     MobileOrderId = expectedMobile.GlobalId

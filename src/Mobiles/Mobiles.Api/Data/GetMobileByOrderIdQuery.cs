@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Utils.DateTimes;
 using Utils.Enums;
 
 namespace Mobiles.Api.Data
@@ -11,11 +12,13 @@ namespace Mobiles.Api.Data
     {
         private readonly MobilesContext mobilesContext;
         private readonly IEnumConverter enumConverter;
+        private readonly IDateTimeCreator dateTimeCreator;
 
-        public GetMobileByOrderIdQuery(MobilesContext mobilesContext, IEnumConverter enumConverter)
+        public GetMobileByOrderIdQuery(MobilesContext mobilesContext, IEnumConverter enumConverter, IDateTimeCreator dateTimeCreator)
         {
             this.mobilesContext = mobilesContext;
             this.enumConverter = enumConverter;
+            this.dateTimeCreator = dateTimeCreator;
         }
 
         public Mobile Get(Guid orderId)
@@ -40,12 +43,13 @@ namespace Mobiles.Api.Data
 
                 if (inFlightOrder != null)
                 {
-                    var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
+                    //var orderHistoryDataEntities = mobileDataEntity.Orders.Except(new[] { inFlightOrderDataEntity });
+                    var orderHistoryDataEntities = mobileDataEntity.Orders;
                     orderHistory = orderHistoryDataEntities.Select(x => new Order(x));
                 }
             }
 
-            return new Mobile(mobileDataEntity, inFlightOrder, orderHistory);
+            return new Mobile(dateTimeCreator, mobileDataEntity);
         }
     }
 }
