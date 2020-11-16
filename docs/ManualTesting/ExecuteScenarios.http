@@ -30,13 +30,13 @@ content-type: application/json
 ###
 @mobileId = {{orderMobile.response.body.$.globalId}}
 
-### Get the Mobile, so we can get the Order Reference (orderHistory.globalId)
+### Get the Mobile, so we can get the Order Reference (orders.globalId)
 # @name getOrder
 GET http://localhost:5000/api/mobiles/{{mobileId}}
 
 ###
 #@phoneNumber = {{getOrder.response.body.$.phoneNumber}}
-@provisionOrderId = {{getOrder.response.body.orderHistory[0].globalId}}
+@provisionOrderId = {{getOrder.response.body.orders[0].globalId}}
 
 ### Step 3 - The External Service has completed the Mobile Provision Order
 # @name completeProvision
@@ -71,12 +71,12 @@ POST http://localhost:5002/api/orders/{{activateOrderId}}/complete
 ### Step 1 - Cease a Mobile
 DELETE http://localhost:5000/api/mobiles/{{mobileId}}
 
-### Get the Mobile, so we can get the Order Reference (orderHistory.globalId)
+### Get the Mobile, so we can get the Order Reference (orders.globalId)
 # @name getCeaseOrder
 GET http://localhost:5000/api/mobiles/{{mobileId}}
 
 ###
-@ceaseOrderId = {{getCeaseOrder.response.body.$.orderHistory[?(@.type==2)].globalId}}
+@ceaseOrderId = {{getCeaseOrder.response.body.$.orders[?(@.type==2)].globalId}}
 
 ### Step 2 - The External Service has completed the Mobile Cease Order
 POST http://localhost:5002/api/orders/{{ceaseOrderId}}/complete

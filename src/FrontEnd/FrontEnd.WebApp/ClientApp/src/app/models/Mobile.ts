@@ -6,6 +6,6 @@ export class Mobile {
   public customerId: string;
   public phoneNumber: string;
   public state: string;
-  public orderHistory: Order[];
+  public orders: Order[];
   public activationCode: string;
 }

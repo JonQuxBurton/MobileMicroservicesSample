@@ -12,7 +12,6 @@ namespace Mobiles.Api.Resources
         public DateTime? UpdatedAt { get; set; }
         public string PhoneNumber { get; set; }
         public string State { get; set; }
-        public IEnumerable<OrderResource> OrderHistory { get; set; }
-        public OrderResource InProgressOrder { get; set; }
+        public IEnumerable<OrderResource> Orders { get; set; }
     }
 }

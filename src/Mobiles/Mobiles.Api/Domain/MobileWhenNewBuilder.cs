@@ -13,7 +13,7 @@ namespace Mobiles.Api.Domain
         private readonly IDateTimeCreator dateTimeCreator;
         private readonly Guid globalId;
         private readonly Guid customerId;
-        private readonly List<Order> orderHistory = new List<Order>();
+        private readonly List<Order> orders = new List<Order>();
         private readonly EnumConverter enumConverter;
         private readonly MobileState initialMobileState = MobileState.New;
         private readonly PhoneNumber phoneNumber;
@@ -38,7 +38,7 @@ namespace Mobiles.Api.Domain
                 State = newStateName,
                 Type = this.enumConverter.ToName<Order.OrderType>(Order.OrderType.Provision)
             };
-            orderHistory.Add(new Order(dataEntity));
+            orders.Add(new Order(dataEntity));
 
             return this;
         }
@@ -53,7 +53,7 @@ namespace Mobiles.Api.Domain
                 State = state,
                 CustomerId = customerId,
                 PhoneNumber = phoneNumber.ToString(),
-                Orders = orderHistory.Select(x => x.GetDataEntity()).ToList()
+                Orders = orders.Select(x => x.GetDataEntity()).ToList()
             };
             return new Mobile(dateTimeCreator, mobileDataEntity);
         }

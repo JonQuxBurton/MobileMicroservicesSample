@@ -47,27 +47,14 @@ namespace Mobiles.Api.Controllers
             if (mobile == null)
                 return NotFound();
 
-            OrderResource inProgressOrder = null;
-
-            if (mobile.InProgressOrder != null)
-            {
-                inProgressOrder = new OrderResource
-                {
-                    GlobalId = mobile.InProgressOrder.GlobalId,
-                    State = mobile.InProgressOrder.CurrentState.ToString(),
-                    Type = mobile.InProgressOrder.Type.ToString(),
-                };
-            }
-
             return new OkObjectResult(new MobileResource
             {
                 Id = mobile.Id,
                 GlobalId = mobile.GlobalId,
                 CustomerId = mobile.CustomerId,
                 CreatedAt = mobile.CreatedAt,
-                InProgressOrder = inProgressOrder,
                 State = mobile.State.ToString(),
-                OrderHistory = mobile.Orders.Select(x => new OrderResource
+                Orders = mobile.Orders.Select(x => new OrderResource
                 {
                     GlobalId = x.GlobalId,
                     State = x.CurrentState.ToString(),

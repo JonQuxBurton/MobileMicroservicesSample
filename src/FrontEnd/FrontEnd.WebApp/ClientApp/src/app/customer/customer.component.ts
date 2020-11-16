@@ -83,7 +83,7 @@ export class CustomerComponent implements OnInit {
 
   refreshActivationCodes() {
     this.selectedCustomer.mobiles.filter(x => x.state == "WaitingForActivate").forEach(y => {
-      const lastOrder = y.orderHistory[y.orderHistory.length - 1];
+      const lastOrder = y.orders[y.orders.length - 1];
 
       if (lastOrder) {
         this.simCardsService.getActivationCode(lastOrder.globalId).subscribe(z => {
@@ -144,10 +144,10 @@ export class CustomerComponent implements OnInit {
   }
 
   getOrderInProgress(mobile: Mobile) {
-    if (mobile.orderHistory.length === 0)
+    if (mobile.orders.length === 0)
       return "";
 
-    const mostRecentOrder = mobile.orderHistory[0];
+    const mostRecentOrder = mobile.orders[0];
     return `'${mostRecentOrder.type}' order '${mostRecentOrder.state}'`;
   }
 }

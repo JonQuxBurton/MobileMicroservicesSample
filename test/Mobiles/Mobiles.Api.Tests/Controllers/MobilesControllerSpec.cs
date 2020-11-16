@@ -10,6 +10,7 @@ using Mobiles.Api.Resources;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
@@ -74,8 +75,7 @@ namespace Mobiles.Api.Tests.Controllers
                 actualMobileResource.GlobalId.Should().Be(expectedMobile.GlobalId);
                 actualMobileResource.CustomerId.Should().Be(expectedMobile.CustomerId);
                 actualMobileResource.CreatedAt.Should().Be(expectedMobile.CreatedAt);
-                actualMobileResource.InProgressOrder.State.Should().Be(expectedInProgressOrder.CurrentState.ToString());
-
+                actualMobileResource.Orders.First().State.Should().Be(expectedInProgressOrder.CurrentState.ToString());
             }
 
             [Fact]

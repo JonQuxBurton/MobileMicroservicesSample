@@ -141,11 +141,11 @@ export function orderMobile() {
 
     let getMobileSuccess = check(getMobileResponse, {
       [`when ${scenarioName} getMobile, is status 200`]: (r) => r.status === 200,
-      [`when ${scenarioName} getMobile, is provisionOrderId present`]: (r) => r.json('orderHistory.0').hasOwnProperty('globalId'),
+      [`when ${scenarioName} getMobile, is provisionOrderId present`]: (r) => r.json('orders.0').hasOwnProperty('globalId'),
     });
     scenarioLogCheck(scenarioName, user, __ITER, getMobileSuccess, getMobileResponse);
     logCheckFailure(scenarioName, getMobileSuccess, getMobileResponse);
-    let provisionOrderId = getMobileResponse.json('orderHistory.0')['globalId'];    
+    let provisionOrderId = getMobileResponse.json('orders.0')['globalId'];    
     
     sleep(SLEEP_DURATION_BEFORE_ORDER_COMPLETION);
 
