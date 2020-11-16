@@ -19,20 +19,20 @@ namespace Mobiles.Api.Tests.Domain
 
                 var expectedGuid = Guid.NewGuid();
                 var expectedId = 0;
-                var expectedInFlightOrderGuid = Guid.NewGuid();
+                var expectedInProgressOrderGuid = Guid.NewGuid();
                 var expectedOrderToAdd = new OrderToAdd() { Name = "Neil", ContactPhoneNumber = "01234" };
                 var expectedCustomerId = Guid.NewGuid();
                 var phoneNumber = new PhoneNumber("07930123456");
 
                 var sut = new MobileWhenNewBuilder(dateTimeCreatorMock.Object, expectedGuid, expectedCustomerId, phoneNumber)
-                    .AddInProgressOrder(expectedOrderToAdd, expectedInFlightOrderGuid);
+                    .AddInProgressOrder(expectedOrderToAdd, expectedInProgressOrderGuid);
                 var actual = sut.Build();
 
                 actual.State.Should().Be(Mobile.MobileState.New);
                 actual.Id.Should().Be(expectedId);
                 actual.GlobalId.Should().Be(expectedGuid);
                 actual.CustomerId.Should().Be(expectedCustomerId);
-                actual.InProgressOrder.GlobalId.Should().Be(expectedInFlightOrderGuid);
+                actual.InProgressOrder.GlobalId.Should().Be(expectedInProgressOrderGuid);
                 actual.InProgressOrder.Name.Should().Be(expectedOrderToAdd.Name);
                 actual.InProgressOrder.ContactPhoneNumber.Should().Be(expectedOrderToAdd.ContactPhoneNumber);
             }

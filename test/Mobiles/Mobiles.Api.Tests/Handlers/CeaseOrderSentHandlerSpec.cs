@@ -28,7 +28,7 @@ namespace Mobiles.Api.Tests.Handlers
             {
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                var inFlightOrder = new Order(new OrderDataEntity()
+                var inProgressOrder = new Order(new OrderDataEntity()
                 {
                     State = "Processing"
                 });
@@ -36,7 +36,7 @@ namespace Mobiles.Api.Tests.Handlers
                 {
                     GlobalId = Guid.NewGuid(),
                     State = "ProcessingCease",
-                    Orders = new List<OrderDataEntity>() { inFlightOrder.GetDataEntity() }
+                    Orders = new List<OrderDataEntity>() { inProgressOrder.GetDataEntity() }
                 });
                 inputMessage = new CeaseOrderSentMessage()
                 {
@@ -58,7 +58,7 @@ namespace Mobiles.Api.Tests.Handlers
             }
 
             [Fact]
-            public async void SetTheMobilesInFlightOrderToSent()
+            public async void SetTheMobilesInProgressOrderToSent()
             {
                 await sut.Handle(inputMessage);
 

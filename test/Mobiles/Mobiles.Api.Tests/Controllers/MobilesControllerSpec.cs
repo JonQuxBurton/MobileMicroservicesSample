@@ -35,7 +35,7 @@ namespace Mobiles.Api.Tests.Controllers
 
                 sut = new MobilesController(loggingMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
 
-                expectedInFlightOrder = new Order(new OrderDataEntity
+                expectedInProgressOrder = new Order(new OrderDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     State = Order.State.New.ToString()
@@ -48,7 +48,7 @@ namespace Mobiles.Api.Tests.Controllers
                         State = Mobile.MobileState.New.ToString(),
                         Orders = new List<OrderDataEntity>()
                         {
-                            expectedInFlightOrder.GetDataEntity()
+                            expectedInProgressOrder.GetDataEntity()
                         }
                     });
 
@@ -62,7 +62,7 @@ namespace Mobiles.Api.Tests.Controllers
             private readonly Mock<IGuidCreator> guidCreatorMock;
             private readonly Mock<IMonitoring> monitoringMock;
             private readonly Mobile expectedMobile;
-            private readonly Order expectedInFlightOrder;
+            private readonly Order expectedInProgressOrder;
 
             [Fact]
             public void ReturnExpectedMobile()
@@ -74,7 +74,7 @@ namespace Mobiles.Api.Tests.Controllers
                 actualMobileResource.GlobalId.Should().Be(expectedMobile.GlobalId);
                 actualMobileResource.CustomerId.Should().Be(expectedMobile.CustomerId);
                 actualMobileResource.CreatedAt.Should().Be(expectedMobile.CreatedAt);
-                actualMobileResource.InFlightOrder.State.Should().Be(expectedInFlightOrder.CurrentState.ToString());
+                actualMobileResource.InProgressOrder.State.Should().Be(expectedInProgressOrder.CurrentState.ToString());
 
             }
 

@@ -13,6 +13,6 @@ namespace Mobiles.Api.Resources
         public string PhoneNumber { get; set; }
         public string State { get; set; }
         public IEnumerable<OrderResource> OrderHistory { get; set; }
-        public OrderResource InFlightOrder { get; set; }
+        public OrderResource InProgressOrder { get; set; }
     }
 }

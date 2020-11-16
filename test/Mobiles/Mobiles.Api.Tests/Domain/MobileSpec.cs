@@ -68,7 +68,7 @@ namespace Mobiles.Api.Tests.Domain
             }
 
             [Fact]
-            public void SetInFlightOrderStateToNew()
+            public void SetInProgressOrderStateToNew()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
                 var sut = new Mobile(dateTimeCreatorMock.Object,
@@ -104,7 +104,7 @@ namespace Mobiles.Api.Tests.Domain
             }
 
             [Fact]
-            public void SetInFlightOrderStateToNew()
+            public void SetInProgressOrderStateToNew()
             {
                 var sut = new Mobile(dateTimeCreatorMock.Object,
                     new MobileDataEntity
@@ -155,7 +155,7 @@ namespace Mobiles.Api.Tests.Domain
             }
 
             [Fact]
-            public void SetInFlightOrderToNull()
+            public void SetInProgressOrderToNull()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
                 var sut = new Mobile(dateTimeCreatorMock.Object,
@@ -184,7 +184,7 @@ namespace Mobiles.Api.Tests.Domain
             [Theory]
             [InlineData("PendingActivation")]
             [InlineData("PendingLive")]
-            public void SetInFlightOrderStateToProcessing(string mobileState)
+            public void SetInProgressOrderStateToProcessing(string mobileState)
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" });
                 var sut = new Mobile(dateTimeCreatorMock.Object,
@@ -212,7 +212,7 @@ namespace Mobiles.Api.Tests.Domain
             [Theory]
             [InlineData("PendingActivation")]
             [InlineData("PendingLive")]
-            public void SetInFlightOrderStateToSent(string mobileState)
+            public void SetInProgressOrderStateToSent(string mobileState)
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Processing" });
                 var sut = new Mobile(dateTimeCreatorMock.Object,
@@ -249,9 +249,8 @@ namespace Mobiles.Api.Tests.Domain
             }
 
             [Fact]
-            public void SetInFlightOrderStateToNew()
+            public void SetInProgressOrderStateToNew()
             {
-                //var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
                 var sut = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity { Id = 101, GlobalId = Guid.NewGuid(), State = "Live" });
 
                 sut.Cease(new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "New" }));
@@ -295,7 +294,7 @@ namespace Mobiles.Api.Tests.Domain
             }
 
             [Fact]
-            public void SetInFlightOrderToNull()
+            public void SetInProgressOrderToNull()
             {
                 var mobileOrder = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Name", ContactPhoneNumber = "0123456789", State = "Sent" });
                 var sut = new Mobile(dateTimeCreatorMock.Object,

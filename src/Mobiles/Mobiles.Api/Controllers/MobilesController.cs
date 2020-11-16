@@ -47,11 +47,11 @@ namespace Mobiles.Api.Controllers
             if (mobile == null)
                 return NotFound();
 
-            OrderResource inFlightOrder = null;
+            OrderResource inProgressOrder = null;
 
             if (mobile.InProgressOrder != null)
             {
-                inFlightOrder = new OrderResource
+                inProgressOrder = new OrderResource
                 {
                     GlobalId = mobile.InProgressOrder.GlobalId,
                     State = mobile.InProgressOrder.CurrentState.ToString(),
@@ -65,7 +65,7 @@ namespace Mobiles.Api.Controllers
                 GlobalId = mobile.GlobalId,
                 CustomerId = mobile.CustomerId,
                 CreatedAt = mobile.CreatedAt,
-                InFlightOrder = inFlightOrder,
+                InProgressOrder = inProgressOrder,
                 State = mobile.State.ToString(),
                 OrderHistory = mobile.Orders.Select(x => new OrderResource
                 {
@@ -97,9 +97,9 @@ namespace Mobiles.Api.Controllers
                 State = newStateName,
                 Type = orderType
             };
-            var inFlightOrder = new Order(dataEntity);
+            var inProgressOrder = new Order(dataEntity);
 
-            mobile.Activate(inFlightOrder);
+            mobile.Activate(inProgressOrder);
             mobileRepository.Update(mobile);
 
             monitoring.Activate();
@@ -135,8 +135,9 @@ namespace Mobiles.Api.Controllers
                 State = newStateName,
                 Type = orderType
             };
-            var inFlightOrder = new Order(dataEntity);
-            mobile.Cease(inFlightOrder);
+
+            var inProgressOrder = new Order(dataEntity);
+            mobile.Cease(inProgressOrder);
             mobileRepository.Update(mobile);
 
             monitoring.Cease();

@@ -29,7 +29,7 @@ namespace Mobiles.Api.Tests.Handlers
             {
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                var inFlightOrder = new Order(new OrderDataEntity()
+                var inProgressOrder = new Order(new OrderDataEntity()
                 {
                     State = "Sent"
                 });
@@ -37,7 +37,7 @@ namespace Mobiles.Api.Tests.Handlers
                 {
                     GlobalId = Guid.NewGuid(),
                     State = MobileState.ProcessingActivate.ToString(),
-                    Orders = new List<OrderDataEntity>() { inFlightOrder.GetDataEntity() }
+                    Orders = new List<OrderDataEntity>() { inProgressOrder.GetDataEntity() }
                 });
                 inputMessage = new ActivateOrderCompletedMessage()
                 {

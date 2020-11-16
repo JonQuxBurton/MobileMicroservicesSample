@@ -69,11 +69,11 @@ namespace Mobiles.Api.Controllers
                     {
                         var mobile = mobileRepository.GetById(x.GlobalId);
 
-                        OrderResource inFlightOrder = null;
+                        OrderResource inProgressOrder = null;
 
                         if (mobile.InProgressOrder != null)
                         {
-                            inFlightOrder = new OrderResource
+                            inProgressOrder = new OrderResource
                             {
                                 GlobalId = mobile.InProgressOrder.GlobalId,
                                 State = mobile.InProgressOrder.CurrentState.ToString(),
@@ -90,7 +90,7 @@ namespace Mobiles.Api.Controllers
                             CustomerId = x.CustomerId,
                             PhoneNumber = x.PhoneNumber.ToString(),
                             State = x.State.ToString(),
-                            InFlightOrder = inFlightOrder,
+                            InProgressOrder = inProgressOrder,
                             OrderHistory = mobile.Orders.Select(x => new OrderResource
                             {
                                 GlobalId = x.GlobalId,
