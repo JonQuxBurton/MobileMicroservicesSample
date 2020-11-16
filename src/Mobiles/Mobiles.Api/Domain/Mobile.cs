@@ -45,15 +45,11 @@ namespace Mobiles.Api.Domain
         private readonly MobileBehaviour behaviour;
 
         private readonly MobileDataEntity mobileDataEntity;
-        private readonly IDateTimeCreator dateTimeCreator;
-
-        private Order newOrder;
 
         public Mobile(IDateTimeCreator dateTimeCreator, MobileDataEntity mobileDataEntity)
         {
             this.mobileDataEntity = mobileDataEntity;
-            this.dateTimeCreator = dateTimeCreator;
-            behaviour = new MobileBehaviour(mobileDataEntity);
+            behaviour = new MobileBehaviour(dateTimeCreator, mobileDataEntity);
         }
 
         public override int Id
@@ -107,67 +103,34 @@ namespace Mobiles.Api.Domain
             return mobileDataEntity;
         }
 
-        private void ProcessNextAction(string nextAction)
-        {
-            if (nextAction is null)
-                return;
-
-            if (nextAction == "CreateNewOrder" && newOrder != null)
-                mobileDataEntity.AddOrder(newOrder.GetDataEntity());
-            else if (nextAction == "CompleteInProgressOrder" && InProgressOrder != null)
-                InProgressOrder.Complete();
-            else if (nextAction == "RejectInProgressOrder" && InProgressOrder != null) InProgressOrder.Reject();
-        }
-
         public void Provision()
         {
-            newOrder = InProgressOrder;
-            var result = behaviour.Provision();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+            behaviour.Provision(mobileDataEntity, InProgressOrder);
         }
 
         public void Activate(Order order)
         {
-            newOrder = order;
-            var result = behaviour.Activate();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+            behaviour.Activate(mobileDataEntity, order);
         }
 
         public void Cease(Order order)
         {
-            newOrder = order;
-            var result = behaviour.Cease();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+            behaviour.Cease(mobileDataEntity, order);
         }
 
         public void ActivateCompleted()
         {
-            var result = behaviour.ActivateCompleted();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+            behaviour.ActivateCompleted(mobileDataEntity, InProgressOrder);
         }
 
         public void ActivateRejected()
         {
-            var result = behaviour.ActivateRejected();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+            behaviour.ActivateRejected(mobileDataEntity, InProgressOrder);
         }
 
         public void ProcessingProvisionCompleted()
         {
-            var result = behaviour.ProcessingProvisionCompleted();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-            mobileDataEntity.UpdatedAt = dateTimeCreator.Create();
+            behaviour.ProcessingProvisionCompleted(mobileDataEntity, InProgressOrder);
         }
 
         public void PortIn()
@@ -202,11 +165,7 @@ namespace Mobiles.Api.Domain
 
         public void CeaseCompleted()
         {
-            var result = behaviour.CeaseCompleted();
-            mobileDataEntity.State = result.MobileState.ToString();
-            ProcessNextAction(result.Action);
-
-            mobileDataEntity.UpdatedAt = DateTime.Now;
+            behaviour.CeaseCompleted(mobileDataEntity, InProgressOrder);
         }
 
         public void PortOutCompleted()
