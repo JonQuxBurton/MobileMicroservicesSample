@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using System;
 using System.Linq;
-using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
-using Utils.Guids;
 
 namespace Mobiles.Api.Controllers
 {
@@ -15,30 +12,23 @@ namespace Mobiles.Api.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly ILogger<CustomersController> logger;
         private readonly ICustomerRepository customerRepository;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMonitoring monitoring;
-        private readonly IGuidCreator guidCreator;
         private readonly IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery;
-        private readonly IDateTimeCreator dateTimeCreator;
+        private readonly ICustomersService customersService;
 
-        public CustomersController(
-            ILogger<CustomersController> logger,
-            ICustomerRepository customerRepository,
+        public CustomersController(ICustomerRepository customerRepository,
             IRepository<Mobile> mobileRepository,
             IMonitoring monitoring,
-            IGuidCreator guidCreator,
             IGetMobilesByCustomerIdQuery getMobilesByCustomerIdQuery,
-            IDateTimeCreator dateTimeCreator)
+            ICustomersService customersService)
         {
-            this.logger = logger;
             this.customerRepository = customerRepository;
             this.mobileRepository = mobileRepository;
             this.monitoring = monitoring;
-            this.guidCreator = guidCreator;
             this.getMobilesByCustomerIdQuery = getMobilesByCustomerIdQuery;
-            this.dateTimeCreator = dateTimeCreator;
+            this.customersService = customersService;
         }
 
         [HttpGet]
@@ -76,13 +66,13 @@ namespace Mobiles.Api.Controllers
                             CustomerId = x.CustomerId,
                             PhoneNumber = x.PhoneNumber.ToString(),
                             State = x.State.ToString(),
-                            Orders = mobile.Orders.Select(x => new OrderResource
+                            Orders = mobile.Orders.Select(order => new OrderResource
                             {
-                                GlobalId = x.GlobalId,
-                                State = x.CurrentState.ToString(),
-                                Type = x.Type.ToString(),
-                                CreatedAt = x.CreatedAt,
-                                ActivationCode = x.ActivationCode
+                                GlobalId = order.GlobalId,
+                                State = order.CurrentState.ToString(),
+                                Type = order.Type.ToString(),
+                                CreatedAt = order.CreatedAt,
+                                ActivationCode = order.ActivationCode
                             })
                         };
                     }).ToArray()
@@ -92,16 +82,7 @@ namespace Mobiles.Api.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] CustomerToAdd customerToAdd)
         {
-            var newCustomer = new Customer
-            {
-                GlobalId = guidCreator.Create(),
-                Name = customerToAdd.Name
-            };
-            customerRepository.Add(newCustomer);
-
-            var created = customerRepository.GetById(newCustomer.GlobalId);
-
-            logger.LogInformation("Created Customer with GlobalId {GlobalId}", created.GlobalId);
+            var created = customersService.Create(customerToAdd);
             monitoring.CreateCustomer();
 
             return new OkObjectResult(new CustomerResource
@@ -116,18 +97,10 @@ namespace Mobiles.Api.Controllers
         [HttpPost("{id}/provision")]
         public IActionResult Provision(Guid id, [FromBody] OrderToAdd orderToAdd)
         {
-            var customer = customerRepository.GetById(id);
+            var mobile = customersService.Provision(id, orderToAdd);
 
-            if (customer == null)
-            {
-                logger.LogWarning("Attempt to Provision for an unknown Customer - CustomerId: {CustomerId}", id);
+            if (mobile == null)
                 return NotFound();
-            }
-
-            var mobile = new MobileWhenNewBuilder(dateTimeCreator, this.guidCreator.Create(), id, new PhoneNumber(orderToAdd.PhoneNumber))
-                            .AddInProgressOrder(orderToAdd, this.guidCreator.Create())
-                            .Build();
-            mobileRepository.Add(mobile);
 
             monitoring.Provision();
 

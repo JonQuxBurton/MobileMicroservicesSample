@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Immutable;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Mobiles.Api.Controllers;
@@ -6,8 +8,6 @@ using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using Moq;
-using System;
-using System.Collections.Immutable;
 using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
@@ -19,8 +19,18 @@ namespace Mobiles.Api.Tests.Controllers
     {
         public class GetShould
         {
+            private readonly Mock<ICustomerRepository> customerRepositoryMock;
+            private readonly Mock<ICustomersService> customersServiceMock;
+            private readonly Customer expected;
+            private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
+            private readonly Mock<IMonitoring> monitoringMock;
+
+            private readonly CustomersController sut;
+
             public GetShould()
             {
+                customersServiceMock = new Mock<ICustomersService>();
                 customerRepositoryMock = new Mock<ICustomerRepository>();
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
@@ -29,27 +39,17 @@ namespace Mobiles.Api.Tests.Controllers
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                sut = new CustomersController(
-                    loggingMock.Object,
-                    customerRepositoryMock.Object,
+                sut = new CustomersController(customerRepositoryMock.Object,
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
-                    guidCreatorMock.Object,
-                    getMobilesByCustomerIdQueryMock.Object, 
-                    dateTimeCreatorMock.Object);
+                    getMobilesByCustomerIdQueryMock.Object,
+                    this.customersServiceMock.Object);
 
                 expected = new Customer();
 
                 customerRepositoryMock.Setup(x => x.GetById(expected.GlobalId))
                     .Returns(expected);
             }
-
-            private readonly CustomersController sut;
-            private readonly Mock<ICustomerRepository> customerRepositoryMock;
-            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
-            private readonly Mock<IMonitoring> monitoringMock;
-            private readonly Customer expected;
 
             [Fact]
             public void ReturnOk()
@@ -58,44 +58,44 @@ namespace Mobiles.Api.Tests.Controllers
 
                 actual.Result.Should().BeOfType<OkObjectResult>();
             }
-
         }
 
         public class GetAllShould
         {
+            private readonly Mock<ICustomerRepository> customerRepositoryMock;
+            private readonly ImmutableList<Customer> expected;
+            private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
+            private readonly Mock<IMonitoring> monitoringMock;
+            private readonly Mock<ICustomersService> customersServiceMock;
+
+            private readonly CustomersController sut;
+
             public GetAllShould()
             {
                 customerRepositoryMock = new Mock<ICustomerRepository>();
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
                 guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
+                customersServiceMock = new Mock<ICustomersService>();
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                sut = new CustomersController(loggingMock.Object,
-                    customerRepositoryMock.Object,
+                sut = new CustomersController(customerRepositoryMock.Object,
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
-                    guidCreatorMock.Object,
                     getMobilesByCustomerIdQueryMock.Object,
-                    dateTimeCreatorMock.Object);
+                    customersServiceMock.Object);
 
                 expected = ImmutableList.Create(
-                    new Customer { GlobalId = Guid.NewGuid() },
-                    new Customer { GlobalId = Guid.NewGuid() }
-                    );
+                    new Customer {GlobalId = Guid.NewGuid()},
+                    new Customer {GlobalId = Guid.NewGuid()}
+                );
 
                 customerRepositoryMock.Setup(x => x.GetAll())
                     .Returns(expected);
             }
-
-            private readonly CustomersController sut;
-            private readonly Mock<ICustomerRepository> customerRepositoryMock;
-            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
-            private readonly Mock<IMonitoring> monitoringMock;
-            private readonly ImmutableList<Customer> expected;
 
             [Fact]
             public void ReturnOk()
@@ -119,18 +119,28 @@ namespace Mobiles.Api.Tests.Controllers
 
         public class CreateShould
         {
+            private readonly Mock<ICustomerRepository> customerRepositoryMock;
+            private readonly CustomerToAdd customerToAdd;
+            private readonly Customer expectedCustomer;
+            private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
+            private readonly Mock<IMonitoring> monitoringMock;
+            private readonly Mock<ICustomersService> customersServiceMock;
+
+            private readonly CustomersController sut;
+
             public CreateShould()
             {
                 customerRepositoryMock = new Mock<ICustomerRepository>();
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-
                 guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
+                customersServiceMock = new Mock<ICustomersService>();
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                customerToAdd = new CustomerToAdd()
+                customerToAdd = new CustomerToAdd
                 {
                     Name = "Armstrong Corporation"
                 };
@@ -147,32 +157,22 @@ namespace Mobiles.Api.Tests.Controllers
                 customerRepositoryMock.Setup(x => x.GetById(expectedCustomer.GlobalId))
                     .Returns(expectedCustomer);
 
-                sut = new CustomersController(
-                    loggingMock.Object,
-                    customerRepositoryMock.Object,
+                customersServiceMock.Setup(x => x.Create(customerToAdd))
+                    .Returns(expectedCustomer);
+
+                sut = new CustomersController(customerRepositoryMock.Object,
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
-                    guidCreatorMock.Object,
                     getMobilesByCustomerIdQueryMock.Object,
-                    dateTimeCreatorMock.Object);
+                    customersServiceMock.Object);
             }
 
-            private readonly CustomersController sut;
-            private readonly Mock<ICustomerRepository> customerRepositoryMock;
-            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
-            private readonly Mock<IMonitoring> monitoringMock;
-            private readonly CustomerToAdd customerToAdd;
-            private readonly Customer expectedCustomer;
-
             [Fact]
-            public void AddCustomerToRepository()
+            public void SendCustomerToCustomersService()
             {
                 sut.Create(customerToAdd);
 
-                customerRepositoryMock.Verify(x => x.Add(It.Is<Customer>(y =>
-                    y.GlobalId == expectedCustomer.GlobalId &&
-                    y.Name == customerToAdd.Name)));
+                customersServiceMock.Verify(x => x.Create(customerToAdd));
             }
 
             [Fact]
@@ -198,86 +198,65 @@ namespace Mobiles.Api.Tests.Controllers
 
         public class ProvisionShould
         {
+            private readonly OrderToAdd expectedOrderToAdd;
+            private readonly Guid expectedCustomerGlobalId;
+            private readonly Mobile expectedMobile;
+
+            private readonly Mock<ICustomerRepository> customerRepositoryMock;
+            private readonly Mock<IGuidCreator> guidCreatorMock;
+            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
+            private readonly Mock<IMonitoring> monitoringMock;
+            private readonly Mock<ICustomersService> customersServiceMock;
+
+            private readonly CustomersController sut;
+
             public ProvisionShould()
             {
                 customerRepositoryMock = new Mock<ICustomerRepository>();
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-
                 guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
-
-                expectedGlobalId = Guid.NewGuid();
-                guidCreatorMock.Setup(x => x.Create()).Returns(expectedGlobalId);
+                customersServiceMock = new Mock<ICustomersService>();
                 var loggingMock = new Mock<ILogger<CustomersController>>();
                 var getMobilesByCustomerIdQueryMock = new Mock<IGetMobilesByCustomerIdQuery>();
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                expectedCustomer = new Customer
+                expectedOrderToAdd = new OrderToAdd
                 {
-                    Name = "Armstrong Corporation",
-                    GlobalId = Guid.NewGuid()
+                    Name = "Neil Armstrong",
+                    ContactPhoneNumber = "01234 123123"
                 };
+                expectedCustomerGlobalId = Guid.NewGuid();
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object, new MobileDataEntity()
+                {
+                    Id = 101,
+                    GlobalId = Guid.NewGuid(),
+                    CustomerId = expectedCustomerGlobalId,
+                    State = Mobile.MobileState.New.ToString()
+                });
 
-                customerRepositoryMock.Setup(x => x.GetById(expectedCustomer.GlobalId))
-                    .Returns(expectedCustomer);
+                customersServiceMock.Setup(x => x.Provision(expectedCustomerGlobalId, expectedOrderToAdd))
+                    .Returns(expectedMobile);
 
-                sut = new CustomersController(
-                    loggingMock.Object,
-                    customerRepositoryMock.Object,
+                sut = new CustomersController(customerRepositoryMock.Object,
                     mobileRepositoryMock.Object,
                     monitoringMock.Object,
-                    guidCreatorMock.Object,
-                    getMobilesByCustomerIdQueryMock.Object,
-                    dateTimeCreatorMock.Object);
-            }
-
-            private readonly CustomersController sut;
-            private readonly Mock<ICustomerRepository> customerRepositoryMock;
-            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
-            private readonly Mock<IMonitoring> monitoringMock;
-            private readonly Customer expectedCustomer;
-            private readonly Guid expectedGlobalId;
-
-            [Fact]
-            public void AddMobileToRepositoryWithStateOfNew()
-            {
-                var expectedOrder = new OrderToAdd()
-                {
-                    Name = "Neil Armstrong",
-                    ContactPhoneNumber = "01234 123123"
-                };
-
-                sut.Provision(expectedCustomer.GlobalId, expectedOrder);
-
-                mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
-                    y.GlobalId == expectedGlobalId &&
-                    y.State == Mobile.MobileState.New &&
-                    y.CustomerId == expectedCustomer.GlobalId)));
+                    getMobilesByCustomerIdQueryMock.Object, 
+                    customersServiceMock.Object);
             }
 
             [Fact]
-            public void AddMobileToRepositoryWithInFligthOrder()
+            public void SendCusOrderToCustomersService()
             {
-                var expectedOrder = new OrderToAdd()
-                {
-                    Name = "Neil Armstrong",
-                    ContactPhoneNumber = "01234 123123"
-                };
+                sut.Provision(expectedCustomerGlobalId, expectedOrderToAdd);
 
-                sut.Provision(expectedCustomer.GlobalId, expectedOrder);
-
-                mobileRepositoryMock.Verify(x => x.Add(It.Is<Mobile>(y =>
-                    y.GlobalId == expectedGlobalId &&
-                    y.State == Mobile.MobileState.New &&
-                    y.InProgressOrder != null &&
-                    y.InProgressOrder.CurrentState == Order.State.New)));
+                customersServiceMock.Verify(x => x.Provision(expectedCustomerGlobalId , expectedOrderToAdd));
             }
 
             [Fact]
             public void ReturnOk()
             {
-                var actual = sut.Provision(expectedCustomer.GlobalId, new OrderToAdd());
+                var actual = sut.Provision(expectedCustomerGlobalId, expectedOrderToAdd);
 
                 actual.Should().BeOfType<OkObjectResult>();
             }
@@ -285,13 +264,13 @@ namespace Mobiles.Api.Tests.Controllers
             [Fact]
             public void ReturnNewMobile()
             {
-                var actual = sut.Provision(expectedCustomer.GlobalId, new OrderToAdd());
+                var actual = sut.Provision(expectedCustomerGlobalId, expectedOrderToAdd);
                 var actualResult = actual as OkObjectResult;
                 var actualMobile = actualResult.Value as MobileResource;
 
                 actualMobile.Should().NotBeNull();
-                actualMobile.GlobalId.Should().Be(expectedGlobalId);
-                actualMobile.CustomerId.Should().Be(expectedCustomer.GlobalId);
+                actualMobile.GlobalId.Should().Be(expectedMobile.GlobalId);
+                actualMobile.CustomerId.Should().Be(expectedCustomerGlobalId);
             }
 
             [Fact]
@@ -301,7 +280,7 @@ namespace Mobiles.Api.Tests.Controllers
 
                 guidCreatorMock.Setup(x => x.Create()).Returns(notFoundGlobalId);
 
-                var actual = sut.Provision(notFoundGlobalId, new OrderToAdd());
+                var actual = sut.Provision(notFoundGlobalId, expectedOrderToAdd);
 
                 actual.Should().BeOfType<NotFoundResult>();
             }
