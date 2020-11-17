@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Mobiles.Api.Configuration;
 using Mobiles.Api.Controllers;
-using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using Moq;
 using Utils.DateTimes;
 using Utils.DomainDrivenDesign;
-using Utils.Guids;
 using Xunit;
 using static Mobiles.Api.Domain.Mobile;
 
@@ -25,7 +22,6 @@ namespace Mobiles.Api.Tests.Controllers
         {
             private readonly Order expectedInProgressOrder;
             private readonly Mobile expectedMobile;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IMobilesService> mobilesServiceMock;
             private readonly Mock<IMonitoring> monitoringMock;
@@ -39,14 +35,10 @@ namespace Mobiles.Api.Tests.Controllers
                 optionsMock = new Mock<IOptions<Config>>();
                 optionsMock.Setup(x => x.Value).Returns(new Config());
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-                guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
-                var loggingMock = new Mock<ILogger<MobilesController>>();
-                var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
                 var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
 
-                sut = new MobilesController(loggingMock.Object, mobilesServiceMock.Object, mobileRepositoryMock.Object,
-                    guidCreatorMock.Object, monitoringMock.Object, getNextMobileIdQueryMock.Object);
+                sut = new MobilesController(mobilesServiceMock.Object, mobileRepositoryMock.Object, monitoringMock.Object);
 
                 expectedInProgressOrder = new Order(new OrderDataEntity
                 {
@@ -99,13 +91,67 @@ namespace Mobiles.Api.Tests.Controllers
                 actual.Result.Should().BeOfType<NotFoundResult>();
             }
         }
+        
+        public class GetAvailablePhoneNumbersShould
+        {
+            private readonly Order expectedInProgressOrder;
+            private readonly Mobile expectedMobile;
+            private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
+            private readonly Mock<IMobilesService> mobilesServiceMock;
+            private readonly Mock<IMonitoring> monitoringMock;
+
+            private readonly MobilesController sut;
+            private readonly string expectedAvailablePhoneNumber;
+
+            public GetAvailablePhoneNumbersShould()
+            {
+                mobilesServiceMock = new Mock<IMobilesService>();
+                var optionsMock = new Mock<IOptions<Config>>();
+                optionsMock.Setup(x => x.Value).Returns(new Config());
+                mobileRepositoryMock = new Mock<IRepository<Mobile>>();
+                monitoringMock = new Mock<IMonitoring>();
+                var dateTimeCreatorMock = new Mock<IDateTimeCreator>();
+
+                expectedInProgressOrder = new Order(new OrderDataEntity
+                {
+                    GlobalId = Guid.NewGuid(),
+                    State = Order.State.New.ToString()
+                });
+                expectedMobile = new Mobile(dateTimeCreatorMock.Object,
+                    new MobileDataEntity
+                    {
+                        Id = 101,
+                        GlobalId = Guid.NewGuid(),
+                        CustomerId = Guid.NewGuid(),
+                        State = MobileState.New.ToString(),
+                        Orders = new List<OrderDataEntity>
+                        {
+                            expectedInProgressOrder.GetDataEntity()
+                        }
+                    });
+                expectedAvailablePhoneNumber = "07101000101";
+                mobilesServiceMock.Setup(x => x.GetAvailablePhoneNumbers())
+                    .Returns(new [] {expectedAvailablePhoneNumber });
+                mobileRepositoryMock.Setup(x => x.GetById(expectedMobile.GlobalId))
+                    .Returns(expectedMobile);
+
+                sut = new MobilesController(mobilesServiceMock.Object, mobileRepositoryMock.Object, monitoringMock.Object);
+            }
+
+            [Fact]
+            public void ReturnAvailablePhoneNumbers()
+            {
+                var actual = sut.GetAvailablePhoneNumbers();
+
+                actual.Value.PhoneNumbers.First().Should().Be(expectedAvailablePhoneNumber);
+            }
+        }
 
         public class ActivateShould
         {
             private readonly ActivateRequest expectedActivateRequest;
             private readonly Mobile expectedMobile;
             private readonly Guid expectedMobileGlobalId;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IMobilesService> mobilesServiceMock;
             private readonly Mock<IMonitoring> monitoringMock;
@@ -145,20 +191,15 @@ namespace Mobiles.Api.Tests.Controllers
                 });
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-                guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
 
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobileGlobalId))
                     .Returns(expectedMobile);
-                guidCreatorMock.Setup(x => x.Create()).Returns(expectedMobileGlobalId);
-                var loggerMock = new Mock<ILogger<MobilesController>>();
-                var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
                 mobilesServiceMock.Setup(x => x.Activate(expectedMobileGlobalId, expectedActivateRequest))
                     .Returns(expectedMobile);
 
-                sut = new MobilesController(loggerMock.Object, mobilesServiceMock.Object, mobileRepositoryMock.Object,
-                    guidCreatorMock.Object,
-                    monitoringMock.Object, getNextMobileIdQueryMock.Object);
+                sut = new MobilesController(mobilesServiceMock.Object, mobileRepositoryMock.Object,
+                    monitoringMock.Object);
             }
 
             [Fact]
@@ -199,12 +240,11 @@ namespace Mobiles.Api.Tests.Controllers
             public void ReturnNotFound()
             {
                 var notFoundGlobalId = Guid.NewGuid();
-                mobileRepositoryMock.Setup(x => x.GetById(notFoundGlobalId))
-                    .Returns((Mobile) null);
+                var activateRequest = new ActivateRequest();
+                mobilesServiceMock.Setup(x => x.Activate(notFoundGlobalId, activateRequest))
+                    .Returns(null as Mobile);
 
-                guidCreatorMock.Setup(x => x.Create()).Returns(notFoundGlobalId);
-
-                var actual = sut.Activate(notFoundGlobalId, new ActivateRequest());
+                var actual = sut.Activate(notFoundGlobalId, activateRequest);
 
                 actual.Should().BeOfType<NotFoundResult>();
             }
@@ -214,7 +254,6 @@ namespace Mobiles.Api.Tests.Controllers
         {
             private readonly Mobile expectedMobile;
             private readonly Guid expectedMobileGlobalId;
-            private readonly Mock<IGuidCreator> guidCreatorMock;
             private readonly Mock<IRepository<Mobile>> mobileRepositoryMock;
             private readonly Mock<IMobilesService> mobilesServiceMock;
             private readonly Mock<IMonitoring> monitoringMock;
@@ -233,20 +272,14 @@ namespace Mobiles.Api.Tests.Controllers
                 expectedMobileGlobalId = Guid.NewGuid();
 
                 mobileRepositoryMock = new Mock<IRepository<Mobile>>();
-                guidCreatorMock = new Mock<IGuidCreator>();
                 monitoringMock = new Mock<IMonitoring>();
-
                 mobileRepositoryMock.Setup(x => x.GetById(expectedMobileGlobalId))
                     .Returns(expectedMobile);
-                guidCreatorMock.Setup(x => x.Create()).Returns(expectedMobileGlobalId);
-                var loggerMock = new Mock<ILogger<MobilesController>>();
-                var getNextMobileIdQueryMock = new Mock<IGetNextMobileIdQuery>();
                 mobilesServiceMock.Setup(x => x.Cease(expectedMobileGlobalId))
                     .Returns(expectedMobile);
 
-                sut = new MobilesController(loggerMock.Object, mobilesServiceMock.Object, mobileRepositoryMock.Object,
-                    guidCreatorMock.Object,
-                    monitoringMock.Object, getNextMobileIdQueryMock.Object);
+                sut = new MobilesController(mobilesServiceMock.Object, mobileRepositoryMock.Object,
+                    monitoringMock.Object);
             }
 
             [Fact]
@@ -268,13 +301,10 @@ namespace Mobiles.Api.Tests.Controllers
             [Fact]
             public void ReturnNotFound()
             {
-                var notFoundReference = Guid.NewGuid();
-                mobileRepositoryMock.Setup(x => x.GetById(notFoundReference))
-                    .Returns((Mobile) null);
+                var notFoundMobileGlobalId = Guid.NewGuid();
+                mobilesServiceMock.Setup(x => x.Cease(notFoundMobileGlobalId)).Returns(null as Mobile);
 
-                guidCreatorMock.Setup(x => x.Create()).Returns(notFoundReference);
-
-                var actual = sut.Cease(notFoundReference);
+                var actual = sut.Cease(notFoundMobileGlobalId);
 
                 actual.Should().BeOfType<NotFoundResult>();
             }

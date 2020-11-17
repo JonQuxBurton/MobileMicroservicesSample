@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Mobiles.Api.Data;
 using Mobiles.Api.Resources;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
@@ -11,14 +13,23 @@ namespace Mobiles.Api.Domain
         private readonly ILogger<MobilesService> logger;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IGuidCreator guidCreator;
+        private readonly IGetNextMobileIdQuery getNextMobileIdQuery;
 
         public MobilesService(ILogger<MobilesService> logger, 
             IRepository<Mobile> mobileRepository, 
-            IGuidCreator guidCreator)
+            IGuidCreator guidCreator,
+            IGetNextMobileIdQuery getNextMobileIdQuery)
         {
             this.logger = logger;
             this.mobileRepository = mobileRepository;
             this.guidCreator = guidCreator;
+            this.getNextMobileIdQuery = getNextMobileIdQuery;
+        }
+
+        public IEnumerable<string> GetAvailablePhoneNumbers()
+        {
+            var nextId = getNextMobileIdQuery.Get().ToString().PadLeft(3, '0');
+            return new[] { $"07{nextId}000{nextId}" };
         }
 
         public Mobile Activate(Guid id, ActivateRequest activateRequest)

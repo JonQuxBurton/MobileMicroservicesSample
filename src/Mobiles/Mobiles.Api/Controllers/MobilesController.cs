@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
 using Utils.DomainDrivenDesign;
-using Utils.Guids;
 
 namespace Mobiles.Api.Controllers
 {
@@ -14,32 +11,24 @@ namespace Mobiles.Api.Controllers
     [ApiController]
     public class MobilesController : ControllerBase
     {
-        private readonly IGetNextMobileIdQuery getNextMobileIdQuery;
-        private readonly IGuidCreator guidCreator;
-        private readonly ILogger<MobilesController> logger;
         private readonly IRepository<Mobile> mobileRepository;
         private readonly IMobilesService mobilesService;
         private readonly IMonitoring monitoring;
 
-        public MobilesController(ILogger<MobilesController> logger, IMobilesService mobilesService,
-            IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring,
-            IGetNextMobileIdQuery getNextMobileIdQuery)
+        public MobilesController(IMobilesService mobilesService,
+            IRepository<Mobile> mobileRepository, IMonitoring monitoring)
         {
-            this.logger = logger;
             this.mobilesService = mobilesService;
             this.mobileRepository = mobileRepository;
-            this.guidCreator = guidCreator;
             this.monitoring = monitoring;
-            this.getNextMobileIdQuery = getNextMobileIdQuery;
         }
 
         [HttpGet("availablePhoneNumbers")]
         public ActionResult<AvailablePhoneNumbersResource> GetAvailablePhoneNumbers()
         {
-            var nextId = getNextMobileIdQuery.Get().ToString().PadLeft(3, '0');
             return new AvailablePhoneNumbersResource
             {
-                PhoneNumbers = new[] {$"07{nextId}000{nextId}"}
+                PhoneNumbers = mobilesService.GetAvailablePhoneNumbers().ToArray()
             };
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Mobiles.Api.Resources;
 
 namespace Mobiles.Api.Domain
@@ -7,5 +8,6 @@ namespace Mobiles.Api.Domain
     {
         Mobile Activate(Guid id, ActivateRequest activateRequest);
         Mobile Cease(Guid id);
+        IEnumerable<string> GetAvailablePhoneNumbers();
     }
 }
