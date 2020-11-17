@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Mobiles.Api.Resources;
-using System;
-using System.Linq;
 using Utils.DomainDrivenDesign;
 using Utils.Guids;
 
@@ -14,15 +14,19 @@ namespace Mobiles.Api.Controllers
     [ApiController]
     public class MobilesController : ControllerBase
     {
+        private readonly IGetNextMobileIdQuery getNextMobileIdQuery;
+        private readonly IGuidCreator guidCreator;
         private readonly ILogger<MobilesController> logger;
         private readonly IRepository<Mobile> mobileRepository;
-        private readonly IGuidCreator guidCreator;
+        private readonly IMobilesService mobilesService;
         private readonly IMonitoring monitoring;
-        private readonly IGetNextMobileIdQuery getNextMobileIdQuery;
 
-        public MobilesController(ILogger<MobilesController> logger, IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring, IGetNextMobileIdQuery getNextMobileIdQuery)
+        public MobilesController(ILogger<MobilesController> logger, IMobilesService mobilesService,
+            IRepository<Mobile> mobileRepository, IGuidCreator guidCreator, IMonitoring monitoring,
+            IGetNextMobileIdQuery getNextMobileIdQuery)
         {
             this.logger = logger;
+            this.mobilesService = mobilesService;
             this.mobileRepository = mobileRepository;
             this.guidCreator = guidCreator;
             this.monitoring = monitoring;
@@ -35,7 +39,7 @@ namespace Mobiles.Api.Controllers
             var nextId = getNextMobileIdQuery.Get().ToString().PadLeft(3, '0');
             return new AvailablePhoneNumbersResource
             {
-                PhoneNumbers = new[] { $"07{nextId}000{nextId}" }
+                PhoneNumbers = new[] {$"07{nextId}000{nextId}"}
             };
         }
 
@@ -67,65 +71,33 @@ namespace Mobiles.Api.Controllers
         [HttpPost("{id}/activate")]
         public IActionResult Activate(Guid id, [FromBody] ActivateRequest activateRequest)
         {
-            var mobile = this.mobileRepository.GetById(id);
+            var mobile = mobilesService.Activate(id, activateRequest);
 
             if (mobile == null)
-            {
-                logger.LogWarning("Attempt to Activate an unknown Mobile - MobileId: {MobileId}", id);
                 return NotFound();
-            }
-
-            var newStateName = Order.State.New.ToString();
-            var orderType = Order.OrderType.Activate.ToString();
-            var dataEntity = new OrderDataEntity()
-            {
-                GlobalId = this.guidCreator.Create(),
-                ActivationCode = activateRequest.ActivationCode,
-                State = newStateName,
-                Type = orderType
-            };
-            var inProgressOrder = new Order(dataEntity);
-
-            mobile.Activate(inProgressOrder);
-            mobileRepository.Update(mobile);
 
             monitoring.Activate();
 
+            var newOrder = mobile.InProgressOrder;
+
             return new OkObjectResult(new OrderResource
             {
-                GlobalId = dataEntity.GlobalId,
-                Name = dataEntity.Name,
-                ContactPhoneNumber = dataEntity.ContactPhoneNumber,
-                State = dataEntity.State,
-                Type = dataEntity.Type,
-                CreatedAt = dataEntity.CreatedAt,
-                UpdatedAt = dataEntity.UpdatedAt
+                GlobalId = newOrder.GlobalId,
+                Name = newOrder.Name,
+                ContactPhoneNumber = newOrder.ContactPhoneNumber,
+                State = newOrder.CurrentState.ToString(),
+                Type = newOrder.Type.ToString(),
+                CreatedAt = newOrder.CreatedAt,
+                UpdatedAt = newOrder.UpdatedAt
             });
         }
 
         [HttpDelete("{id}")]
         public IActionResult Cease(Guid id)
         {
-            var mobile = this.mobileRepository.GetById(id);
+            var mobile = mobilesService.Cease(id);
 
-            if (mobile == null)
-            {
-                logger.LogWarning("Attempt to Cease an unknown Mobile - MobileId: {MobileId}", id);
-                return NotFound();
-            }
-
-            var newStateName = Order.State.New.ToString();
-            var orderType = Order.OrderType.Cease.ToString();
-            var dataEntity = new OrderDataEntity()
-            {
-                GlobalId = this.guidCreator.Create(),
-                State = newStateName,
-                Type = orderType
-            };
-
-            var inProgressOrder = new Order(dataEntity);
-            mobile.Cease(inProgressOrder);
-            mobileRepository.Update(mobile);
+            if (mobile == null) return NotFound();
 
             monitoring.Cease();
 

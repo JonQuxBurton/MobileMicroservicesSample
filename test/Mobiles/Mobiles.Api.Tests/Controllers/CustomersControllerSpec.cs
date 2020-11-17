@@ -246,7 +246,7 @@ namespace Mobiles.Api.Tests.Controllers
             }
 
             [Fact]
-            public void SendCusOrderToCustomersService()
+            public void SendOrderToCustomersService()
             {
                 sut.Provision(expectedCustomerGlobalId, expectedOrderToAdd);
 

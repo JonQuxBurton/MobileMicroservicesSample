@@ -15,7 +15,10 @@ namespace Mobiles.Api.Domain
         {
             this.dateTimeCreator = dateTimeCreator;
             var enumConverter = new EnumConverter();
-            var initialState = enumConverter.ToEnum<MobileState>(mobileDataEntity.State);
+
+            var initialState = MobileState.New;
+            if (mobileDataEntity.State != null)
+                initialState = enumConverter.ToEnum<MobileState>(mobileDataEntity.State);
 
             machine = new StateMachine<MobileState, Trigger>(initialState);
 
