@@ -292,6 +292,24 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 * Verify the changes in the database by running the SQL script: \docs\ManualTesting\CheckDatabase.sql
 * Repeat for the other Steps and Scenarios
 
+### 4. Load Tests
+* Install k6 and Cmder (optional)
+* Start Docker Desktop
+* Launch the test system
+```
+λ docker-compose -f docker-compose-test.yml -f docker-compose-test.override.yml up
+```
+* Launch the LoadTestingWebApp
+```
+λ cd docs\LoadTesting\LoadTestingWebService\LoadTestingWebService
+λ dotnet run
+```
+* Run the k6 Load Tests (will take some time). Open a new Cmder tab:
+```
+λ cd docs\LoadTesting
+λ k6 run LoadTest.js
+```
+
 ## The Scenarios
 
 1. Create a Customer
