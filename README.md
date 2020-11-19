@@ -184,11 +184,12 @@ Source: \docs\MobileC4Components.puml
 
 ## Testing Goals
 
-The goals of the tests are to ensure that the system is Reliable, Robust, Modifiable and Understandable.
+The goals of the tests are to ensure that the system is Reliable, Robust, Modifiable, Understandable and has acceptable Performance.
 * Reliable - the users can use the system as intended and without encountering bugs.
 * Robust - the system operates for an extended period of time without crashing.
 * Modifiable - the system can be adapted to meet future requirements.
 * Understandable - the system design is not more complicated than it needs to be.
+* Performance - the system has acceptable performance.
 
 ## Testing Strategy
 
@@ -251,6 +252,7 @@ The Load Tests support the testing goals as follows:
 * Robust - they simulate a number of users simultaneously using the system and verify that it does not crash.
 * Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
 * Understandable - the system can be refactored and simplified, then the tests can be re-run to check for, and prevent regressions.
+* Performance - check and benchamrk the performace of the system with a number of simultaneous users.
 
 ## Executing the Tests
 
