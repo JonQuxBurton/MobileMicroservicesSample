@@ -183,11 +183,11 @@ Source: \docs\MobileC4Components.puml
 # Testing
 
 ## Testing Goals
-The goals of the tests are to ensure that the system is reliable, robust, modifiable and understandable.
-Reliable - the users can use the system as intended and without encountering bugs.
-Robust - the system operates for an extended period of time without crashing.
-Modifiable - the system can be adapted to meet future requirements.
-Understandable - the system design is not more complicated than it needs to be.
+The goals of the tests are to ensure that the system is Reliable, Robust, Modifiable and Understandable.
+* Reliable - the users can use the system as intended and without encountering bugs.
+* Robust - the system operates for an extended period of time without crashing.
+* Modifiable - the system can be adapted to meet future requirements.
+* Understandable - the system design is not more complicated than it needs to be.
 
 ## Testing Strategy
 
@@ -229,13 +229,13 @@ Once the system is running they are executed manually by using the [REST Client 
 The Load test are performed using [k6](#k6), which is a command line Load testing tool. The tests to be executed by k6 are defined in a JavaScript file (/docs/LoadTesting/LoadTest.js). This script details the actions to be performed (the Scenarios) and defines the number of Virtual Users and iterations.
 It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 scenarios. 
 
-During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestignWebApp which I created. This also allows each Virtual User to request an Identifier, which it can use to ensure it gets it's own specific data for each test iterations that it runs.
+During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestingWebService, which I created. This also allows each Virtual User to request an Identifier, which it can use to ensure it gets it's own specific data for each test iterations that it runs.
 
 The Load Tests support the testing goals as follows:
-Reliable - the Load Test Scenarios match the primary use cases of the system, and so verify that the system works as intended.
-Robust - they simulate a number of users simultaneously using the system and verify that it works as intended.
-Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
-Understandable - the system can be refactored and simplified,, then the tests can be re-run to check for and prevent regressions.
+* Reliable - the Load Test Scenarios match the primary use cases of the system, and so verify that the system works as intended.
+* Robust - they simulate a number of users simultaneously using the system and verify that it works as intended.
+* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
+* Understandable - the system can be refactored and simplified, then the tests can be re-run to check for and prevent regressions.
 
 ## Executing the Tests
 
@@ -446,5 +446,5 @@ http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pd
 (44 pages)
 
 <a name="k6">[k6]</a>  
-**k6**
+**k6**  
 https://k6.io
