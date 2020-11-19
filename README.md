@@ -242,7 +242,7 @@ These support the testing goals as follows:
 
 ### 4. Load Tests
 The Load test are performed using [k6](#k6), which is a command line Load testing tool. The tests to be executed by k6 are defined in a JavaScript file (/docs/LoadTesting/LoadTest.js). This script details the actions to be performed (the Scenarios) and defines the number of Virtual Users and iterations.
-It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 scenarios. 
+It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 scenarios. So 5 * 5 * 3 = 75 tests in total.
 
 During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestingWebService, which I created. This also allows each Virtual User to request an Identifier, which it can use to ensure it gets it's own specific data for each test iterations that it runs.
 
@@ -309,6 +309,9 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 λ cd docs\LoadTesting
 λ k6 run LoadTest.js
 ```
+
+#### Output
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/K6-Output.png)
 
 ## The Scenarios
 
