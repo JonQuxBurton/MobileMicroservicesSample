@@ -64,7 +64,7 @@ From [microservices.io](#microservices.io)
 |				|Manual				|Walkthroughs using the [REST Client Visual Studio Code plugin](#REST-client)
 |				|Unit tests			|xUnit, Moq, Fluent assertions
 |				|End-to-end tests	|Scenario Scripts in EndToEndApiLevelTests
-|				|Load tests			|TODO
+|				|Load tests			|k6 Load Testing tool
 |Deployment		|					|
 |				|Containers			|docker-compose
 |Documentation	|					|Markdown, Readme.md (this document)
