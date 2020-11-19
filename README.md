@@ -64,7 +64,7 @@ From [microservices.io](#microservices.io)
 |				|Manual				|Walkthroughs using the [REST Client Visual Studio Code plugin](#REST-client)
 |				|Unit tests			|xUnit, Moq, Fluent assertions
 |				|End-to-end tests	|Scenario Scripts in EndToEndApiLevelTests
-|				|Load tests			|TODO
+|				|Load tests			|k6 Load Testing tool
 |Deployment		|					|
 |				|Containers			|docker-compose
 |Documentation	|					|Markdown, Readme.md (this document)
@@ -181,24 +181,38 @@ Source: \docs\MobileC4Containers.puml
 Source: \docs\MobileC4Components.puml
 
 # Testing
+
+## Testing Goals
+
+The goals of the tests are to ensure that the system is Reliable, Robust, Modifiable and Understandable.
+* Reliable - the users can use the system as intended and without encountering bugs.
+* Robust - the system operates for an extended period of time without crashing.
+* Modifiable - the system can be adapted to meet future requirements.
+* Understandable - the system design is not more complicated than it needs to be.
+
 ## Testing Strategy
 
-My plan is to test the system from the bottom up, with unit tests and from the top down with manual and automated tests. 
+To achieve these goals, my plan is to test the system from the bottom up, with unit tests and from the top down with manual and automated tests. 
 These are illustrated on the standard testing pyramid:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/TestingStrategy.png)
 
 The rough positions of the three types of tests are shown with the numbers:
 1. Unit Tests
-2. API level End-to-end Tests
+2. API level Automated End-to-end Tests
 3. API level Manual Tests
-
+4. Load Tests
 
 ### 1. Unit Tests
 
 These are standard unit tests which test individual units in isolation and are fast running. 
 
-### 2. API level End-to-end Tests
+These support the testing goals as follows:
+* Reliable - ensure each unit is reliable when run in isolation. 
+* Modifiable - they are fast to run and so can be run after every code change to prevent regressions.
+* Understandable - the code can be refactored and simplified, then the tests can be re-run to check for and prevent regressions.
+
+### 2. API level Automated End-to-end Tests
 These test each of the most important Scenarios which the system can perform. 
 
 These are not true "End-to-end" tests since they are at the API level rather than the UI. I choose to use the API level as a seam to test against as this should provide confidence that the back end system has not regressed.
@@ -210,12 +224,33 @@ The tests are executed against a test system which is started using docker-compo
 
 The tests are then executed against this test system and verified by querying the database.
 
+These support the testing goals as follows:
+* Reliable - they match the primary use cases of the system, and so verify that the system works as intended.
+* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
+* Understandable - the system can be refactored and simplified,, then the tests can be re-run to check for and prevent regressions.
+
 ### 3. API level Manual Tests
 These also test the most important Scenarios which the system can perform.
 
 They are run against the same test system as above, launched through docker-compose.
 Once the system is running they are executed manually by using the [REST Client Visual Studio Code plugin](#REST-client) and executing the Scenarios in the file:
 \docs\ManualTesting\ExecuteScenarios.http
+
+These support the testing goals as follows:
+* Reliable - they can be run manaully to aid in troubleshooting and diagnosing.
+* Understandable - they allow each step of a Scenario can be run and checked.
+
+### 4. Load Tests
+The Load test are performed using [k6](#k6), which is a command line Load testing tool. The tests to be executed by k6 are defined in a JavaScript file (/docs/LoadTesting/LoadTest.js). This script details the actions to be performed (the Scenarios) and defines the number of Virtual Users and iterations.
+It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 scenarios. So 5 * 5 * 3 = 75 tests in total.
+
+During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestingWebService, which I created. This also allows each Virtual User to request an Identifier, which it can use to ensure it gets it's own specific data for each test iterations that it runs.
+
+The Load Tests support the testing goals as follows:
+* Reliable - the Load Test Scenarios match the primary use cases of the system, and so verify that the system works as intended.
+* Robust - they simulate a number of users simultaneously using the system and verify that it does not crash.
+* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
+* Understandable - the system can be refactored and simplified, then the tests can be re-run to check for, and prevent regressions.
 
 ## Executing the Tests
 
@@ -256,6 +291,27 @@ docker-compose -f docker-compose-test.yml -f docker-compose-testoverride.yml up
 * Click 'Send Request' against the first Step of the first Scenario
 * Verify the changes in the database by running the SQL script: \docs\ManualTesting\CheckDatabase.sql
 * Repeat for the other Steps and Scenarios
+
+### 4. Load Tests
+* Install k6 and Cmder (optional)
+* Start Docker Desktop
+* Launch the test system
+```
+λ docker-compose -f docker-compose-test.yml -f docker-compose-test.override.yml up
+```
+* Launch the LoadTestingWebApp
+```
+λ cd docs\LoadTesting\LoadTestingWebService\LoadTestingWebService
+λ dotnet run
+```
+* Run the k6 Load Tests (will take some time). Open a new Cmder tab:
+```
+λ cd docs\LoadTesting
+λ k6 run LoadTest.js
+```
+
+#### Output
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/K6-Output.png)
 
 ## The Scenarios
 
@@ -425,3 +481,6 @@ https://statecharts.github.io/
 http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf  
 (44 pages)
 
+<a name="k6">[k6]</a>  
+**k6 - Load Testing tool**  
+https://k6.io
