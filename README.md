@@ -402,6 +402,19 @@ To launch the Front End:
 ```
 * Open a web browser and go to http://localhost:5000
 
+## Walkthrough of the Scenarios through the Front end
+
+The scenarios described above can be performed as follows:
+
+### 1. Create a Customer
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-1-DisplayCustomers.jpg)
+Displays the Customers, click on 'CREATE CUSTOMER'.
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-2-CreateCustomer.jpg)
+Enter the new Customer's name and click 'SUBMIT'.
+
+
+
 # Resiliency
 
 ## Logging
