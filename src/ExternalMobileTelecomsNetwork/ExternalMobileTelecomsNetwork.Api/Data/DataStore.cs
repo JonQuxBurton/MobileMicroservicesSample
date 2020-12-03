@@ -77,11 +77,10 @@ namespace ExternalMobileTelecomsNetwork.Api.Data
 
         public void Add(Order order)
         {
-            var type = "Provision";
             var status = "New";
             var sql =
                 $"insert into {SchemaName}.{OrdersTableName}(Reference, Type, Status, PhoneNumber, ActivationCode) values (@Reference, @Type, @Status, @PhoneNumber, @ActivationCode)";
-            connection.Execute(sql, new {order.Reference, type, status, order.PhoneNumber, order.ActivationCode},
+            connection.Execute(sql, new {order.Reference, order.Type, status, order.PhoneNumber, order.ActivationCode},
                 currentTransaction.Get());
         }
 

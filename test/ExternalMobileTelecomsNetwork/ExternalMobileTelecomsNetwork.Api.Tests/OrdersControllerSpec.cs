@@ -82,8 +82,8 @@ namespace ExternalMobileTelecomsNetwork.Api.Tests
                 dataStoreMock.Verify(x => x.BeginTransaction());
                 dataStoreMock.Verify(x => x.Add(It.Is<Order>(
                     y => y.Reference == expectedOrderToAdd.Reference &&
-                    y.Type == "Provision" &&
-                    y.Status == "New"
+                    y.Type == OrderTypes.Activate.ToString() &&
+                                y.Status == "New"
                 )));
             }
 

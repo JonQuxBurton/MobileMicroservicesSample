@@ -23,7 +23,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             {
                 PhoneNumber = orderToAdd.PhoneNumber,
                 Reference = orderToAdd.Reference,
-                Type = "Provision",
+                Type = OrderTypes.Activate.ToString(),
                 Status = "New",
                 ActivationCode = orderToAdd.ActivationCode
             };
@@ -63,7 +63,7 @@ namespace ExternalMobileTelecomsNetwork.Api.Controllers
             if (order == null)
                 return NotFound();
 
-            if (order.Type == "Provision")
+            if (order.Type == OrderTypes.Activate.ToString())
             {
                 using (dataStore.BeginTransaction())
                 {
