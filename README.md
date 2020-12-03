@@ -384,6 +384,24 @@ Outputs:
 	* Mobile State to Live
 	* Order State to Completed
 
+# Front End
+
+I have implemented a basic Front End to aid in understanding how the system works. It consists of an Angular app which talks directly to the microservice APIs (rather than a Back End for Front End which has not been implemented at this time). 
+
+To launch the Front End:
+
+* Launch the system
+```
+λ docker-compose -f docker-compose.yml -f docker-compose-override.yml up
+```
+* Wait a minute
+* Launch the Front End
+```
+λ cd src/FrontEnd/FrontEnd.WebApp
+λ dotnet run
+```
+* Open a web browser and go to http://localhost:5000
+
 # Resiliency
 
 ## Logging
