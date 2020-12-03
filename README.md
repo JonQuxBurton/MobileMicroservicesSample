@@ -436,9 +436,13 @@ The scenarios described above can be performed as follows:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/3-1-CompleteSIMCardOrder.jpg)
 
+#### Switch back to the Mobiles System by clicking the 'Mobiles System' button at the top. Observe that the Mobile state is now 'WaitingForActivate'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/3-2-WatingForActivate.jpg)
+
 ### 4. Activate a Mobile
 
-#### Switch back to the Mobiles System by clicking the 'Mobiles System' button at the top. Then activate the Mobile by clicking on 'ACTIVATE'
+#### Activate the Mobile by clicking on 'ACTIVATE'
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/4-1-Activate.jpg)
 
