@@ -430,6 +430,27 @@ The scenarios described above can be performed as follows:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/2-3-DisplayCustomerWithMobile.jpg)
 
+### 3. Mobile Order Completed
+
+#### Access the fake External SIM Card System by clicking the 'External SIM Card System' button at the top. Then complete the SIM Card order by clicking on 'COMPLETE'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/3-1-CompleteSIMCardOrder.jpg)
+
+### 4. Activate a Mobile
+
+#### Switch back to the Mobiles System by clicking the 'Mobiles System' button at the top. Then activate the Mobile by clicking on 'ACTIVATE'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/4-1-Activate.jpg)
+
+### 5. Activate Order Completed
+
+#### Access the fake External Mobile Telecoms System by clicking the 'External Mobile Telecoms System' button at the top. Then complete the Activate order by clicking on 'COMPLETE'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/5-1-CompleteExternalMobileTelecomsOrder.jpg)
+
+#### Switch back to the Mobiles System by clicking the 'Mobiles System' button at the top. Then observe that the Mobile state is now 'Live'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/5-2-ActvateCompleted.jpg)
 
 
 # Resiliency
