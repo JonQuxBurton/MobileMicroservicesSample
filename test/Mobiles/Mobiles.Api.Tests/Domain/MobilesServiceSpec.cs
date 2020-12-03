@@ -181,7 +181,6 @@ namespace Mobiles.Api.Tests.Domain
                 sut = new MobilesService(loggerMock.Object, mobileRepositoryMock.Object, guidCreatorMock.Object, getNextMobileIdQuery.Object);
             }
 
-
             [Fact]
             public void ReturnAvailablePhoneNumbers()
             {

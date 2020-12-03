@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { Customer } from '../models/Customer';
 import { HttpClient } from '@angular/common/http';
@@ -16,7 +17,7 @@ export class CustomersService {
   customerAdded$ = this.customerAddedSource.asObservable();
   mobileOrdered$ = this.mobileOrderedSource.asObservable();
 
-  private apiBaseUrl: string = "http://localhost:5000/api/";
+  private apiBaseUrl: string = environment.apiBaseUrl;
 
   constructor(private http: HttpClient) { }
 

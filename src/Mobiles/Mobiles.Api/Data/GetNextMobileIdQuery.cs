@@ -13,7 +13,12 @@ namespace Mobiles.Api.Data
 
         public int Get()
         {
-            return mobilesContext.Mobiles.Max(x => x.Id) + 1;
+            var ids =  mobilesContext.Mobiles.Select(x => x.Id);
+
+            if (!ids.Any())
+                return 1;
+
+            return ids.Max() + 1;
         }
     }
 }

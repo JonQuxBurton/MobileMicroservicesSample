@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { MobileTelecomsNetworkOrder } from "../models/MobileTelecomsNetworkOrder";
@@ -12,7 +13,7 @@ export class MobileTelecomsNetworkService {
 
   orderCompletedSource$ = this.orderCompletedSource.asObservable();
 
-  private apiBaseUrl = "http://localhost:5002/api/";
+  private apiBaseUrl = environment.mobileTelecomsNetworkServiceApiBaseUrl;
 
   constructor(private http: HttpClient) {}
 

@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiBaseUrl: 'http://192.168.0.5:5000/api/',
+  mobileTelecomsNetworkServiceApiBaseUrl: 'http://192.168.0.5:5002/api/',
+  simCardsServiceApiBaseUrl: 'http://192.168.0.5:5001/api/'
 };
 
 /*

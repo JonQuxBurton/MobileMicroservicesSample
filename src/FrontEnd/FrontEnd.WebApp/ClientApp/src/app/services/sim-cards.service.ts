@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -13,7 +14,7 @@ export class SimCardsService {
 
   orderCompletedSource$ = this.orderCompletedSource.asObservable();
 
-  private apiBaseUrl: string = "http://localhost:5001/api/";
+  private apiBaseUrl: string = environment.simCardsServiceApiBaseUrl;
 
   constructor(private http: HttpClient) { }
 
