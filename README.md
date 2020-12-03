@@ -94,7 +94,7 @@ To keep the system resilient we should provide:
 Microservices should perform the standard security practices of Authentication (verifying  identify) and Authroization (verifying the principal has the correct claims). Performance shoud also be considered since multiple microservices may be involved in processing a request, each needing to do security checks. Also microservices should not be abe to access each others data.
 
 ## Testing
-Indivudal microservices can be tested with automated, fast running unit tests. These can keep the code from breaking and also help improve the design and keep components loosely coupled. 
+Individual microservices can be tested with automated, fast running unit tests. These can keep the code from breaking and also help improve the design and keep components loosely coupled. 
 Testing multiple services interacting with each other is more complicated. There are multiple ideas about how to do this, such as:
 * End-to-end tests driven through a UI automation tool
 * Testing services using faked dependencies such as the EF Core In-Memory database
