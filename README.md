@@ -198,7 +198,7 @@ These are illustrated on the standard testing pyramid:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/TestingStrategy.png)
 
-The rough positions of the three types of tests are shown with the numbers:
+The rough positions of the different types of tests are shown with the numbers:
 1. Unit Tests
 2. API level Automated End-to-end Tests
 3. API level Manual Tests
