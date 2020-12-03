@@ -408,14 +408,27 @@ The scenarios described above can be performed as follows:
 
 ### 1. Create a Customer
 
-#### The Home page displays the Customers, click on 'CREATE CUSTOMER'.  
+#### The Home page displays the Customers, click on 'CREATE CUSTOMER'
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-1-DisplayCustomers.jpg)
 
-#### Enter the new Customer's name and click 'SUBMIT'.  
+#### Enter the new Customer's name and click 'SUBMIT'
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-2-CreateCustomer.jpg)
 
+### 2. Order a Mobile
+
+#### Load a Customer and click on 'ORDER MOBILE'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/2-1-DisplayCustomer.jpg)
+
+#### Enter a Contact Name and Contact Phone Number then click 'SUBMIT'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/2-2-OrderMobile.jpg)
+
+#### Observe that the new Mobile PhoneNumber has now been ordered with the state of 'New' and 'Order in progress'
+
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/2-3-DisplayCustomerWithMobile.jpg)
 
 
 
