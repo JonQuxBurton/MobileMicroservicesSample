@@ -94,7 +94,7 @@ To keep the system resilient we should provide:
 Microservices should perform the standard security practices of Authentication (verifying  identify) and Authroization (verifying the principal has the correct claims). Performance shoud also be considered since multiple microservices may be involved in processing a request, each needing to do security checks. Also microservices should not be abe to access each others data.
 
 ## Testing
-Indivudal microservices can be tested with automated, fast running unit tests. These can keep the code from breaking and also help improve the design and keep components loosely coupled. 
+Individual microservices can be tested with automated, fast running unit tests. These can keep the code from breaking and also help improve the design and keep components loosely coupled. 
 Testing multiple services interacting with each other is more complicated. There are multiple ideas about how to do this, such as:
 * End-to-end tests driven through a UI automation tool
 * Testing services using faked dependencies such as the EF Core In-Memory database
@@ -203,6 +203,7 @@ The rough positions of the three types of tests are shown with the numbers:
 2. API level Automated End-to-end Tests
 3. API level Manual Tests
 4. Load Tests
+5. Manual Tests
 
 ### 1. Unit Tests
 
@@ -242,7 +243,7 @@ These support the testing goals as follows:
 * Understandable - they allow each step of a Scenario can be run and checked.
 
 ### 4. Load Tests
-The Load test are performed using [k6](#k6), which is a command line Load testing tool. The tests to be executed by k6 are defined in a JavaScript file (/docs/LoadTesting/LoadTest.js). This script details the actions to be performed (the Scenarios) and defines the number of Virtual Users and iterations.
+The Load Tests are performed using [k6](#k6), which is a command line Load testing tool. The tests to be executed by k6 are defined in a JavaScript file (/docs/LoadTesting/LoadTest.js). This script details the actions to be performed (the Scenarios) and defines the number of Virtual Users and iterations.
 It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 scenarios. So 5 * 5 * 3 = 75 tests in total.
 
 During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestingWebService, which I created. This also allows each Virtual User to request an Identifier, which it can use to ensure it gets it's own specific data for each test iterations that it runs.
@@ -253,6 +254,12 @@ The Load Tests support the testing goals as follows:
 * Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
 * Understandable - the system can be refactored and simplified, then the tests can be re-run to check for, and prevent regressions.
 * Performance - check and benchamrk the performace of the system with a number of simultaneous users.
+
+### 5. Manual Tests
+Manual Tests can be performed by through the Front End application. The main focus of these is to catch higher level, conceptual types errors (have we built the right thing) and usability problems. 
+
+The Manual Tests support the testing goals as follows:
+* Reliable - they verify that the system works as intended.
 
 ## Executing the Tests
 
@@ -376,6 +383,24 @@ Outputs:
 * Updates Mobiles database
 	* Mobile State to Live
 	* Order State to Completed
+
+# Front End
+
+I have implemented a basic Front End to aid in understanding how the system works. It consists of an Angular app which talks directly to the microservice APIs (rather than a Back End for Front End which has not been implemented at this time). 
+
+To launch the Front End:
+
+* Launch the system
+```
+λ docker-compose -f docker-compose.yml -f docker-compose-override.yml up
+```
+* Wait a minute
+* Launch the Front End
+```
+λ cd src/FrontEnd/FrontEnd.WebApp
+λ dotnet run
+```
+* Open a web browser and go to http://localhost:5000
 
 # Resiliency
 
