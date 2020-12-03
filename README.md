@@ -408,11 +408,11 @@ The scenarios described above can be performed as follows:
 
 ### 1. Create a Customer
 
-> The Home page displays the Customers, click on 'CREATE CUSTOMER'.  
+#### The Home page displays the Customers, click on 'CREATE CUSTOMER'.  
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-1-DisplayCustomers.jpg)
 
-> Enter the new Customer's name and click 'SUBMIT'.  
+#### Enter the new Customer's name and click 'SUBMIT'.  
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-2-CreateCustomer.jpg)
 
