@@ -416,6 +416,9 @@ The scenarios described above can be performed as follows:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-2-CreateCustomer.jpg)
 
+#### Observe that the new Customer has been created
+![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/FrontEnd/1-3-ObserveCustomerCreated.jpg)
+
 ### 2. Order a Mobile
 
 #### Load a Customer and click on 'ORDER MOBILE'
