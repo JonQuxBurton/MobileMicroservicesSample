@@ -48,7 +48,7 @@ From [microservices.io](#microservices.io)
 | Aspect        |               	| Implementation
 | ------------- | ------------------|------------- |
 |Data			| 					|SQL Server, Dapper, Entity Framework
-|				|Sovereignty		|Seperate database schemas adn logins
+|				|Sovereignty		|Seperate database schemas and logins
 |Communication	|					|
 |				|Event Bus			|AWS SNQ, SQS. JustSaying. Minimal Event Bus. GoAws
 |				|Outbox Pattern		|In Mobiles.API, EventPublisherService and Checkers
@@ -81,7 +81,7 @@ As the services should be loosley coupled, we avoid long chains of service calls
 
 ### API Gateway
 If the Front end apps call the microservices directly, then they are coupled and changes to the back end will also require updates to the front end. 
-An API Gateway (also known as a Back end-for-Front end (BFF)) can sit inbetween and act as a facade for the front end. It can perform re-routing of inbound requests and aggregating together the responses into a single response. The back end microservices can then evolve independently from the front end.
+An API Gateway (also known as a Back-end For Front-end (BFF)) can sit inbetween and act as a facade for the front end. It can perform re-routing of inbound requests and aggregate together the responses into a single response. The back end microservices can then evolve independently from the front end.
 
 ### Resiliency
 To keep the system resilient we should provide:
@@ -100,7 +100,7 @@ Testing multiple services interacting with each other is more complicated. There
 * Testing services using faked dependencies such as the EF Core In-Memory database
 * Running tests againat a simulated system running in Docker containers. For example using GoAws to simulate AWS SNS/SQS
 
-Ultimately whatever approach is taken the goal is to have tests which can give confidence that the system as a whole works (and has not regressed) and are automated so they reduce the need for manual testing.
+Ultimately whatever approach is taken the goal is to have tests which can give confidence that the system as a whole works (and has not regressed) and are automated so they minimise the need for manual testing.
 
 ### Deployment
 Microservices can be deployed in many ways. One way is by using containers, which allow each instance of a service to run in isolation from all others. The container can also be restarted if it crashes, by an Orchestrator. Another benefit of this approach is that test systems can be easily created and deployed using the same techniques.
@@ -109,12 +109,12 @@ Microservices can be deployed in many ways. One way is by using containers, whic
 Not directly related to microservices, but documentation is essential for future developers to quickly familiarise themselves with the system and for long term maintainability.
 We should document:
 * The domain - record the business processes so future developers can see what problem the system is solving
-* The architecutre - record the high level structure of the system so future developers can see how the pieces fit together
+* The architecture - record the high level structure of the system so future developers can see how the pieces fit together
 
 # Documentation
 ## The Domain
 
-The system is a Mobile Mobile Phone/Telecoms which supports the ordering and cancelling of Mobile Phones. The Ordering process is illustrated in the following diagram and User Stories:
+The system is a Mobile Phone/Telecoms system which supports the ordering and cancelling of Mobile Phones. The Ordering process is described by the following diagram and User Stories:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/Order_a_Mobile.png)
 
@@ -156,7 +156,21 @@ For information on statecharts, see [Welcome to Statecharts](#Welcome-to-Statech
 
 ## Architecture
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram1.png)
+
+
+
+
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/MobileMsSampleDiagram2.png)
+
+#### Figure 2. Order a Mobile Flow - proceeds as follows:
+1. The User submits the MobileRequest in the Front-end
+1. The Front-end posts the MobileRequest to the BFF
+1. The BFF posts the MobileRequest to the Mobiles API
+1. The Mobiles API writes the MobileRequest to it's DB, Mobiles.Orders table
+1. The Mobiles API publishes the event to the MobileRequested topic
+1. The SimCards Microservice is subscribed to the MobileRequested topic so receives the event
+1. The SimCards Microservice writes the MobileRequest it's DB, SimCards.Orders table
+1. The  SimCards Microservice posts a SmCardOrder to the External SimCards Provider API
 
 ### Visualisation
 The following diagrams map the architecture of the system.
@@ -193,12 +207,12 @@ The goals of the tests are to ensure that the system is Reliable, Robust, Modifi
 
 ## Testing Strategy
 
-To achieve these goals, my plan is to test the system from the bottom up, with unit tests and from the top down with manual and automated tests. 
+To achieve these goals, my plan is to test the system from the bottom up with unit tests, and from the top down with manual and automated tests. 
 These are illustrated on the standard testing pyramid:
 
 ![alt text](https://raw.githubusercontent.com/JonQuxBurton/MobileMicroservicesSample/master/docs/TestingStrategy.png)
 
-The rough positions of the different types of tests are shown with the numbers:
+The approximate positions of the different types of tests are shown with the numbers:
 1. Unit Tests
 2. API level Automated End-to-end Tests
 3. API level Manual Tests
@@ -210,14 +224,14 @@ The rough positions of the different types of tests are shown with the numbers:
 These are standard unit tests which test individual units in isolation and are fast running. 
 
 These support the testing goals as follows:
-* Reliable - ensure each unit is reliable when run in isolation. 
-* Modifiable - they are fast to run and so can be run after every code change to prevent regressions.
-* Understandable - the code can be refactored and simplified, then the tests can be re-run to check for and prevent regressions.
+* Reliable - ensure each unit is reliable when run in isolation
+* Modifiable - they are fast to run and so can be run after every code change to prevent regressions
+* Understandable - the code can be refactored and simplified. These tests can then be re-run to check for and prevent regressions
 
 ### 2. API level Automated End-to-end Tests
-These test each of the most important Scenarios which the system can perform. 
+These test each of the most important Scenarios which the system can execute. 
 
-These are not true "End-to-end" tests since they are at the API level rather than the UI. I choose to use the API level as a seam to test against as this should provide confidence that the back end system has not regressed.
+These are not true "End-to-end" tests since they are at the API level rather than the UI. I chose to use the API level as a seam to test against, as this should provide confidence that the back end system has not regressed.
 
 The tests are executed against a test system which is started using docker-compose. This launches the following:
 * each service running in a seperate container
@@ -227,39 +241,39 @@ The tests are executed against a test system which is started using docker-compo
 The tests are then executed against this test system and verified by querying the database.
 
 These support the testing goals as follows:
-* Reliable - they match the primary use cases of the system, and so verify that the system works as intended.
-* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
-* Understandable - the system can be refactored and simplified,, then the tests can be re-run to check for and prevent regressions.
+* Reliable - they match the primary Use Cases of the system, and so verify that the system works as intended
+* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions
+* Understandable - the system can be refactored and simplified, then the tests can be re-run to check for and prevent regressions
 
 ### 3. API level Manual Tests
-These also test the most important Scenarios which the system can perform.
+These also test the most important Scenarios which the system can execute.
 
 They are run against the same test system as above, launched through docker-compose.
 Once the system is running they are executed manually by using the [REST Client Visual Studio Code plugin](#REST-client) and executing the Scenarios in the file:
 \docs\ManualTesting\ExecuteScenarios.http
 
 These support the testing goals as follows:
-* Reliable - they can be run manaully to aid in troubleshooting and diagnosing.
-* Understandable - they allow each step of a Scenario can be run and checked.
+* Reliable - they can be run manaully to aid in troubleshooting and diagnosing
+* Understandable - they allow each step of a Scenario to be run and checked
 
 ### 4. Load Tests
 The Load Tests are performed using [k6](#k6), which is a command line Load testing tool. The tests to be executed by k6 are defined in a JavaScript file (/docs/LoadTesting/LoadTest.js). This script details the actions to be performed (the Scenarios) and defines the number of Virtual Users and iterations.
-It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 scenarios. So 5 * 5 * 3 = 75 tests in total.
+It is currently set to launch 5 simultaneous Virtual Users each performing 3 iterations of one of 5 Scenarios. So 5 * 5 * 3 = 75 tests in total.
 
-During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestingWebService, which I created. This also allows each Virtual User to request an Identifier, which it can use to ensure it gets it's own specific data for each test iterations that it runs.
+During the test run, the Virtual User needs data to use for the current test iteration. This is pre-generated into a JSON file by the LoadTestingWebService. This also allows each Virtual User to request an identifier, which it can use to ensure that it gets it's own specific data for each test iteration it runs.
 
 The Load Tests support the testing goals as follows:
-* Reliable - the Load Test Scenarios match the primary use cases of the system, and so verify that the system works as intended.
-* Robust - they simulate a number of users simultaneously using the system and verify that it does not crash.
-* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions.
-* Understandable - the system can be refactored and simplified, then the tests can be re-run to check for, and prevent regressions.
-* Performance - check and benchamrk the performace of the system with a number of simultaneous users.
+* Reliable - the Load Test Scenarios match the primary use cases of the system, and so verify that the system works as intended
+* Robust - they simulate a number of users simultaneously using the system and verify that it does not crash or have concurrency bugs
+* Modifiable - after the system is modified, the tests can be re-run to check for and prevent regressions
+* Understandable - the system can be refactored and simplified, then the tests can be re-run to check for and prevent regressions
+* Performance - check the performance of the system (and benchmark it) with a number of simultaneous users
 
 ### 5. Manual Tests
-Manual Tests can be performed by through the Front End application. The main focus of these is to catch higher level, conceptual types errors (have we built the right thing) and usability problems. 
+Manual Tests can be performed by through the Front End application. The main focus of these is to catch higher level, conceptual types of errors (have we built the right thing) and usability problems. 
 
 The Manual Tests support the testing goals as follows:
-* Reliable - they verify that the system works as intended.
+* Reliable - they verify that the system works as intended
 
 ## Executing the Tests
 
@@ -540,7 +554,6 @@ https://microservices.io
 **The "4+1" View Model of Software Architecture**  
 Architectural Blueprints - The "4+1" View Model of Software Architecture by Kruchten, Philippe (1995)     
 https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf  
-(15 pages)  
 https://en.wikipedia.org/wiki/4%2B1_architectural_view_model
 
 <a name="C4-Model">[C4 Model]</a>    
@@ -564,7 +577,6 @@ https://statecharts.github.io/
 <a name="Statecharts">[Statecharts]</a>  
 **Statecharts: A visual formalism for complex systems by David Harel (1986)**  
 http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf  
-(44 pages)
 
 <a name="k6">[k6]</a>  
 **k6 - Load Testing tool**  
