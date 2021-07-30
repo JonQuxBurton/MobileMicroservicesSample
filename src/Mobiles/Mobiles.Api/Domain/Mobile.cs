@@ -108,14 +108,15 @@ namespace Mobiles.Api.Domain
             behaviour.Provision(mobileDataEntity, InProgressOrder);
         }
 
+
+        public void ProcessingProvisionCompleted()
+        {
+            behaviour.ProcessingProvisionCompleted(mobileDataEntity, InProgressOrder);
+        }
+
         public void Activate(Order order)
         {
             behaviour.Activate(mobileDataEntity, order);
-        }
-
-        public void Cease(Order order)
-        {
-            behaviour.Cease(mobileDataEntity, order);
         }
 
         public void ActivateCompleted()
@@ -128,9 +129,9 @@ namespace Mobiles.Api.Domain
             behaviour.ActivateRejected(mobileDataEntity, InProgressOrder);
         }
 
-        public void ProcessingProvisionCompleted()
+        public void Cease(Order order)
         {
-            behaviour.ProcessingProvisionCompleted(mobileDataEntity, InProgressOrder);
+            behaviour.Cease(mobileDataEntity, order);
         }
 
         public void PortIn()
