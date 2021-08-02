@@ -47,10 +47,10 @@ namespace Mobiles.Api.Domain
                 });
         }
 
-        public Guid GlobalId => this.orderDataEntity.GlobalId;
-        public int MobileId => this.orderDataEntity.MobileId;
-        public string Name => this.orderDataEntity.Name;
-        public string ContactPhoneNumber => this.orderDataEntity.ContactPhoneNumber;
+        public Guid GlobalId => orderDataEntity.GlobalId;
+        public int MobileId => orderDataEntity.MobileId;
+        public string Name => orderDataEntity.Name;
+        public string ContactPhoneNumber => orderDataEntity.ContactPhoneNumber;
         public State CurrentState => machine.State;
 
         public OrderType Type
@@ -60,36 +60,36 @@ namespace Mobiles.Api.Domain
                 if (orderDataEntity.Type == null)
                     return OrderType.Provision;
 
-                return enumConverter.ToEnum<OrderType>(this.orderDataEntity.Type);
+                return enumConverter.ToEnum<OrderType>(orderDataEntity.Type);
             }
         }
-        public DateTime CreatedAt => this.orderDataEntity.CreatedAt;
-        public DateTime? UpdatedAt => this.orderDataEntity.UpdatedAt;
-        public string ActivationCode => this.orderDataEntity.ActivationCode;
+        public DateTime CreatedAt => orderDataEntity.CreatedAt;
+        public DateTime? UpdatedAt => orderDataEntity.UpdatedAt;
+        public string ActivationCode => orderDataEntity.ActivationCode;
 
         public OrderDataEntity GetDataEntity()
         {
-            return this.orderDataEntity;
+            return orderDataEntity;
         }
 
         public void Process()
         {
-            this.machine.Fire(Trigger.Process);
+            machine.Fire(Trigger.Process);
         }
         
         public void Send()
         {
-            this.machine.Fire(Trigger.Send);
+            machine.Fire(Trigger.Send);
         }
 
         public void Complete()
         {
-            this.machine.Fire(Trigger.Complete);
+            machine.Fire(Trigger.Complete);
         }
 
         public void Reject()
         {
-            this.machine.Fire(Trigger.Reject);
+            machine.Fire(Trigger.Reject);
         }
     }
 }

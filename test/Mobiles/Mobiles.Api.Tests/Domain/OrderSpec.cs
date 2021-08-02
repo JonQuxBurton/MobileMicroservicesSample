@@ -45,5 +45,18 @@ namespace Mobiles.Api.Tests.Domain
                 sut.CurrentState.Should().Be(Order.State.Completed);
             }
         }
+
+        public class RejectShould
+        {
+            [Fact]
+            public void ChangeStateToRejected()
+            {
+                var sut = new Order(new OrderDataEntity { GlobalId = Guid.NewGuid(), Name = "Neil", ContactPhoneNumber = "0123456789", State = "Sent" });
+
+                sut.Reject();
+
+                sut.CurrentState.Should().Be(Order.State.Rejected);
+            }
+        }
     }
 }
