@@ -9,7 +9,7 @@ using Mobiles.Api.Domain;
 using Utils.DateTimes;
 using Utils.Enums;
 
-namespace EndToEndApiLevelTests.DataAcess
+namespace EndToEndApiLevelTests.DataAccess
 {
     public class MobilesData : Retry
     {

@@ -2,7 +2,7 @@
 using ExternalSimCardsProvider.Api.Data;
 using Microsoft.Extensions.Options;
 
-namespace EndToEndApiLevelTests.DataAcess
+namespace EndToEndApiLevelTests.DataAccess
 {
     public class ExternalSimCardOrdersData : Retry
     {

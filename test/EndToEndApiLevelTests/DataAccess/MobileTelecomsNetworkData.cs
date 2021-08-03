@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using Dapper;
 using MobileTelecomsNetwork.EventHandlers.Domain;
 
-namespace EndToEndApiLevelTests.DataAcess
+namespace EndToEndApiLevelTests.DataAccess
 {
     public class MobileTelecomsNetworkData : Retry
     {

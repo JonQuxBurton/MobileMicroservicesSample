@@ -1,7 +1,7 @@
-﻿using EndToEndApiLevelTests.DataAcess;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Mobiles.Api.Resources;
 using System;
+using EndToEndApiLevelTests.DataAccess;
 
 namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {

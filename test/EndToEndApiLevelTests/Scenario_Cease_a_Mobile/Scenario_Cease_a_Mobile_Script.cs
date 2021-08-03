@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System;
 using System.Threading.Tasks;
-using EndToEndApiLevelTests.DataAcess;
+using EndToEndApiLevelTests.DataAccess;
 using Mobiles.Api.Domain;
 
 namespace EndToEndApiLevelTests.Scenario_Cease_a_Mobile

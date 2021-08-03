@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using SimCards.EventHandlers.Data;
 
-namespace EndToEndApiLevelTests.DataAcess
+namespace EndToEndApiLevelTests.DataAccess
 {
     public class SimCardsData : Retry
     {

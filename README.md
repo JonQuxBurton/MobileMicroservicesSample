@@ -295,7 +295,7 @@ docker-compose -f docker-compose-test.yml -f docker-compose-test.override.yml up
 * Verify the test system has successfully launched by  executing the checks in the file \docs\ManualTesting\CheckSystem.http
 * Verify the database is running by running the SQL script \docs\ManualTesting\CheckDatabase.sql
 
-Execute the tests in the EndToEndApiLevelTests project using the Visual Studio test runner.
+Open the EndToEndTests.sln solution in Visual Studio. Execute the tests in the EndToEndApiLevelTests project using the Visual Studio test runner.
 
 ### 3. API level Manual Tests
 * Start Docker Desktop

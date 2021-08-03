@@ -2,7 +2,7 @@
 using ExternalMobileTelecomsNetwork.Api.Data;
 using Microsoft.Extensions.Options;
 
-namespace EndToEndApiLevelTests.DataAcess
+namespace EndToEndApiLevelTests.DataAccess
 {
     public class ExternalMobileTelecomsNetworkData : Retry
     {

@@ -25,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api\ExternalMobileTelecomsNetwork.Api.csproj" />
     <ProjectReference Include="..\..\src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api\ExternalSimCardsProvider.Api.csproj" />
     <ProjectReference Include="..\..\src\Mobiles\Mobiles.Api\Mobiles.Api.csproj" />

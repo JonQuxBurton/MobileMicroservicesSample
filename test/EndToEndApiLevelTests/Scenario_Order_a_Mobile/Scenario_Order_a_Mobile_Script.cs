@@ -1,13 +1,11 @@
-﻿using FluentAssertions;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using System;
 using System.Threading.Tasks;
-using EndToEndApiLevelTests.Scenario_Order_a_Mobile;
-using EndToEndApiLevelTests.DataAcess;
+using EndToEndApiLevelTests.DataAccess;
+using FluentAssertions;
 
-namespace EndToEndApiLevelTests
+namespace EndToEndApiLevelTests.Scenario_Order_a_Mobile
 {
     public partial class Scenario_Order_a_Mobile_Script
     {

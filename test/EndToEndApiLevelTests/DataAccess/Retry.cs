@@ -1,7 +1,7 @@
-﻿using Polly;
-using System;
+﻿using System;
+using Polly;
 
-namespace EndToEndApiLevelTests.DataAcess
+namespace EndToEndApiLevelTests.DataAccess
 {
     public class Retry
     {
