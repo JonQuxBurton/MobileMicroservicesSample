@@ -53,7 +53,7 @@ Content-Disposition: form-data; name="Version"
 ###==================================================
 
 ### Health Check
-GET http://localhost:5000/health
+GET http://192.168.0.5:5000/health
 
 ### Get Prometheus metrics
 GET http://localhost:5000/metrics
@@ -166,3 +166,21 @@ content-type: application/json
 {
 	"ScenarioKey" : "moon-landing"
 }
+
+###
+POST http://localhost:5099/scenarios/beginlog
+content-type: application/json
+
+{"ScenarioKey":"orderMobile","Index0":"0","VirtualUserId":0,"Iteration":0,"Message":""}
+
+###
+POST http://localhost:5099/data
+content-type: application/json
+
+{"ScenarioKey":"completeProvision","Index0":"0","VirtualUserId":0,"Iteration":0,"Message":""}
+
+###
+POST http://localhost:5099/data
+content-type: application/json
+
+{"ScenarioKey":"orderMobile","Index0":"0","VirtualUserId":2,"Iteration":0,"Message":""}
