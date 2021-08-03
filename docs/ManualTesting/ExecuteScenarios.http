@@ -76,7 +76,7 @@ DELETE http://localhost:5000/api/mobiles/{{mobileId}}
 GET http://localhost:5000/api/mobiles/{{mobileId}}
 
 ###
-@ceaseOrderId = {{getCeaseOrder.response.body.$.orders[?(@.type==2)].globalId}}
+@ceaseOrderId = {{getCeaseOrder.response.body.$.orders[?(@.type=="Cease")].globalId}}
 
 ### Step 2 - The External Service has completed the Mobile Cease Order
 POST http://localhost:5002/api/orders/{{ceaseOrderId}}/complete
