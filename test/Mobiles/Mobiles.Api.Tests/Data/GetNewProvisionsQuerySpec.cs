@@ -37,7 +37,7 @@ namespace Mobiles.Api.Tests.Data
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingProvision.ToString(),
+                        State = Mobile.MobileState.ProcessingActivate.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
@@ -85,12 +85,21 @@ namespace Mobiles.Api.Tests.Data
 
                     var actualMobile = actual[0];
                     actualMobile.GlobalId.Should().Be(data[0].GlobalId);
+                    actualMobile.State.Should().Be(Mobile.MobileState.New);
+                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Provision);
+                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
 
                     actualMobile = actual[1];
                     actualMobile.GlobalId.Should().Be(data[2].GlobalId);
+                    actualMobile.State.Should().Be(Mobile.MobileState.New);
+                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Provision);
+                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
 
                     actualMobile = actual[2];
                     actualMobile.GlobalId.Should().Be(data[3].GlobalId);
+                    actualMobile.State.Should().Be(Mobile.MobileState.New);
+                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Provision);
+                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
                 }
             }
 
