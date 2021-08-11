@@ -3,7 +3,7 @@ using Mobiles.Api.Domain;
 
 namespace Mobiles.Api.Data
 {
-    public interface IGetNeProvisionsQuery
+    public interface IGetNewProvisionsQuery
     {
         IEnumerable<Mobile> Get();
     }

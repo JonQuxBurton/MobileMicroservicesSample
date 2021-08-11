@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Mobiles.Api.Tests.Data
 {
-    namespace GetNewCeasesQuerySpec
+    namespace GetProcessingProvisionMobilesQuerySpec
     {
         public class GetShould
         {
@@ -28,12 +28,13 @@ namespace Mobiles.Api.Tests.Data
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingCease.ToString(),
+                        CustomerId = Guid.NewGuid(),
+                        State = Mobile.MobileState.ProcessingProvision.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
                             {
-                                Type = Order.OrderType.Cease.ToString(),
+                                Type = Order.OrderType.Provision.ToString(),
                                 State = Order.State.New.ToString()
                             }
                         }
@@ -41,11 +42,13 @@ namespace Mobiles.Api.Tests.Data
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
+                        CustomerId = Guid.NewGuid(),
                         State = Mobile.MobileState.ProcessingActivate.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
                             {
+                                Type = Order.OrderType.Activate.ToString(),
                                 State = Order.State.New.ToString()
                             }
                         }
@@ -53,12 +56,13 @@ namespace Mobiles.Api.Tests.Data
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingCease.ToString(),
+                        CustomerId = Guid.NewGuid(),
+                        State = Mobile.MobileState.ProcessingProvision.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
                             {
-                                Type = Order.OrderType.Cease.ToString(),
+                                Type = Order.OrderType.Provision.ToString(),
                                 State = Order.State.New.ToString()
                             }
                         }
@@ -66,58 +70,8 @@ namespace Mobiles.Api.Tests.Data
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingCease.ToString(),
-                        Orders = new List<OrderDataEntity>
-                        {
-                            new OrderDataEntity
-                            {
-                                Type = Order.OrderType.Cease.ToString(),
-                                State = Order.State.New.ToString()
-                            }
-                        }
-                    }
-                };
-
-                database.AddData(data);
-
-                using (database)
-                using (var context = new MobilesContext(database.ContextOptions))
-                {
-                    var sut = new GetNewCeasesQuery(context, new DateTimeCreator());
-
-                    var actual = sut.Get().ToList();
-
-                    actual.Count().Should().Be(3);
-                    
-                    var actualMobile = actual[0];
-                    actualMobile.GlobalId.Should().Be(data[0].GlobalId);
-                    actualMobile.State.Should().Be(Mobile.MobileState.ProcessingCease);
-                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Cease);
-                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
-
-                    actualMobile = actual[1];
-                    actualMobile.GlobalId.Should().Be(data[2].GlobalId);
-                    actualMobile.State.Should().Be(Mobile.MobileState.ProcessingCease);
-                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Cease);
-                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
-
-                    actualMobile = actual[2];
-                    actualMobile.GlobalId.Should().Be(data[3].GlobalId);
-                    actualMobile.State.Should().Be(Mobile.MobileState.ProcessingCease);
-                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Cease);
-                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
-                }
-            }
-
-            [Fact]
-            public void NotReturnNonCeases()
-            {
-                var data = new List<MobileDataEntity>
-                {
-                    new MobileDataEntity
-                    {
-                        GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingCease.ToString(),
+                        CustomerId = Guid.NewGuid(),
+                        State = Mobile.MobileState.ProcessingProvision.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
@@ -134,7 +88,59 @@ namespace Mobiles.Api.Tests.Data
                 using (database)
                 using (var context = new MobilesContext(database.ContextOptions))
                 {
-                    var sut = new GetNewCeasesQuery(context, new DateTimeCreator());
+                    var sut = new GetProcessingProvisionMobilesQuery(context, new DateTimeCreator());
+
+                    var actual = sut.Get().ToList();
+
+                    actual.Count().Should().Be(3);
+                    
+                    var actualMobile = actual[0];
+                    actualMobile.GlobalId.Should().Be(data[0].GlobalId);
+                    actualMobile.State.Should().Be(Mobile.MobileState.ProcessingProvision);
+                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Provision);
+                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
+
+                    actualMobile = actual[1];
+                    actualMobile.GlobalId.Should().Be(data[2].GlobalId);
+                    actualMobile.State.Should().Be(Mobile.MobileState.ProcessingProvision);
+                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Provision);
+                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
+
+                    actualMobile = actual[2];
+                    actualMobile.GlobalId.Should().Be(data[3].GlobalId);
+                    actualMobile.State.Should().Be(Mobile.MobileState.ProcessingProvision);
+                    actualMobile.InProgressOrder.Type.Should().Be(Order.OrderType.Provision);
+                    actualMobile.InProgressOrder.CurrentState.Should().Be(Order.State.New);
+                }
+            }
+
+            [Fact]
+            public void NotReturnMobilesNotProcessingProvision()
+            {
+                var data = new List<MobileDataEntity>
+                {
+                    new MobileDataEntity
+                    {
+                        GlobalId = Guid.NewGuid(),
+                        CustomerId = Guid.NewGuid(),
+                        State = Mobile.MobileState.ProcessingCease.ToString(),
+                        Orders = new List<OrderDataEntity>
+                        {
+                            new OrderDataEntity
+                            {
+                                Type = Order.OrderType.Cease.ToString(),
+                                State = Order.State.New.ToString()
+                            }
+                        }
+                    }
+                };
+
+                database.AddData(data);
+
+                using (database)
+                using (var context = new MobilesContext(database.ContextOptions))
+                {
+                    var sut = new GetProcessingProvisionMobilesQuery(context, new DateTimeCreator());
 
                     var actual = sut.Get();
 
@@ -143,19 +149,20 @@ namespace Mobiles.Api.Tests.Data
             }
 
             [Fact]
-            public void NotReturnCeasesWithSentOrCompletedOrders()
+            public void NotReturnProcessingProvisionsWithSentOrCompletedOrders()
             {
                 var data = new List<MobileDataEntity>
                 {
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingCease.ToString(),
+                        CustomerId = Guid.NewGuid(),
+                        State = Mobile.MobileState.ProcessingProvision.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
                             {
-                                Type = Order.OrderType.Cease.ToString(),
+                                Type = Order.OrderType.Provision.ToString(),
                                 State = Order.State.Sent.ToString()
                             }
                         }
@@ -163,12 +170,13 @@ namespace Mobiles.Api.Tests.Data
                     new MobileDataEntity
                     {
                         GlobalId = Guid.NewGuid(),
-                        State = Mobile.MobileState.ProcessingCease.ToString(),
+                        CustomerId = Guid.NewGuid(),
+                        State = Mobile.MobileState.ProcessingProvision.ToString(),
                         Orders = new List<OrderDataEntity>
                         {
                             new OrderDataEntity
                             {
-                                Type = Order.OrderType.Cease.ToString(),
+                                Type = Order.OrderType.Provision.ToString(),
                                 State = Order.State.Completed.ToString()
                             }
                         }
@@ -180,7 +188,7 @@ namespace Mobiles.Api.Tests.Data
                 using (database)
                 using (var context = new MobilesContext(database.ContextOptions))
                 {
-                    var sut = new GetNewCeasesQuery(context, new DateTimeCreator());
+                    var sut = new GetProcessingProvisionMobilesQuery(context, new DateTimeCreator());
 
                     var actual = sut.Get();
 

@@ -68,7 +68,7 @@ namespace Mobiles.Api
             // API
             services.AddScoped<IGuidCreator, GuidCreator>();
             services.AddScoped<IMessagePublisher, MessagePublisher>();
-            services.AddScoped<IGetNeProvisionsQuery, GetNewProvisionsQuery>();
+            services.AddScoped<IGetNewProvisionsQuery, GetNewProvisionsQuery>();
             services.AddScoped<IGetProcessingProvisionMobilesQuery, GetProcessingProvisionMobilesQuery>();
             services.AddScoped<IGetNewActivatesQuery, GetNewActivatesQuery>();
             services.AddScoped<IGetNewCeasesQuery, GetNewCeasesQuery>();

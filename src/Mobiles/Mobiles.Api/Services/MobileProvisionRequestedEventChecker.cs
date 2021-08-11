@@ -9,12 +9,12 @@ namespace Mobiles.Api.Services
     public class MobileProvisionRequestedEventChecker : IMobileEventsChecker
     {
         private readonly ILogger<MobileProvisionRequestedEventChecker> logger;
-        private readonly IGetNeProvisionsQuery getNewMobilesQuery;
+        private readonly IGetNewProvisionsQuery getNewMobilesQuery;
         private readonly IRepository<Mobile> mobileRepository;
 
         public MobileProvisionRequestedEventChecker(
             ILogger<MobileProvisionRequestedEventChecker> logger,
-            IGetNeProvisionsQuery getNewMobilesQuery,
+            IGetNewProvisionsQuery getNewMobilesQuery,
             IRepository<Mobile> mobileRepository
             )
         {

@@ -16,7 +16,7 @@ namespace Mobiles.Api.Tests.Services
         {
             private readonly Mobile expectedNewMobile;
             private readonly MobileProvisionRequestedEventChecker sut;
-            private readonly Mock<IGetNeProvisionsQuery> getNewMobilesQueryMock;
+            private readonly Mock<IGetNewProvisionsQuery> getNewMobilesQueryMock;
             private readonly Mock<IRepository<Mobile>> repositoryMock;
 
             public CheckShould()
@@ -27,7 +27,7 @@ namespace Mobiles.Api.Tests.Services
                 {
                     State = "New"
                 });
-                getNewMobilesQueryMock = new Mock<IGetNeProvisionsQuery>();
+                getNewMobilesQueryMock = new Mock<IGetNewProvisionsQuery>();
                 getNewMobilesQueryMock.Setup(x => x.Get())
                     .Returns(new[] { expectedNewMobile });
                 repositoryMock = new Mock<IRepository<Mobile>>();

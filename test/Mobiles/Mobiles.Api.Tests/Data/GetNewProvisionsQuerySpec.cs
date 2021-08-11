@@ -13,11 +13,11 @@ namespace Mobiles.Api.Tests.Data
     {
         public class GetShould
         {
-            private readonly InMemoryDatabase<MobilesContext> database;
+            private readonly InMemoryMobilesDatabase database;
 
             public GetShould()
             {
-                database = new InMemoryDatabase<MobilesContext>();
+                database = new InMemoryMobilesDatabase();
             }
 
             [Fact]
@@ -72,7 +72,7 @@ namespace Mobiles.Api.Tests.Data
                     }
                 };
 
-                AddToDatabase(data);
+                database.AddData(data);
 
                 using (database)
                 using (var context = new MobilesContext(database.ContextOptions))
@@ -122,7 +122,7 @@ namespace Mobiles.Api.Tests.Data
                     }
                 };
 
-                AddToDatabase(data);
+                database.AddData(data);
 
                 using (database)
                 using (var context = new MobilesContext(database.ContextOptions))
@@ -166,7 +166,7 @@ namespace Mobiles.Api.Tests.Data
                     }
                 };
 
-                AddToDatabase(data);
+                database.AddData(data);
 
                 using (database)
                 using (var context = new MobilesContext(database.ContextOptions))
@@ -177,17 +177,6 @@ namespace Mobiles.Api.Tests.Data
 
                     actual.Should().BeEmpty();
                 }
-            }
-
-            private void AddToDatabase(List<MobileDataEntity> data)
-            {
-                using var context = new MobilesContext(database.ContextOptions);
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-
-                foreach (var dataEntity in data) context.Mobiles.Add(dataEntity);
-
-                context.SaveChanges();
             }
         }
     }

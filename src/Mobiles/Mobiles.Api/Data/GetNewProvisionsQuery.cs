@@ -6,7 +6,7 @@ using Utils.DateTimes;
 
 namespace Mobiles.Api.Data
 {
-    public class GetNewProvisionsQuery : IGetNeProvisionsQuery
+    public class GetNewProvisionsQuery : IGetNewProvisionsQuery
     {
         private readonly IDateTimeCreator dateTimeCreator;
         private readonly MobilesContext mobilesContext;

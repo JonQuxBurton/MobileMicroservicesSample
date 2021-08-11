@@ -3,21 +3,17 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
-using Utils.Enums;
 
 namespace Mobiles.Api.Data
 {
     public class GetProcessingProvisionMobilesQuery : IGetProcessingProvisionMobilesQuery
     {
         private readonly IDateTimeCreator dateTimeCreator;
-        private readonly IEnumConverter enumConverter;
         private readonly MobilesContext mobilesContext;
 
-        public GetProcessingProvisionMobilesQuery(MobilesContext mobilesContext, IEnumConverter enumConverter,
-            IDateTimeCreator dateTimeCreator)
+        public GetProcessingProvisionMobilesQuery(MobilesContext mobilesContext, IDateTimeCreator dateTimeCreator)
         {
             this.mobilesContext = mobilesContext;
-            this.enumConverter = enumConverter;
             this.dateTimeCreator = dateTimeCreator;
         }
 
@@ -29,10 +25,8 @@ namespace Mobiles.Api.Data
 
             foreach (var mobileDataEntity in mobilesDataEntities)
             {
-                var newStateName = enumConverter.ToName<Mobile.MobileState>(Order.State.New);
-
                 var inProgressOrderDataEntity =
-                    mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == newStateName);
+                    mobileDataEntity.Orders.FirstOrDefault(x => x.State.Trim() == Order.State.New.ToString());
                 if (inProgressOrderDataEntity != null) mobiles.Add(new Mobile(dateTimeCreator, mobileDataEntity));
             }
 
