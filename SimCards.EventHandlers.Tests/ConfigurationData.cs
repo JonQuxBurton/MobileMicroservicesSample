@@ -1,4 +1,4 @@
-namespace SimCards.EventHandlers.Tests.Data
+namespace Data.Tests
 {
     public static class ConfigurationData
     {

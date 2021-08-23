@@ -91,6 +91,7 @@ namespace ExternalSimCardsProvider.Api.Data
         {
             return new Order
             {
+                Id = dbOrder.Id,
                 PhoneNumber = dbOrder.PhoneNumber,
                 Reference = dbOrder.Reference,
                 Status = dbOrder.Status,

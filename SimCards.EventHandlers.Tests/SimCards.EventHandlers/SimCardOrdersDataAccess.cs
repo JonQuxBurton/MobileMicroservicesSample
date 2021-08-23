@@ -5,10 +5,11 @@ using System.Linq;
 using Dapper;
 using DapperDataAccess;
 using Microsoft.Extensions.Options;
+using SimCards.EventHandlers;
 using SimCards.EventHandlers.Data;
 using Xunit.Abstractions;
 
-namespace SimCards.EventHandlers.Tests.Data
+namespace Data.Tests.SimCards.EventHandlers
 {
     public class SimCardOrdersDataAccess
     {

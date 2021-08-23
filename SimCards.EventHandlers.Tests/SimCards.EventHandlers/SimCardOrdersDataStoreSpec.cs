@@ -2,11 +2,12 @@ using System;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
+using SimCards.EventHandlers;
 using SimCards.EventHandlers.Data;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace SimCards.EventHandlers.Tests.Data
+namespace Data.Tests.SimCards.EventHandlers
 {
     namespace SimCardOrdersDataStoreSpec
     {
@@ -34,7 +35,7 @@ namespace SimCards.EventHandlers.Tests.Data
         }
 
         [CollectionDefinition("SimCardOrdersDataStoreSpec")]
-        public class DatabaseCollection : ICollectionFixture<SimCardOrdersSharedFixture>
+        public class SimCardOrdersDataStoreSpecCollection : ICollectionFixture<SimCardOrdersSharedFixture>
         { }
 
         [Collection("SimCardOrdersDataStoreSpec")]

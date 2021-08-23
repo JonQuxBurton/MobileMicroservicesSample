@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api\ExternalSimCardsProvider.Api.csproj" />
     <ProjectReference Include="..\src\SimCards\SimCards.EventHandlers\SimCards.EventHandlers.csproj" />
   </ItemGroup>
 
