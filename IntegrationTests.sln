@@ -41,7 +41,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrontEnd", "FrontEnd", "{D6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{EC3654CF-0185-40A9-BCB5-F5E1863AB5D1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Tests", "SimCards.EventHandlers.Tests\Data.Tests.csproj", "{DC256768-3719-436E-9AC0-C101CFB7B970}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Tests", "test\Data.Tests\Data.Tests.csproj", "{DC256768-3719-436E-9AC0-C101CFB7B970}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
