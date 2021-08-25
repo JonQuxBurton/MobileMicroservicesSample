@@ -64,7 +64,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = "Live",
                     PhoneNumber = "0700000001",
                     Orders = new List<OrderDataEntity>
                     {
@@ -73,7 +73,8 @@ namespace Data.Tests.Mobiles.Api
                             GlobalId = Guid.NewGuid(),
                             Name = "Neil Armstrong",
                             ContactPhoneNumber = "0800000001",
-                            State = "New"
+                            State = "Completed",
+                            Type = "Activate"
                         }
                     }
                 });
