@@ -190,13 +190,11 @@ namespace Data.Tests.ExternalSimCardsProvider.Api
             }
 
             [Fact]
-            public void ReturnNull_WhenOrderNotFound()
+            public void ReturnZero_WhenNoOrders()
             {
-                var notReference = Guid.NewGuid();
+                var actual = sut.GetMaxId();
 
-                var actual = sut.GetByReference(notReference);
-
-                actual.Should().BeNull();
+                actual.Should().Be(0);
             }
         }
 
