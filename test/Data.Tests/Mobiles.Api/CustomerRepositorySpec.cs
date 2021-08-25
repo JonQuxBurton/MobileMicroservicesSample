@@ -181,10 +181,10 @@ namespace Data.Tests.Mobiles.Api
                 customers.Add(expectedCustomer1);
                 using var context = new MobilesContext(fixture.ContextOptions);
                 sut = new CustomerRepository(context);
-
                 sut.Add(expectedCustomer1);
 
                 var actual = sut.GetById(expectedCustomer1.GlobalId);
+
                 actual.Should().BeEquivalentTo(expectedCustomer1);
             }
 
