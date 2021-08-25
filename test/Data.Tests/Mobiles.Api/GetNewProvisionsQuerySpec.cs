@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data.Tests.Mobiles.Api.MobileRepositorySpec;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Data;
@@ -16,39 +17,13 @@ namespace Data.Tests.Mobiles.Api
 {
     namespace GetNewProvisionsQuerySpec
     {
-        public class GetNewProvisionsQuerySharedFixture
-        {
-            public MobilesDataAccess DataAccess;
-
-            public DbContextOptions<MobilesContext>
-                ContextOptions =>
-                new DbContextOptionsBuilder<MobilesContext>()
-                    .UseSqlServer(ConfigurationData.ConnectionString)
-                    .Options;
-
-            private MobilesDataAccess CreateDataAccess(ITestOutputHelper output)
-            {
-                return new(output, ConfigurationData.ConnectionString);
-            }
-
-            public void Setup(ITestOutputHelper output)
-            {
-                DataAccess = CreateDataAccess(output);
-            }
-        }
-
-        [CollectionDefinition("GetNewProvisionsQuerySpec")]
-        public class GetNewProvisionsQuerySpecCollection : ICollectionFixture<GetNewProvisionsQuerySharedFixture>
-        {
-        }
-
-        [Collection("GetNewProvisionsQuerySpec")]
+        [Collection("MobilesTests")]
         public class GetShould : IDisposable
         {
-            private readonly GetNewProvisionsQuerySharedFixture fixture;
+            private readonly MobilesSharedFixture fixture;
             private readonly List<Mobile> mobilesAdded;
 
-            public GetShould(GetNewProvisionsQuerySharedFixture fixture, ITestOutputHelper output)
+            public GetShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);

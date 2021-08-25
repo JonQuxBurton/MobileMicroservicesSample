@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
@@ -13,40 +12,14 @@ namespace Data.Tests.Mobiles.Api
 {
     namespace MobileRepositorySpec
     {
-        public class MobileRepositorySharedFixture
-        {
-            public MobilesDataAccess DataAccess;
-
-            public DbContextOptions<MobilesContext>
-                ContextOptions =>
-                new DbContextOptionsBuilder<MobilesContext>()
-                    .UseSqlServer(ConfigurationData.ConnectionString)
-                    .Options;
-
-            private MobilesDataAccess CreateDataAccess(ITestOutputHelper output)
-            {
-                return new(output, ConfigurationData.ConnectionString);
-            }
-
-            public void Setup(ITestOutputHelper output)
-            {
-                DataAccess = CreateDataAccess(output);
-            }
-        }
-
-        [CollectionDefinition("MobileRepositorySpec")]
-        public class MobileRepositorySpecCollection : ICollectionFixture<MobileRepositorySharedFixture>
-        {
-        }
-
-        [Collection("MobileRepositorySpec")]
+        [Collection("MobilesTests")]
         public class AddShould : IDisposable
         {
-            private readonly MobileRepositorySharedFixture fixture;
+            private readonly MobilesSharedFixture fixture;
             private Mobile expectedMobile;
             private MobileRepository sut;
 
-            public AddShould(MobileRepositorySharedFixture fixture, ITestOutputHelper output)
+            public AddShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
@@ -88,14 +61,14 @@ namespace Data.Tests.Mobiles.Api
             }
         }
 
-        [Collection("MobileRepositorySpec")]
+        [Collection("MobilesTests")]
         public class UpdateShould : IDisposable
         {
-            private readonly MobileRepositorySharedFixture fixture;
+            private readonly MobilesSharedFixture fixture;
             private Mobile expectedMobile;
             private MobileRepository sut;
 
-            public UpdateShould(MobileRepositorySharedFixture fixture, ITestOutputHelper output)
+            public UpdateShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
@@ -128,14 +101,14 @@ namespace Data.Tests.Mobiles.Api
             }
         }
 
-        [Collection("MobileRepositorySpec")]
+        [Collection("MobilesTests")]
         public class GetByIdUpdateShould : IDisposable
         {
-            private readonly MobileRepositorySharedFixture fixture;
+            private readonly MobilesSharedFixture fixture;
             private readonly List<Mobile> mobiles;
             private MobileRepository sut;
 
-            public GetByIdUpdateShould(MobileRepositorySharedFixture fixture, ITestOutputHelper output)
+            public GetByIdUpdateShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
