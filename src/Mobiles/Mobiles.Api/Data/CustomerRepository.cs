@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Mobiles.Api.Domain;
-using Utils.Enums;
 
 namespace Mobiles.Api.Data
 {
