@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data.Tests.Mobiles.Api.MobileRepositorySpec;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
-using Utils.Enums;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,87 +16,77 @@ namespace Data.Tests.Mobiles.Api
         public class GetShould : IDisposable
         {
             private readonly MobilesSharedFixture fixture;
-            private readonly List<Mobile> mobilesAdded;
 
             public GetShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
-
-                mobilesAdded = new List<Mobile>();
             }
 
             public void Dispose()
             {
-                foreach (var mobile in mobilesAdded) 
-                    fixture.DataAccess.Delete(mobile);
+                fixture.DataAccess.Cleanup();
             }
 
             [Fact]
             public void ReturnNewProvisions()
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>()
+                    Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
                             GlobalId = Guid.NewGuid(),
                             Name = "Neil Armstrong",
                             ContactPhoneNumber = "0800000001",
-                            State = "New"
+                            State = Order.State.New.ToString()
                         }
                     }
                 });
-                var newProvision2 = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var newProvision2 = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000002",
-                    Orders = new List<OrderDataEntity>()
+                    Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
                             GlobalId = Guid.NewGuid(),
                             Name = "Buzz Aldrin",
                             ContactPhoneNumber = "0800000002",
-                            State = "New"
+                            State = Order.State.New.ToString()
                         }
                     }
                 });
-                var newProvision3 = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var newProvision3 = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000003",
-                    Orders = new List<OrderDataEntity>()
+                    Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
                             GlobalId = Guid.NewGuid(),
                             Name = "Michael Collins",
                             ContactPhoneNumber = "0800000003",
-                            State = "New"
+                            State = Order.State.New.ToString()
                         }
                     }
                 });
-                mobilesAdded.Add(newProvision1);
-                mobilesAdded.Add(newProvision2);
-                mobilesAdded.Add(newProvision3);
-
+                fixture.DataAccess.Add(newProvision1);
+                fixture.DataAccess.Add(newProvision2);
+                fixture.DataAccess.Add(newProvision3);
                 using var context = new MobilesContext(fixture.ContextOptions);
-                
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());
-                var mobilesRepository = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
-                mobilesRepository.Add(newProvision1);
-                mobilesRepository.Add(newProvision2);
-                mobilesRepository.Add(newProvision3);
 
                 var actual = sut.Get().ToList();
 
@@ -109,37 +94,33 @@ namespace Data.Tests.Mobiles.Api
                 actual.ElementAt(1).Should().BeEquivalentTo(newProvision2);
                 actual.ElementAt(2).Should().BeEquivalentTo(newProvision3);
             }
-            
+
             [Theory]
             [InlineData("ProcessingProvision")]
             [InlineData("Live")]
             [InlineData("Ceased")]
             public void DoesNotReturnMobilesWhichAreNotNew(string state)
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
                     State = state,
                     PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>()
+                    Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
                             GlobalId = Guid.NewGuid(),
                             Name = "Neil Armstrong",
                             ContactPhoneNumber = "0800000001",
-                            State = "New"
+                            State = Order.State.New.ToString()
                         }
                     }
                 });
-                mobilesAdded.Add(newProvision1);
-
+                fixture.DataAccess.Add(newProvision1);
                 using var context = new MobilesContext(fixture.ContextOptions);
-                
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());
-                var mobilesRepository = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
-                mobilesRepository.Add(newProvision1);
 
                 var actual = sut.Get().ToList();
 
@@ -149,21 +130,17 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void DoesNotReturnMobilesWhichHaveNoOrders()
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001",
                     Orders = new List<OrderDataEntity>()
                 });
-                mobilesAdded.Add(newProvision1);
-
+                fixture.DataAccess.Add(newProvision1);
                 using var context = new MobilesContext(fixture.ContextOptions);
-                
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());
-                var mobilesRepository = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
-                mobilesRepository.Add(newProvision1);
 
                 var actual = sut.Get().ToList();
 
@@ -176,13 +153,13 @@ namespace Data.Tests.Mobiles.Api
             [InlineData("Completed")]
             public void DoesNotReturnMobilesWithOrderWhichAreNotNew(string orderState)
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>()
+                    Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
@@ -190,17 +167,13 @@ namespace Data.Tests.Mobiles.Api
                             Name = "Neil Armstrong",
                             ContactPhoneNumber = "0800000001",
                             State = orderState,
-                            Type = "Provision"
+                            Type = Order.OrderType.Provision.ToString(),
                         }
                     }
                 });
-                mobilesAdded.Add(newProvision1);
-
+                fixture.DataAccess.Add(newProvision1);
                 using var context = new MobilesContext(fixture.ContextOptions);
-                
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());
-                var mobilesRepository = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
-                mobilesRepository.Add(newProvision1);
 
                 var actual = sut.Get().ToList();
 

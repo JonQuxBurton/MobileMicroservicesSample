@@ -35,7 +35,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001",
                     Orders = new List<OrderDataEntity>
                     {
@@ -53,7 +53,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000002",
                     Orders = new List<OrderDataEntity>
                     {
@@ -71,7 +71,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000003",
                     Orders = new List<OrderDataEntity>
                     {

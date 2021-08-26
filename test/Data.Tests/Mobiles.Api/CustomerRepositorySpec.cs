@@ -141,13 +141,6 @@ namespace Data.Tests.Mobiles.Api
 
                 actual.Should().BeEmpty();
             }
-
-            // TODO
-            // GetById
-            // Update
-            // GetMobileByOrderIdQuery
-            // MobileRepository
-            // List others
         }
 
         [Collection("CustomerRepositorySpec")]

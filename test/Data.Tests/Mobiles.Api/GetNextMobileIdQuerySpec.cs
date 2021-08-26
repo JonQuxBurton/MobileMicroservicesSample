@@ -4,7 +4,6 @@ using FluentAssertions;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
-using Utils.Enums;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,48 +15,41 @@ namespace Data.Tests.Mobiles.Api
         public class GetShould : IDisposable
         {
             private readonly MobilesSharedFixture fixture;
-            private readonly List<Mobile> mobilesAdded;
 
             public GetShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
-
-                mobilesAdded = new List<Mobile>();
             }
 
             public void Dispose()
             {
-                foreach (var mobile in mobilesAdded)
-                    fixture.DataAccess.Delete(mobile);
+                fixture.DataAccess.Cleanup();
             }
 
             [Fact]
             public void ReturnNextMobileId()
             {
-                var mobile = new Mobile(new DateTimeCreator(), new MobileDataEntity()
+                var mobile = new Mobile(new DateTimeCreator(), new MobileDataEntity
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "Live",
+                    State = Mobile.MobileState.Live.ToString(),
                     PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>()
+                    Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
                             GlobalId = Guid.NewGuid(),
                             Name = "Neil Armstrong",
                             ContactPhoneNumber = "0800000001",
-                            State = "Completed",
-                            Type = "Activate"
+                            State = Order.State.Completed.ToString(),
+                            Type = Order.OrderType.Activate.ToString()
                         }
                     }
                 });
-
+                fixture.DataAccess.Add(mobile);
                 using var context = new MobilesContext(fixture.ContextOptions);
-                var mobilesRepository = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
-                mobilesRepository.Add(mobile);
-                mobilesAdded.Add(mobile);
                 var sut = new GetNextMobileIdQuery(context);
 
                 var actual = sut.Get();

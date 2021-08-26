@@ -24,7 +24,7 @@ namespace Mobiles.Api.Data
             return mobilesContext.Mobiles
                 .Include(x => x.Orders)
                 .Where(x => x.Orders.Any(y =>
-                    y.Type == OrderType.Activate.ToString() && y.State == Mobile.MobileState.New.ToString()))
+                    y.Type == OrderType.Activate.ToString() && y.State == State.New.ToString()))
                 .Select(x => new Mobile(dateTimeCreator, x));
         }
     }

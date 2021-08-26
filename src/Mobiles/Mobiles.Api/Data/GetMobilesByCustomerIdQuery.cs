@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
 
@@ -21,8 +22,12 @@ namespace Mobiles.Api.Data
         {
             var mobiles = new List<Mobile>();
 
-            foreach (var mobileDataEntity in mobilesContext.Mobiles.Where(x => x.CustomerId == customerId))
+            foreach (var mobileDataEntity in mobilesContext.Mobiles
+                .Include(x => x.Orders)
+                .Where(x => x.CustomerId == customerId))
+            {
                 mobiles.Add(new Mobile(dateTimeCreator, mobileDataEntity));
+            }
 
             return mobiles;
         }

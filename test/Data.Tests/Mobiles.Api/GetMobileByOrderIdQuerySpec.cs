@@ -5,7 +5,6 @@ using FluentAssertions;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
-using Utils.Enums;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,20 +16,16 @@ namespace Data.Tests.Mobiles.Api
         public class GetShould : IDisposable
         {
             private readonly MobilesSharedFixture fixture;
-            private readonly List<Mobile> mobilesAdded;
 
             public GetShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
-
-                mobilesAdded = new List<Mobile>();
             }
 
             public void Dispose()
             {
-                foreach (var mobile in mobilesAdded)
-                    fixture.DataAccess.Delete(mobile);
+                fixture.DataAccess.Cleanup();
             }
 
             [Fact]
@@ -40,22 +35,20 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001",
                     Orders = new List<OrderDataEntity>
                     {
                         new()
                         {
                             GlobalId = Guid.NewGuid(),
-                            Type = "Provision",
-                            State = "New"
+                            Type = Order.OrderType.Provision.ToString(),
+                            State = Order.State.New.ToString()
                         }
                     }
                 });
+                fixture.DataAccess.Add(expectedMobile);
                 using var context = new MobilesContext(fixture.ContextOptions);
-                var mobilesRepository = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
-                mobilesRepository.Add(expectedMobile);
-                mobilesAdded.Add(expectedMobile);
                 var sut = new GetMobileByOrderIdQuery(context, new DateTimeCreator());
 
                 var actual = sut.Get(expectedMobile.Orders.First().GlobalId);

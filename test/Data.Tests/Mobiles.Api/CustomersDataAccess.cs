@@ -2,7 +2,6 @@
 using Dapper;
 using DapperDataAccess;
 using Microsoft.Data.SqlClient;
-using Mobiles.Api.Domain;
 using Xunit.Abstractions;
 
 namespace Data.Tests.Mobiles.Api

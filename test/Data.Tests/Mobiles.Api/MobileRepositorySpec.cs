@@ -37,7 +37,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "Live",
+                    State = Mobile.MobileState.Live.ToString(),
                     PhoneNumber = "0700000001",
                     Orders = new List<OrderDataEntity>
                     {
@@ -46,8 +46,8 @@ namespace Data.Tests.Mobiles.Api
                             GlobalId = Guid.NewGuid(),
                             Name = "Neil Armstrong",
                             ContactPhoneNumber = "0800000001",
-                            State = "Completed",
-                            Type = "Activate"
+                            Type = Order.OrderType.Activate.ToString(),
+                            State = Order.State.Completed.ToString()
                         }
                     }
                 });
@@ -86,7 +86,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001"
                 });
                 using var context = new MobilesContext(fixture.ContextOptions);
@@ -128,7 +128,7 @@ namespace Data.Tests.Mobiles.Api
                 {
                     GlobalId = Guid.NewGuid(),
                     CustomerId = Guid.NewGuid(),
-                    State = "New",
+                    State = Mobile.MobileState.New.ToString(),
                     PhoneNumber = "0700000001"
                 });
                 mobiles.Add(expectedMobile);
