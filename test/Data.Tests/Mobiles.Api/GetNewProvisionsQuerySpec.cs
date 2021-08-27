@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Mobiles.Api.Data;
 using Mobiles.Api.Domain;
 using Utils.DateTimes;
+using Utils.Enums;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,11 +16,13 @@ namespace Data.Tests.Mobiles.Api
         public class GetShould : IDisposable
         {
             private readonly MobilesSharedFixture fixture;
+            private readonly MobileBuilder mobileBuilder;
 
             public GetShould(MobilesSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
                 this.fixture.Setup(output);
+                mobileBuilder = new MobileBuilder();
             }
 
             public void Dispose()
@@ -31,57 +33,21 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void ReturnNewProvisions()
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Neil Armstrong",
-                            ContactPhoneNumber = "0800000001",
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
-                var newProvision2 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000002",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Buzz Aldrin",
-                            ContactPhoneNumber = "0800000002",
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
-                var newProvision3 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000003",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Michael Collins",
-                            ContactPhoneNumber = "0800000003",
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
+                var newProvision1 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
+                var newProvision2 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
+                var newProvision3 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
                 fixture.DataAccess.Add(newProvision1);
                 fixture.DataAccess.Add(newProvision2);
                 fixture.DataAccess.Add(newProvision3);
@@ -99,25 +65,14 @@ namespace Data.Tests.Mobiles.Api
             [InlineData("ProcessingProvision")]
             [InlineData("Live")]
             [InlineData("Ceased")]
-            public void DoesNotReturnMobilesWhichAreNotNew(string state)
+            public void DoesNotReturnMobilesWhichAreNotNew(string stateString)
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = state,
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Neil Armstrong",
-                            ContactPhoneNumber = "0800000001",
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
+                var state = new EnumConverter().ToEnum<Mobile.MobileState>(stateString);
+                var newProvision1 = mobileBuilder
+                    .WithMobileState(state)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
                 fixture.DataAccess.Add(newProvision1);
                 using var context = new MobilesContext(fixture.ContextOptions);
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());
@@ -130,14 +85,9 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void DoesNotReturnMobilesWhichHaveNoOrders()
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>()
-                });
+                var newProvision1 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .BuildWithoutOrder();
                 fixture.DataAccess.Add(newProvision1);
                 using var context = new MobilesContext(fixture.ContextOptions);
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());
@@ -151,26 +101,14 @@ namespace Data.Tests.Mobiles.Api
             [InlineData("Processing")]
             [InlineData("Sent")]
             [InlineData("Completed")]
-            public void DoesNotReturnMobilesWithOrderWhichAreNotNew(string orderState)
+            public void DoesNotReturnMobilesWithOrderWhichAreNotNew(string orderStateString)
             {
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Neil Armstrong",
-                            ContactPhoneNumber = "0800000001",
-                            State = orderState,
-                            Type = Order.OrderType.Provision.ToString(),
-                        }
-                    }
-                });
+                var orderState = new EnumConverter().ToEnum<Order.State>(orderStateString);
+                var newProvision1 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(orderState)
+                    .Build();
                 fixture.DataAccess.Add(newProvision1);
                 using var context = new MobilesContext(fixture.ContextOptions);
                 var sut = new GetNewProvisionsQuery(context, new DateTimeCreator());

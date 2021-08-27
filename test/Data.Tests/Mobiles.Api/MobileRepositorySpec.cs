@@ -33,24 +33,12 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void AddMobile()
             {
-                expectedMobile = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.Live.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Neil Armstrong",
-                            ContactPhoneNumber = "0800000001",
-                            Type = Order.OrderType.Activate.ToString(),
-                            State = Order.State.Completed.ToString()
-                        }
-                    }
-                });
+                var mobileBuilder = new MobileBuilder();
+                expectedMobile = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.Live)
+                    .WithOrderType(Order.OrderType.Activate)
+                    .WithOrderState(Order.State.Completed)
+                    .Build();
                 using var context = new MobilesContext(fixture.ContextOptions);
                 sut = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
 
@@ -82,13 +70,10 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void AddMobile()
             {
-                expectedMobile = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001"
-                });
+                var mobileBuilder = new MobileBuilder();
+                expectedMobile = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .BuildWithoutOrder();
                 using var context = new MobilesContext(fixture.ContextOptions);
                 sut = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());
                 sut.Add(expectedMobile);
@@ -124,13 +109,10 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void ReturnMobile()
             {
-                var expectedMobile = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001"
-                });
+                var mobileBuilder = new MobileBuilder();
+                var expectedMobile = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .BuildWithoutOrder();
                 mobiles.Add(expectedMobile);
                 using var context = new MobilesContext(fixture.ContextOptions);
                 sut = new MobileRepository(context, new EnumConverter(), new DateTimeCreator());

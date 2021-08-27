@@ -79,7 +79,7 @@ namespace Data.Tests.Mobiles.Api
         {
             private readonly CustomersRepositorySharedFixture fixture;
             private CustomerRepository sut;
-            private List<Customer> customers;
+            private readonly List<Customer> customers;
 
             public GetAllShould(CustomersRepositorySharedFixture fixture, ITestOutputHelper output)
             {

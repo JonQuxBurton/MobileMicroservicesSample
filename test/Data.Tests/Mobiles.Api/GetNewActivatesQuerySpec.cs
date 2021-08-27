@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Mobiles.Api.Data;
@@ -31,60 +30,22 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void ReturnNewActivates()
             {
-                var newActivate1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Neil Armstrong",
-                            ContactPhoneNumber = "0800000001",
-                            Type = Order.OrderType.Activate.ToString(),
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
-                var newProvision1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000002",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Buzz Aldrin",
-                            ContactPhoneNumber = "0800000002",
-                            Type = Order.OrderType.Provision.ToString(),
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
-                var newActivate2 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000003",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Michael Collins",
-                            ContactPhoneNumber = "0800000003",
-                            Type = Order.OrderType.Activate.ToString(),
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
+                var mobileBuilder = new MobileBuilder();
+                var newActivate1 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Activate)
+                    .WithOrderState(Order.State.New)
+                    .Build();
+                var newProvision1 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
+                var newActivate2 = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Activate)
+                    .WithOrderState(Order.State.New)
+                    .Build();
                 fixture.DataAccess.Add(newActivate1);
                 fixture.DataAccess.Add(newProvision1);
                 fixture.DataAccess.Add(newActivate2);

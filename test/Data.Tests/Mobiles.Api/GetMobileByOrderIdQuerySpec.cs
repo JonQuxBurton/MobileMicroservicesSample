@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Mobiles.Api.Data;
@@ -31,22 +30,12 @@ namespace Data.Tests.Mobiles.Api
             [Fact]
             public void ReturnMobile()
             {
-                var expectedMobile = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Type = Order.OrderType.Provision.ToString(),
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
+                var mobileBuilder = new MobileBuilder();
+                var expectedMobile = mobileBuilder
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
                 fixture.DataAccess.Add(expectedMobile);
                 using var context = new MobilesContext(fixture.ContextOptions);
                 var sut = new GetMobileByOrderIdQuery(context, new DateTimeCreator());

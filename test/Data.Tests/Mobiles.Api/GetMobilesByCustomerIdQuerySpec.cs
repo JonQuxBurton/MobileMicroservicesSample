@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Mobiles.Api.Data;
@@ -32,40 +31,19 @@ namespace Data.Tests.Mobiles.Api
             public void ReturnMobiles()
             {
                 var customerId = Guid.NewGuid();
-                var mobile1 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = customerId,
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000001",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Neil Armstrong",
-                            ContactPhoneNumber = "0800000001",
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
-                var mobile2 = new Mobile(new DateTimeCreator(), new MobileDataEntity
-                {
-                    GlobalId = Guid.NewGuid(),
-                    CustomerId = customerId,
-                    State = Mobile.MobileState.New.ToString(),
-                    PhoneNumber = "0700000002",
-                    Orders = new List<OrderDataEntity>
-                    {
-                        new()
-                        {
-                            GlobalId = Guid.NewGuid(),
-                            Name = "Buzz Aldrin",
-                            ContactPhoneNumber = "0800000002",
-                            State = Order.State.New.ToString()
-                        }
-                    }
-                });
+                var mobileBuilder = new MobileBuilder();
+                var mobile1 = mobileBuilder
+                    .WithCustomerId(customerId)
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
+                var mobile2 = mobileBuilder
+                    .WithCustomerId(customerId)
+                    .WithMobileState(Mobile.MobileState.New)
+                    .WithOrderType(Order.OrderType.Provision)
+                    .WithOrderState(Order.State.New)
+                    .Build();
                 using var context = new MobilesContext(fixture.ContextOptions);
                 fixture.DataAccess.Add(mobile1);
                 fixture.DataAccess.Add(mobile2);
