@@ -184,7 +184,6 @@ namespace Data.Tests.SimCards.EventHandlers
             public AddShould(SimCardOrdersSharedFixture fixture, ITestOutputHelper output)
             {
                 this.fixture = fixture;
-                this.fixture = fixture;
                 this.fixture.Setup(output);
             }
 

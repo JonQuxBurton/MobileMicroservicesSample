@@ -75,6 +75,7 @@ namespace MobileTelecomsNetwork.EventHandlers.Data
                         MobileId = dbOrder.MobileId,
                         MobileOrderId = dbOrder.MobileOrderId,
                         Name = dbOrder.Name,
+                        PhoneNumber = dbOrder.PhoneNumber,
                         Status = orderStatus,
                         Type = orderType,
                         CreatedAt = dbOrder.CreatedAt,
