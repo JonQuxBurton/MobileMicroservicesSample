@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ExternalMobileTelecomsNetwork\ExternalMobileTelecomsNetwork.Api\ExternalMobileTelecomsNetwork.Api.csproj" />
     <ProjectReference Include="..\..\src\ExternalSimCardsProvider\ExternalSimCardsProvider.Api\ExternalSimCardsProvider.Api.csproj" />
     <ProjectReference Include="..\..\src\Mobiles\Mobiles.Api\Mobiles.Api.csproj" />
     <ProjectReference Include="..\..\src\MobileTelecomsNetwork\MobileTelecomsNetwork.EventHandlers\MobileTelecomsNetwork.EventHandlers.csproj" />
